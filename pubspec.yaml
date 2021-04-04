@@ -1,0 +1,40 @@
+name: youtube_diegoveloper_challenges
+description: A new Flutter project.
+
+# The following line prevents the package from being accidentally published to
+# pub.dev using `pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^0.1.3
+  google_fonts: any
+  provider: 4.3.1
+  intl: any
+ 
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+
+  uses-material-design: true
+  assets:
+    - assets/
+    - assets/nike_shoes_store/
+    - assets/vinyl_album/
+    - assets/dbrand_skin_selection/
+    - assets/multiple_card_flow/
+    - assets/grocery_store/
+    - assets/travel_photos/
+    - assets/batman_sign_up/
+    - assets/rappi_concept/
+    - assets/pizza_order/
