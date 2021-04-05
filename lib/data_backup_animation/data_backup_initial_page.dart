@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:youtube_diegoveloper_challenges/data_backup_animation/data_backup_home.dart';
+import 'package:australti_feriafy_app/data_backup_animation/data_backup_home.dart';
 
 const _duration = Duration(milliseconds: 500);
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:youtube_diegoveloper_challenges/grocery_store/grocery_store_bloc.dart';
+import 'package:australti_feriafy_app/grocery_store/grocery_store_bloc.dart';
 
 import 'grocery_provider.dart';
+
+const _blueColor = Color(0xFF0D1863);
 
 class GroceryStoreCart extends StatelessWidget {
   @override
@@ -102,20 +104,21 @@ class GroceryStoreCart extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: ElevatedButton(
-                /*   color: Color(0xFFF4C459),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), */
+                style: ElevatedButton.styleFrom(
+                  primary: _blueColor,
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15.0),
+                  padding: const EdgeInsets.symmetric(vertical: 0.0),
                   child: Text(
                     'Next',
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
                 ),
                 onPressed: () => null,
               ),
-            ),
+            )
           ],
         ),
       ),

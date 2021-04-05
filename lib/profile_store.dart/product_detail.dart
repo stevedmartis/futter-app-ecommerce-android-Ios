@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:australti_feriafy_app/grocery_store/grocery_product.dart';
+import 'package:australti_feriafy_app/store_product_concept/store_product_data.dart';
 
-class GroceryStoreDetails extends StatefulWidget {
-  const GroceryStoreDetails({
+class ProductStoreDetails extends StatefulWidget {
+  const ProductStoreDetails({
     Key key,
     @required this.product,
     this.onProductAdded,
   }) : super(key: key);
-  final GroceryProduct product;
+  final ProfileStoreProduct product;
   final ValueChanged<int> onProductAdded;
 
   @override
   _GroceryStoreDetailsState createState() => _GroceryStoreDetailsState();
 }
 
-class _GroceryStoreDetailsState extends State<GroceryStoreDetails> {
+class _GroceryStoreDetailsState extends State<ProductStoreDetails> {
   String heroTag = '';
   int quantity = 1;
 
@@ -48,7 +48,7 @@ class _GroceryStoreDetailsState extends State<GroceryStoreDetails> {
                       Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: Hero(
-                          tag: 'list_${widget.product.name}$heroTag',
+                          tag: '${widget.product.name}',
                           child: Image.asset(
                             widget.product.image,
                             fit: BoxFit.contain,
@@ -65,7 +65,7 @@ class _GroceryStoreDetailsState extends State<GroceryStoreDetails> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        widget.product.weight,
+                        '100',
                         style: Theme.of(context).textTheme.subtitle2.copyWith(
                               color: Colors.grey,
                             ),

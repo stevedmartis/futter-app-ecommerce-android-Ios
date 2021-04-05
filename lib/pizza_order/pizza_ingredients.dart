@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:youtube_diegoveloper_challenges/pizza_order/pizza_order_provider.dart';
+import 'package:australti_feriafy_app/pizza_order/pizza_order_provider.dart';
 
 import 'ingredient.dart';
 

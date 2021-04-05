@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:youtube_diegoveloper_challenges/store_product_concept/store_product_data.dart';
+import 'package:australti_feriafy_app/store_product_concept/store_product_data.dart';
 
-const categoryHeight = 55.0;
+const categoryHeight = 50.0;
 const productHeight = 110.0;
 
 class TabsViewScrollBLoC with ChangeNotifier {
@@ -62,22 +62,19 @@ class TabsViewScrollBLoC with ChangeNotifier {
     }
   }
 
-  void snapAppbar() {
-    final scrollDistance = 500.0 - 35;
-
+  void snapAppbar() async {
     print(scrollController2.offset);
-
-    if (scrollController2.offset > 0 &&
-        scrollController2.offset < scrollDistance) {
-      final double snapOffset =
-          scrollController2.offset / scrollDistance > 0.5 ? scrollDistance : 0;
-
-      Future.microtask(() => scrollController2.animateTo(snapOffset,
-          duration: Duration(milliseconds: 200), curve: Curves.easeIn));
-    }
+    if (scrollController2.offset >= 250)
+      await scrollController2.animateTo(
+        0.0,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.linear,
+      );
   }
 
   void onCategorySelected(int index, {bool animationRequired = true}) async {
+    print(scrollController.offset);
+
     final selected = tabs[index];
     for (int i = 0; i < tabs.length; i++) {
       final condition = selected.category.name == tabs[i].category.name;
@@ -85,9 +82,9 @@ class TabsViewScrollBLoC with ChangeNotifier {
     }
     notifyListeners();
 
-    if (animationRequired && scrollController2.offset == 0.0) {
+    if (animationRequired && scrollController2.offset >= 0.0) {
       await scrollController2.animateTo(
-        450,
+        260,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeIn,
       );
@@ -102,16 +99,16 @@ class TabsViewScrollBLoC with ChangeNotifier {
     } else if (animationRequired && scrollController2.offset > 400.0) {
       _listen = false;
       await scrollController.animateTo(
-        selected.offsetFrom,
+        selected.offsetFrom - 80,
         duration: const Duration(milliseconds: 200),
         curve: Curves.linear,
       );
       _listen = true;
     }
 
-    if (scrollController2.offset == 0.0)
+    if (scrollController2.offset >= 0.0 && scrollController.offset > 400)
       await scrollController2.animateTo(
-        450,
+        260,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeIn,
       );

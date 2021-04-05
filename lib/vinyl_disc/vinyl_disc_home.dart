@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:youtube_diegoveloper_challenges/vinyl_disc/album.dart';
+import 'package:australti_feriafy_app/vinyl_disc/album.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 
 const _colorHeader = Color(0xFFECECEA);
@@ -26,7 +26,7 @@ class VinylDiscHome extends StatelessWidget {
                 color: Colors.white,
                 padding: const EdgeInsets.all(20.0),
                 child: Text(
-                  currentAlbum.description,
+                  currentProfile.description,
                 ),
               ),
             ),
@@ -88,7 +88,7 @@ class _MyVinylDiscHeader extends SliverPersistentHeaderDelegate {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  currentAlbum.artist,
+                  currentProfile.name,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: titleSize,
@@ -96,7 +96,7 @@ class _MyVinylDiscHeader extends SliverPersistentHeaderDelegate {
                   ),
                 ),
                 Text(
-                  currentAlbum.album,
+                  currentProfile.username,
                   style: TextStyle(
                     fontSize: subTitleSize,
                     letterSpacing: -0.5,
@@ -114,7 +114,7 @@ class _MyVinylDiscHeader extends SliverPersistentHeaderDelegate {
             child: Transform.rotate(
               angle: vector.radians(360 * -percent),
               child: Image.asset(
-                currentAlbum.imageDisc,
+                currentProfile.imageAvatar,
               ),
             ),
           ),
@@ -123,7 +123,7 @@ class _MyVinylDiscHeader extends SliverPersistentHeaderDelegate {
             left: 35.0,
             height: currentImageSize,
             child: Image.asset(
-              currentAlbum.imageAlbum,
+              currentProfile.imageAvatar,
             ),
           ),
         ],

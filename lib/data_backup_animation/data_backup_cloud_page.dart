@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-import 'package:youtube_diegoveloper_challenges/data_backup_animation/data_backup_home.dart';
+import 'package:australti_feriafy_app/data_backup_animation/data_backup_home.dart';
 
 class _Bubble {
   _Bubble({
@@ -34,7 +34,8 @@ class DataBackupCloudPage extends StatelessWidget {
     final speed = math.Random().nextInt(50) + 1.0;
     final directionRandom = math.Random().nextBool();
     final colorRandom = math.Random().nextBool();
-    final direction = math.Random().nextInt(250) * (directionRandom ? 1.0 : -1.0);
+    final direction =
+        math.Random().nextInt(250) * (directionRandom ? 1.0 : -1.0);
     final color = colorRandom ? mainDataBackupColor : secondaryDataBackupColor;
     return _Bubble(
       color: color,
@@ -57,16 +58,22 @@ class DataBackupCloudPage extends StatelessWidget {
         ),
         builder: (context, snapshot) {
           final size = queryData.width * 0.5;
-          final circleSize = size * math.pow((progressAnimation.value + cloudOutAnimation.value + 1), 2);
+          final circleSize = size *
+              math.pow(
+                  (progressAnimation.value + cloudOutAnimation.value + 1), 2);
           final topPosition = queryData.height * 0.45;
           final centerMargin = queryData.width - circleSize;
-          final leftSize = size * 0.6 * math.pow((1 - progressAnimation.value), 3);
-          final rightSize = size * 0.7 * math.pow((1 - progressAnimation.value), 3);
+          final leftSize =
+              size * 0.6 * math.pow((1 - progressAnimation.value), 3);
+          final rightSize =
+              size * 0.7 * math.pow((1 - progressAnimation.value), 3);
           final leftMargin = queryData.width / 2 - leftSize * 1.2;
           final rightMargin = queryData.width / 2 - rightSize * 1.2;
-          final middleMargin = queryData.width / 2 - (size / 2) * math.pow((1 - progressAnimation.value),3);
+          final middleMargin = queryData.width / 2 -
+              (size / 2) * math.pow((1 - progressAnimation.value), 3);
           final topOutPosition = queryData.height * cloudOutAnimation.value;
-          final bottomMiddleSize = size * math.pow((1 - progressAnimation.value), 3);
+          final bottomMiddleSize =
+              size * math.pow((1 - progressAnimation.value), 3);
 
           return Positioned(
             left: 0,

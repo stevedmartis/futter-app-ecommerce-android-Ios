@@ -1,4 +1,4 @@
-package com.diegoveloper.youtube_diegoveloper_challenges
+package com.diegoveloper.australti_feriafy_app
 
 import io.flutter.embedding.android.FlutterActivity
 

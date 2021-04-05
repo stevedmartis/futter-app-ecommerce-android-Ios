@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:youtube_diegoveloper_challenges/store_product_concept/store_product_bloc.dart';
-import 'package:youtube_diegoveloper_challenges/store_product_concept/store_product_data.dart';
+import 'package:australti_feriafy_app/store_product_concept/store_product_bloc.dart';
+import 'package:australti_feriafy_app/store_product_concept/store_product_data.dart';
 
 const _backgroundColor = Color(0xFFF6F9FA);
 const _blueColor = Color(0xFF0D1863);

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:youtube_diegoveloper_challenges/nike_shoes_store/nike_shoes.dart';
-import 'package:youtube_diegoveloper_challenges/nike_shoes_store/nike_shopping_cart.dart';
-import 'package:youtube_diegoveloper_challenges/nike_shoes_store/page_indicator_painter.dart';
-import 'package:youtube_diegoveloper_challenges/transitions/shake_transition.dart';
+import 'package:australti_feriafy_app/nike_shoes_store/nike_shoes.dart';
+import 'package:australti_feriafy_app/nike_shoes_store/nike_shopping_cart.dart';
+import 'package:australti_feriafy_app/nike_shoes_store/page_indicator_painter.dart';
+import 'package:australti_feriafy_app/transitions/shake_transition.dart';
 
 class NikeShoesDetails extends StatefulWidget {
   final NikeShoes shoes;

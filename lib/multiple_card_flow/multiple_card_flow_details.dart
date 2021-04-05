@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:youtube_diegoveloper_challenges/multiple_card_flow/place.dart';
+import 'package:australti_feriafy_app/multiple_card_flow/place.dart';
 
 import 'multiple_card_flow.dart';
 

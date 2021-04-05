@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:youtube_diegoveloper_challenges/batman_sign_up/batman_button.dart';
+import 'package:australti_feriafy_app/batman_sign_up/batman_button.dart';
 
 class BatmanScreenSignUp extends AnimatedWidget {
   BatmanScreenSignUp(

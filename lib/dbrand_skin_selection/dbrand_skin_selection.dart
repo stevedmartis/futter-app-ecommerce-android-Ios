@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:youtube_diegoveloper_challenges/dbrand_skin_selection/dbrand_skin.dart';
+import 'package:australti_feriafy_app/dbrand_skin_selection/dbrand_skin.dart';
 
 class DbrandSkinSelection extends StatefulWidget {
   @override
   _DbrandSkinSelectionState createState() => _DbrandSkinSelectionState();
 }
 
-class _DbrandSkinSelectionState extends State<DbrandSkinSelection> with SingleTickerProviderStateMixin {
+class _DbrandSkinSelectionState extends State<DbrandSkinSelection>
+    with SingleTickerProviderStateMixin {
   DbrandSkin _current = skins.first;
   DbrandSkin _past = skins.last;
   AnimationController _controller;

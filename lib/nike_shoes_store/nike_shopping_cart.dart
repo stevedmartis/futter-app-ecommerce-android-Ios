@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:youtube_diegoveloper_challenges/nike_shoes_store/nike_shoes.dart';
+import 'package:australti_feriafy_app/nike_shoes_store/nike_shoes.dart';
 
 const _buttonSizeWidth = 200.0;
 const _buttonSizeHeight = 60.0;
@@ -16,7 +16,8 @@ class NikeShoppingCart extends StatefulWidget {
   _NikeShoppingCartState createState() => _NikeShoppingCartState();
 }
 
-class _NikeShoppingCartState extends State<NikeShoppingCart> with SingleTickerProviderStateMixin {
+class _NikeShoppingCartState extends State<NikeShoppingCart>
+    with SingleTickerProviderStateMixin {
   AnimationController _controller;
   Animation _animationResize;
   Animation _animationMovementIn;
@@ -80,7 +81,8 @@ class _NikeShoppingCartState extends State<NikeShoppingCart> with SingleTickerPr
 
   Widget _buildPanel() {
     final size = MediaQuery.of(context).size;
-    final currentImageSize = (_imageSize * _animationResize.value).clamp(_finalImageSize, _imageSize);
+    final currentImageSize = (_imageSize * _animationResize.value)
+        .clamp(_finalImageSize, _imageSize);
 
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 400),
@@ -100,19 +102,26 @@ class _NikeShoppingCartState extends State<NikeShoppingCart> with SingleTickerPr
           _buttonCircularSize,
           size.height * 0.6,
         ),
-        width: (size.width * _animationResize.value).clamp(_buttonCircularSize, size.width),
+        width: (size.width * _animationResize.value)
+            .clamp(_buttonCircularSize, size.width),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30),
             topRight: Radius.circular(30),
-            bottomLeft: _animationResize.value == 1 ? Radius.circular(0) : Radius.circular(30),
-            bottomRight: _animationResize.value == 1 ? Radius.circular(0) : Radius.circular(30),
+            bottomLeft: _animationResize.value == 1
+                ? Radius.circular(0)
+                : Radius.circular(30),
+            bottomRight: _animationResize.value == 1
+                ? Radius.circular(0)
+                : Radius.circular(30),
           ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: _animationResize.value == 1 ? MainAxisAlignment.start : MainAxisAlignment.center,
+          mainAxisAlignment: _animationResize.value == 1
+              ? MainAxisAlignment.start
+              : MainAxisAlignment.center,
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(15),
@@ -219,11 +228,13 @@ class _NikeShoppingCartState extends State<NikeShoppingCart> with SingleTickerPr
       child: AnimatedBuilder(
           animation: _controller,
           builder: (context, child) {
-            final buttonSizeWidth = (_buttonSizeWidth * _animationResize.value).clamp(
+            final buttonSizeWidth =
+                (_buttonSizeWidth * _animationResize.value).clamp(
               _buttonCircularSize,
               _buttonSizeWidth,
             );
-            final panelSizeWidth = (size.width * _animationResize.value).clamp(_buttonCircularSize, size.width);
+            final panelSizeWidth = (size.width * _animationResize.value)
+                .clamp(_buttonCircularSize, size.width);
             return Stack(
               fit: StackFit.expand,
               children: <Widget>[
@@ -242,7 +253,8 @@ class _NikeShoppingCartState extends State<NikeShoppingCart> with SingleTickerPr
                     children: <Widget>[
                       if (_animationMovementIn.value != 1)
                         Positioned(
-                          top: size.height * 0.45 + (_animationMovementIn.value * size.height * 0.45),
+                          top: size.height * 0.45 +
+                              (_animationMovementIn.value * size.height * 0.45),
                           left: size.width / 2 - panelSizeWidth / 2,
                           width: panelSizeWidth,
                           child: _buildPanel(),
@@ -274,16 +286,22 @@ class _NikeShoppingCartState extends State<NikeShoppingCart> with SingleTickerPr
                                       : null,
                                   child: Container(
                                     width: buttonSizeWidth,
-                                    height: (_buttonSizeHeight * _animationResize.value).clamp(
+                                    height: (_buttonSizeHeight *
+                                            _animationResize.value)
+                                        .clamp(
                                       _buttonCircularSize,
                                       _buttonSizeHeight,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: (sizeSelected != null) ? Colors.black : Colors.grey,
-                                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                                      color: (sizeSelected != null)
+                                          ? Colors.black
+                                          : Colors.grey,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(30)),
                                     ),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 12.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: <Widget>[

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:youtube_diegoveloper_challenges/android_messages_animation/main_android_messages_animation_app.dart';
-import 'package:youtube_diegoveloper_challenges/batman_sign_up/main_batman_sign_up_app.dart';
-import 'package:youtube_diegoveloper_challenges/data_backup_animation/main_data_backup_animation.dart';
-import 'package:youtube_diegoveloper_challenges/dbrand_skin_selection/main_dbrand_skin_selection_app.dart';
-import 'package:youtube_diegoveloper_challenges/grocery_store/main_grocery_store.dart';
-import 'package:youtube_diegoveloper_challenges/multiple_card_flow/main_multiple_card_flow.dart';
-import 'package:youtube_diegoveloper_challenges/nike_shoes_store/main_nike_shoes_store.dart';
-import 'package:youtube_diegoveloper_challenges/pizza_order/main_pizza_order.dart';
-import 'package:youtube_diegoveloper_challenges/profile_store.dart/main_profile_store.dart';
-import 'package:youtube_diegoveloper_challenges/store_product_concept/main_store_product_concept_app.dart';
-import 'package:youtube_diegoveloper_challenges/travel_photos/main_travel_photos.dart';
-import 'package:youtube_diegoveloper_challenges/vinyl_disc/main_vinyl_disc_app.dart';
+import 'package:australti_feriafy_app/android_messages_animation/main_android_messages_animation_app.dart';
+import 'package:australti_feriafy_app/batman_sign_up/main_batman_sign_up_app.dart';
+import 'package:australti_feriafy_app/data_backup_animation/main_data_backup_animation.dart';
+import 'package:australti_feriafy_app/dbrand_skin_selection/main_dbrand_skin_selection_app.dart';
+import 'package:australti_feriafy_app/grocery_store/main_grocery_store.dart';
+import 'package:australti_feriafy_app/multiple_card_flow/main_multiple_card_flow.dart';
+import 'package:australti_feriafy_app/nike_shoes_store/main_nike_shoes_store.dart';
+import 'package:australti_feriafy_app/pizza_order/main_pizza_order.dart';
+import 'package:australti_feriafy_app/profile_store.dart/main_profile_store.dart';
+import 'package:australti_feriafy_app/store_product_concept/main_store_product_concept_app.dart';
+import 'package:australti_feriafy_app/travel_photos/main_travel_photos.dart';
+import 'package:australti_feriafy_app/vinyl_disc/main_vinyl_disc_app.dart';
 
 import 'grocery_store/myhome.dart';
 

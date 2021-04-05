@@ -1,4 +1,4 @@
-name: youtube_diegoveloper_challenges
+name: australti_feriafy_app
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -18,6 +18,7 @@ dependencies:
   google_fonts: any
   provider: 4.3.1
   intl: any
+  font_awesome_flutter: ^9.0.0
  
 
 dev_dependencies:

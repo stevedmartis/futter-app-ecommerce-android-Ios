@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:youtube_diegoveloper_challenges/batman_sign_up/batman_city.dart';
-import 'package:youtube_diegoveloper_challenges/batman_sign_up/batman_screen_buttons.dart';
-import 'package:youtube_diegoveloper_challenges/batman_sign_up/batman_screen_signup.dart';
-import 'package:youtube_diegoveloper_challenges/batman_sign_up/batman_screen_title.dart';
+import 'package:australti_feriafy_app/batman_sign_up/batman_city.dart';
+import 'package:australti_feriafy_app/batman_sign_up/batman_screen_buttons.dart';
+import 'package:australti_feriafy_app/batman_sign_up/batman_screen_signup.dart';
+import 'package:australti_feriafy_app/batman_sign_up/batman_screen_title.dart';
 
 const _batmanVerticalMovement = 60.0;
 
@@ -24,7 +24,8 @@ class BatmanSignUp extends StatefulWidget {
   _BatmanSignUpState createState() => _BatmanSignUpState();
 }
 
-class _BatmanSignUpState extends State<BatmanSignUp> with TickerProviderStateMixin {
+class _BatmanSignUpState extends State<BatmanSignUp>
+    with TickerProviderStateMixin {
   AnimationController _animationController;
   Animation<double> _animationLogoIn;
   Animation<double> _animationLogoMovementUp;
@@ -126,7 +127,8 @@ class _BatmanSignUpState extends State<BatmanSignUp> with TickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: Listenable.merge([_animationController, _animationControllerSignUp]),
+      animation:
+          Listenable.merge([_animationController, _animationControllerSignUp]),
       builder: (context, _) {
         return Scaffold(
           backgroundColor: Color(0xFF100F0B),
@@ -179,7 +181,8 @@ class _BatmanSignUpState extends State<BatmanSignUp> with TickerProviderStateMix
                 child: Column(
                   children: [
                     Transform.translate(
-                      offset: Offset(0.0, _batmanVerticalMovement * _animationLogoOut.value),
+                      offset: Offset(0.0,
+                          _batmanVerticalMovement * _animationLogoOut.value),
                       child: Opacity(
                         opacity: (1 - _animationLogoOut.value),
                         child: BatmanScreenTitle(_animationLogoMovementUp),
@@ -187,18 +190,20 @@ class _BatmanSignUpState extends State<BatmanSignUp> with TickerProviderStateMix
                     ),
                     const SizedBox(height: 35),
                     Transform.translate(
-                      offset: Offset(0.0, _batmanVerticalMovement * _animationLogoOut.value),
+                      offset: Offset(0.0,
+                          _batmanVerticalMovement * _animationLogoOut.value),
                       child: Opacity(
                         opacity: (1 - _animationLogoOut.value),
-                        child: BatmanScreenButtons(_animationButtonsIn, _onSignUp),
+                        child:
+                            BatmanScreenButtons(_animationButtonsIn, _onSignUp),
                       ),
                     ),
                   ],
                 ),
               ),
               Positioned(
-                top:
-                    MediaQuery.of(context).size.height / 2.2 - _batmanVerticalMovement * _animationLogoMovementUp.value,
+                top: MediaQuery.of(context).size.height / 2.2 -
+                    _batmanVerticalMovement * _animationLogoMovementUp.value,
                 left: 0,
                 right: 0,
                 child: Opacity(

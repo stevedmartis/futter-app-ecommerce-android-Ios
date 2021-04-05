@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
-import 'package:youtube_diegoveloper_challenges/multiple_card_flow/multiple_card_flow_details.dart';
-import 'package:youtube_diegoveloper_challenges/multiple_card_flow/place.dart';
+import 'package:australti_feriafy_app/multiple_card_flow/multiple_card_flow_details.dart';
+import 'package:australti_feriafy_app/multiple_card_flow/place.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 
 const backgroundGradient = LinearGradient(

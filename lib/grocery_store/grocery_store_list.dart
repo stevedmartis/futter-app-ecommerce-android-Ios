@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:youtube_diegoveloper_challenges/grocery_store/grocery_provider.dart';
-import 'package:youtube_diegoveloper_challenges/layouts/staggered_dual_view.dart';
+import 'package:australti_feriafy_app/grocery_store/grocery_provider.dart';
+import 'package:australti_feriafy_app/layouts/staggered_dual_view.dart';
 
 import 'grocery_store_details.dart';
 import 'grocery_store_home.dart';

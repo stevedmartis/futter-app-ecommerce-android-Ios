@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
-import 'package:youtube_diegoveloper_challenges/travel_photos/travel_photo.dart';
+import 'package:australti_feriafy_app/travel_photos/travel_photo.dart';
 
 class TravelPhotosHome extends StatefulWidget {
   @override
@@ -45,7 +45,8 @@ class _TravelPhotosHomeState extends State<TravelPhotosHome> {
             ),
           ),
           Positioned(
-            top: topCardHeight - horizontalListHeight / 3 + horizontalListHeight,
+            top:
+                topCardHeight - horizontalListHeight / 3 + horizontalListHeight,
             left: 0,
             right: 0,
             bottom: 0,
@@ -136,7 +137,8 @@ class TravelPhotoDetails extends StatefulWidget {
   _TravelPhotoDetailsState createState() => _TravelPhotoDetailsState();
 }
 
-class _TravelPhotoDetailsState extends State<TravelPhotoDetails> with SingleTickerProviderStateMixin {
+class _TravelPhotoDetailsState extends State<TravelPhotoDetails>
+    with SingleTickerProviderStateMixin {
   AnimationController _controller;
   final _movement = -100.0;
 
