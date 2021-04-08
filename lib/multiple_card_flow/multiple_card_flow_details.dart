@@ -11,7 +11,7 @@ class MultipleCardFlowDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: Colors.black,
       child: Stack(
         children: <Widget>[
           Positioned.fill(
@@ -23,7 +23,7 @@ class MultipleCardFlowDetails extends StatelessWidget {
           ),
           Positioned.fill(
             child: Scaffold(
-              backgroundColor: Colors.transparent,
+              backgroundColor: Colors.black,
               body: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[

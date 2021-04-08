@@ -7,7 +7,7 @@ import 'package:australti_feriafy_app/profile_store.dart/profile_store_home.dart
 import 'grocery_provider.dart';
 import 'grocery_store_cart.dart';
 
-const backgroundColor = Color(0XFFF6F5F2);
+const backgroundColor = Color(0xFFF6F5F2);
 const cartBarHeight = 65.0;
 const _panelTransition = Duration(milliseconds: 500);
 
@@ -105,6 +105,7 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                     height: size.height - toolBarHeight,
                     child: GestureDetector(
                       onVerticalDragUpdate: _onVerticalGesture,
+                      onTap: () => bloc.changeToCart(),
                       behavior: HitTestBehavior.opaque,
                       child: Container(
                         color: Colors.black,
@@ -193,11 +194,14 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                                             ),
                                             CircleAvatar(
                                               backgroundColor:
-                                                  Color(0xFFF4C459),
+                                                  Color(0xFF1CD60B),
                                               child: Text(
                                                 bloc
                                                     .totalCartElements()
                                                     .toString(),
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white),
                                               ),
                                             ),
                                           ],
@@ -227,44 +231,3 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
     );
   }
 }
-/* 
-const _blueColor = Color(0xFF0D1863);
-const _greenColor = Color(0xFF2BBEBA); */
-
-/* class _AppBarGrocery extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 15),
-      height: 100,
-      color: backgroundColor,
-      alignment: Alignment.center,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Text(
-            'Homepage',
-            style: TextStyle(
-              color: _blueColor,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          CircleAvatar(
-            backgroundColor: _greenColor,
-            radius: 17,
-            child: ClipOval(
-              child: Image.asset(
-                'assets/logo.png',
-                height: 30,
-                fit: BoxFit.cover,
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
- */

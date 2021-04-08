@@ -9,8 +9,8 @@ const backgroundGradient = LinearGradient(
   begin: Alignment.topCenter,
   end: Alignment.bottomCenter,
   colors: [
-    Color(0XFF4b6089),
-    Color(0XFF9FB4D2),
+    Color(0xFF4b6089),
+    Color(0xFF9FB4D2),
   ],
 );
 

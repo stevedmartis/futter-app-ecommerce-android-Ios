@@ -1,3 +1,4 @@
+import 'package:australti_feriafy_app/store_product_concept/store_product_data.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_feriafy_app/grocery_store/grocery_product.dart';
 
@@ -32,7 +33,7 @@ class GroceryStoreBLoC with ChangeNotifier {
     notifyListeners();
   }
 
-  void addProduct(GroceryProduct product, int quantity) {
+  void addProduct(ProfileStoreProduct product, int quantity) {
     for (GroceryProductItem item in cart) {
       if (item.product.name == product.name) {
         item.increment(quantity);
@@ -59,7 +60,7 @@ class GroceryStoreBLoC with ChangeNotifier {
 class GroceryProductItem {
   GroceryProductItem({this.quantity = 1, @required this.product});
   int quantity;
-  final GroceryProduct product;
+  final ProfileStoreProduct product;
 
   void increment(int newQuantity) {
     quantity += newQuantity;

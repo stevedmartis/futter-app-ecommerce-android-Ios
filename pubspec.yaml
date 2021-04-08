@@ -19,6 +19,12 @@ dependencies:
   provider: 4.3.1
   intl: any
   font_awesome_flutter: ^9.0.0
+  flutter_secure_storage: ^4.1.0
+  google_sign_in: ^5.0.1
+  socket_io_client: ^0.9.12
+  animations: ^2.0.0
+  animate_do: ^1.7.5
+
  
 
 dev_dependencies:

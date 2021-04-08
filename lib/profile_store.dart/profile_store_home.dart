@@ -1,18 +1,25 @@
+import 'package:australti_feriafy_app/authentication/auth_bloc.dart';
+import 'package:australti_feriafy_app/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:australti_feriafy_app/grocery_store/grocery_provider.dart';
 import 'package:australti_feriafy_app/profile_store.dart/product_detail.dart';
 import 'package:australti_feriafy_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_feriafy_app/store_product_concept/store_product_data.dart';
 import 'package:australti_feriafy_app/vinyl_disc/album.dart';
 import 'dart:math' as math;
 
-const _colorHeader = Color(0xFFECECEA);
-const _blueColor = Color(0xFF0D1863);
-const _greenColor = Color(0xFF2BBEBA);
+import 'package:provider/provider.dart';
+
+const _colorHeader = Color(0xFFF1F1F1);
+const _blueColor = Color(0xFF00649FE);
+const _textHighColor = Color(0xFF241E1E);
+const _textColor = Color(0xFF5C5657);
 
 class ProfileStore extends StatefulWidget {
+  ProfileStore({this.isAuthUser = false});
+
+  final bool isAuthUser;
   @override
   _ProfileStoreState createState() => _ProfileStoreState();
 }
@@ -20,6 +27,7 @@ class ProfileStore extends StatefulWidget {
 class _ProfileStoreState extends State<ProfileStore>
     with TickerProviderStateMixin {
   final _bloc = TabsViewScrollBLoC();
+  AnimationController _animationController;
 
   double get maxHeight => 400 + MediaQuery.of(context).padding.top;
   double get minHeight => MediaQuery.of(context).padding.bottom;
@@ -28,7 +36,25 @@ class _ProfileStoreState extends State<ProfileStore>
   void initState() {
     _bloc.init(this);
 
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+      reverseDuration: const Duration(milliseconds: 1300),
+    );
+
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(Widget old) {
+    super.didUpdateWidget(old);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+
+    super.dispose();
   }
 
   TabController controller;
@@ -40,16 +66,18 @@ class _ProfileStoreState extends State<ProfileStore>
   ValueChanged<int> onPositionChange;
   ValueChanged<double> onScroll;
   int initPosition;
+  bool isFallow;
 
   @override
   Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     return Scaffold(
         /*  floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           backgroundColor: Colors.black,
           onPressed: () {},
         ), */
-        backgroundColor: _colorHeader,
+        backgroundColor: currentTheme.scaffoldBackgroundColor,
         body: SafeArea(
             child: AnimatedBuilder(
           animation: _bloc,
@@ -59,7 +87,9 @@ class _ProfileStoreState extends State<ProfileStore>
               return [
                 SliverPersistentHeader(
                   delegate: _ProfileStoreHeader(
-                      bloc: _bloc, maxHeight: maxHeight, minHeight: minHeight),
+                      bloc: _bloc,
+                      animationController: _animationController,
+                      isAuthUser: widget.isAuthUser),
                   pinned: true,
                 ),
                 /* SliverToBoxAdapter(
@@ -82,58 +112,27 @@ class _ProfileStoreState extends State<ProfileStore>
                         ],
                       )),
                 ), */
-                /*   SliverPersistentHeader(
-                      pinned: true,
-                      delegate: SliverAppBarDelegate(
-                          minHeight: 70,
-                          maxHeight: 70,
-                          child: Container(
-                            color: _colorHeader,
-                            alignment: Alignment.centerLeft,
-                            child: TabBar(
-                              onTap: _bloc.onCategorySelected,
-                              controller: _bloc.tabController,
-                              indicatorWeight: 0.1,
-                              isScrollable: true,
-                              tabs:
-                                  _bloc.tabs.map((e) => _TabWidget(e)).toList(),
-                            ),
-                          )),
-                    ), */
-                SliverAppBar(
-                    collapsedHeight: categoryHeight,
-                    backgroundColor: _colorHeader,
-                    toolbarHeight: categoryHeight,
-                    pinned: true,
-                    automaticallyImplyLeading: false,
-                    actions: [Container()],
-                    title: Container(
-                      alignment: Alignment.centerLeft,
-                      child: TabBar(
-                        onTap: _bloc.onCategorySelected,
-                        controller: _bloc.tabController,
-                        indicatorWeight: 0.1,
-                        isScrollable: true,
-                        tabs: _bloc.tabs
-                            .map((e) => _TabWidget(
-                                  tabCategory: e,
-                                ))
-                            .toList(),
-                      ), /* TabBar(
-
-                              controller: controller,
-                              indicatorWeight: 5,
-                              isScrollable: true,
-                              indicator: BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    width: 4,
-                                  ),
-                                ),
-                              ),
-                              tabs: List.generate(
-                                  1, (index) => tabBuilder(context, index))) */
-                    ))
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: SliverAppBarDelegate(
+                      minHeight: 70,
+                      maxHeight: 70,
+                      child: Container(
+                        color: currentTheme.scaffoldBackgroundColor,
+                        alignment: Alignment.centerLeft,
+                        child: TabBar(
+                          onTap: _bloc.onCategorySelected,
+                          controller: _bloc.tabController,
+                          indicatorWeight: 0.1,
+                          isScrollable: true,
+                          tabs: _bloc.tabs
+                              .map((e) => _TabWidget(
+                                    tabCategory: e,
+                                  ))
+                              .toList(),
+                        ),
+                      )),
+                ),
               ];
             },
 
@@ -167,19 +166,21 @@ class _TabWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
     final selected = tabCategory.selected;
 
     return Opacity(
       opacity: selected ? 1 : 0.5,
       child: Card(
-        color: Colors.white,
+        color: currentTheme.cardColor,
         elevation: selected ? 6 : 0,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
             tabCategory.category.name,
             style: TextStyle(
-              color: _blueColor,
+              color: (selected) ? _blueColor : Colors.grey,
               fontWeight: FontWeight.bold,
               fontSize: 13,
             ),
@@ -196,13 +197,15 @@ class _ProfileStoreCategoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeChanger>(context);
+
     return Container(
       height: categoryHeight,
       alignment: Alignment.centerLeft,
       child: Text(
         category.name,
         style: TextStyle(
-          color: _blueColor,
+          color: (!currentTheme.customTheme) ? Colors.black54 : Colors.white54,
           fontSize: 16,
           fontWeight: FontWeight.bold,
         ),
@@ -216,11 +219,13 @@ class _ProfileStoreProductItem extends StatelessWidget {
   final ProfileStoreProduct product;
   @override
   Widget build(BuildContext context) {
-    final bloc = GroceryProvider.of(context).bloc;
+    final currentTheme = Provider.of<ThemeChanger>(context);
+
+    //  final bloc = GroceryProvider.of(context).bloc;
 
     return GestureDetector(
       onTap: () async {
-        bloc.changeToDetails();
+        //  bloc.changeToDetails();
         await Navigator.of(context).push(
           PageRouteBuilder(
             transitionDuration: const Duration(milliseconds: 800),
@@ -230,13 +235,13 @@ class _ProfileStoreProductItem extends StatelessWidget {
                 child: ProductStoreDetails(
                     product: product,
                     onProductAdded: (int quantity) {
-                      //bloc.addProduct(product, quantity);
+                      //  bloc.addProduct(product, quantity);
                     }),
               );
             },
           ),
         );
-        bloc.changeToNormal();
+        //  bloc.changeToNormal();
       },
       child: Container(
         height: productHeight,
@@ -248,13 +253,13 @@ class _ProfileStoreProductItem extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            color: Colors.white,
+            color: currentTheme.currentTheme.cardColor,
             child: Row(
               children: [
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Hero(
-                      tag: '${product.name}',
+                      tag: 'list_${product.name}',
                       child: Image.asset(product.image)),
                 ),
                 const SizedBox(width: 10),
@@ -266,7 +271,9 @@ class _ProfileStoreProductItem extends StatelessWidget {
                       Text(
                         product.name,
                         style: TextStyle(
-                          color: _blueColor,
+                          color: (currentTheme.customTheme)
+                              ? Colors.white
+                              : _textColor,
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
@@ -276,7 +283,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
                         product.description,
                         maxLines: 2,
                         style: TextStyle(
-                          color: _blueColor,
+                          color: Colors.grey,
                           fontSize: 10,
                         ),
                       ),
@@ -284,7 +291,9 @@ class _ProfileStoreProductItem extends StatelessWidget {
                       Text(
                         '\$${product.price.toStringAsFixed(2)}',
                         style: TextStyle(
-                          color: _greenColor,
+                          color: (currentTheme.customTheme)
+                              ? Colors.white
+                              : _textColor,
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
@@ -320,14 +329,18 @@ const _minTitleSize = 16.0;
 const _minSubTitleSize = 12.0;
 
 class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
-  _ProfileStoreHeader({this.bloc, this.maxHeight, this.minHeight});
-  final double maxHeight;
-  final double minHeight;
+  _ProfileStoreHeader({this.bloc, this.animationController, this.isAuthUser});
+  final AnimationController animationController;
+
   final TabsViewScrollBLoC bloc;
+
+  final bool isAuthUser;
 
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
+    final currentTheme = Provider.of<ThemeChanger>(context);
+
     final percent = 1 -
         ((maxExtent - shrinkOffset - minExtent) / (maxExtent - minExtent))
             .clamp(0.0, 1.0);
@@ -355,13 +368,13 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
     return GestureDetector(
       onTap: () => bloc.snapAppbar(),
       child: Container(
-        color: _colorHeader,
+        color: currentTheme.currentTheme.scaffoldBackgroundColor,
         child: Stack(
           children: <Widget>[
             Positioned(
               top: 18.0,
               child: IconButton(
-                icon: FaIcon(FontAwesomeIcons.chevronLeft, color: _blueColor),
+                icon: FaIcon(FontAwesomeIcons.chevronLeft, color: Colors.white),
                 iconSize: 25,
                 onPressed: () =>
                     //  Navigator.pushReplacement(context, createRouteProfile()),
@@ -384,7 +397,10 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                         gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [Colors.black26, Colors.black26]),
+                            colors: [
+                              currentTheme.currentTheme.cardColor,
+                              currentTheme.currentTheme.cardColor
+                            ]),
                         borderRadius: BorderRadius.all(Radius.circular(30)),
                         /*  boxShadow: [
                           BoxShadow(
@@ -394,24 +410,11 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                               offset: Offset(0, 5))
                         ], */
                       ),
-                      child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              // Icon( FontAwesomeIcons.chevronLeft, color: Colors.black54 ),
-
-                              Icon(Icons.search, color: Colors.white),
-                              SizedBox(width: 10),
-                              Container(
-                                  // margin: EdgeInsets.only(top: 0, left: 0),
-                                  child: Text('Search in this Store',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500))),
-                            ],
-                          )))),
+                      child:
+                          SearchContent() /*  Container(
+                      child: _MyTextField(animationController),
+                    ), */
+                      )),
             ),
             Positioned(
               top: (_bottomMarginName * (1 - percent))
@@ -424,10 +427,13 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                   Text(
                     currentProfile.name,
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: titleSize,
-                        letterSpacing: -0.5,
-                        color: _blueColor),
+                      fontWeight: FontWeight.bold,
+                      fontSize: titleSize,
+                      letterSpacing: -0.5,
+                      color: (currentTheme.customTheme)
+                          ? Colors.white
+                          : _textHighColor,
+                    ),
                   ),
                   AnimatedContainer(
                     duration: Duration(milliseconds: 100),
@@ -436,14 +442,16 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                       style: TextStyle(
                         fontSize: subTitleSize,
                         letterSpacing: -0.5,
-                        color: Colors.grey,
+                        color: (currentTheme.customTheme)
+                            ? Colors.white54
+                            : _textColor,
                       ),
                     ),
                   ),
                   AnimatedContainer(
                     duration: Duration(milliseconds: 100),
                     child: Text(
-                      '300 seguidores',
+                      '300 followers',
                       style: TextStyle(
                         fontSize: subTitleSize,
                         letterSpacing: -0.5,
@@ -454,51 +462,11 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                 ],
               ),
             ),
-            (percent <= 0.9)
-                ? Positioned(
-                    top: 350,
-                    right: 100,
-                    child: Container(
-                      width: 180,
-                      height: 35,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: _blueColor,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 0.0),
-                          child: Text(
-                            'Fallow',
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        onPressed: () => null,
-                      ),
-                    ))
-                : Positioned(
-                    top: 90,
-                    right: 20,
-                    child: Container(
-                      width: 100,
-                      height: 35,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: _blueColor,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 0.0),
-                          child: Text(
-                            'Fallow',
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        onPressed: () => null,
-                      ),
-                    )),
+            (!isAuthUser)
+                ? ButtonFollow(
+                    percent: percent, bloc: bloc, left: leftTextMargin)
+                : ButtonEditProfile(
+                    percent: percent, bloc: bloc, left: leftTextMargin),
 
             /*  Positioned(
               bottom: 20.0,
@@ -518,17 +486,20 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                 left: (_leftMarginDisc * (1 - percent))
                     .clamp(20.0, _leftMarginDisc),
                 height: currentImageSize,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(100.0)),
-                  child: Image.asset(
-                    currentProfile.imageAvatar,
+                child: Hero(
+                  tag: 'user_auth_avatar',
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(100.0)),
+                    child: Image.asset(
+                      currentProfile.imageAvatar,
+                    ),
                   ),
                 )),
             Positioned(
               right: 40,
               top: 18.0,
               child: IconButton(
-                icon: FaIcon(FontAwesomeIcons.share, color: _blueColor),
+                icon: Icon(Icons.share, color: Colors.white),
                 iconSize: 25,
                 onPressed: () =>
                     //  Navigator.pushReplacement(context, createRouteProfile()),
@@ -540,7 +511,7 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
               right: 0,
               top: 18.0,
               child: IconButton(
-                icon: Icon(Icons.menu, color: _blueColor),
+                icon: Icon(Icons.menu, color: Colors.white),
                 iconSize: 30,
                 onPressed: () =>
                     //  Navigator.pushReplacement(context, createRouteProfile()),
@@ -562,6 +533,192 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => false;
+}
+
+class ButtonFollow extends StatefulWidget {
+  const ButtonFollow(
+      {Key key, @required this.percent, @required this.bloc, this.left})
+      : super(key: key);
+
+  final num percent;
+  final TabsViewScrollBLoC bloc;
+  final double left;
+
+  @override
+  _ButtonFollowState createState() => _ButtonFollowState();
+}
+
+class _ButtonFollowState extends State<ButtonFollow> {
+  bool isFollow = false;
+  void changeFollow() {
+    isFollow = !isFollow;
+
+    print(isFollow);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        (widget.percent <= 0.9)
+            ? Positioned(
+                top: 350,
+                right: 100,
+                child: Container(
+                  width: 180,
+                  height: 35,
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: (!isFollow) ? Colors.white : _blueColor,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 0.0),
+                        child: Text(
+                          (isFollow) ? 'Fallow' : 'Following',
+                          style: TextStyle(
+                              color: (isFollow) ? Colors.white : Colors.black,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      onPressed: () => {
+                            setState(() {
+                              this.changeFollow();
+                            })
+                          }),
+                ))
+            : Positioned(
+                top: 90,
+                right: 20,
+                child: Container(
+                  width: 100,
+                  height: 35,
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          primary: (!isFollow) ? Colors.white : _blueColor),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 0.0),
+                        child: Text(
+                          (isFollow) ? 'Fallow' : 'Following',
+                          style: TextStyle(
+                              color: (isFollow) ? Colors.white : Colors.black,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      onPressed: () => {
+                            setState(() {
+                              this.changeFollow();
+                            })
+                          }),
+                )),
+      ],
+    );
+  }
+}
+
+class ButtonEditProfile extends StatefulWidget {
+  const ButtonEditProfile(
+      {Key key, @required this.percent, @required this.bloc, this.left})
+      : super(key: key);
+
+  final num percent;
+  final TabsViewScrollBLoC bloc;
+  final double left;
+
+  @override
+  _ButtonEditProfileState createState() => _ButtonEditProfileState();
+}
+
+class _ButtonEditProfileState extends State<ButtonEditProfile> {
+  bool isFollow = false;
+  void changeFollow() {
+    isFollow = !isFollow;
+
+    print(isFollow);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        (widget.percent <= 0.9)
+            ? Positioned(
+                top: 350,
+                left: widget.left,
+                child: Container(
+                  width: 180,
+                  height: 35,
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(primary: Colors.white),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 0.0),
+                        child: Text(
+                          'Editar perfil',
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      onPressed: () => {
+                            setState(() {
+                              this.changeFollow();
+                            })
+                          }),
+                ))
+            : Positioned(
+                top: 90,
+                right: 20,
+                child: Container(
+                  width: 100,
+                  height: 35,
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(primary: Colors.white),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 0.0, horizontal: 10),
+                        child: Text(
+                          'Editar',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15),
+                        ),
+                      ),
+                      onPressed: () => {
+                            setState(() {
+                              this.changeFollow();
+                            })
+                          }),
+                )),
+      ],
+    );
+  }
+}
+
+class SearchContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeChanger>(context);
+
+    return Container(
+        margin: EdgeInsets.symmetric(horizontal: 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            // Icon( FontAwesomeIcons.chevronLeft, color: Colors.black54 ),
+
+            Icon(Icons.search,
+                color:
+                    (currentTheme.customTheme) ? Colors.white : Colors.black),
+            SizedBox(width: 10),
+            Container(
+                // margin: EdgeInsets.only(top: 0, left: 0),
+                child: Text('Search product ...',
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500))),
+          ],
+        ));
+  }
 }
 
 class SliverAppBarDelegate extends SliverPersistentHeaderDelegate {

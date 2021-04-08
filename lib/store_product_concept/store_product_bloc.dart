@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:australti_feriafy_app/store_product_concept/store_product_data.dart';
 
 const categoryHeight = 50.0;
+
 const productHeight = 110.0;
 
 class TabsViewScrollBLoC with ChangeNotifier {
@@ -10,9 +11,15 @@ class TabsViewScrollBLoC with ChangeNotifier {
   TabController tabController;
   ScrollController scrollController = ScrollController();
 
-  ScrollController scrollController2 = ScrollController();
+  // ScrollController scrollController2 = ScrollController();
+
+  ScrollController scrollController2 =
+      ScrollController(initialScrollOffset: 260);
 
   bool _listen = true;
+  bool initial = true;
+
+  bool isFollow = false;
 
   void init(TickerProvider ticker) {
     tabController =
@@ -63,18 +70,28 @@ class TabsViewScrollBLoC with ChangeNotifier {
   }
 
   void snapAppbar() async {
-    print(scrollController2.offset);
-    if (scrollController2.offset >= 250)
+    if (scrollController2.offset >= 250 || initial) {
       await scrollController2.animateTo(
         0.0,
         duration: const Duration(milliseconds: 200),
         curve: Curves.linear,
       );
+      initial = false;
+    }
+  }
+
+  void initSnapAppbar() async {
+    if (scrollController2.offset == 0.0) {
+      await scrollController2.animateTo(
+        260.0,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.linear,
+      );
+      initial = false;
+    }
   }
 
   void onCategorySelected(int index, {bool animationRequired = true}) async {
-    print(scrollController.offset);
-
     final selected = tabs[index];
     for (int i = 0; i < tabs.length; i++) {
       final condition = selected.category.name == tabs[i].category.name;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:australti_feriafy_app/store_product_concept/store_product_data.dart';
 
+const _blueColor = Color(0xFF00649FE);
+
 class ProductStoreDetails extends StatefulWidget {
   const ProductStoreDetails({
     Key key,
@@ -48,7 +50,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails> {
                       Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: Hero(
-                          tag: '${widget.product.name}',
+                          tag: 'list_${widget.product.name}' + heroTag,
                           child: Image.asset(
                             widget.product.image,
                             fit: BoxFit.contain,
@@ -172,22 +174,20 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails> {
                   ),
                   Spacer(),
                   Expanded(
-                    flex: 6,
-                    child: ElevatedButton(
-                      /*    color: Color(0xFFF4C459),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), */
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 15.0),
-                        child: Text(
-                          'Add to Cart',
-                          style: TextStyle(
-                            color: Colors.black,
+                      flex: 6,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(primary: _blueColor),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15.0),
+                          child: Text(
+                            'Add to Cart',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
-                      ),
-                      onPressed: () => _addToCart(context),
-                    ),
-                  ),
+                        onPressed: () => _addToCart(context),
+                      )),
                 ],
               ),
             )

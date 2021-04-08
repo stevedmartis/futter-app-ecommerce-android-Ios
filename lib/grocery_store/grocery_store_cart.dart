@@ -3,7 +3,7 @@ import 'package:australti_feriafy_app/grocery_store/grocery_store_bloc.dart';
 
 import 'grocery_provider.dart';
 
-const _blueColor = Color(0xFF0D1863);
+const _blueColor = Color(0xFF00649FE);
 
 class GroceryStoreCart extends StatelessWidget {
   @override
@@ -44,30 +44,56 @@ class GroceryStoreCart extends StatelessWidget {
                           final item = bloc.cart[index];
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15.0),
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  backgroundImage: AssetImage(
-                                    item.product.image,
+                            child: Dismissible(
+                              key: UniqueKey(),
+                              direction: DismissDirection.endToStart,
+                              onDismissed: (direction) =>
+                                  {bloc.deleteProduct(item)},
+                              background: Container(
+                                  alignment: Alignment.centerRight,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
                                   ),
-                                ),
-                                const SizedBox(width: 15),
-                                Text(item.quantity.toString()),
-                                const SizedBox(width: 10),
-                                Text('x'),
-                                const SizedBox(width: 10),
-                                Text(item.product.name),
-                                Spacer(),
-                                Text(
-                                    '\$${(item.product.price * item.quantity).toStringAsFixed(2)}'),
-                                IconButton(
-                                  icon: Icon(Icons.delete),
-                                  onPressed: () {
-                                    bloc.deleteProduct(item);
-                                  },
-                                ),
-                              ],
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.only(right: 10),
+                                        child: Icon(
+                                          Icons.delete,
+                                          color: Colors.black,
+                                          size: 25,
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Expanded(
+                                    child: CircleAvatar(
+                                      backgroundColor: Colors.white,
+                                      backgroundImage: AssetImage(
+                                        item.product.image,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 15),
+                                  Expanded(
+                                      child: Text(item.quantity.toString())),
+                                  const SizedBox(width: 10),
+                                  Text('x'),
+                                  const SizedBox(width: 10),
+                                  Text(item.product.name),
+                                  Spacer(),
+                                  Text(
+                                      '\$${(item.product.price * item.quantity).toStringAsFixed(2)}'),
+                                  const SizedBox(width: 10),
+                                ],
+                              ),
                             ),
                           );
                         },

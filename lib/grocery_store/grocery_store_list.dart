@@ -30,7 +30,7 @@ class GroceryStoreList extends StatelessWidget {
                       child: GroceryStoreDetails(
                           product: product,
                           onProductAdded: (int quantity) {
-                            bloc.addProduct(product, quantity);
+                            //    bloc.addProduct(product, quantity);
                           }),
                     );
                   },
@@ -54,7 +54,7 @@ class GroceryStoreList extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Hero(
-                        tag: 'list_${product.name}',
+                        tag: '${product.name}',
                         child: Image.asset(
                           product.image,
                           fit: BoxFit.contain,

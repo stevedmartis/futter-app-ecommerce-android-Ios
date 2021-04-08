@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:australti_feriafy_app/grocery_store/grocery_product.dart';
 
+const _textHighColor = Color(0xFF241E1E);
+const _textColor = Color(0xFF5C5657);
+
 class GroceryStoreDetails extends StatefulWidget {
   const GroceryStoreDetails({
     Key key,
@@ -59,7 +62,7 @@ class _GroceryStoreDetailsState extends State<GroceryStoreDetails> {
                       Text(
                         widget.product.name,
                         style: Theme.of(context).textTheme.headline5.copyWith(
-                              color: Colors.black,
+                              color: _textHighColor,
                               fontWeight: FontWeight.bold,
                             ),
                       ),
@@ -67,7 +70,7 @@ class _GroceryStoreDetailsState extends State<GroceryStoreDetails> {
                       Text(
                         widget.product.weight,
                         style: Theme.of(context).textTheme.subtitle2.copyWith(
-                              color: Colors.grey,
+                              color: _textColor,
                             ),
                       ),
                       const SizedBox(height: 20),
@@ -77,7 +80,7 @@ class _GroceryStoreDetailsState extends State<GroceryStoreDetails> {
                             padding: const EdgeInsets.symmetric(vertical: 5),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(25),
-                              color: Colors.grey[200],
+                              color: _textColor,
                             ),
                             child: Row(
                               children: [
@@ -125,7 +128,7 @@ class _GroceryStoreDetailsState extends State<GroceryStoreDetails> {
                             '\$${widget.product.price}',
                             style:
                                 Theme.of(context).textTheme.headline4.copyWith(
-                                      color: Colors.black,
+                                      color: _textHighColor,
                                       fontWeight: FontWeight.bold,
                                     ),
                           ),
@@ -135,7 +138,7 @@ class _GroceryStoreDetailsState extends State<GroceryStoreDetails> {
                       Text(
                         'About the product',
                         style: Theme.of(context).textTheme.subtitle1.copyWith(
-                              color: Colors.black,
+                              color: _textColor,
                               fontWeight: FontWeight.bold,
                             ),
                       ),

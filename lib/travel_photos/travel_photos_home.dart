@@ -1,4 +1,8 @@
+import 'package:australti_feriafy_app/authentication/auth_bloc.dart';
+import 'package:australti_feriafy_app/routes/routes.dart';
+import 'package:australti_feriafy_app/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 import 'package:australti_feriafy_app/travel_photos/travel_photo.dart';
 
@@ -8,72 +12,160 @@ class TravelPhotosHome extends StatefulWidget {
 }
 
 class _TravelPhotosHomeState extends State<TravelPhotosHome> {
-  TravelPhoto _selected = travelPhotos.last;
-
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final topCardHeight = size.height / 2;
-    final horizontalListHeight = 160.0;
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: <Widget>[
-          Positioned(
-            height: topCardHeight,
-            left: 0,
-            right: 0,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 700),
-              child: TravelPhotoDetails(
-                key: Key(_selected.name),
-                travelPhoto: _selected,
-              ),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            top: topCardHeight - horizontalListHeight / 3,
-            height: horizontalListHeight,
-            child: TravelPhotosList(
-              onPhotoSelected: (item) {
-                setState(() {
-                  _selected = item;
-                });
-              },
-            ),
-          ),
-          Positioned(
-            top:
-                topCardHeight - horizontalListHeight / 3 + horizontalListHeight,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Recomendation',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    FakeReview(),
-                    FakeReview(),
-                  ],
+        backgroundColor: Colors.black,
+        body: SafeArea(
+            child: CustomScrollView(
+          slivers: [
+            makeHeaderPrincipal(context),
+            makeHeaderTitle(context),
+            makeListRecomendations(context)
+          ],
+        )));
+  }
+}
+
+SliverPersistentHeader makeHeaderPrincipal(context) {
+  return SliverPersistentHeader(
+      floating: true,
+      pinned: true,
+      delegate: SliverCustomHeaderDelegate(
+          minHeight: 120,
+          maxHeight: 440,
+          child: Container(
+              color: Colors.black,
+              child: Container(color: Colors.black, child: HeaderCustom()))));
+}
+
+SliverPersistentHeader makeHeaderTitle(context) {
+  return SliverPersistentHeader(
+      pinned: true,
+      delegate: SliverCustomHeaderDelegate(
+          minHeight: 60,
+          maxHeight: 60,
+          child: Container(
+            color: Colors.black,
+            child: Container(
+              color: Colors.black,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text(
+                  'Recomendation',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ),
+          )));
+}
+
+SliverList makeListRecomendations(context) {
+  return SliverList(
+    delegate: SliverChildListDelegate([
+      Container(child: _buildWidgetItem()),
+    ]),
+  );
+}
+
+Widget _buildWidgetItem() {
+  return Container(
+    child: SizedBox(
+      child: ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: 6,
+          itemBuilder: (BuildContext ctxt, int index) {
+            return Stack(
+              children: [
+                FakeReview(),
+                FakeReview(),
+                FakeReview(),
+                FakeReview(),
+              ],
+            );
+          }),
+    ),
+  );
+}
+
+class HeaderCustom extends StatefulWidget {
+  @override
+  _HeaderCustomState createState() => _HeaderCustomState();
+}
+
+class _HeaderCustomState extends State<HeaderCustom> {
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    final topCardHeight = size.height / 2.0;
+    final horizontalListHeight = 160.0;
+    TravelPhoto _selected = travelPhotos.last;
+
+    return Stack(
+      children: <Widget>[
+        Positioned(
+          height: topCardHeight,
+          left: 0,
+          right: 0,
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 700),
+            child: TravelPhotoDetails(
+              key: Key(_selected.name),
+              travelPhoto: _selected,
+            ),
           ),
-        ],
-      ),
+        ),
+        Positioned(
+          left: 0,
+          right: 0,
+          top: topCardHeight - horizontalListHeight / 3,
+          height: horizontalListHeight,
+          child: TravelPhotosList(
+            onPhotoSelected: (item) {
+              setState(() {
+                _selected = item;
+              });
+            },
+          ),
+        ),
+      ],
     );
+  }
+}
+
+class SliverCustomHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final double minHeight;
+  final double maxHeight;
+  final Widget child;
+
+  SliverCustomHeaderDelegate(
+      {@required this.minHeight,
+      @required this.maxHeight,
+      @required this.child});
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return SizedBox.expand(child: child);
+  }
+
+  @override
+  double get maxExtent => maxHeight;
+
+  @override
+  double get minExtent => minHeight;
+
+  @override
+  bool shouldRebuild(covariant SliverCustomHeaderDelegate oldDelegate) {
+    return maxHeight != oldDelegate.maxHeight ||
+        minHeight != oldDelegate.minHeight ||
+        child != oldDelegate.child;
   }
 }
 
@@ -140,6 +232,7 @@ class TravelPhotoDetails extends StatefulWidget {
 class _TravelPhotoDetailsState extends State<TravelPhotoDetails>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
+
   final _movement = -100.0;
 
   @override
@@ -148,6 +241,7 @@ class _TravelPhotoDetailsState extends State<TravelPhotoDetails>
       vsync: this,
       duration: const Duration(seconds: 10),
     );
+
     _controller.repeat(reverse: true);
     super.initState();
   }
@@ -166,7 +260,7 @@ class _TravelPhotoDetailsState extends State<TravelPhotoDetails>
           return Stack(
             fit: StackFit.expand,
             children: <Widget>[
-              Positioned.fill(
+              Positioned(
                 left: _movement * _controller.value,
                 right: _movement * (1 - _controller.value),
                 child: Image.asset(
@@ -175,10 +269,10 @@ class _TravelPhotoDetailsState extends State<TravelPhotoDetails>
                 ),
               ),
               Positioned(
-                top: 40,
+                top: 70,
                 left: 10,
                 right: 10,
-                height: 100,
+                height: 40,
                 child: FittedBox(
                   child: Text(
                     widget.travelPhoto.name,
@@ -191,14 +285,90 @@ class _TravelPhotoDetailsState extends State<TravelPhotoDetails>
               Positioned.fill(
                 left: _movement * _controller.value,
                 right: _movement * (1 - _controller.value),
-                child: Image.asset(
-                  widget.travelPhoto.frontImage,
-                  fit: BoxFit.cover,
+                child: Container(
+                  child: Image.asset(
+                    widget.travelPhoto.frontImage,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
+              Positioned(
+                top: 10,
+                left: 15,
+                right: 0,
+                height: 45,
+                child: Container(
+                  alignment: Alignment.centerLeft,
+                  child: FittedBox(
+                      child: GestureDetector(
+                    onTap: () {
+                      {
+                        Navigator.push(context, profileAuthRoute());
+                      }
+                    },
+                    child: Hero(
+                      tag: 'user_auth_avatar',
+                      child: Container(
+                          width: 100,
+                          height: 100,
+                          decoration: new BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: new DecorationImage(
+                                  fit: BoxFit.fill,
+                                  image: new NetworkImage(
+                                      "https://lh3.googleusercontent.com/ogw/ADGmqu-N16bBzFHRsgF3UX1nSmunUCznIt8LmhSgqFCE=s192-c-mo")))),
+                    ),
+                  )),
+                ),
+              ),
+              Positioned(
+                  top: 0,
+                  left: 70,
+                  right: 10,
+                  height: 70,
+                  child: Container(
+                      alignment: Alignment.center,
+                      child: _MyTextField(_controller))),
             ],
           );
         });
+  }
+}
+
+class _MyTextField extends AnimatedWidget {
+  _MyTextField(Animation<double> animation) : super(listenable: animation);
+
+  Animation<double> get animation => listenable;
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final value = 1 - animation.value;
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+          width: size.width / 1.6,
+          height: 40,
+          decoration: BoxDecoration(
+              color: Colors.transparent.withOpacity(0.40),
+              borderRadius: BorderRadius.circular(20)),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Row(
+              children: [
+                Icon(Icons.search),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                    child: Text('Search ...',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ))),
+              ],
+            ),
+          )),
+    );
   }
 }
 

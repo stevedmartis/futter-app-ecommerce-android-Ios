@@ -13,7 +13,8 @@ class DataBackupHome extends StatefulWidget {
   _DataBackupHomeState createState() => _DataBackupHomeState();
 }
 
-class _DataBackupHomeState extends State<DataBackupHome> with SingleTickerProviderStateMixin {
+class _DataBackupHomeState extends State<DataBackupHome>
+    with SingleTickerProviderStateMixin {
   AnimationController _animationController;
   Animation<double> _progressAnimation;
   Animation<double> _cloudOutAnimation;

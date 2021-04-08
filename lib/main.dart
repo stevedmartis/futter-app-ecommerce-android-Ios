@@ -1,3 +1,8 @@
+import 'package:australti_feriafy_app/authentication/auth_bloc.dart';
+import 'package:australti_feriafy_app/pages/principal_home_page.dart';
+import 'package:australti_feriafy_app/routes/routes.dart';
+import 'package:australti_feriafy_app/sockets/socket_connection.dart';
+import 'package:australti_feriafy_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:australti_feriafy_app/android_messages_animation/main_android_messages_animation_app.dart';
@@ -12,147 +17,33 @@ import 'package:australti_feriafy_app/profile_store.dart/main_profile_store.dart
 import 'package:australti_feriafy_app/store_product_concept/main_store_product_concept_app.dart';
 import 'package:australti_feriafy_app/travel_photos/main_travel_photos.dart';
 import 'package:australti_feriafy_app/vinyl_disc/main_vinyl_disc_app.dart';
+import 'package:provider/provider.dart';
 
+import 'bloc_globals/notitification.dart';
 import 'grocery_store/myhome.dart';
 
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(MultiProvider(providers: [
+      ChangeNotifierProvider(create: (_) => MenuModel()),
+      ChangeNotifierProvider(create: (_) => AuthenticationBLoC()),
+      ChangeNotifierProvider(create: (_) => SocketService()),
+      ChangeNotifierProvider(create: (_) => ThemeChanger(3)),
+      ChangeNotifierProvider(create: (_) => NotificationModel()),
+    ], child: MyApp()));
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
+    final currentTheme = Provider.of<ThemeChanger>(context);
+
     return MaterialApp(
+      theme: currentTheme.currentTheme,
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.light(),
-      home: MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  void _onPressed(BuildContext context, Widget child) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => child),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    const separator = SizedBox(height: 20);
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Youtube Diegoveloper Challenges'),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(40.0),
-        children: <Widget>[
-          separator,
-          ElevatedButton(
-            child: Text('Flight App Concept'),
-            onPressed: () => _onPressed(
-              context,
-              MyHomePage1(),
-            ),
-          ),
-          separator,
-          ElevatedButton(
-            child: Text('Nike Shoes Store Concept'),
-            onPressed: () => _onPressed(
-              context,
-              MainNikeShoesStoreApp(),
-            ),
-          ),
-          separator,
-          ElevatedButton(
-            child: Text('Profile store'),
-            onPressed: () => _onPressed(
-              context,
-              MainProfileStoreApp(),
-            ),
-          ),
-          ElevatedButton(
-            child: Text('Vinyl Disc Concept'),
-            onPressed: () => _onPressed(
-              context,
-              MainVinylDiscApp(),
-            ),
-          ),
-          separator,
-          ElevatedButton(
-            child: Text('Dbrand Color selection'),
-            onPressed: () => _onPressed(
-              context,
-              MainDbrandSkinSelectionApp(),
-            ),
-          ),
-          separator,
-          ElevatedButton(
-            child: Text('Multiple Card Flow'),
-            onPressed: () => _onPressed(
-              context,
-              MainMultipleCardFlowApp(),
-            ),
-          ),
-          separator,
-          ElevatedButton(
-            child: Text('Travel Photos'),
-            onPressed: () => _onPressed(
-              context,
-              MainTravelPhotosApp(),
-            ),
-          ),
-          separator,
-          ElevatedButton(
-            child: Text('Grocery Products'),
-            onPressed: () => _onPressed(
-              context,
-              MainGroceryStoreApp(),
-            ),
-          ),
-          separator,
-          ElevatedButton(
-            child: Text('Data Backup Animation'),
-            onPressed: () => _onPressed(
-              context,
-              MainDataBackupAnimationApp(),
-            ),
-          ),
-          separator,
-          ElevatedButton(
-            child: Text('Batman SignUp'),
-            onPressed: () => _onPressed(
-              context,
-              MainBatmanSignUpApp(),
-            ),
-          ),
-          separator,
-          ElevatedButton(
-            child: Text('Rappi Concept'),
-            onPressed: () => _onPressed(
-              context,
-              MainRappiConceptApp(),
-            ),
-          ),
-          separator,
-          ElevatedButton(
-            child: Text('Android Messages Animation'),
-            onPressed: () => _onPressed(
-              context,
-              MainAndroidMessagesAnimationApp(),
-            ),
-          ),
-          separator,
-          ElevatedButton(
-            child: Text('Pizza Order'),
-            onPressed: () => _onPressed(
-              context,
-              MainPizzaOrderApp(),
-            ),
-          ),
-        ],
-      ),
+      color: currentTheme.currentTheme.scaffoldBackgroundColor,
+      initialRoute: 'loading',
+      routes: appRoutes,
     );
   }
 }
