@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:australti_feriafy_app/batman_sign_up/batman_city.dart';
-import 'package:australti_feriafy_app/batman_sign_up/batman_screen_buttons.dart';
-import 'package:australti_feriafy_app/batman_sign_up/batman_screen_signup.dart';
-import 'package:australti_feriafy_app/batman_sign_up/batman_screen_title.dart';
+import 'package:australti_ecommerce_app/batman_sign_up/batman_city.dart';
+import 'package:australti_ecommerce_app/batman_sign_up/batman_screen_buttons.dart';
+import 'package:australti_ecommerce_app/batman_sign_up/batman_screen_signup.dart';
+import 'package:australti_ecommerce_app/batman_sign_up/batman_screen_title.dart';
 
 const _batmanVerticalMovement = 60.0;
 

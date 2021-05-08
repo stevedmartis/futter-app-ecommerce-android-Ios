@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:australti_feriafy_app/global/enviroments.dart';
-import 'package:australti_feriafy_app/models/auth_response.dart';
-import 'package:australti_feriafy_app/models/profile.dart';
+import 'package:australti_ecommerce_app/global/enviroments.dart';
+import 'package:australti_ecommerce_app/models/auth_response.dart';
+import 'package:australti_ecommerce_app/models/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -21,11 +21,11 @@ class AuthenticationBLoC with ChangeNotifier {
     ],
   );
   final _storage = new FlutterSecureStorage();
+  ValueNotifier<bool> notifierBottomBarVisible = ValueNotifier(true);
 
   bool isAuthenticated = false;
 
   Profile _profileAuth;
-  bool _bottomVisible = true;
 
   void changeToStore() {
     authState = AuthState.isStore;
@@ -34,6 +34,13 @@ class AuthenticationBLoC with ChangeNotifier {
 
   void changeToClient() {
     authState = AuthState.isStore;
+    notifyListeners();
+  }
+
+  ValueNotifier<bool> get bottomVisible => this.notifierBottomBarVisible;
+
+  set bottomVisible(ValueNotifier<bool> valor) {
+    this.notifierBottomBarVisible = valor;
     notifyListeners();
   }
 
@@ -70,12 +77,12 @@ class AuthenticationBLoC with ChangeNotifier {
     return token;
   }
 
-  bool get bottomVisible => this._bottomVisible;
+/*   bool get bottomVisible => this._bottomVisible;
 
   set bottomVisible(bool valor) {
     this._bottomVisible = valor;
     notifyListeners();
-  }
+  } */
 
   Future siginWithApple(String code, String email, String firstName,
       bool useBundleId, String state) async {

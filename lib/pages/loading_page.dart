@@ -1,7 +1,7 @@
-import 'package:australti_feriafy_app/authentication/auth_bloc.dart';
-import 'package:australti_feriafy_app/pages/principal_home_page.dart';
-import 'package:australti_feriafy_app/sockets/socket_connection.dart';
-import 'package:australti_feriafy_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
+import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
+import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
+import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

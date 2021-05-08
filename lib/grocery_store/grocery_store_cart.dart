@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:australti_feriafy_app/grocery_store/grocery_store_bloc.dart';
-
-import 'grocery_provider.dart';
+import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 
 const _blueColor = Color(0xFF00649FE);
 
 class GroceryStoreCart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final bloc = GroceryProvider.of(context).bloc;
+    //final bloc = Provider.of<GroceryStoreBLoC>(context);
+
     return SafeArea(
       child: TweenAnimationBuilder<double>(
         duration: const Duration(milliseconds: 500),
-        tween: bloc.groceryState != GroceryState.cart
+        tween: groceryStoreBloc.groceryState != GroceryState.cart
             ? Tween(begin: 0.0, end: 1.0)
             : Tween(begin: 1.0, end: 0.0),
         builder: (_, value, child) {
@@ -39,16 +38,16 @@ class GroceryStoreCart extends StatelessWidget {
                     ),
                     Expanded(
                       child: ListView.builder(
-                        itemCount: bloc.cart.length,
+                        itemCount: groceryStoreBloc.cart.length,
                         itemBuilder: (context, index) {
-                          final item = bloc.cart[index];
+                          final item = groceryStoreBloc.cart[index];
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15.0),
                             child: Dismissible(
                               key: UniqueKey(),
                               direction: DismissDirection.endToStart,
                               onDismissed: (direction) =>
-                                  {bloc.deleteProduct(item)},
+                                  {groceryStoreBloc.deleteProduct(item)},
                               background: Container(
                                   alignment: Alignment.centerRight,
                                   decoration: BoxDecoration(
@@ -117,7 +116,7 @@ class GroceryStoreCart extends StatelessWidget {
                   ),
                   Spacer(),
                   Text(
-                    '\$${bloc.totalPriceElements().toStringAsFixed(2)}',
+                    '\$${groceryStoreBloc.totalPriceElements().toStringAsFixed(2)}',
                     style: Theme.of(context).textTheme.headline4.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,

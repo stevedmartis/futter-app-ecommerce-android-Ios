@@ -1,5 +1,5 @@
-import 'package:australti_feriafy_app/authentication/auth_bloc.dart';
-import 'package:australti_feriafy_app/global/enviroments.dart';
+import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
+import 'package:australti_ecommerce_app/global/enviroments.dart';
 
 import 'package:flutter/material.dart';
 

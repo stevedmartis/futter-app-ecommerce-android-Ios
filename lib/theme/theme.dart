@@ -18,7 +18,7 @@ class ThemeChanger with ChangeNotifier {
         _darkTheme = false;
         _customTheme = false;
         _currentTheme = ThemeData.light().copyWith(
-            accentColor: Color(0xFF34EC9C),
+            accentColor: Color(0xffF78C39),
             scaffoldBackgroundColor: Color(0xFFEDE9EC),
             primaryColor: Color(0xFFCBC3C5),
             brightness: Brightness.light,
@@ -36,11 +36,11 @@ class ThemeChanger with ChangeNotifier {
         _darkTheme = false;
         _customTheme = true;
         _currentTheme = ThemeData.dark().copyWith(
-          accentColor: Color(0xFF34EC9C),
-          primaryColor: Color(0xFFA39FA2),
+          accentColor: Color(0xffFEB42C),
+//her          primaryColor: Color(0xFFA39FA2),
           brightness: Brightness.dark,
-          scaffoldBackgroundColor: Colors.black,
-          cardColor: Color(0xFF151518),
+          scaffoldBackgroundColor: Color(0xFF131313),
+          cardColor: Color(0xFF262626),
           textTheme: TextTheme(bodyText1: TextStyle(color: Colors.white)),
         );
         break;
@@ -73,17 +73,17 @@ class ThemeChanger with ChangeNotifier {
 
     if (value) {
       _currentTheme = ThemeData.dark().copyWith(
-        accentColor: Color(0xFF34EC9C), // Sea green Crayon
+        accentColor: Color(0xFF00649FE),
         primaryColor: Color(0xFFA39FA2).withOpacity(0.50),
-        cardColor: Color(0xFF151616),
+        cardColor: Color(0xFF262626),
         brightness: Brightness.dark,
         primaryColorLight: Colors.white,
-        scaffoldBackgroundColor: Color(0xFF090A0A), // gummetal
+        scaffoldBackgroundColor: Color(0xFF131313), // gummetal
         textTheme: TextTheme(bodyText1: TextStyle(color: Colors.white)),
       );
     } else {
       _currentTheme = ThemeData.light().copyWith(
-          accentColor: Color(0xFF34EC9C),
+          accentColor: Color(0xffF78C39),
           brightness: Brightness.light,
           scaffoldBackgroundColor: Color(0xFFEFEEF6),
           primaryColor: Color(0xFFCBC3C5),

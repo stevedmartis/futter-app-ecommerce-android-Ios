@@ -1,33 +1,33 @@
-class TravelPhoto {
-  const TravelPhoto({
-    this.backImage,
-    this.frontImage,
-    this.name,
-    this.photos,
-  });
+class StoreService {
+  const StoreService(
+      {this.backImage, this.frontImage, this.name, this.stores, this.id});
+  final int id;
   final String backImage;
   final String frontImage;
   final String name;
-  final int photos;
+  final int stores;
 }
 
-final travelPhotos = [
-  TravelPhoto(
-      backImage: 'assets/travel_photos/kuala_lumpur_backImage.png',
-      frontImage: 'assets/travel_photos/kuala_lumpur_frontImage.png',
-      name: 'Kuala Lumpur',
-      photos: 258),
-  TravelPhoto(
-      backImage: 'assets/travel_photos/singapore_backImage.png',
-      frontImage: 'assets/travel_photos/singapore_frontImage.png',
-      name: 'Singapore',
-      photos: 768),
-  TravelPhoto(
-      backImage: 'assets/travel_photos/japan_backImage.png',
-      frontImage: 'assets/travel_photos/japan_frontImage.png',
-      name: 'Japan',
-      photos: 1928),
-  TravelPhoto(
+final storeService = [
+  StoreService(
+      id: 1,
+      backImage: 'assets/travel_photos/rest6.jpg',
+      frontImage: 'assets/travel_photos/rest6.jpg',
+      name: 'Restaurantes',
+      stores: 50),
+  StoreService(
+      id: 2,
+      backImage: 'assets/travel_photos/frutas_verduras3.jpeg',
+      frontImage: 'assets/travel_photos/frutas_verduras3.jpeg',
+      name: 'Mercados',
+      stores: 20),
+  StoreService(
+      id: 3,
+      backImage: 'assets/travel_photos/licores1.jpeg',
+      frontImage: 'assets/travel_photos/licores1.jpeg',
+      name: 'Licores',
+      stores: 15),
+/*   TravelPhoto(
       backImage: 'assets/travel_photos/south_korea_backImage.png',
       frontImage: 'assets/travel_photos/south_korea_frontImage.png',
       name: 'South Korea',
@@ -51,5 +51,5 @@ final travelPhotos = [
       backImage: 'assets/travel_photos/sydney_backImage.png',
       frontImage: 'assets/travel_photos/sydney_frontImage.png',
       name: 'Sydney',
-      photos: 589)
+      photos: 589) */
 ];

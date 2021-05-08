@@ -1,25 +1,27 @@
-import 'package:australti_feriafy_app/authentication/auth_bloc.dart';
-import 'package:australti_feriafy_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
+import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
+import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:australti_feriafy_app/profile_store.dart/product_detail.dart';
-import 'package:australti_feriafy_app/store_product_concept/store_product_bloc.dart';
-import 'package:australti_feriafy_app/store_product_concept/store_product_data.dart';
-import 'package:australti_feriafy_app/vinyl_disc/album.dart';
+import 'package:australti_ecommerce_app/profile_store.dart/product_detail.dart';
+import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
+import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:australti_ecommerce_app/vinyl_disc/album.dart';
 import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
 
-const _colorHeader = Color(0xFFF1F1F1);
 const _blueColor = Color(0xFF00649FE);
 const _textHighColor = Color(0xFF241E1E);
 const _textColor = Color(0xFF5C5657);
 
 class ProfileStore extends StatefulWidget {
-  ProfileStore({this.isAuthUser = false});
+  ProfileStore({this.isAuthUser = false, @required this.store});
 
   final bool isAuthUser;
+  final Store store;
   @override
   _ProfileStoreState createState() => _ProfileStoreState();
 }
@@ -34,7 +36,7 @@ class _ProfileStoreState extends State<ProfileStore>
 
   @override
   void initState() {
-    _bloc.init(this);
+    _bloc.init(this, widget.store.user.uid);
 
     _animationController = AnimationController(
       vsync: this,
@@ -71,12 +73,8 @@ class _ProfileStoreState extends State<ProfileStore>
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
     return Scaffold(
-        /*  floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          backgroundColor: Colors.black,
-          onPressed: () {},
-        ), */
         backgroundColor: currentTheme.scaffoldBackgroundColor,
         body: SafeArea(
             child: AnimatedBuilder(
@@ -89,29 +87,10 @@ class _ProfileStoreState extends State<ProfileStore>
                   delegate: _ProfileStoreHeader(
                       bloc: _bloc,
                       animationController: _animationController,
-                      isAuthUser: widget.isAuthUser),
+                      isAuthUser: widget.isAuthUser,
+                      store: widget.store),
                   pinned: true,
                 ),
-                /* SliverToBoxAdapter(
-                  child: Container(
-                      color: Colors.white,
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '15 - 30 min',
-                            style: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                        ],
-                      )),
-                ), */
                 SliverPersistentHeader(
                   pinned: true,
                   delegate: SliverAppBarDelegate(
@@ -148,7 +127,10 @@ class _ProfileStoreState extends State<ProfileStore>
                     return Container(
                         child: _ProfileStoreCategoryItem(item.category));
                   } else {
-                    return _ProfileStoreProductItem(item.product);
+                    return (widget.isAuthUser)
+                        ? _ProfileAuthStoreProductItem(
+                            item.product, widget.isAuthUser)
+                        : _ProfileStoreProductItem(item.product);
                   }
                 },
               ),
@@ -214,18 +196,123 @@ class _ProfileStoreCategoryItem extends StatelessWidget {
   }
 }
 
+class _ProfileAuthStoreProductItem extends StatelessWidget {
+  const _ProfileAuthStoreProductItem(this.product, this.isAuthUser);
+  final ProfileStoreProduct product;
+  final bool isAuthUser;
+  @override
+  Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeChanger>(context);
+
+    return GestureDetector(
+      onTap: () async {
+        await Navigator.of(context).push(
+          PageRouteBuilder(
+            transitionDuration: const Duration(milliseconds: 800),
+            pageBuilder: (context, animation, __) {
+              return FadeTransition(
+                opacity: animation,
+                child: ProductStoreDetails(
+                    product: product, onProductAdded: (int quantity) {}),
+              );
+            },
+          ),
+        );
+      },
+      child: Container(
+        height: productHeight,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Card(
+            elevation: 6,
+            shadowColor: Colors.black54,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            color: currentTheme.currentTheme.cardColor,
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Hero(
+                      tag: 'list_${product.name}',
+                      child: Image.asset(product.image)),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        product.name,
+                        style: TextStyle(
+                          color: (currentTheme.customTheme)
+                              ? Colors.white
+                              : _textColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        product.description,
+                        maxLines: 2,
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 10,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        '\$${product.price.toStringAsFixed(2)}',
+                        style: TextStyle(
+                          color: (currentTheme.customTheme)
+                              ? Colors.white
+                              : _textColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+void _listenNotification(context) {
+  final notifiModel = Provider.of<NotificationModel>(context, listen: false);
+  int number = notifiModel.numberNotifiBell;
+  number++;
+  notifiModel.numberNotifiBell = number;
+
+  if (number >= 2) {
+    final controller = notifiModel.bounceControllerBell;
+    controller.forward(from: 0.0);
+  }
+}
+
 class _ProfileStoreProductItem extends StatelessWidget {
-  const _ProfileStoreProductItem(this.product);
+  const _ProfileStoreProductItem(
+    this.product,
+  );
+
   final ProfileStoreProduct product;
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context);
 
-    //  final bloc = GroceryProvider.of(context).bloc;
+    //final bloc = Provider.of<GroceryStoreBLoC>(context);
 
     return GestureDetector(
       onTap: () async {
-        //  bloc.changeToDetails();
+        groceryStoreBloc.changeToDetails();
         await Navigator.of(context).push(
           PageRouteBuilder(
             transitionDuration: const Duration(milliseconds: 800),
@@ -235,13 +322,15 @@ class _ProfileStoreProductItem extends StatelessWidget {
                 child: ProductStoreDetails(
                     product: product,
                     onProductAdded: (int quantity) {
-                      //  bloc.addProduct(product, quantity);
+                      groceryStoreBloc.addProduct(product, quantity);
+
+                      _listenNotification(context);
                     }),
               );
             },
           ),
         );
-        //  bloc.changeToNormal();
+        groceryStoreBloc.changeToNormal();
       },
       child: Container(
         height: productHeight,
@@ -329,12 +418,17 @@ const _minTitleSize = 16.0;
 const _minSubTitleSize = 12.0;
 
 class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
-  _ProfileStoreHeader({this.bloc, this.animationController, this.isAuthUser});
+  _ProfileStoreHeader(
+      {this.bloc,
+      this.animationController,
+      this.isAuthUser,
+      @required this.store});
   final AnimationController animationController;
 
   final TabsViewScrollBLoC bloc;
 
   final bool isAuthUser;
+  final Store store;
 
   @override
   Widget build(
@@ -374,11 +468,12 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
             Positioned(
               top: 18.0,
               child: IconButton(
-                icon: FaIcon(FontAwesomeIcons.chevronLeft, color: Colors.white),
+                icon: FaIcon(FontAwesomeIcons.chevronLeft,
+                    color: (currentTheme.customTheme)
+                        ? Colors.white
+                        : Colors.black),
                 iconSize: 25,
-                onPressed: () =>
-                    //  Navigator.pushReplacement(context, createRouteProfile()),
-                    Navigator.pop(context),
+                onPressed: () => Navigator.pop(context),
                 color: Colors.blueAccent,
               ),
             ),
@@ -388,9 +483,6 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
               child: GestureDetector(
                   onTap: () => {},
                   child: Container(
-
-                      // color: Colors.black,
-                      //  margin: EdgeInsets.only(left: 10, right: 10),
                       width: size.width / 1.6,
                       height: 40,
                       decoration: BoxDecoration(
@@ -402,19 +494,8 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                               currentTheme.currentTheme.cardColor
                             ]),
                         borderRadius: BorderRadius.all(Radius.circular(30)),
-                        /*  boxShadow: [
-                          BoxShadow(
-                              color: Colors.black54,
-                              spreadRadius: -5,
-                              blurRadius: 10,
-                              offset: Offset(0, 5))
-                        ], */
                       ),
-                      child:
-                          SearchContent() /*  Container(
-                      child: _MyTextField(animationController),
-                    ), */
-                      )),
+                      child: SearchContent())),
             ),
             Positioned(
               top: (_bottomMarginName * (1 - percent))
@@ -425,7 +506,7 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    currentProfile.name,
+                    store.name,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: titleSize,
@@ -487,7 +568,9 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                     .clamp(20.0, _leftMarginDisc),
                 height: currentImageSize,
                 child: Hero(
-                  tag: 'user_auth_avatar',
+                  tag: (isAuthUser)
+                      ? 'user_auth_avatar'
+                      : 'user_auth_avatar_list',
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(100.0)),
                     child: Image.asset(
@@ -499,11 +582,12 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
               right: 40,
               top: 18.0,
               child: IconButton(
-                icon: Icon(Icons.share, color: Colors.white),
+                icon: Icon(Icons.share,
+                    color: (currentTheme.customTheme)
+                        ? Colors.white
+                        : Colors.black),
                 iconSize: 25,
-                onPressed: () =>
-                    //  Navigator.pushReplacement(context, createRouteProfile()),
-                    Navigator.pop(context),
+                onPressed: () => Navigator.pop(context),
                 color: Colors.blueAccent,
               ),
             ),
@@ -511,7 +595,10 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
               right: 0,
               top: 18.0,
               child: IconButton(
-                icon: Icon(Icons.menu, color: Colors.white),
+                icon: Icon(Icons.menu,
+                    color: (currentTheme.customTheme)
+                        ? Colors.white
+                        : Colors.black),
                 iconSize: 30,
                 onPressed: () =>
                     //  Navigator.pushReplacement(context, createRouteProfile()),
@@ -552,8 +639,6 @@ class _ButtonFollowState extends State<ButtonFollow> {
   bool isFollow = false;
   void changeFollow() {
     isFollow = !isFollow;
-
-    print(isFollow);
   }
 
   @override
@@ -563,7 +648,7 @@ class _ButtonFollowState extends State<ButtonFollow> {
         (widget.percent <= 0.9)
             ? Positioned(
                 top: 350,
-                right: 100,
+                left: widget.left,
                 child: Container(
                   width: 180,
                   height: 35,
@@ -574,7 +659,7 @@ class _ButtonFollowState extends State<ButtonFollow> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 0.0),
                         child: Text(
-                          (isFollow) ? 'Fallow' : 'Following',
+                          (isFollow) ? 'Follow' : 'Following',
                           style: TextStyle(
                               color: (isFollow) ? Colors.white : Colors.black,
                               fontWeight: FontWeight.bold),
@@ -598,7 +683,7 @@ class _ButtonFollowState extends State<ButtonFollow> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 0.0),
                         child: Text(
-                          (isFollow) ? 'Fallow' : 'Following',
+                          (isFollow) ? 'Follow' : 'Following',
                           style: TextStyle(
                               color: (isFollow) ? Colors.white : Colors.black,
                               fontWeight: FontWeight.bold),
@@ -632,8 +717,6 @@ class _ButtonEditProfileState extends State<ButtonEditProfile> {
   bool isFollow = false;
   void changeFollow() {
     isFollow = !isFollow;
-
-    print(isFollow);
   }
 
   @override

@@ -1,4 +1,4 @@
-package com.diegoveloper.australti_feriafy_app
+package com.australti_ecommerce_app
 
 import io.flutter.embedding.android.FlutterActivity
 

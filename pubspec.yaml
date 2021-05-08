@@ -1,4 +1,4 @@
-name: australti_feriafy_app
+name: australti_ecommerce_app
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -36,6 +36,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/empty/
     - assets/nike_shoes_store/
     - assets/vinyl_album/
     - assets/dbrand_skin_selection/

@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:australti_feriafy_app/pizza_order/pizza_order_bloc.dart';
+import 'package:australti_ecommerce_app/pizza_order/pizza_order_bloc.dart';
 import 'ingredient.dart';
 import 'pizza_cart_button.dart';
 import 'pizza_cart_icon.dart';

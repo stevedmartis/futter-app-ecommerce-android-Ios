@@ -38,9 +38,9 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.diegoveloper.australti_feriafy_app"
-        minSdkVersion 16
-        targetSdkVersion 28
+        applicationId "com.australti_ecommerce_app"
+        minSdkVersion 18
+        targetSdkVersion 29
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

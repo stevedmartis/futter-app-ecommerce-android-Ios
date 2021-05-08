@@ -1,6 +1,6 @@
-import 'package:australti_feriafy_app/store_product_concept/store_product_data.dart';
+import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:flutter/material.dart';
-import 'package:australti_feriafy_app/grocery_store/grocery_product.dart';
+import 'package:australti_ecommerce_app/grocery_store/grocery_product.dart';
 
 enum GroceryState {
   normal,
@@ -33,6 +33,16 @@ class GroceryStoreBLoC with ChangeNotifier {
     notifyListeners();
   }
 
+  double getTotalCartElements() {
+    //final newList = storesList.where((i) => i.service == 1).toList();
+
+    return cart.fold<double>(
+      0.0,
+      (previousValue, element) =>
+          previousValue + (element.quantity * element.product.price),
+    );
+  }
+
   void addProduct(ProfileStoreProduct product, int quantity) {
     for (GroceryProductItem item in cart) {
       if (item.product.name == product.name) {
@@ -41,6 +51,7 @@ class GroceryStoreBLoC with ChangeNotifier {
         return;
       }
     }
+
     cart.add(GroceryProductItem(product: product, quantity: quantity));
     notifyListeners();
   }
@@ -66,3 +77,5 @@ class GroceryProductItem {
     quantity += newQuantity;
   }
 }
+
+final groceryStoreBloc = GroceryStoreBLoC();

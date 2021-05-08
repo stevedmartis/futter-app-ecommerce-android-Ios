@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:australti_feriafy_app/store_product_concept/store_product_data.dart';
+import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:flutter/rendering.dart';
 
 const categoryHeight = 50.0;
 
@@ -10,7 +11,7 @@ class TabsViewScrollBLoC with ChangeNotifier {
   List<ProfileStoreItem> items = [];
   TabController tabController;
   ScrollController scrollController = ScrollController();
-
+  ScrollController hideBottomNavController;
   // ScrollController scrollController2 = ScrollController();
 
   ScrollController scrollController2 =
@@ -21,15 +22,18 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
   bool isFollow = false;
 
-  void init(TickerProvider ticker) {
+  void init(TickerProvider ticker, String storeUserId) {
+    final categoriesByStoreUserId =
+        rappiCategories.where((i) => i.store.user.uid == storeUserId).toList();
+
     tabController =
-        TabController(vsync: ticker, length: rappiCategories.length);
+        TabController(vsync: ticker, length: categoriesByStoreUserId.length);
 
     double offsetFrom = 0.0;
     double offsetTo = 0.0;
 
-    for (int i = 0; i < rappiCategories.length; i++) {
-      final category = rappiCategories[i];
+    for (int i = 0; i < categoriesByStoreUserId.length; i++) {
+      final category = categoriesByStoreUserId[i];
 
       offsetFrom = offsetTo;
       offsetTo = offsetFrom +
@@ -42,6 +46,7 @@ class TabsViewScrollBLoC with ChangeNotifier {
         offsetFrom: offsetFrom,
         offsetTo: offsetTo,
       ));
+
       items.add(ProfileStoreItem(category: category));
       for (int j = 0; j < category.products.length; j++) {
         final product = category.products[j];
@@ -50,6 +55,30 @@ class TabsViewScrollBLoC with ChangeNotifier {
     }
 
     scrollController.addListener(_onScrollListener);
+  }
+
+  bool _bottomVisible = true;
+
+  bool get bottomVisible => this._bottomVisible;
+
+  set bottomVisible(bool valor) {
+    this._bottomVisible = valor;
+    notifyListeners();
+  }
+
+  void hideScrollListener() {
+    hideBottomNavController.addListener(
+      () {
+        if (hideBottomNavController.position.userScrollDirection ==
+            ScrollDirection.reverse) {
+          if (bottomVisible) bottomVisible = false;
+        }
+        if (hideBottomNavController.position.userScrollDirection ==
+            ScrollDirection.forward) {
+          if (!bottomVisible) bottomVisible = true;
+        }
+      },
+    );
   }
 
   void _onScrollListener() {
@@ -170,3 +199,5 @@ class ProfileStoreItem {
   final ProfileStoreProduct product;
   bool get isCategory => category != null;
 }
+
+final tabsViewScrollBLoC = TabsViewScrollBLoC();

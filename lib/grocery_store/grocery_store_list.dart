@@ -1,6 +1,7 @@
+import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:australti_feriafy_app/grocery_store/grocery_provider.dart';
-import 'package:australti_feriafy_app/layouts/staggered_dual_view.dart';
+import 'package:australti_ecommerce_app/layouts/staggered_dual_view.dart';
+import 'package:provider/provider.dart';
 
 import 'grocery_store_details.dart';
 import 'grocery_store_home.dart';
@@ -8,7 +9,7 @@ import 'grocery_store_home.dart';
 class GroceryStoreList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final bloc = GroceryProvider.of(context).bloc;
+    final bloc = Provider.of<GroceryStoreBLoC>(context);
     return Container(
       color: backgroundColor,
       padding: const EdgeInsets.only(top: cartBarHeight, left: 10, right: 10),

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:australti_feriafy_app/models/profile.dart';
+import 'package:australti_ecommerce_app/models/profile.dart';
 
 LoginResponse loginResponseFromJson(String str) =>
     LoginResponse.fromJson(json.decode(str));

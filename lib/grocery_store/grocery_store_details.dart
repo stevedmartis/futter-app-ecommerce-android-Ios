@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:australti_feriafy_app/grocery_store/grocery_product.dart';
+import 'package:australti_ecommerce_app/grocery_store/grocery_product.dart';
 
 const _textHighColor = Color(0xFF241E1E);
 const _textColor = Color(0xFF5C5657);
@@ -26,6 +26,7 @@ class _GroceryStoreDetailsState extends State<GroceryStoreDetails> {
       heroTag = 'details';
     });
     widget.onProductAdded(quantity);
+
     Navigator.of(context).pop();
   }
 
@@ -75,6 +76,7 @@ class _GroceryStoreDetailsState extends State<GroceryStoreDetails> {
                       ),
                       const SizedBox(height: 20),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(vertical: 5),

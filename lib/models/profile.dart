@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:australti_feriafy_app/models/user.dart';
+import 'package:australti_ecommerce_app/models/user.dart';
 
 Profile profilesFromJson(String str) => Profile.fromJson(json.decode(str));
 

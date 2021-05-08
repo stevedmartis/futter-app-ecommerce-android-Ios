@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:australti_feriafy_app/batman_sign_up/batman_button.dart';
+import 'package:australti_ecommerce_app/batman_sign_up/batman_button.dart';
 
 class BatmanScreenButtons extends AnimatedWidget {
   BatmanScreenButtons(

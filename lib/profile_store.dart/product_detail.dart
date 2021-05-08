@@ -1,5 +1,7 @@
+import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:australti_feriafy_app/store_product_concept/store_product_data.dart';
+import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:provider/provider.dart';
 
 const _blueColor = Color(0xFF00649FE);
 
@@ -30,13 +32,15 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails> {
 
   @override
   Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(color: Colors.black),
-        backgroundColor: Colors.white,
+        leading: BackButton(color: Colors.white),
+        backgroundColor: currentTheme.scaffoldBackgroundColor,
         elevation: 0,
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: currentTheme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -61,7 +65,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails> {
                       Text(
                         widget.product.name,
                         style: Theme.of(context).textTheme.headline5.copyWith(
-                              color: Colors.black,
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
                       ),
@@ -127,7 +131,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails> {
                             '\$${widget.product.price}',
                             style:
                                 Theme.of(context).textTheme.headline4.copyWith(
-                                      color: Colors.black,
+                                      color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
                           ),
@@ -137,7 +141,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails> {
                       Text(
                         'About the product',
                         style: Theme.of(context).textTheme.subtitle1.copyWith(
-                              color: Colors.black,
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
                       ),
@@ -145,7 +149,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails> {
                       Text(
                         widget.product.description,
                         style: Theme.of(context).textTheme.subtitle1.copyWith(
-                              color: Colors.black,
+                              color: Colors.white,
                               fontWeight: FontWeight.w200,
                             ),
                       ),

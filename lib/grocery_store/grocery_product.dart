@@ -1,20 +1,22 @@
 class GroceryProduct {
-  const GroceryProduct({
-    this.price,
-    this.name,
-    this.description,
-    this.image,
-    this.weight,
-  });
+  const GroceryProduct(
+      {this.price,
+      this.name,
+      this.description,
+      this.image,
+      this.weight,
+      this.user});
   final double price;
   final String name;
   final String description;
   final String image;
   final String weight;
+  final String user;
 }
 
 const groceryProducts = <GroceryProduct>[
   GroceryProduct(
+      user: '1-a',
       price: 8.30,
       name: 'Avocado',
       description:
@@ -22,6 +24,7 @@ const groceryProducts = <GroceryProduct>[
       image: 'assets/grocery_store/avocado.png',
       weight: '500g'),
   GroceryProduct(
+      user: '1-a',
       price: 11.00,
       name: 'Banana',
       description:
@@ -29,6 +32,7 @@ const groceryProducts = <GroceryProduct>[
       image: 'assets/grocery_store/banana.png',
       weight: '1000g'),
   GroceryProduct(
+      user: '1-a',
       price: 15.40,
       name: 'Mango',
       description:
@@ -36,6 +40,7 @@ const groceryProducts = <GroceryProduct>[
       image: 'assets/grocery_store/mango.png',
       weight: '500g'),
   GroceryProduct(
+      user: '1',
       price: 4.15,
       name: 'Pineapple',
       description:
@@ -43,6 +48,7 @@ const groceryProducts = <GroceryProduct>[
       image: 'assets/grocery_store/pineapple.png',
       weight: '1000g'),
   GroceryProduct(
+      user: '1',
       price: 2.35,
       name: 'Cherry',
       description:
@@ -50,6 +56,7 @@ const groceryProducts = <GroceryProduct>[
       image: 'assets/grocery_store/cherry.png',
       weight: '500g'),
   GroceryProduct(
+      user: '1',
       price: 6.15,
       name: 'Orange',
       description:

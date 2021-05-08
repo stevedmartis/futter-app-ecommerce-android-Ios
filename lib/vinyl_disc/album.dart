@@ -12,7 +12,7 @@ class Profile {
 }
 
 final currentProfile = Profile(
-  imageAvatar: 'assets/vinyl_album/album.jpg',
+  imageAvatar: 'assets/empty/user_empty.png',
   name: 'Dexter Gordon',
   username: 'dexter.gordon',
   description: r'''

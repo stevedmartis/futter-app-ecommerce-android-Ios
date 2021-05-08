@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:australti_feriafy_app/grocery_store/grocery_store_bloc.dart';
+import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 
 class GroceryProvider extends InheritedWidget {
   final GroceryStoreBLoC bloc;

@@ -1,12 +1,13 @@
+import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/models/user.dart';
 import 'package:meta/meta.dart' show required;
 
 class ProfileStoreCategory {
-  const ProfileStoreCategory({
-    @required this.name,
-    @required this.products,
-  });
+  const ProfileStoreCategory(
+      {@required this.name, @required this.products, @required this.store});
   final String name;
   final List<ProfileStoreProduct> products;
+  final Store store;
 }
 
 class ProfileStoreProduct {
@@ -24,6 +25,7 @@ class ProfileStoreProduct {
 
 const rappiCategories = [
   ProfileStoreCategory(
+    store: Store(user: User(uid: '1')),
     name: 'Orden Again',
     products: [
       ProfileStoreProduct(
@@ -59,6 +61,7 @@ const rappiCategories = [
     ],
   ),
   ProfileStoreCategory(
+    store: Store(user: User(uid: '1')),
     name: 'Picker For You',
     products: [
       ProfileStoreProduct(
@@ -91,6 +94,7 @@ const rappiCategories = [
     ],
   ),
   ProfileStoreCategory(
+    store: Store(user: User(uid: '1')),
     name: 'Starters',
     products: [
       ProfileStoreProduct(
@@ -125,6 +129,7 @@ const rappiCategories = [
     ],
   ),
   ProfileStoreCategory(
+    store: Store(user: User(uid: '1')),
     name: 'Sides',
     products: [
       ProfileStoreProduct(
@@ -157,6 +162,7 @@ const rappiCategories = [
 
   //repeated items
   ProfileStoreCategory(
+    store: Store(user: User(uid: '2')),
     name: 'Orden Again 2',
     products: [
       ProfileStoreProduct(
@@ -192,6 +198,7 @@ const rappiCategories = [
     ],
   ),
   ProfileStoreCategory(
+    store: Store(user: User(uid: '2')),
     name: 'Picker For You 2',
     products: [
       ProfileStoreProduct(
@@ -224,6 +231,7 @@ const rappiCategories = [
     ],
   ),
   ProfileStoreCategory(
+    store: Store(user: User(uid: '2')),
     name: 'Starters 2',
     products: [
       ProfileStoreProduct(
@@ -258,6 +266,7 @@ const rappiCategories = [
     ],
   ),
   ProfileStoreCategory(
+    store: Store(user: User(uid: '2')),
     name: 'Sides 2',
     products: [
       ProfileStoreProduct(

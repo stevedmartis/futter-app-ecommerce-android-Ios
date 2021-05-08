@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:australti_feriafy_app/vinyl_disc/album.dart';
+import 'package:australti_ecommerce_app/vinyl_disc/album.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 
 const _colorHeader = Color(0xFFECECEA);
