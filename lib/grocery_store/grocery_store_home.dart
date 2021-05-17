@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
-import 'package:australti_ecommerce_app/profile_store.dart/profile_store_home.dart';
+import 'package:australti_ecommerce_app/profile_store.dart/profile_store_user.dart';
 
 import 'grocery_store_cart.dart';
 
@@ -100,7 +100,8 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                       decoration: BoxDecoration(
                         color: Colors.black,
                       ),
-                      child: ProfileStore(
+                      child: ProfileStoreSelect(
+                        isAuthUser: false,
                         store: widget.store,
                       ),
                     ),
@@ -134,64 +135,76 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                                     ? Row(
                                         children: [
                                           Icon(
-                                            Icons.shopping_cart_outlined,
+                                            Icons.shopping_bag_outlined,
+                                            color: Colors.white,
                                             size: 35,
                                           ),
                                           Expanded(
-                                            child: SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 8.0),
-                                                child: Row(
-                                                  children: List.generate(
-                                                    groceryStoreBloc
-                                                        .cart.length,
-                                                    (index) => Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 8.0),
-                                                      child: Stack(
-                                                        children: [
-                                                          Hero(
-                                                            tag:
-                                                                'list_${groceryStoreBloc.cart[index].product.name}details',
-                                                            child: CircleAvatar(
-                                                              backgroundColor:
-                                                                  Colors.white,
-                                                              backgroundImage:
-                                                                  AssetImage(
-                                                                groceryStoreBloc
-                                                                    .cart[index]
-                                                                    .product
-                                                                    .image,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Positioned(
-                                                            right: 0,
-                                                            child: CircleAvatar(
-                                                              radius: 10,
-                                                              backgroundColor:
-                                                                  Colors.red,
-                                                              child: Text(
-                                                                groceryStoreBloc
-                                                                    .cart[index]
-                                                                    .quantity
-                                                                    .toString(),
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Colors
-                                                                      .white,
+                                            child: Container(
+                                              child: SingleChildScrollView(
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      horizontal: 8.0),
+                                                  child: Container(
+                                                      child: Row(
+                                                    children: List.generate(
+                                                      groceryStoreBloc
+                                                          .cart.length,
+                                                      (index) => Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal:
+                                                                    8.0),
+                                                        child: Stack(
+                                                          children: [
+                                                            Hero(
+                                                              tag:
+                                                                  'list_${groceryStoreBloc.cart[index].product.name}details',
+                                                              child:
+                                                                  CircleAvatar(
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .white,
+                                                                backgroundImage:
+                                                                    AssetImage(
+                                                                  groceryStoreBloc
+                                                                      .cart[
+                                                                          index]
+                                                                      .product
+                                                                      .image,
                                                                 ),
                                                               ),
                                                             ),
-                                                          ),
-                                                        ],
+                                                            Positioned(
+                                                              right: 0,
+                                                              child:
+                                                                  CircleAvatar(
+                                                                radius: 10,
+                                                                backgroundColor:
+                                                                    Colors.red,
+                                                                child: Text(
+                                                                  groceryStoreBloc
+                                                                      .cart[
+                                                                          index]
+                                                                      .quantity
+                                                                      .toString(),
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
+                                                  )),
                                                 ),
                                               ),
                                             ),

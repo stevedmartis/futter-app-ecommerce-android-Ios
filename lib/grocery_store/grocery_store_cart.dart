@@ -1,9 +1,12 @@
+import 'package:animate_do/animate_do.dart';
+import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 
-const _blueColor = Color(0xFF00649FE);
-
 class GroceryStoreCart extends StatelessWidget {
+  GroceryStoreCart({this.cartHome = false});
+
+  final bool cartHome;
   @override
   Widget build(BuildContext context) {
     //final bloc = Provider.of<GroceryStoreBLoC>(context);
@@ -16,7 +19,7 @@ class GroceryStoreCart extends StatelessWidget {
             : Tween(begin: 1.0, end: 0.0),
         builder: (_, value, child) {
           return Transform.translate(
-            offset: Offset(0.0, 200 * value),
+            offset: Offset(0.0, cartHome ? 30 : 200 * value),
             child: child,
           );
         },
@@ -30,7 +33,7 @@ class GroceryStoreCart extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      'Cart',
+                      'Bolsa',
                       style: Theme.of(context).textTheme.headline4.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -41,57 +44,61 @@ class GroceryStoreCart extends StatelessWidget {
                         itemCount: groceryStoreBloc.cart.length,
                         itemBuilder: (context, index) {
                           final item = groceryStoreBloc.cart[index];
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15.0),
-                            child: Dismissible(
-                              key: UniqueKey(),
-                              direction: DismissDirection.endToStart,
-                              onDismissed: (direction) =>
-                                  {groceryStoreBloc.deleteProduct(item)},
-                              background: Container(
-                                  alignment: Alignment.centerRight,
-                                  decoration: BoxDecoration(
-                                    color: Colors.red,
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Container(
-                                        margin: EdgeInsets.only(right: 10),
-                                        child: Icon(
-                                          Icons.delete,
-                                          color: Colors.black,
-                                          size: 25,
+                          return FadeInUp(
+                            delay: Duration(milliseconds: 100 * index),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 15.0),
+                              child: Dismissible(
+                                key: UniqueKey(),
+                                direction: DismissDirection.endToStart,
+                                onDismissed: (direction) =>
+                                    {groceryStoreBloc.deleteProduct(item)},
+                                background: Container(
+                                    alignment: Alignment.centerRight,
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Container(
+                                          margin: EdgeInsets.only(right: 10),
+                                          child: Icon(
+                                            Icons.delete,
+                                            color: Colors.black,
+                                            size: 25,
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Expanded(
+                                      child: CircleAvatar(
+                                        backgroundColor: Colors.white,
+                                        backgroundImage: AssetImage(
+                                          item.product.image,
                                         ),
                                       ),
-                                    ],
-                                  )),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Expanded(
-                                    child: CircleAvatar(
-                                      backgroundColor: Colors.white,
-                                      backgroundImage: AssetImage(
-                                        item.product.image,
-                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 15),
-                                  Expanded(
-                                      child: Text(item.quantity.toString())),
-                                  const SizedBox(width: 10),
-                                  Text('x'),
-                                  const SizedBox(width: 10),
-                                  Text(item.product.name),
-                                  Spacer(),
-                                  Text(
-                                      '\$${(item.product.price * item.quantity).toStringAsFixed(2)}'),
-                                  const SizedBox(width: 10),
-                                ],
+                                    const SizedBox(width: 15),
+                                    Expanded(
+                                        child: Text(item.quantity.toString())),
+                                    const SizedBox(width: 10),
+                                    Text('x'),
+                                    const SizedBox(width: 10),
+                                    Text(item.product.name),
+                                    Spacer(),
+                                    Text(
+                                        '\$${(item.product.price * item.quantity).toStringAsFixed(2)}'),
+                                    const SizedBox(width: 10),
+                                  ],
+                                ),
                               ),
                             ),
                           );
@@ -127,23 +134,15 @@ class GroceryStoreCart extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: _blueColor,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 0.0),
-                  child: Text(
-                    'Next',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                onPressed: () => null,
-              ),
-            )
+                padding: (cartHome)
+                    ? EdgeInsets.only(bottom: 50.0)
+                    : EdgeInsets.all(20),
+                child: elevatedButtonCustom(
+                    context: context,
+                    title: 'Continuar compa',
+                    onPress: () {
+                      print('hello');
+                    }))
           ],
         ),
       ),

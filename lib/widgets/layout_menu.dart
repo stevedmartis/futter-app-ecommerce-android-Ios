@@ -37,8 +37,8 @@ class GridLayoutMenu extends StatelessWidget {
         borderRadius: BorderRadius.all(Radius.circular(100)),
         child: BackdropFilter(
           filter: ImageFilter.blur(
-            sigmaX: 10.0,
-            sigmaY: 10.0,
+            sigmaX: (show) ? 10.0 : 0,
+            sigmaY: (show) ? 10.0 : 0,
           ),
           child: AnimatedOpacity(
               duration: Duration(milliseconds: 500),

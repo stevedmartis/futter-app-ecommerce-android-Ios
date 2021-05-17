@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:australti_ecommerce_app/models/user.dart';
+import 'package:flutter/material.dart';
 
 Store storeFromJson(String str) => Store.fromJson(json.decode(str));
 
@@ -13,7 +14,7 @@ String storeToJson(Store data) => json.encode(data.toJson());
 class Store {
   const Store({
     this.id = "",
-    this.user,
+    @required this.user,
     this.about = "",
     this.products = 0,
     this.name = "",

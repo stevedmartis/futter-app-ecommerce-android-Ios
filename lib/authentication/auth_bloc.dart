@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:australti_ecommerce_app/global/enviroments.dart';
 import 'package:australti_ecommerce_app/models/auth_response.dart';
 import 'package:australti_ecommerce_app/models/profile.dart';
+import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -26,6 +27,8 @@ class AuthenticationBLoC with ChangeNotifier {
   bool isAuthenticated = false;
 
   Profile _profileAuth;
+
+  Store _storeAuth;
 
   void changeToStore() {
     authState = AuthState.isStore;
@@ -56,6 +59,13 @@ class AuthenticationBLoC with ChangeNotifier {
   set profile(Profile valor) {
     this._profileAuth = valor;
     notifyListeners();
+  }
+
+  Store get storeAuth => this._storeAuth;
+
+  set storeAuth(Store valor) {
+    this._storeAuth = valor;
+    //notifyListeners();
   }
 
   Future _guardarToken(String token) async {

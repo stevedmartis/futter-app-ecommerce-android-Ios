@@ -3,18 +3,23 @@ import 'dart:ui';
 import 'package:animate_do/animate_do.dart';
 import 'package:animations/animations.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
+import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/models/profile.dart';
+import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/models/user.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/delete_alert_modal.dart';
 import 'package:australti_ecommerce_app/widgets/layout_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart';
 
 class PrincipalPage extends StatefulWidget {
   @override
@@ -22,13 +27,13 @@ class PrincipalPage extends StatefulWidget {
 }
 
 class _PrincipalPageState extends State<PrincipalPage>
-    with TickerProviderStateMixin {
+    with WidgetsBindingObserver {
   SocketService socketService;
   // final notificationService = new NotificationService();
-  AuthenticationBLoC authService;
 
   Profile profile;
   AnimationController animation;
+  bool isCancelLocation = false;
 
   @override
   initState() {
@@ -37,6 +42,13 @@ class _PrincipalPageState extends State<PrincipalPage>
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
 
     profile = authService.profile;
+
+    authService.storeAuth = new Store(
+      user: User(uid: '1', username: 'fiarvy'),
+      name: 'Fiarvy',
+    );
+    locationStatus();
+    WidgetsBinding.instance.addObserver(this);
 
     super.initState();
 
@@ -72,10 +84,56 @@ class _PrincipalPageState extends State<PrincipalPage>
  */
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    myLocationBloc.disposePositionLocation();
     // this.socketService.socket.off('principal-message');
     super.dispose();
   }
 
+  bool _isDialogShowing = false;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    final isGranted = await Permission.location.isGranted;
+
+    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
+    print(state);
+    if (state == AppLifecycleState.resumed) {
+      if (isGranted && serviceEnabled) {
+        myLocationBloc.initPositionLocation();
+
+        if (_isDialogShowing) {
+          setState(() {
+            _isDialogShowing = false;
+          });
+          Navigator.pop(context);
+        }
+        print('granted did && serviceEnabled');
+      } else if (!serviceEnabled) {
+        print('isPermanentlyDenied did');
+        setState(() {
+          _isDialogShowing = true;
+        });
+
+        showAlertPermissionGpsModalMatCup(
+            'Activar Gps',
+            'Para encontrar las tiendas sercanas a tu ubicación',
+            'Configurar',
+            context, () async {
+          await Geolocator.openLocationSettings();
+        }, () {
+          setState(() {
+            _isDialogShowing = false;
+            Navigator.pop(context);
+          });
+        });
+        //Navigator.pop(context);
+      } else if (serviceEnabled) {
+        if (_isDialogShowing) Navigator.pop(context);
+      }
+    }
+  }
 /*   void _listenMessage(dynamic payload) {
     final notifiModel = Provider.of<NotificationModel>(context, listen: false);
     int numberMessages = notifiModel.number;
@@ -105,6 +163,101 @@ class _PrincipalPageState extends State<PrincipalPage>
     }
   } */
 
+  void showModalGpsLocation() async {
+    _isDialogShowing = true;
+
+    showAlertPermissionGpsModalMatCup(
+        'Permitir Ubicación',
+        'Para encontrar las tiendas sercanas a tu ubicación',
+        'Permitir',
+        context, () async {
+      final status = await Permission.location.request();
+      print(status);
+      accessGps(status);
+    }, () {
+      setState(() {
+        _isDialogShowing = false;
+
+        Navigator.pop(context);
+      });
+    });
+  }
+
+  void locationStatus() async {
+    final isGranted = await Permission.location.isGranted;
+    //final isPermanentlyDenied = await Permission.location.isPermanentlyDenied;
+    final isDenied = await Permission.location.isDenied;
+
+    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (isDenied) {
+      print('isPermanentlyDenied!');
+      showModalGpsLocation();
+    } else if (isGranted && serviceEnabled) {
+      myLocationBloc.initPositionLocation();
+
+      if (_isDialogShowing) {
+        setState(() {
+          _isDialogShowing = false;
+        });
+        Navigator.pop(context);
+      }
+      print('granted! & gpsEnabled');
+    } else if (isGranted && !serviceEnabled) {
+      setState(() {
+        _isDialogShowing = true;
+      });
+
+      if (_isDialogShowing)
+        showAlertPermissionGpsModalMatCup(
+            'Activar Gps',
+            'Para encontrar las tiendas sercanas a tu ubicación',
+            'Configurar',
+            context, () async {
+          await Geolocator.openLocationSettings();
+        }, () {
+          setState(() {
+            _isDialogShowing = false;
+            Navigator.pop(context);
+          });
+        });
+    } else if (!serviceEnabled) {
+      setState(() {
+        _isDialogShowing = true;
+      });
+
+      showAlertPermissionGpsModalMatCup(
+          'Activar Gps',
+          'Para encontrar las tiendas sercanas a tu ubicación',
+          'Configurar',
+          context, () async {
+        await Geolocator.openLocationSettings();
+      }, () {
+        setState(() {
+          _isDialogShowing = false;
+          Navigator.pop(context);
+        });
+      });
+    }
+  }
+
+  void accessGps(PermissionStatus status) {
+    switch (status) {
+      case PermissionStatus.granted:
+        print(status);
+
+        break;
+
+      case PermissionStatus.denied:
+        break;
+      case PermissionStatus.restricted:
+      case PermissionStatus.permanentlyDenied:
+        // openAppSettings();
+        Navigator.pop(context);
+        break;
+      default:
+    }
+  }
+
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final ValueNotifier<bool> notifierBottomBarVisible = ValueNotifier(true);
   int currentIndex = 0;
@@ -122,7 +275,7 @@ class _PrincipalPageState extends State<PrincipalPage>
 
     appTheme.customTheme = darkModeOn;
  */
-    final bloc = Provider.of<StoreBLoC>(context);
+    //final bloc = Provider.of<StoreBLoC>(context);
 
     final _onFirstPage = (currentPage == 0) ? true : false;
 
@@ -146,7 +299,7 @@ class _PrincipalPageState extends State<PrincipalPage>
           },
           child: pageRouter[currentPage].page,
         ),
-        if (bloc.isVisible) _PositionedMenu(),
+        _PositionedMenu(),
         /* ValueListenableBuilder(
           valueListenable: bloc.notifierBottom,
           builder: (context, value, _) {
@@ -349,40 +502,61 @@ class __PositionedMenuState extends State<_PositionedMenu> {
       widthView = widthView - 300;
     }
 
+    final currentPage =
+        Provider.of<MenuModel>(context, listen: false).currentPage;
+
     return Positioned(
         bottom: 0,
-        child: Container(
-          height: 100,
-          width: widthView,
-          child: Row(
-            children: [
-              Spacer(),
-              FadeIn(
-                duration: Duration(milliseconds: 200),
-                animate: bloc.isVisible,
-                child: GridLayoutMenu(
-                    show: bloc.isVisible,
-                    backgroundColor: appTheme.scaffoldBackgroundColor,
-                    activeColor: appTheme.accentColor,
-                    inactiveColor: Colors.white,
-                    items: [
-                      GLMenuButton(
-                          icon: Icons.home,
-                          onPressed: () {
-                            _onItemTapped(0);
-                          }),
-                      GLMenuButton(
-                          icon: Icons.favorite,
-                          onPressed: () {
-                            _onItemTapped(2);
-                          }),
-                      GLMenuButton(icon: Icons.notifications, onPressed: () {}),
-                      GLMenuButton(
-                          icon: Icons.supervised_user_circle, onPressed: () {}),
-                    ]),
-              ),
-              Spacer(),
-            ],
+        child: IgnorePointer(
+          ignoring: !bloc.isVisible,
+          child: Container(
+            height: 100,
+            width: widthView,
+            child: Row(
+              children: [
+                Spacer(),
+                FadeIn(
+                  duration: Duration(milliseconds: 200),
+                  animate: bloc.isVisible,
+                  child: GridLayoutMenu(
+                      show: bloc.isVisible,
+                      backgroundColor: appTheme.scaffoldBackgroundColor,
+                      activeColor: appTheme.accentColor,
+                      inactiveColor: Colors.white,
+                      items: [
+                        GLMenuButton(
+                            icon: (currentPage == 0)
+                                ? Icons.home
+                                : Icons.home_outlined,
+                            onPressed: () {
+                              if (bloc.isVisible) _onItemTapped(0);
+                            }),
+                        GLMenuButton(
+                            icon: (currentPage == 1)
+                                ? Icons.favorite
+                                : Icons.favorite_outline,
+                            onPressed: () {
+                              if (bloc.isVisible) _onItemTapped(1);
+                            }),
+                        GLMenuButton(
+                            icon: (currentPage == 2)
+                                ? Icons.store
+                                : Icons.store_outlined,
+                            onPressed: () {
+                              if (bloc.isVisible) _onItemTapped(2);
+                            }),
+                        GLMenuButton(
+                            icon: (currentPage == 3)
+                                ? Icons.notifications
+                                : Icons.notifications_outlined,
+                            onPressed: () {
+                              if (bloc.isVisible) _onItemTapped(3);
+                            }),
+                      ]),
+                ),
+                Spacer(),
+              ],
+            ),
           ),
         ));
   }
@@ -398,167 +572,6 @@ class __PositionedMenuState extends State<_PositionedMenu> {
             .numberNotifiBell = 0;
       }
     });
-  }
-}
-
-class BottomNavigation extends StatefulWidget {
-  const BottomNavigation({
-    Key key,
-    @required isVisible,
-  })  : _isVisible = isVisible,
-        super(key: key);
-
-  final bool _isVisible;
-
-  @override
-  _BottomNavigationState createState() => _BottomNavigationState();
-}
-
-class _BottomNavigationState extends State<BottomNavigation> {
-  int currentIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      currentIndex = index;
-
-      Provider.of<MenuModel>(context, listen: false).currentPage = currentIndex;
-
-      if (currentIndex == 4) {
-        Provider.of<NotificationModel>(context, listen: false)
-            .numberNotifiBell = 0;
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final currentTheme = Provider.of<ThemeChanger>(context);
-    final currentPage = Provider.of<MenuModel>(context).currentPage;
-    final int number = Provider.of<NotificationModel>(context).numberNotifiBell;
-    final size = MediaQuery.of(context).size;
-
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 300),
-      height: widget._isVisible ? size.height / 15 : 0.0,
-      child: Wrap(
-        children: <Widget>[
-          BottomNavigationBar(
-            currentIndex: currentPage,
-            onTap: _onItemTapped,
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: currentTheme.currentTheme.scaffoldBackgroundColor,
-            selectedItemColor: currentTheme.currentTheme.accentColor,
-            unselectedItemColor: Colors.grey,
-            items: [
-              BottomNavigationBarItem(
-                icon: (currentPage == 0)
-                    ? Icon(Icons.home, size: 33)
-                    : Icon(Icons.home_outlined,
-                        size: 33,
-                        color: (currentPage == 0)
-                            ? currentTheme.currentTheme.accentColor
-                            : currentTheme.currentTheme.primaryColor),
-                label: '',
-              ),
-              BottomNavigationBarItem(
-                icon: (currentPage == 1)
-                    ? Icon(
-                        Icons.campaign,
-                        size: 35,
-                      )
-                    : Icon(Icons.campaign_outlined,
-                        size: 35,
-                        color: (currentPage == 1)
-                            ? currentTheme.currentTheme.accentColor
-                            : currentTheme.currentTheme.primaryColor),
-                label: '',
-              ),
-              BottomNavigationBarItem(
-                icon: (currentPage == 2)
-                    ? Icon(
-                        Icons.add_circle,
-                        size: 30,
-                      )
-                    : Icon(Icons.add_circle_outline,
-                        size: 30,
-                        color: (currentPage == 2)
-                            ? currentTheme.currentTheme.accentColor
-                            : currentTheme.currentTheme.primaryColor),
-                label: '',
-              ),
-              BottomNavigationBarItem(
-                icon: (currentPage == 3)
-                    ? FaIcon(
-                        FontAwesomeIcons.solidHeart,
-                        size: 27,
-                      )
-                    : FaIcon(FontAwesomeIcons.heart,
-                        size: 27,
-                        color: (currentPage == 3)
-                            ? currentTheme.currentTheme.accentColor
-                            : currentTheme.currentTheme.primaryColor),
-                label: '',
-              ),
-              BottomNavigationBarItem(
-                  icon: Stack(
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(top: 5.0, left: 10),
-                        child: FaIcon(
-                          (currentPage == 4)
-                              ? FontAwesomeIcons.solidBell
-                              : FontAwesomeIcons.bell,
-                          color: (currentPage == 4)
-                              ? currentTheme.currentTheme.accentColor
-                              : currentTheme.currentTheme.primaryColor,
-                          size: (currentPage == 4) ? 28 : 28,
-                        ),
-                      ),
-                      (number > 0)
-                          ? Container(
-                              margin: EdgeInsets.only(right: 35),
-                              alignment: Alignment.centerRight,
-                              child: BounceInDown(
-                                from: 5,
-                                animate: (number > 0) ? true : false,
-                                child: Bounce(
-                                  delay: Duration(seconds: 2),
-                                  from: 5,
-                                  controller: (controller) =>
-                                      Provider.of<NotificationModel>(context)
-                                          .bounceControllerBell = controller,
-                                  child: Container(
-                                    child: Text(
-                                      '$number',
-                                      style: TextStyle(
-                                          color: (currentTheme.customTheme)
-                                              ? Colors.black
-                                              : Colors.white,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    alignment: Alignment.center,
-                                    width: 15,
-                                    height: 15,
-                                    decoration: BoxDecoration(
-                                        color: (currentTheme.customTheme)
-                                            ? currentTheme
-                                                .currentTheme.accentColor
-                                            : Colors.black,
-                                        shape: BoxShape.circle),
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Container()
-                    ],
-                  ),
-                  label: ''),
-            ],
-          ),
-        ],
-      ),
-    );
   }
 }
 

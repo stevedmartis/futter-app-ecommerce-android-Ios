@@ -1,5 +1,5 @@
+import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
-import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:flutter/material.dart';
 
 class CustomProvider extends InheritedWidget {
@@ -9,6 +9,8 @@ class CustomProvider extends InheritedWidget {
 
   //final storeBloc = new StoreBLoC();
   final groceryStoreBloc = new GroceryStoreBLoC();
+
+  final myLocationBloc = new MyLocationBloc();
 
   // final roomBloc = new RoomBloc();
 
@@ -51,5 +53,10 @@ class CustomProvider extends InheritedWidget {
   static GroceryStoreBLoC groceryStoreBlocIn(BuildContext context) {
     return (context.dependOnInheritedWidgetOfExactType<CustomProvider>())
         .groceryStoreBloc;
+  }
+
+  static MyLocationBloc myLocationBlocIn(BuildContext context) {
+    return (context.dependOnInheritedWidgetOfExactType<CustomProvider>())
+        .myLocationBloc;
   }
 }

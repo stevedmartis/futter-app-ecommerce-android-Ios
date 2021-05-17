@@ -1,6 +1,8 @@
+import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +10,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/product_detail.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
-import 'package:australti_ecommerce_app/vinyl_disc/album.dart';
 import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
@@ -17,18 +18,23 @@ const _blueColor = Color(0xFF00649FE);
 const _textHighColor = Color(0xFF241E1E);
 const _textColor = Color(0xFF5C5657);
 
-class ProfileStore extends StatefulWidget {
-  ProfileStore({this.isAuthUser = false, @required this.store});
+class ProfileStoreSelect extends StatefulWidget {
+  ProfileStoreSelect({this.isAuthUser = false, this.store});
 
   final bool isAuthUser;
+
   final Store store;
+
   @override
   _ProfileStoreState createState() => _ProfileStoreState();
 }
 
-class _ProfileStoreState extends State<ProfileStore>
+Store storeAuth;
+
+class _ProfileStoreState extends State<ProfileStoreSelect>
     with TickerProviderStateMixin {
   final _bloc = TabsViewScrollBLoC();
+
   AnimationController _animationController;
 
   double get maxHeight => 400 + MediaQuery.of(context).padding.top;
@@ -36,6 +42,9 @@ class _ProfileStoreState extends State<ProfileStore>
 
   @override
   void initState() {
+    final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
+
+    storeAuth = authBloc.storeAuth;
     _bloc.init(this, widget.store.user.uid);
 
     _animationController = AnimationController(
@@ -162,7 +171,7 @@ class _TabWidget extends StatelessWidget {
           child: Text(
             tabCategory.category.name,
             style: TextStyle(
-              color: (selected) ? _blueColor : Colors.grey,
+              color: (selected) ? currentTheme.primaryColor : Colors.grey,
               fontWeight: FontWeight.bold,
               fontSize: 13,
             ),
@@ -457,7 +466,7 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
     final textMovement = 5.0;
     final leftTextMargin = maxMargin + (textMovement * percent);
 
-    final username = currentProfile.username;
+    final username = store.user.username;
 
     return GestureDetector(
       onTap: () => bloc.snapAppbar(),

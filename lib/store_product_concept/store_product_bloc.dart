@@ -1,6 +1,8 @@
+import 'package:australti_ecommerce_app/bloc_globals/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:flutter/rendering.dart';
+import 'package:rxdart/rxdart.dart';
 
 const categoryHeight = 50.0;
 
@@ -8,11 +10,12 @@ const productHeight = 110.0;
 
 class TabsViewScrollBLoC with ChangeNotifier {
   List<TabCategory> tabs = [];
+
   List<ProfileStoreItem> items = [];
+  List<ProfileStoreProduct> productsByCategoryList = [];
   TabController tabController;
   ScrollController scrollController = ScrollController();
   ScrollController hideBottomNavController;
-  // ScrollController scrollController2 = ScrollController();
 
   ScrollController scrollController2 =
       ScrollController(initialScrollOffset: 260);
@@ -40,12 +43,18 @@ class TabsViewScrollBLoC with ChangeNotifier {
           rappiCategories[i].products.length * productHeight +
           categoryHeight;
 
-      tabs.add(TabCategory(
-        category: category,
-        selected: (i == 0),
-        offsetFrom: offsetFrom,
-        offsetTo: offsetTo,
-      ));
+      final item = tabs.firstWhere((item) => item.category.id == category.id,
+          orElse: () => null);
+
+      final exist = (item != null) ? true : false;
+
+      if (!exist)
+        tabs.add(TabCategory(
+          category: category,
+          selected: (i == 0),
+          offsetFrom: offsetFrom,
+          offsetTo: offsetTo,
+        ));
 
       items.add(ProfileStoreItem(category: category));
       for (int j = 0; j < category.products.length; j++) {
@@ -55,6 +64,22 @@ class TabsViewScrollBLoC with ChangeNotifier {
     }
 
     scrollController.addListener(_onScrollListener);
+  }
+
+  void addNewCategory(TickerProvider ticket, ProfileStoreCategory newCategory) {
+    rappiCategories.add(newCategory);
+
+    init(ticket, newCategory.store.user.uid);
+  }
+
+  void productsByCategory(String categoryId) {
+    final category = rappiCategories.where((i) => i.id == categoryId);
+    print(category.single);
+
+    productsByCategoryList = category.single.products;
+
+    print(productsByCategoryList);
+    notifyListeners();
   }
 
   bool _bottomVisible = true;
@@ -166,6 +191,40 @@ class TabsViewScrollBLoC with ChangeNotifier {
     scrollController.dispose();
     tabController.dispose();
     super.dispose();
+  }
+}
+
+class CategoryBloc with Validators {
+  final _nameController = BehaviorSubject<String>();
+
+  final _descriptionController = BehaviorSubject<String>();
+
+  final _privacityController = BehaviorSubject<bool>();
+
+  // Recuperar los datos del Stream
+  Stream<String> get nameStream =>
+      _nameController.stream.transform(validationNameRequired);
+  Stream<String> get descriptionStream => _descriptionController.stream;
+
+  // Insertar valores al Stream
+  Function(String) get changeName => _nameController.sink.add;
+  Function(String) get changeDescription => _descriptionController.sink.add;
+
+  Stream<bool> get privacityStream => _privacityController.stream;
+
+  // Obtener el último valor ingresado a los streams
+  String get name => _nameController.value;
+  String get description => _descriptionController.value;
+  bool get privacity => _privacityController.value;
+
+  dispose() {
+    _privacityController?.close();
+
+    _nameController?.close();
+
+    _descriptionController?.close();
+
+    //  _roomsController?.close();
   }
 }
 

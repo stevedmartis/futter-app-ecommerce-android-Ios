@@ -1,14 +1,17 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/store_principal/store_Service.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/vinyl_disc/album.dart';
+import 'package:australti_ecommerce_app/widgets/modal_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:provider/provider.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 
@@ -92,8 +95,10 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
   @override
   Widget build(BuildContext context) {
     StoreService _selected = storeService.last;
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
     final bloc = Provider.of<StoreBLoC>(context);
+    final isItems = groceryStoreBloc.totalCartElements() > 0 ? true : false;
 
     return Scaffold(
         backgroundColor: Colors.black,
@@ -132,58 +137,62 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                   ),
                 ),
                 actions: [
-                  GestureDetector(
-                      onTap: () {
-                        {}
-                      },
-                      child: Stack(
-                        children: [
-                          Container(
-                            margin:
-                                EdgeInsets.only(left: 10, top: 15, right: 15),
-                            child: Icon(
-                              Icons.shopping_bag_outlined,
-                              color: Colors.green,
-                              size: 40,
+                  Swing(
+                    animate: isItems,
+                    delay: Duration(seconds: 1),
+                    controller: (controller) =>
+                        Provider.of<NotificationModel>(context)
+                            .bounceControllerBell = controller,
+                    child: GestureDetector(
+                        onTap: () {
+                          showMaterialCupertinoBottomSheet(
+                              context, 'hello', 'hello2');
+                        },
+                        child: Stack(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(
+                                  left: 10,
+                                  top: (isItems) ? 12 : 15,
+                                  right: 15),
+                              child: (isItems)
+                                  ? Icon(
+                                      Icons.shopping_bag,
+                                      color: currentTheme.primaryColor,
+                                      size: 40,
+                                    )
+                                  : Icon(
+                                      Icons.shopping_bag_outlined,
+                                      color: currentTheme.primaryColor,
+                                      size: 35,
+                                    ),
                             ),
-                          ),
-                          Positioned(
-                            top: 32,
-                            left: 22,
-                            child: BounceInDown(
-                              from: 5,
-                              animate: (1 > 0) ? true : false,
-                              child: Bounce(
-                                delay: Duration(seconds: 2),
-                                from: 10,
-                                controller: (controller) =>
-                                    Provider.of<NotificationModel>(context)
-                                        .bounceControllerBell = controller,
-                                child:
-                                    (groceryStoreBloc.totalCartElements() > 0)
-                                        ? Container(
-                                            child: Text(
-                                              groceryStoreBloc
-                                                  .totalCartElements()
-                                                  .toString(),
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            alignment: Alignment.center,
-                                            width: 15,
-                                            height: 15,
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                shape: BoxShape.circle),
-                                          )
-                                        : Container(),
-                              ),
+                            Positioned(
+                              top: 29,
+                              left: 22,
+                              child: (groceryStoreBloc.totalCartElements() > 0)
+                                  ? Container(
+                                      child: Text(
+                                        groceryStoreBloc
+                                            .totalCartElements()
+                                            .toString(),
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      alignment: Alignment.center,
+                                      width: 15,
+                                      height: 15,
+                                      decoration: BoxDecoration(
+                                          color: Color(0xff32D73F),
+                                          shape: BoxShape.circle),
+                                    )
+                                  : Container(),
                             ),
-                          ),
-                        ],
-                      )),
+                          ],
+                        )),
+                  ),
                 ],
                 stretch: true,
                 expandedHeight: 250.0,
@@ -213,7 +222,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                     ),
                   ),
                   centerTitle: true,
-                  title: Container(child: _MyTextField(_showTitle)),
+                  title: Container(child: MyTextField(_showTitle)),
                 ),
               ),
               SliverAppBar(
@@ -245,84 +254,6 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                 ),
               ),
 
-              /* SliverAppBar(
-                      backgroundColor: Colors.black,
-                      automaticallyImplyLeading: false,
-                      expandedHeight: 60.0,
-                      collapsedHeight: 60.0,
-                      pinned: true,
-                      actionsIconTheme: IconThemeData(opacity: 0.0),
-                      title: Container(
-                          alignment: Alignment.centerLeft,
-                          child: FadeIn(
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 10.0, left: 10),
-                              child: Text(
-                                _selected.name,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                          ))), */
-
-              /*  SliverAppBar(
-                    automaticallyImplyLeading: false,
-                    backgroundColor: Colors.black,
-                    stretch: true,
-                    //stretchTriggerOffset: 100.0,
-                    expandedHeight: 150.0,
-                    collapsedHeight: 70,
-                    // floating: false,
-                    pinned: true,
-                    flexibleSpace: FlexibleSpaceBar(
-                      /*  stretchModes: [
-                        StretchMode.zoomBackground,
-                        StretchMode.fadeTitle,
-                        // StretchMode.blurBackground
-                      ], */
-                      background: Material(
-                          type: MaterialType.transparency,
-                          child: Container(
-                              color: Colors.black,
-                              child: Container(
-                                color: Colors.black,
-                                child: StoreServicesList(
-                                  onPhotoSelected: (item) => {
-                                    _changeService(bloc, item.id),
-                                    setState(() {
-                                      _selected = item;
-                                    })
-                                  },
-                                ),
-                              ))),
-                      //centerTitle: true,
-                    ),
-                  ), */
-
-              /*  SliverPersistentHeader(
-                    floating: true,
-                    pinned: true,
-                    delegate: SliverCustomHeaderDelegate(
-                        minHeight: 150,
-                        maxHeight: 150,
-                        child: Container(
-                            color: Colors.black,
-                            child: Container(
-                              color: Colors.black,
-                              child: StoreServicesList(
-                                onPhotoSelected: (item) => {
-                                  _changeService(bloc, item.id),
-                                  setState(() {
-                                    _selected = item;
-                                  })
-                                },
-                              ),
-                            ))),
-                  ), */
-
               // makeHeaderPrincipal(context),
               makeHeaderTitle(context, _selected.name),
               makeListRecomendations(),
@@ -331,6 +262,37 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
         ));
   }
 }
+
+/* class NestedScrollModal extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return NestedScrollView(
+      controller: ScrollController(),
+      physics: ScrollPhysics(parent: PageScrollPhysics()),
+      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        return <Widget>[
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                Container(height: 100, color: Colors.blue),
+              ],
+            ),
+          ),
+        ];
+      },
+      body: ListView.builder(
+        controller: ModalScrollController.of(context),
+        itemBuilder: (context, index) {
+          return Container(
+            height: 100,
+            color: index.isOdd ? Colors.green : Colors.orange,
+          );
+        },
+        itemCount: 12,
+      ),
+    );
+  }
+} */
 
 SliverPersistentHeader makeHeaderPrincipal(context) {
   final size = MediaQuery.of(context).size;
@@ -635,6 +597,9 @@ class StoreServiceDetails extends StatefulWidget {
   _StoreServiceDetailsState createState() => _StoreServiceDetailsState();
 }
 
+List<Address> addresses = [];
+Address nameAddress = Address(addressLine: '');
+
 class _StoreServiceDetailsState extends State<StoreServiceDetails>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
@@ -660,6 +625,12 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
 
   @override
   Widget build(BuildContext context) {
+//
+
+// From coordinates
+
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
     return AnimatedBuilder(
         animation: _controller,
         builder: (context, _) {
@@ -698,10 +669,73 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                   ),
                 ),
               ),
+              Positioned(
+                  top: 20,
+                  left: 10,
+                  right: 10,
+                  height: 40,
+                  child: FadeInDown(
+                    child: (myLocationBloc.addresName != '')
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                child: Icon(
+                                  Icons.location_on,
+                                  color: currentTheme.accentColor,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Container(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    myLocationBloc.state.isLocationExist
+                                        ? '${myLocationBloc.addresName}'
+                                        : '...',
+                                    //'${state.location.latitude}',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: Colors.white70),
+                                  )),
+                            ],
+                          )
+                        : Container(),
+                  )
+
+                  /* BlocBuilder<MyLocationBloc, MyLocationState>(
+                        builder: (context, state) {
+                      print(state);
+                      return Text(
+                        '${myLocationBloc.state.isLocationExist}',
+                        //'${state.location.latitude}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
+                      );
+                    })), */
+                  ),
             ],
           );
         });
   }
+}
+
+Widget createLocation() {
+  if (!myLocationBloc.state.isLocationExist)
+    return Text(
+      '...',
+      //'${state.location.latitude}',
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+    );
+
+  return Text(
+    '${myLocationBloc.state.isLocationExist}',
+    //'${state.location.latitude}',
+    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+  );
 }
 
 const List<Color> gradients = [
@@ -710,8 +744,8 @@ const List<Color> gradients = [
   Color(0xffFEB42C),
 ];
 
-class _MyTextField extends StatelessWidget {
-  _MyTextField(this.showTitle);
+class MyTextField extends StatelessWidget {
+  MyTextField(this.showTitle);
   final bool showTitle;
 
   @override

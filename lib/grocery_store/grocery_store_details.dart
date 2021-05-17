@@ -1,5 +1,7 @@
+import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_product.dart';
+import 'package:provider/provider.dart';
 
 const _textHighColor = Color(0xFF241E1E);
 const _textColor = Color(0xFF5C5657);
@@ -32,6 +34,8 @@ class _GroceryStoreDetailsState extends State<GroceryStoreDetails> {
 
   @override
   Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeChanger>(context);
+
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(color: Colors.black),
@@ -179,6 +183,10 @@ class _GroceryStoreDetailsState extends State<GroceryStoreDetails> {
                   Expanded(
                     flex: 6,
                     child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                            currentTheme.currentTheme.primaryColor),
+                      ),
                       /*    color: Color(0xFFF4C459),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), */
                       child: Padding(

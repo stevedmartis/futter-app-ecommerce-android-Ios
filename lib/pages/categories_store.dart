@@ -1,0 +1,690 @@
+import 'dart:async';
+
+import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
+import 'package:australti_ecommerce_app/models/profile.dart';
+import 'package:australti_ecommerce_app/pages/add_update_category.dart';
+import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:australti_ecommerce_app/services/catalogo.dart';
+import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
+import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
+import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
+import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:universal_platform/universal_platform.dart';
+
+class CatalogosListPage extends StatefulWidget {
+  @override
+  _CatalogosListPagePageState createState() => _CatalogosListPagePageState();
+}
+
+class _CatalogosListPagePageState extends State<CatalogosListPage> {
+  SocketService socketService;
+
+  final category = new ProfileStoreCategory(id: '');
+
+  final _bloc = TabsViewScrollBLoC();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // roomBloc.disposeRooms();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+    // final roomsModel = Provider.of<Room>(context);
+
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: currentTheme.scaffoldBackgroundColor,
+        body: CustomScrollView(
+            physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics()),
+            slivers: <Widget>[
+              makeHeaderCustom('Mi Tienda'),
+              makeListCatalogos(context)
+            ]),
+      ),
+    );
+  }
+
+  SliverList makeListCatalogos(
+    context,
+  ) {
+    return SliverList(
+        delegate: SliverChildListDelegate([
+      CatalogsList(
+        bloc: _bloc,
+      ),
+    ]));
+  }
+
+  SliverPersistentHeader makeHeaderCustom(String title) {
+    //final catalogo = new ProfileStoreCategory();
+
+    return SliverPersistentHeader(
+        pinned: true,
+        floating: true,
+        delegate: SliverCustomHeaderDelegate(
+            minHeight: 60,
+            maxHeight: 60,
+            child: Container(
+                color: Colors.black,
+                child: Container(
+                    color: Colors.black,
+                    child: CustomAppBarHeaderPages(
+                        title: title,
+                        isAdd: true,
+                        action: Container(),
+                        //   Container()
+                        onPress: () => {
+                              Navigator.of(context)
+                                  .push(createRouteAdd(category, false, _bloc)),
+                            })))));
+  }
+
+  void addBandToList(String name) {
+    if (name.length > 1) {
+      final socketService = Provider.of<SocketService>(context, listen: false);
+      socketService.emit('add-band', {'name': name});
+    }
+
+    Navigator.pop(context);
+  }
+}
+
+class CatalogsList extends StatefulWidget {
+  CatalogsList({this.bloc});
+
+  final TabsViewScrollBLoC bloc;
+
+  @override
+  _CatalogsListState createState() => _CatalogsListState();
+}
+
+class _CatalogsListState extends State<CatalogsList>
+    with TickerProviderStateMixin {
+  Profile profile;
+
+  final catalogoService = new StoreCategoiesService();
+  var _isVisible;
+
+  ScrollController _hideBottomNavController;
+  List<TabCategory> catalogos = [];
+  SlidableController slidableController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
+
+    widget.bloc.init(this, authBloc.storeAuth.user.uid);
+
+    _chargeCatalogs();
+
+    bottomControll();
+  }
+
+  _chargeCatalogs() async {
+    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+
+    profile = authService.profile;
+
+    catalogos = widget.bloc.tabs;
+
+    //catalogoBloc.getMyCatalogos(profile.user.uid);
+  }
+
+  void reorderData(int oldindex, int newindex) {
+    setState(() {
+      if (newindex > oldindex) {
+        newindex -= 1;
+      }
+      final items = this.catalogos.removeAt(oldindex);
+      this.catalogos.insert(newindex, items);
+    });
+  }
+
+  bottomControll() {
+    _isVisible = true;
+    _hideBottomNavController = ScrollController();
+    _hideBottomNavController.addListener(
+      () {
+        if (_hideBottomNavController.position.userScrollDirection ==
+            ScrollDirection.reverse) {
+          if (_isVisible)
+            setState(() {
+              _isVisible = false;
+            });
+        }
+        if (_hideBottomNavController.position.userScrollDirection ==
+            ScrollDirection.forward) {
+          if (!_isVisible)
+            setState(() {
+              _isVisible = true;
+            });
+        }
+      },
+    );
+  }
+
+/*   _PatternVibrate() {
+    HapticFeedback.mediumImpact();
+
+    sleep(
+      const Duration(milliseconds: 200),
+    );
+
+    HapticFeedback.mediumImpact();
+
+    sleep(
+      const Duration(milliseconds: 500),
+    );
+
+    HapticFeedback.mediumImpact();
+
+    sleep(
+      const Duration(milliseconds: 200),
+    );
+    HapticFeedback.mediumImpact();
+  } */
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: (catalogos.length > 0)
+            ? Container(
+                height: 160 * (catalogos.length).toDouble(),
+                child: _buildCatalogoWidget())
+            : Container(
+                padding: EdgeInsets.all(50),
+                child: Center(child: Text('Vacio')),
+              ));
+
+    /*  Container(
+      height: double.maxFinite,
+      child: StreamBuilder<StoreCategoriesResponse>(
+        stream: _bloc.myCatalogos.stream,
+        builder: (context, AsyncSnapshot<StoreCategoriesResponse> snapshot) {
+          if (snapshot.hasData) {
+            catalogos = snapshot.data.storeCategories;
+
+            return (catalogos.length > 0)
+                ? Container(child: _buildCatalogoWidget(catalogos))
+                : _buildEmptyWidget(); // image is ready
+
+          } else if (snapshot.hasError) {
+            return _buildErrorWidget(snapshot.error);
+          } else {
+            return _buildLoadingWidget();
+          }
+        },
+      ),
+    ); */
+  }
+
+/*   Widget _buildLoadingWidget() {
+    return Container(
+        height: 400.0, child: Center(child: CircularProgressIndicator()));
+  }
+
+  Widget _buildEmptyWidget() {
+    return Container(
+        height: 400.0, child: Center(child: Text('Sin Catalogos, crea nuevo')));
+  }
+
+  Widget _buildErrorWidget(String error) {
+    return Center(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text("Error occured: $error"),
+      ],
+    ));
+  }
+ */
+  Future _deleteCategory(String id, int index) async {
+    final res = await this.catalogoService.deleteCatalogo(id);
+    if (res) {
+      setState(() {
+        catalogos.removeAt(index);
+
+        return true;
+        // catalogoBloc.getMyCatalogos(profile.user.uid);
+      });
+
+      return true;
+    }
+  }
+
+  Widget _buildCatalogoWidget() {
+    final currentTheme = Provider.of<ThemeChanger>(context);
+    final size = MediaQuery.of(context).size;
+
+    return Stack(
+      children: [
+        Container(
+          padding: EdgeInsets.only(top: 20, left: 20),
+          child: Text(
+            'Catalogos',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+          ),
+        ),
+        Container(
+          child: ReorderableListView(
+              padding: EdgeInsets.only(top: 70),
+              scrollController: _hideBottomNavController,
+              children: List.generate(
+                catalogos.length,
+                (index) {
+                  final item = catalogos[index].category;
+
+                  final privacity = (item.privacity == '1')
+                      ? 'Publico'
+                      : (item.privacity == '2')
+                          ? 'Privado'
+                          : (item.privacity == '3')
+                              ? 'Nadie'
+                              : '';
+                  return Slidable.builder(
+                    key: Key(item.id),
+                    controller: slidableController,
+                    direction: Axis.horizontal,
+                    dismissal: SlidableDismissal(
+                      child: SlidableDrawerDismissal(),
+                      onWillDismiss: (actionType) {
+                        return showDialog<bool>(
+                            context: context,
+                            builder: (context) {
+                              if (UniversalPlatform.isAndroid) {
+                                return AlertDialog(
+                                  backgroundColor:
+                                      currentTheme.currentTheme.cardColor,
+                                  title: Text(
+                                    'Eliminar Catalogo',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  content: Text(
+                                    'Seguro de realizar esta acción',
+                                    style: TextStyle(color: Colors.white54),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                        child: Text(
+                                          'Eliminar',
+                                          style: TextStyle(
+                                              color: Colors.red, fontSize: 18),
+                                        ),
+                                        onPressed: () => {
+                                              Navigator.of(context).pop(true),
+                                            }),
+                                    TextButton(
+                                        child: Text(
+                                          'Cancelar',
+                                          style: TextStyle(
+                                              color: Colors.white54,
+                                              fontSize: 18),
+                                        ),
+                                        onPressed: () => {
+                                              Navigator.of(context).pop(false),
+                                            }),
+                                  ],
+                                );
+                              } else {
+                                return CupertinoAlertDialog(
+                                  title: Text(
+                                    'Eliminar Catalogo',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  content: Text(
+                                    'Seguro de realizar esta acción',
+                                    style: TextStyle(color: Colors.white54),
+                                  ),
+                                  actions: <Widget>[
+                                    CupertinoDialogAction(
+                                      isDefaultAction: true,
+                                      child: Text(
+                                        'Eliminar',
+                                        style: TextStyle(
+                                            color: currentTheme
+                                                .currentTheme.accentColor),
+                                      ),
+                                      onPressed: () => {
+                                        Navigator.of(context).pop(true),
+                                      },
+                                    ),
+                                    CupertinoDialogAction(
+                                      isDefaultAction: false,
+                                      child: Text(
+                                        'Cancelar',
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                      onPressed: () => {
+                                        Navigator.of(context).pop(false),
+                                      },
+                                    ),
+                                  ],
+                                );
+                              }
+                            }) as FutureOr<bool>;
+                      } as FutureOr<bool> Function(SlideActionType),
+                      onDismissed: (actionType) {
+                        _showSnackBar(context, 'Catalogo Eliminado');
+                        setState(() {
+                          catalogos.removeAt(index);
+                        });
+                      },
+                    ),
+                    actionPane: _getActionPane(index),
+                    actionExtentRatio: 0.25,
+                    secondaryActionDelegate: SlideActionBuilderDelegate(
+                        actionCount: 2,
+                        builder: (context, index, animation, renderingMode) {
+                          if (index == 0) {
+                            return IconSlideAction(
+                              caption: 'Editar',
+                              color: renderingMode ==
+                                      SlidableRenderingMode.slide
+                                  ? currentTheme.currentTheme.accentColor
+                                      .withOpacity(animation.value)
+                                  : (renderingMode ==
+                                          SlidableRenderingMode.dismiss
+                                      ? currentTheme.currentTheme.accentColor
+                                      : currentTheme.currentTheme.accentColor),
+                              icon: Icons.edit,
+                              onTap: () async {
+                                Navigator.of(context).push(
+                                    createRouteAdd(item, true, widget.bloc));
+                              },
+                              closeOnTap: false,
+                            );
+                          } else {
+                            return IconSlideAction(
+                              caption: 'Eliminar',
+                              color:
+                                  renderingMode == SlidableRenderingMode.slide
+                                      ? Colors.red.withOpacity(animation.value)
+                                      : Colors.red,
+                              icon: Icons.delete,
+                              onTap: () async {
+                                var state = Slidable.of(context);
+
+                                /*    var dismiss = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) {
+                                      if (UniversalPlatform.isAndroid) {
+                                        return AlertDialog(
+                                          backgroundColor: currentTheme
+                                              .currentTheme.cardColor,
+                                          title: Text(
+                                            'Eliminar Catalogo',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                          content: Text(
+                                            'Seguro de realizar esta acción',
+                                            style: TextStyle(
+                                                color: Colors.white54),
+                                          ),
+                                          actions: <Widget>[
+                                            TextButton(
+                                                child: Text(
+                                                  'Eliminar',
+                                                  style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontSize: 18),
+                                                ),
+                                                onPressed: () => {
+                                                      Navigator.of(context)
+                                                          .pop(true),
+                                                    }),
+                                            TextButton(
+                                                child: Text(
+                                                  'Cancelar',
+                                                  style: TextStyle(
+                                                      color: Colors.white54,
+                                                      fontSize: 18),
+                                                ),
+                                                onPressed: () => {
+                                                      Navigator.of(context)
+                                                          .pop(false),
+                                                    }),
+                                          ],
+                                        );
+                                      } else {
+                                        return CupertinoAlertDialog(
+                                          title: Text(
+                                            'Eliminar Catalogo',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                          content: Text(
+                                            'Seguro de realizar esta acción',
+                                            style: TextStyle(
+                                                color: Colors.white54),
+                                          ),
+                                          actions: <Widget>[
+                                            CupertinoDialogAction(
+                                              isDefaultAction: true,
+                                              child: Text(
+                                                'Eliminar',
+                                                style: TextStyle(
+                                                    color: currentTheme
+                                                        .currentTheme
+                                                        .accentColor),
+                                              ),
+                                              onPressed: () => {
+                                                Navigator.of(context).pop(true),
+                                              },
+                                            ),
+                                            CupertinoDialogAction(
+                                              isDefaultAction: false,
+                                              child: Text(
+                                                'Cancelar',
+                                                style: TextStyle(
+                                                    color: Colors.grey),
+                                              ),
+                                              onPressed: () => {
+                                                Navigator.of(context)
+                                                    .pop(false),
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      }
+                                    }); */
+
+                                state.dismiss();
+                              },
+                            );
+                          }
+                        }),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: (currentTheme.customTheme)
+                              ? Colors.black
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(0.0)),
+                      key: Key(item.id),
+                      padding: EdgeInsets.only(bottom: 1.0),
+                      child: Stack(
+                        children: [
+                          GestureDetector(
+                            onTap: () => {
+                              Navigator.push(context, groceryListRoute(item)),
+                              HapticFeedback.selectionClick()
+                            },
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 10.0),
+                              child: SizedBox(
+                                height: size.height / 10,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              20.0, 10.0, 2.0, 0.0),
+                                          child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text(
+                                                  item.name,
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                    color: (currentTheme
+                                                            .customTheme)
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 10),
+                                                Row(
+                                                  children: [
+                                                    FaIcon(
+                                                      FontAwesomeIcons.users,
+                                                      size: 20,
+                                                      color: Colors.grey,
+                                                    ),
+                                                    SizedBox(
+                                                      width: 15,
+                                                    ),
+                                                    Text(
+                                                      privacity,
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 13,
+                                                        color: (currentTheme
+                                                                .customTheme)
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )
+                                              ])),
+                                    ),
+                                    SizedBox(
+                                        width: 50,
+                                        child: Center(
+                                            child: Container(
+                                          margin: EdgeInsets.only(right: 10),
+                                          child: Icon(
+                                            Icons.format_list_bulleted,
+                                            color: currentTheme
+                                                .currentTheme.primaryColor,
+                                            size: 30,
+                                          ),
+                                        ))),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 1.0,
+                            child: Center(
+                              child: Container(
+                                height: 1.0,
+                                color: currentTheme
+                                    .currentTheme.scaffoldBackgroundColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ).toList(),
+              onReorder: (int oldIndex, int newIndex) => {
+                    setState(() {
+                      if (newIndex > oldIndex) {
+                        newIndex -= 1;
+                      }
+                      final TabCategory catalogo = catalogos.removeAt(oldIndex);
+                      catalogo.category.position = newIndex;
+                      catalogos.insert(newIndex, catalogo);
+                    }),
+                    // _updateCatalogo(catalogos, newIndex, context, profile.user.uid)
+                  }),
+        ),
+      ],
+    );
+  }
+
+  static Widget _getActionPane(int index) {
+    switch (index % 4) {
+      case 0:
+        return SlidableBehindActionPane();
+      case 1:
+        return SlidableStrechActionPane();
+      case 2:
+        return SlidableScrollActionPane();
+      case 3:
+        return SlidableDrawerActionPane();
+      default:
+        return null;
+    }
+  }
+}
+
+void _showSnackBar(BuildContext context, String text) {
+  final currentTheme = Provider.of<ThemeChanger>(context, listen: false);
+
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: (currentTheme.customTheme) ? Colors.black : Colors.black,
+      content: Text(text,
+          style: TextStyle(
+            color: (currentTheme.customTheme) ? Colors.white : Colors.white,
+          ))));
+}
+
+Route createRouteAdd(
+    ProfileStoreCategory category, bool isEdit, TabsViewScrollBLoC bloc) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        AddUpdateCategoryPage(category: category, isEdit: isEdit, bloc: bloc),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(1.0, 0.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+    transitionDuration: Duration(milliseconds: 400),
+  );
+}

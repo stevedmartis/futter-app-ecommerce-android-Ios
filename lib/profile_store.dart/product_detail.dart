@@ -1,9 +1,8 @@
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:provider/provider.dart';
-
-const _blueColor = Color(0xFF00649FE);
 
 class ProductStoreDetails extends StatefulWidget {
   const ProductStoreDetails({
@@ -179,19 +178,12 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails> {
                   Spacer(),
                   Expanded(
                       flex: 6,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(primary: _blueColor),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 15.0),
-                          child: Text(
-                            'Add to Cart',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        onPressed: () => _addToCart(context),
-                      )),
+                      child: elevatedButtonCustom(
+                          context: context,
+                          title: 'Agregar a la bolsa',
+                          onPress: () {
+                            _addToCart(context);
+                          })),
                 ],
               ),
             )

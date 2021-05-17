@@ -1,7 +1,6 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
-import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,14 +20,8 @@ class LoadingPage extends StatelessWidget {
   }
 
   Widget _buildLoadingWidget(context) {
-    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-
     return Container(
-        height: 400.0,
-        child: Center(
-            child: CircularProgressIndicator(
-          backgroundColor: currentTheme.accentColor,
-        )));
+        height: 400.0, child: Center(child: CircularProgressIndicator()));
   }
 
   Future checkLoginState(BuildContext context) async {
@@ -39,6 +32,7 @@ class LoadingPage extends StatelessWidget {
 
     if (autenticado) {
       socketService.connect();
+
       Navigator.of(context).push(PageRouteBuilder(
         transitionDuration: Duration(milliseconds: 1000),
         pageBuilder: (BuildContext context, Animation<double> animation,
