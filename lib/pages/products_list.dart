@@ -1,5 +1,8 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/pages/add_edit_product.dart';
+import 'package:australti_ecommerce_app/pages/carousel_images_product.dart';
+import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
@@ -16,9 +19,13 @@ const _blueColor = Color(0xFF00649FE);
 const _textColor = Color(0xFF5C5657);
 
 class ProductsByCategoryStorePage extends StatefulWidget {
-  ProductsByCategoryStorePage({@required this.category});
+  ProductsByCategoryStorePage(
+      {@required this.category, this.products, this.bloc});
 
+  final List<ProfileStoreProduct> products;
   final ProfileStoreCategory category;
+
+  final TabsViewScrollBLoC bloc;
   @override
   _ProductsByCategoryStorePage createState() => _ProductsByCategoryStorePage();
 }
@@ -26,7 +33,7 @@ class ProductsByCategoryStorePage extends StatefulWidget {
 Store storeAuth;
 
 class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
-  final _bloc = TabsViewScrollBLoC();
+  final product = new ProfileStoreProduct(id: '', name: '');
 
   double get maxHeight => 400 + MediaQuery.of(context).padding.top;
   double get minHeight => MediaQuery.of(context).padding.bottom;
@@ -36,7 +43,12 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
     final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
 
     storeAuth = authBloc.storeAuth;
-    _bloc.productsByCategory(widget.category.id);
+    widget.bloc.productsByCategory(widget.category.id);
+
+    final productsBloc =
+        Provider.of<TabsViewScrollBLoC>(context, listen: false);
+
+    productsBloc.productsByCategory(widget.category.id);
 
     super.initState();
   }
@@ -62,9 +74,14 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
   int initPosition;
   bool isFallow;
 
+  List<ProfileStoreProduct> productsByCategoryList = [];
+
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
+    productsByCategoryList =
+        Provider.of<TabsViewScrollBLoC>(context).productsByCategoryList;
 
     return SafeArea(
       child: Scaffold(
@@ -100,7 +117,10 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
                       isAdd: true,
                       leading: true,
                       action: Container(),
-                      onPress: () => {},
+                      onPress: () => {
+                        Navigator.of(context).push(createRouteAddEditProduct(
+                            product, false, widget.category)),
+                      },
                       //   Container()
                       /*  IconButton(
                               icon: Icon(
@@ -139,11 +159,11 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
           margin: EdgeInsets.only(top: 70),
           child: ListView.builder(
             shrinkWrap: true,
-            controller: _bloc.scrollController,
-            itemCount: _bloc.productsByCategoryList.length,
+            controller: widget.bloc.scrollController,
+            itemCount: productsByCategoryList.length,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             itemBuilder: (context, index) {
-              final item = _bloc.productsByCategoryList[index];
+              final item = productsByCategoryList[index];
 
               return _ProfileAuthStoreProductItem(item);
             },
@@ -216,8 +236,8 @@ class _ProfileAuthStoreProductItem extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Hero(
-                      tag: 'list_${product.name}',
-                      child: Image.asset(product.image)),
+                      tag: 'list_${product.images[0].url + product.name + '0'}',
+                      child: Image.network(product.images[0].url)),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -246,7 +266,7 @@ class _ProfileAuthStoreProductItem extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        '\$${product.price.toStringAsFixed(2)}',
+                        '\$${product.price}',
                         style: TextStyle(
                           color: (currentTheme.customTheme)
                               ? Colors.white
@@ -488,4 +508,26 @@ class SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
         minHeight != oldDelegate.minHeight ||
         child != oldDelegate.child;
   }
+}
+
+Route createRouteAddEditProduct(
+    ProfileStoreProduct product, bool isEdit, ProfileStoreCategory category) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        AddUpdateProductPage(
+            product: product, isEdit: isEdit, category: category),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(1.0, 0.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+    transitionDuration: Duration(milliseconds: 400),
+  );
 }

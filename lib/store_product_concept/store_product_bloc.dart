@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:australti_ecommerce_app/bloc_globals/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:flutter/rendering.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:http/http.dart' as http;
 
 const categoryHeight = 50.0;
 
@@ -20,10 +23,16 @@ class TabsViewScrollBLoC with ChangeNotifier {
   ScrollController scrollController2 =
       ScrollController(initialScrollOffset: 260);
 
+  List<http.MultipartFile> imagesProducts = [];
+
   bool _listen = true;
   bool initial = true;
 
   bool isFollow = false;
+
+  void addImageProduct(http.MultipartFile file) {
+    imagesProducts.add(file);
+  }
 
   void init(TickerProvider ticker, String storeUserId) {
     final categoriesByStoreUserId =
@@ -72,13 +81,35 @@ class TabsViewScrollBLoC with ChangeNotifier {
     init(ticket, newCategory.store.user.uid);
   }
 
+  void editCategory(TickerProvider ticket, ProfileStoreCategory editCategory) {
+    final item = tabs.firstWhere((item) => item.category.id == editCategory.id,
+        orElse: () => null);
+
+    print(item);
+
+    item.category.name = editCategory.name;
+    item.category.description = editCategory.description;
+    item.category.visibility = editCategory.visibility;
+
+    print(item);
+
+    print(rappiCategories);
+
+    init(ticket, editCategory.store.user.uid);
+  }
+
   void productsByCategory(String categoryId) {
     final category = rappiCategories.where((i) => i.id == categoryId);
     print(category.single);
 
     productsByCategoryList = category.single.products;
+  }
 
-    print(productsByCategoryList);
+  void addProductsByCategory(
+      ProfileStoreProduct product, String categoryId, TickerProvider ticket) {
+    productsByCategoryList.add(product);
+
+    print(rappiCategories);
     notifyListeners();
   }
 
@@ -190,7 +221,15 @@ class TabsViewScrollBLoC with ChangeNotifier {
     scrollController.removeListener(_onScrollListener);
     scrollController.dispose();
     tabController.dispose();
+    imagesProducts.clear();
+
     super.dispose();
+  }
+
+  @override
+  void disposeImages() {
+    imagesProducts = [];
+    imagesProducts.clear();
   }
 }
 
@@ -223,6 +262,48 @@ class CategoryBloc with Validators {
     _nameController?.close();
 
     _descriptionController?.close();
+
+    //  _roomsController?.close();
+  }
+}
+
+class ProductBloc with Validators {
+  final _nameController = BehaviorSubject<String>();
+
+  final _descriptionController = BehaviorSubject<String>();
+
+  final _privacityController = BehaviorSubject<bool>();
+
+  final _priceController = BehaviorSubject<String>();
+
+  // Recuperar los datos del Stream
+  Stream<String> get nameStream =>
+      _nameController.stream.transform(validationNameRequired);
+  Stream<String> get descriptionStream => _descriptionController.stream;
+
+  // Insertar valores al Stream
+  Function(String) get changeName => _nameController.sink.add;
+  Function(String) get changeDescription => _descriptionController.sink.add;
+
+  Stream<bool> get privacityStream => _privacityController.stream;
+
+  Stream<String> get priceSteam => _priceController.stream;
+
+  Function(String) get changePrice => _priceController.sink.add;
+
+  // Obtener el último valor ingresado a los streams
+  String get name => _nameController.value;
+  String get description => _descriptionController.value;
+  bool get privacity => _privacityController.value;
+  String get price => _priceController.value;
+
+  dispose() {
+    _privacityController?.close();
+
+    _nameController?.close();
+
+    _descriptionController?.close();
+    _priceController?.close();
 
     //  _roomsController?.close();
   }

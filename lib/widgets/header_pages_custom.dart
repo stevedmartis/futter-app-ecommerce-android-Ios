@@ -54,7 +54,7 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(width: 20),
+          SizedBox(width: 10),
           (widget.leading)
               ? Container(
                   padding: EdgeInsets.only(left: 0),
@@ -94,17 +94,20 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                       Navigator.push(context, profileAuthRoute(true));
                     }
                   },
-                  child: Hero(
-                    tag: 'user_auth_avatar',
-                    child: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: new BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: new DecorationImage(
-                                fit: BoxFit.fill,
-                                image: new AssetImage(
-                                    currentProfile.imageAvatar)))),
+                  child: Container(
+                    padding: EdgeInsets.only(bottom: 15),
+                    child: Hero(
+                      tag: 'user_auth_avatar',
+                      child: Container(
+                          width: 50,
+                          height: 50,
+                          decoration: new BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: new DecorationImage(
+                                  fit: BoxFit.fill,
+                                  image: new AssetImage(
+                                      currentProfile.imageAvatar)))),
+                    ),
                   ),
                 ),
           Expanded(

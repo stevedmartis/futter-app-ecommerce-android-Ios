@@ -53,6 +53,16 @@
     <key>NSLocationAlwaysUsageDescription</key>
     <string>Can I have location always?</string>
 
+
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Allow access to photo library</string>
+
+	<key>NSCameraUsageDescription</key>
+	<string>Allow access to camera to capture photos</string>
+
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allow access to microphone</string>
+
 </dict>
 
 </plist>

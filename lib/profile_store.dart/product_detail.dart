@@ -1,4 +1,6 @@
+import 'package:australti_ecommerce_app/pages/carousel_images_product.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/carousel_images_indicator.dart';
 import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
@@ -51,14 +53,12 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Hero(
-                          tag: 'list_${widget.product.name}' + heroTag,
-                          child: Image.asset(
-                            widget.product.image,
-                            fit: BoxFit.contain,
-                            height: MediaQuery.of(context).size.height * 0.36,
-                          ),
+                        padding: const EdgeInsets.only(bottom: 20.0),
+                        child: CarouselImagesProductIndicator(
+                          images: widget.product.images,
+                          tag: 'list_${widget.product.images[0].url}' +
+                              '${widget.product.name}' +
+                              heroTag,
                         ),
                       ),
                       Text(

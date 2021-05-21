@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/models/profile.dart';
-import 'package:australti_ecommerce_app/pages/add_update_category.dart';
+import 'package:australti_ecommerce_app/pages/add_edit_category.dart';
+import 'package:australti_ecommerce_app/pages/single_image_upload.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/services/catalogo.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
@@ -93,8 +94,9 @@ class _CatalogosListPagePageState extends State<CatalogosListPage> {
                         action: Container(),
                         //   Container()
                         onPress: () => {
-                              Navigator.of(context)
-                                  .push(createRouteAdd(category, false, _bloc)),
+                              Navigator.of(context).push(
+                                  createRouteAddEditCategory(
+                                      category, false, _bloc)),
                             })))));
   }
 
@@ -259,7 +261,7 @@ class _CatalogsListState extends State<CatalogsList>
     ));
   }
  */
-  Future _deleteCategory(String id, int index) async {
+/*   Future _deleteCategory(String id, int index) async {
     final res = await this.catalogoService.deleteCatalogo(id);
     if (res) {
       setState(() {
@@ -272,7 +274,7 @@ class _CatalogsListState extends State<CatalogsList>
       return true;
     }
   }
-
+ */
   Widget _buildCatalogoWidget() {
     final currentTheme = Provider.of<ThemeChanger>(context);
     final size = MediaQuery.of(context).size;
@@ -295,19 +297,16 @@ class _CatalogsListState extends State<CatalogsList>
                 (index) {
                   final item = catalogos[index].category;
 
-                  final privacity = (item.privacity == '1')
-                      ? 'Publico'
-                      : (item.privacity == '2')
-                          ? 'Privado'
-                          : (item.privacity == '3')
-                              ? 'Nadie'
-                              : '';
+                  final products = item.products.length;
+
+                  final visibiliy = item.visibility;
                   return Slidable.builder(
                     key: Key(item.id),
                     controller: slidableController,
                     direction: Axis.horizontal,
                     dismissal: SlidableDismissal(
                       child: SlidableDrawerDismissal(),
+                      closeOnCanceled: true,
                       onWillDismiss: (actionType) {
                         return showDialog<bool>(
                             context: context,
@@ -321,7 +320,7 @@ class _CatalogsListState extends State<CatalogsList>
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   content: Text(
-                                    'Seguro de realizar esta acción',
+                                    'Seguro de realizar esta acción?',
                                     style: TextStyle(color: Colors.white54),
                                   ),
                                   actions: <Widget>[
@@ -353,7 +352,7 @@ class _CatalogsListState extends State<CatalogsList>
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   content: Text(
-                                    'Seguro de realizar esta acción',
+                                    'Seguro de realizar esta acción?',
                                     style: TextStyle(color: Colors.white54),
                                   ),
                                   actions: <Widget>[
@@ -410,9 +409,10 @@ class _CatalogsListState extends State<CatalogsList>
                               icon: Icons.edit,
                               onTap: () async {
                                 Navigator.of(context).push(
-                                    createRouteAdd(item, true, widget.bloc));
+                                    createRouteAddEditCategory(
+                                        item, true, widget.bloc));
                               },
-                              closeOnTap: false,
+                              closeOnTap: true,
                             );
                           } else {
                             return IconSlideAction(
@@ -425,91 +425,6 @@ class _CatalogsListState extends State<CatalogsList>
                               onTap: () async {
                                 var state = Slidable.of(context);
 
-                                /*    var dismiss = await showDialog<bool>(
-                                    context: context,
-                                    builder: (context) {
-                                      if (UniversalPlatform.isAndroid) {
-                                        return AlertDialog(
-                                          backgroundColor: currentTheme
-                                              .currentTheme.cardColor,
-                                          title: Text(
-                                            'Eliminar Catalogo',
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                          content: Text(
-                                            'Seguro de realizar esta acción',
-                                            style: TextStyle(
-                                                color: Colors.white54),
-                                          ),
-                                          actions: <Widget>[
-                                            TextButton(
-                                                child: Text(
-                                                  'Eliminar',
-                                                  style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize: 18),
-                                                ),
-                                                onPressed: () => {
-                                                      Navigator.of(context)
-                                                          .pop(true),
-                                                    }),
-                                            TextButton(
-                                                child: Text(
-                                                  'Cancelar',
-                                                  style: TextStyle(
-                                                      color: Colors.white54,
-                                                      fontSize: 18),
-                                                ),
-                                                onPressed: () => {
-                                                      Navigator.of(context)
-                                                          .pop(false),
-                                                    }),
-                                          ],
-                                        );
-                                      } else {
-                                        return CupertinoAlertDialog(
-                                          title: Text(
-                                            'Eliminar Catalogo',
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                          content: Text(
-                                            'Seguro de realizar esta acción',
-                                            style: TextStyle(
-                                                color: Colors.white54),
-                                          ),
-                                          actions: <Widget>[
-                                            CupertinoDialogAction(
-                                              isDefaultAction: true,
-                                              child: Text(
-                                                'Eliminar',
-                                                style: TextStyle(
-                                                    color: currentTheme
-                                                        .currentTheme
-                                                        .accentColor),
-                                              ),
-                                              onPressed: () => {
-                                                Navigator.of(context).pop(true),
-                                              },
-                                            ),
-                                            CupertinoDialogAction(
-                                              isDefaultAction: false,
-                                              child: Text(
-                                                'Cancelar',
-                                                style: TextStyle(
-                                                    color: Colors.grey),
-                                              ),
-                                              onPressed: () => {
-                                                Navigator.of(context)
-                                                    .pop(false),
-                                              },
-                                            ),
-                                          ],
-                                        );
-                                      }
-                                    }); */
-
                                 state.dismiss();
                               },
                             );
@@ -517,109 +432,171 @@ class _CatalogsListState extends State<CatalogsList>
                         }),
                     child: Container(
                       decoration: BoxDecoration(
-                          color: (currentTheme.customTheme)
-                              ? Colors.black
-                              : Colors.white,
-                          borderRadius: BorderRadius.circular(0.0)),
-                      key: Key(item.id),
-                      padding: EdgeInsets.only(bottom: 1.0),
-                      child: Stack(
-                        children: [
-                          GestureDetector(
-                            onTap: () => {
-                              Navigator.push(context, groceryListRoute(item)),
-                              HapticFeedback.selectionClick()
-                            },
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 10.0),
-                              child: SizedBox(
-                                height: size.height / 10,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              20.0, 10.0, 2.0, 0.0),
-                                          child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Text(
-                                                  item.name,
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 16,
-                                                    color: (currentTheme
-                                                            .customTheme)
-                                                        ? Colors.white
-                                                        : Colors.black,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 10),
-                                                Row(
-                                                  children: [
-                                                    FaIcon(
-                                                      FontAwesomeIcons.users,
-                                                      size: 20,
-                                                      color: Colors.grey,
-                                                    ),
-                                                    SizedBox(
-                                                      width: 15,
-                                                    ),
+                        color: (currentTheme.customTheme)
+                            ? Colors.black
+                            : Colors.white,
+                      ),
+                      child: Material(
+                        color: (currentTheme.customTheme)
+                            ? Colors.black
+                            : Colors.white,
+                        child: InkWell(
+                          splashColor: Colors.white,
+                          radius: 30,
+                          onTap: () => {
+                            Navigator.push(
+                                context, groceryListRoute(item, widget.bloc)),
+                            HapticFeedback.selectionClick()
+                          },
+                          child: Container(
+                            key: Key(item.id),
+                            padding: EdgeInsets.only(bottom: 1.0),
+                            child: Stack(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10.0),
+                                  child: SizedBox(
+                                    height: size.height / 8,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      20.0, 10.0, 2.0, 0.0),
+                                              child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: <Widget>[
                                                     Text(
-                                                      privacity,
+                                                      item.name,
                                                       maxLines: 2,
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                       style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        fontSize: 13,
+                                                        fontSize: 16,
                                                         color: (currentTheme
                                                                 .customTheme)
                                                             ? Colors.white
                                                             : Colors.black,
                                                       ),
                                                     ),
-                                                  ],
-                                                )
-                                              ])),
+                                                    SizedBox(height: 10),
+                                                    Row(
+                                                      children: [
+                                                        FaIcon(
+                                                          (visibiliy)
+                                                              ? FontAwesomeIcons
+                                                                  .eye
+                                                              : FontAwesomeIcons
+                                                                  .eyeSlash,
+                                                          size: 20,
+                                                          color: Colors.grey,
+                                                        ),
+                                                        SizedBox(
+                                                          width: 15,
+                                                        ),
+                                                        Text(
+                                                          (visibiliy)
+                                                              ? 'Publico'
+                                                              : 'Privado',
+                                                          maxLines: 2,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
+                                                            color: (currentTheme
+                                                                    .customTheme)
+                                                                ? Colors.white
+                                                                : Colors.black,
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 20,
+                                                        ),
+                                                        FaIcon(
+                                                          FontAwesomeIcons
+                                                              .shoppingBag,
+                                                          size: 20,
+                                                          color: Colors.grey,
+                                                        ),
+                                                        SizedBox(
+                                                          width: 15,
+                                                        ),
+                                                        Text(
+                                                          'Productos: ',
+                                                          maxLines: 2,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
+                                                            color: (currentTheme
+                                                                    .customTheme)
+                                                                ? Colors.grey
+                                                                : Colors.black,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          '$products',
+                                                          maxLines: 2,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 13,
+                                                            color: (currentTheme
+                                                                    .customTheme)
+                                                                ? Colors.white
+                                                                : Colors.black,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ])),
+                                        ),
+                                        SizedBox(
+                                            width: 50,
+                                            child: Center(
+                                                child: Container(
+                                              margin:
+                                                  EdgeInsets.only(right: 10),
+                                              child: Icon(
+                                                Icons.format_list_bulleted,
+                                                color: currentTheme
+                                                    .currentTheme.primaryColor,
+                                                size: 30,
+                                              ),
+                                            ))),
+                                      ],
                                     ),
-                                    SizedBox(
-                                        width: 50,
-                                        child: Center(
-                                            child: Container(
-                                          margin: EdgeInsets.only(right: 10),
-                                          child: Icon(
-                                            Icons.format_list_bulleted,
-                                            color: currentTheme
-                                                .currentTheme.primaryColor,
-                                            size: 30,
-                                          ),
-                                        ))),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                                SizedBox(
+                                  height: 1.0,
+                                  child: Center(
+                                    child: Container(
+                                      height: 1.0,
+                                      color: currentTheme
+                                          .currentTheme.scaffoldBackgroundColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          SizedBox(
-                            height: 1.0,
-                            child: Center(
-                              child: Container(
-                                height: 1.0,
-                                color: currentTheme
-                                    .currentTheme.scaffoldBackgroundColor,
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   );
@@ -668,7 +645,7 @@ void _showSnackBar(BuildContext context, String text) {
           ))));
 }
 
-Route createRouteAdd(
+Route createRouteAddEditCategory(
     ProfileStoreCategory category, bool isEdit, TabsViewScrollBLoC bloc) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) =>

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -80,7 +78,7 @@ showAlertPermissionGpsModalMatCup(String title, String subTitle, String action,
   final currentTheme =
       Provider.of<ThemeChanger>(context, listen: false).currentTheme;
 
-  if (Platform.isAndroid) {
+  if (UniversalPlatform.isAndroid) {
     return showDialog(
         context: context,
         builder: (_) => AlertDialog(

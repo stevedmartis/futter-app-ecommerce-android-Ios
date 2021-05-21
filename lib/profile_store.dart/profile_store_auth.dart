@@ -243,7 +243,7 @@ class _ProfileAuthStoreProductItem extends StatelessWidget {
                   padding: const EdgeInsets.all(10.0),
                   child: Hero(
                       tag: 'list_${product.name}',
-                      child: Image.asset(product.image)),
+                      child: Image.network(product.images[0].url)),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -356,7 +356,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
                   padding: const EdgeInsets.all(10.0),
                   child: Hero(
                       tag: 'list_${product.name}',
-                      child: Image.asset(product.image)),
+                      child: Image.network(product.images[0].url)),
                 ),
                 const SizedBox(width: 10),
                 Expanded(

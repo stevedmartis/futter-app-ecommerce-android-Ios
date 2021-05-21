@@ -4,14 +4,18 @@ import 'package:australti_ecommerce_app/global/enviroments.dart';
 import 'package:australti_ecommerce_app/models/auth_response.dart';
 import 'package:australti_ecommerce_app/models/profile.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:universal_platform/universal_platform.dart';
 
 enum AuthState { isClient, isStore }
 
 class AuthenticationBLoC with ChangeNotifier {
+  final prefs = new AuthUserPreferences();
+
   AuthState authState = AuthState.isStore;
   static String redirectUri =
       'https://api.gettymarket.com/api/apple/callbacks/sign_in_with_apple';
@@ -127,11 +131,15 @@ class AuthenticationBLoC with ChangeNotifier {
   }
 
   Future<bool> isLoggedIn() async {
-    var urlFinal = Uri.https('${Environment.apiUrl}', '/api/login/renew');
+    var urlFinal = ('${Environment.apiUrl}/api/login/renew');
 
-    final token = await this._storage.read(key: 'token');
+    String token = '';
+    (UniversalPlatform.isWeb)
+        ? token = prefs.token
+        : token = await this._storage.read(key: 'token');
+
     //this.logout();
-    final resp = await http.get(urlFinal,
+    final resp = await http.get(Uri.parse(urlFinal),
         headers: {'Content-Type': 'application/json', 'x-token': token});
     if (resp.statusCode == 200) {
       final loginResponse = loginResponseFromJson(resp.body);
@@ -140,7 +148,7 @@ class AuthenticationBLoC with ChangeNotifier {
 
       return true;
     } else {
-      this.logout();
+      (UniversalPlatform.isWeb) ? prefs.setToken = '' : this.logout();
       return false;
     }
   }

@@ -4,7 +4,6 @@ import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/utils.dart';
-import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -45,7 +44,7 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
   bool isControllerChangeEdit = false;
   bool loading = false;
 
-  String optionItemSelected = "3";
+  String optionItemSelected = "1";
 
   bool isDefault;
 
@@ -65,6 +64,7 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
     nameCtrl.text = widget.category.name;
     descriptionCtrl.text = widget.category.description;
     optionItemSelected = widget.category.privacity;
+    isSwitchedVisibility = widget.category.visibility;
 
     //  plantBloc.imageUpdate.add(true);
     nameCtrl.addListener(() {
@@ -98,6 +98,7 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
     nameCtrl.dispose();
 
     descriptionCtrl.dispose();
+    categoryBloc.dispose();
 
     super.dispose();
   }
@@ -111,7 +112,7 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
     final isControllerChange = isNameChange;
 
     final isControllerChangeEdit =
-        isNameChange || isAboutChange || optionSelectChange;
+        isNameChange || isAboutChange || isVisibilityChange;
 
     return Scaffold(
       backgroundColor: currentTheme.currentTheme.scaffoldBackgroundColor,
@@ -386,76 +387,6 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
     int number = await showPicker();
   }
  */
-  Widget _createPrivacity() {
-    final size = MediaQuery.of(context).size;
-    final currentTheme = Provider.of<ThemeChanger>(context);
-
-    List<DropdownMenuItem> categories = [
-      DropdownMenuItem(
-        child: Text(
-          'Todos',
-          style: TextStyle(
-              color:
-                  (currentTheme.customTheme) ? Colors.white54 : Colors.black54),
-        ),
-        value: "1",
-      ),
-      DropdownMenuItem(
-        child: Text(
-          'Mis suscriptores',
-          style: TextStyle(
-              color:
-                  (currentTheme.customTheme) ? Colors.white54 : Colors.black54),
-        ),
-        value: "2",
-      ),
-      DropdownMenuItem(
-        child: Text(
-          'Nadie',
-          style: TextStyle(
-              color:
-                  (currentTheme.customTheme) ? Colors.white54 : Colors.black54),
-        ),
-        value: "3",
-      )
-    ];
-
-    return StreamBuilder(
-      stream: categoryBloc.privacityStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return Container(
-
-            //leading: FaIcon(FontAwesomeIcons.moon, color: accentColor),
-            height: 50,
-            width: size.width,
-            child: DropdownButtonFormField(
-              decoration: InputDecoration(
-                  enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                          color: (currentTheme.customTheme)
-                              ? Colors.white54
-                              : Colors.black54))),
-              dropdownColor:
-                  (currentTheme.customTheme) ? Colors.black : Colors.white,
-              hint: Text(
-                'Mostrar con: ',
-                style: TextStyle(
-                    color: (currentTheme.customTheme)
-                        ? Colors.white54
-                        : Colors.black54),
-              ),
-              value: optionItemSelected,
-              items: categories,
-              onChanged: (optionItem) {
-                setState(() {
-                  optionItemSelected = optionItem;
-                  optionSelectChange = true;
-                });
-              },
-            ));
-      },
-    );
-  }
 
   Widget _createButton(
     bool isControllerChange,
@@ -488,9 +419,6 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
   }
 
   _createCatalogo() async {
-    final catalogoService =
-        Provider.of<StoreCategoiesService>(context, listen: false);
-
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
 
     // final uid = authService.profile.user.uid;
@@ -505,14 +433,14 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
     final privacity = optionItemSelected;
 
     final newCategory = ProfileStoreCategory(
-      id: '2-c',
-      store: authService.storeAuth,
-      position: 5,
-      products: [],
-      name: name,
-      description: description,
-      privacity: '1',
-    );
+        id: '2-c',
+        store: authService.storeAuth,
+        position: 5,
+        name: name,
+        visibility: isSwitchedVisibility,
+        description: description,
+        privacity: privacity,
+        products: []);
 
     widget.bloc.addNewCategory(this, newCategory);
 
@@ -542,9 +470,6 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
 
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
 
-    final name = (categoryBloc.name == null)
-        ? widget.category.name
-        : categoryBloc.name.trim();
     final description = (descriptionCtrl.text == "")
         ? widget.category.description
         : descriptionCtrl.text.trim();
@@ -552,18 +477,21 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
     final privacity = optionItemSelected;
 
     final editCategory = ProfileStoreCategory(
-      id: '',
+      id: widget.category.id,
       store: authService.storeAuth,
-      position: 0,
-      products: [],
-      name: name,
+      position: 5,
+      name: nameCtrl.text.trim(),
+      visibility: isSwitchedVisibility,
       description: description,
       privacity: privacity,
     );
 
-    final editCatalogoRes = await catalogoService.editCatalogo(editCategory);
+    widget.bloc.editCategory(this, editCategory);
+    Navigator.pop(context);
 
-    if (editCatalogoRes != null) {
+    //final editCatalogoRes = await catalogoService.editCatalogo(editCategory);
+
+    /*   if (editCatalogoRes != null) {
       if (editCatalogoRes.ok) {
         // widget.rooms.removeWhere((element) => element.id == editRoomRes.room.id)
         //  plantBloc.getPlant(widget.plant);
@@ -578,7 +506,7 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
     } else {
       showAlertError(
           context, 'Error del servidor', 'lo sentimos, Intentelo mas tarde');
-    }
+    } */
 
     //Navigator.pushReplacementNamed(context, '');
   }

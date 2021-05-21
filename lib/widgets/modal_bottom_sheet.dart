@@ -3,10 +3,11 @@ import 'dart:io';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_cart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 showMaterialCupertinoBottomSheet(
     BuildContext context, String titulo, String subtitulo) {
-  if (Platform.isIOS) {
+  if (UniversalPlatform.isIOS) {
     return showModalBottomSheet(
       backgroundColor: Colors.transparent,
       context: context,
@@ -25,7 +26,7 @@ showMaterialCupertinoBottomSheet(
             cartHome: true,
           )),
     );
-  } else if (Platform.isAndroid) {
+  } else if (UniversalPlatform.isAndroid) {
     showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) => CupertinoActionSheet(

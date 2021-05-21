@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:universal_platform/universal_platform.dart';
 // import 'package:provider/provider.dart';
 
 class GLMenuButton {
@@ -33,16 +34,32 @@ class GridLayoutMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => new _MenuModel(),
-      child: ClipRRect(
-        borderRadius: BorderRadius.all(Radius.circular(100)),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(
-            sigmaX: (show) ? 10.0 : 0,
-            sigmaY: (show) ? 10.0 : 0,
-          ),
-          child: AnimatedOpacity(
+      child: (!UniversalPlatform.isWeb)
+          ? ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(100)),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(
+                  sigmaX: (show) ? 10.0 : 0,
+                  sigmaY: (show) ? 10.0 : 0,
+                ),
+                child: AnimatedOpacity(
+                    duration: Duration(milliseconds: 500),
+                    opacity: (show) ? 0.7 : 0,
+                    child: Builder(builder: (BuildContext context) {
+                      Provider.of<_MenuModel>(context).backgroundColor =
+                          this.backgroundColor;
+                      Provider.of<_MenuModel>(context).activeColor =
+                          this.activeColor;
+                      Provider.of<_MenuModel>(context).inactiveColor =
+                          this.inactiveColor;
+
+                      return GLMenuBackGround(child: _MenuItems(items));
+                    })),
+              ),
+            )
+          : AnimatedOpacity(
               duration: Duration(milliseconds: 500),
-              opacity: (show) ? 0.7 : 0,
+              opacity: (show) ? 1.0 : 0,
               child: Builder(builder: (BuildContext context) {
                 Provider.of<_MenuModel>(context).backgroundColor =
                     this.backgroundColor;
@@ -52,8 +69,6 @@ class GridLayoutMenu extends StatelessWidget {
 
                 return GLMenuBackGround(child: _MenuItems(items));
               })),
-        ),
-      ),
     );
   }
 }

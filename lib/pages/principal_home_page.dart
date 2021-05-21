@@ -20,6 +20,7 @@ import 'package:flutter/rendering.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 class PrincipalPage extends StatefulWidget {
   @override
@@ -29,6 +30,8 @@ class PrincipalPage extends StatefulWidget {
 class _PrincipalPageState extends State<PrincipalPage>
     with WidgetsBindingObserver {
   SocketService socketService;
+
+  bool isWeb = UniversalPlatform.isWeb;
   // final notificationService = new NotificationService();
 
   Profile profile;
@@ -47,8 +50,9 @@ class _PrincipalPageState extends State<PrincipalPage>
       user: User(uid: '1', username: 'fiarvy'),
       name: 'Fiarvy',
     );
-    locationStatus();
-    WidgetsBinding.instance.addObserver(this);
+
+    if (!isWeb) locationStatus();
+    if (!isWeb) WidgetsBinding.instance.addObserver(this);
 
     super.initState();
 
