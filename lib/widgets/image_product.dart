@@ -1,6 +1,4 @@
-import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class OnboardingMessages extends StatelessWidget {
   final String title;
@@ -22,7 +20,6 @@ class OnboardingMessages extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size _size = MediaQuery.of(context).size;
-    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
     return Center(
       child: Container(

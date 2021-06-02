@@ -1,4 +1,5 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
+import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/models/user.dart';
 import 'package:australti_ecommerce_app/pages/search_home_page.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
@@ -14,6 +15,7 @@ class CustomAppBarHeaderPages extends StatefulWidget {
   final String title;
   final bool isAdd;
   final bool leading;
+  final bool showTitle;
 
   final Widget action;
 
@@ -26,7 +28,8 @@ class CustomAppBarHeaderPages extends StatefulWidget {
       this.action,
       this.leading = false,
       this.isAdd = false,
-      this.onPress});
+      this.onPress,
+      this.showTitle});
 
   @override
   _CustomAppBarHeaderState createState() => _CustomAppBarHeaderState();
@@ -38,6 +41,8 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
     super.initState();
   }
 
+  Store storeAuth;
+
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthenticationBLoC>(context);
@@ -48,16 +53,17 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
 
     // final size = MediaQuery.of(context).size;
 
+    storeAuth = authService.storeAuth;
+
     return Container(
-      color: (currentTheme.customTheme) ? Colors.black : Colors.white,
+      color: Colors.black,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(width: 10),
+          SizedBox(width: 20),
           (widget.leading)
               ? Container(
-                  padding: EdgeInsets.only(left: 0),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       color: currentTheme.currentTheme.cardColor),
@@ -91,13 +97,17 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
               : GestureDetector(
                   onTap: () {
                     {
-                      Navigator.push(context, profileAuthRoute(true));
+                      if (storeAuth.user.uid == '0') {
+                        Navigator.pushNamed(context, 'login');
+                      } else {
+                        Navigator.push(context, profileAuthRoute(true));
+                      }
                     }
                   },
                   child: Container(
                     padding: EdgeInsets.only(bottom: 15),
                     child: Hero(
-                      tag: 'user_auth_avatar',
+                      tag: 'user_auth_avatar-header',
                       child: Container(
                           width: 50,
                           height: 50,
@@ -112,15 +122,19 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                 ),
           Expanded(
             child: Center(
-              child: Container(
-                child: Text(
-                  widget.title,
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: (currentTheme.customTheme)
-                          ? Colors.white
-                          : Colors.black),
+              child: AnimatedOpacity(
+                duration: Duration(milliseconds: 100),
+                opacity: (widget.showTitle) ? 1.0 : 0.0,
+                child: Container(
+                  child: Text(
+                    widget.title,
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: (currentTheme.customTheme)
+                            ? Colors.white
+                            : Colors.black),
+                  ),
                 ),
               ),
             ),

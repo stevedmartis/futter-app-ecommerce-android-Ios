@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/responses/images_product_response.dart';
@@ -12,17 +11,15 @@ import 'package:australti_ecommerce_app/store_product_concept/store_product_data
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:mime_type/mime_type.dart';
 import "package:universal_html/html.dart" as html;
-import 'package:path/path.dart' as p;
 
 class StoreProductService with ChangeNotifier {
   final prefs = new AuthUserPreferences();
   ProfileStoreCategory _catalogo;
-  List<File> _images;
+
   ProfileStoreCategory get catalogo => this._catalogo;
 
   set catalogo(ProfileStoreCategory valor) {
@@ -124,6 +121,7 @@ class StoreProductService with ChangeNotifier {
     }
   }
 
+  String token = '';
   Future<ImagesResponse> uploadImagesProducts(
       List<http.MultipartFile> images, String id) async {
     final urlUploadMultiFiles =
@@ -132,7 +130,6 @@ class StoreProductService with ChangeNotifier {
     final urlUploadFile =
         ('${Environment.apiUrl}/api/aws/upload/image/product');
 
-    String token = '';
     (UniversalPlatform.isWeb)
         ? token = prefs.token
         : token = await this._storage.read(key: 'token');
@@ -140,7 +137,7 @@ class StoreProductService with ChangeNotifier {
     Map<String, String> headers = {
       "Content-Type": "image/mimeType",
       "x-token":
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2MDJjNDIwOTJjMzVkMzUxNjBkNjdkYzMiLCJpYXQiOjE2MjE1NDA5NTksImV4cCI6MTYyMTYyNzM1OX0.tHY7BxYlB482dpOdbhxd2BmxyMxrnhReIJQQwJB-XL4",
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2MDJjNDIwOTJjMzVkMzUxNjBkNjdkYzMiLCJpYXQiOjE2MjE2MzI2NjYsImV4cCI6MTYyMTcxOTA2Nn0.kgxLy2tEI7DJhhE0Eoq74EV5lIZCPIF5HMrHr4Huq54",
       'id': "602c42092c35d35160d67dc3",
     };
 

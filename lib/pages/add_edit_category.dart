@@ -184,9 +184,9 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
                           SizedBox(
                             height: 20,
                           ),
-                          _createVisibility()
+                          _createVisibility(),
                           //_createPrivacity(),
-                          /*  Center(
+                          /* Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [

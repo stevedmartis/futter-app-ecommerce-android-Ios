@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:australti_ecommerce_app/models/profile.dart';
+import 'package:australti_ecommerce_app/models/store.dart';
 
 LoginResponse loginResponseFromJson(String str) =>
     LoginResponse.fromJson(json.decode(str));
@@ -9,22 +10,19 @@ String loginResponseToJson(LoginResponse data) => json.encode(data.toJson());
 class LoginResponse {
   LoginResponse({
     this.ok,
-    this.profile,
+    this.store,
     this.token,
   });
 
   bool ok;
-  Profile profile;
+  Store store;
   String token;
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
         ok: json["ok"],
-        profile: Profile.fromJson(json["profile"]),
+        store: Store.fromJson(json["store"]),
         token: json["token"],
-        //json['profile'].cast<String>()
-
-//        Profile.fromJson(json["profile"]),
       );
 
-  Map<String, dynamic> toJson() => {"ok": ok, "profile": profile.toJson()};
+  Map<String, dynamic> toJson() => {"ok": ok, "profile": store.toJson()};
 }

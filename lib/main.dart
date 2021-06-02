@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'bloc_globals/notitification.dart';
+import 'grocery_store/grocery_store_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,8 +32,7 @@ void main() async {
     ChangeNotifierProvider(create: (_) => MyLocationBloc()),
     ChangeNotifierProvider(create: (_) => StoreCategoiesService()),
     ChangeNotifierProvider(create: (_) => StoreProductService()),
-
-    //ChangeNotifierProvider(create: (_) => GroceryStoreBLoC()),
+    ChangeNotifierProvider(create: (_) => GroceryStoreBLoC()),
     ChangeNotifierProvider(create: (_) => TabsViewScrollBLoC()),
   ], child: MyApp()));
 }

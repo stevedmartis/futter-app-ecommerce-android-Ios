@@ -4,6 +4,7 @@ import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile_store_user.dart';
+import 'package:provider/provider.dart';
 
 import 'grocery_store_cart.dart';
 
@@ -19,17 +20,17 @@ class GroceryStoreHome extends StatefulWidget {
 }
 
 class _GroceryStoreHomeState extends State<GroceryStoreHome> {
-  // final bloc = GroceryStoreBLoC();
-
   double get toolBarHeight => kToolbarHeight;
 
   void _onVerticalGesture(
     DragUpdateDetails details,
   ) {
+    final bloc = Provider.of<GroceryStoreBLoC>(context, listen: false);
+
     if (details.primaryDelta < -7) {
-      groceryStoreBloc.changeToCart();
+      bloc.changeToCart();
     } else if (details.primaryDelta > 12) {
-      groceryStoreBloc.changeToNormal();
+      bloc.changeToNormal();
     }
   }
 
@@ -70,10 +71,10 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    //final bloc = Provider.of<GroceryStoreBLoC>(context);
+    final bloc = Provider.of<GroceryStoreBLoC>(context);
 
     return AnimatedBuilder(
-        animation: groceryStoreBloc,
+        animation: bloc,
         builder: (context, _) {
           return Scaffold(
             backgroundColor: Colors.black,
@@ -84,8 +85,7 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                   curve: Curves.decelerate,
                   left: 0,
                   right: 0,
-                  top:
-                      _getTopForWhitePanel(groceryStoreBloc.groceryState, size),
+                  top: _getTopForWhitePanel(bloc.groceryState, size),
                   height: size.height - toolBarHeight,
                   child: ClipRRect(
                     borderRadius: BorderRadius.only(
@@ -112,12 +112,11 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                   duration: _panelTransition,
                   left: 0,
                   right: 0,
-                  top:
-                      _getTopForBlackPanel(groceryStoreBloc.groceryState, size),
+                  top: _getTopForBlackPanel(bloc.groceryState, size),
                   height: size.height - toolBarHeight,
                   child: GestureDetector(
                     onVerticalDragUpdate: _onVerticalGesture,
-                    onTap: () => groceryStoreBloc.changeToCart(),
+                    onTap: () => bloc.changeToCart(),
                     behavior: HitTestBehavior.opaque,
                     child: Container(
                       color: Colors.black,
@@ -130,8 +129,7 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                               duration: _panelTransition,
                               child: SizedBox(
                                 height: toolBarHeight,
-                                child: groceryStoreBloc.groceryState ==
-                                        GroceryState.normal
+                                child: bloc.groceryState == GroceryState.normal
                                     ? Row(
                                         children: [
                                           Icon(
@@ -151,8 +149,7 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                                                   child: Container(
                                                       child: Row(
                                                     children: List.generate(
-                                                      groceryStoreBloc
-                                                          .cart.length,
+                                                      bloc.cart.length,
                                                       (index) => Padding(
                                                         padding:
                                                             const EdgeInsets
@@ -162,20 +159,23 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                                                         child: Stack(
                                                           children: [
                                                             Hero(
-                                                              tag:
-                                                                  'list_${groceryStoreBloc.cart[index].product.name}details',
+                                                              tag: 'list_${bloc.cart[index].product.images[0].url}' +
+                                                                  '${bloc.cart[index].product.name}' +
+                                                                  'details' +
+                                                                  '0',
                                                               child:
                                                                   CircleAvatar(
                                                                 backgroundColor:
                                                                     Colors
                                                                         .white,
                                                                 backgroundImage:
-                                                                    AssetImage(
-                                                                  groceryStoreBloc
+                                                                    NetworkImage(
+                                                                  bloc
                                                                       .cart[
                                                                           index]
                                                                       .product
-                                                                      .image,
+                                                                      .images[0]
+                                                                      .url,
                                                                 ),
                                                               ),
                                                             ),
@@ -187,7 +187,7 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                                                                 backgroundColor:
                                                                     Colors.red,
                                                                 child: Text(
-                                                                  groceryStoreBloc
+                                                                  bloc
                                                                       .cart[
                                                                           index]
                                                                       .quantity
@@ -212,7 +212,7 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                                           CircleAvatar(
                                             backgroundColor: Color(0xFF1CD60B),
                                             child: Text(
-                                              groceryStoreBloc
+                                              bloc
                                                   .totalCartElements()
                                                   .toString(),
                                               style: TextStyle(

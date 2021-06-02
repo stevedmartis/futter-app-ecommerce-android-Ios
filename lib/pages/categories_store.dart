@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/models/profile.dart';
 import 'package:australti_ecommerce_app/pages/add_edit_category.dart';
-import 'package:australti_ecommerce_app/pages/single_image_upload.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/services/catalogo.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
@@ -36,6 +35,8 @@ class _CatalogosListPagePageState extends State<CatalogosListPage> {
 
   @override
   void initState() {
+    _scrollController = ScrollController()..addListener(() => setState(() {}));
+
     super.initState();
   }
 
@@ -43,6 +44,28 @@ class _CatalogosListPagePageState extends State<CatalogosListPage> {
   void dispose() {
     super.dispose();
     // roomBloc.disposeRooms();
+  }
+
+  ScrollController _scrollController;
+
+  double get maxHeight => 400 + MediaQuery.of(context).padding.top;
+  double get minHeight => MediaQuery.of(context).padding.bottom;
+
+  void _snapAppbar() {
+    final scrollDistance = maxHeight - minHeight;
+
+    if (_scrollController.offset > 0 &&
+        _scrollController.offset < scrollDistance) {
+      final double snapOffset =
+          _scrollController.offset / scrollDistance > 0.5 ? scrollDistance : 0;
+
+      Future.microtask(() => _scrollController.animateTo(snapOffset,
+          duration: Duration(milliseconds: 200), curve: Curves.easeIn));
+    }
+  }
+
+  bool get _showTitle {
+    return _scrollController.hasClients && _scrollController.offset >= 70;
   }
 
   @override
@@ -53,13 +76,22 @@ class _CatalogosListPagePageState extends State<CatalogosListPage> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: currentTheme.scaffoldBackgroundColor,
-        body: CustomScrollView(
-            physics: const BouncingScrollPhysics(
-                parent: AlwaysScrollableScrollPhysics()),
-            slivers: <Widget>[
-              makeHeaderCustom('Mi Tienda'),
-              makeListCatalogos(context)
-            ]),
+        body: NotificationListener<ScrollEndNotification>(
+          onNotification: (_) {
+            _snapAppbar();
+
+            return false;
+          },
+          child: CustomScrollView(
+              physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics()),
+              controller: _scrollController,
+              slivers: <Widget>[
+                makeHeaderCustom('Mis Catalogos'),
+                makeListCatalogos(context)
+                //makeListProducts(context)
+              ]),
+        ),
       ),
     );
   }
@@ -89,6 +121,7 @@ class _CatalogosListPagePageState extends State<CatalogosListPage> {
                 child: Container(
                     color: Colors.black,
                     child: CustomAppBarHeaderPages(
+                        showTitle: _showTitle,
                         title: title,
                         isAdd: true,
                         action: Container(),
@@ -210,15 +243,11 @@ class _CatalogsListState extends State<CatalogsList>
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: (catalogos.length > 0)
-            ? Container(
-                height: 160 * (catalogos.length).toDouble(),
-                child: _buildCatalogoWidget())
-            : Container(
-                padding: EdgeInsets.all(50),
-                child: Center(child: Text('Vacio')),
-              ));
-
+        child: Container(
+            height: (catalogos.length > 0)
+                ? 160 * (catalogos.length).toDouble()
+                : 160,
+            child: _buildCatalogoWidget()));
     /*  Container(
       height: double.maxFinite,
       child: StreamBuilder<StoreCategoriesResponse>(
@@ -284,7 +313,7 @@ class _CatalogsListState extends State<CatalogsList>
         Container(
           padding: EdgeInsets.only(top: 20, left: 20),
           child: Text(
-            'Catalogos',
+            'Mis Catalogos',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
           ),
         ),
@@ -360,9 +389,7 @@ class _CatalogsListState extends State<CatalogsList>
                                       isDefaultAction: true,
                                       child: Text(
                                         'Eliminar',
-                                        style: TextStyle(
-                                            color: currentTheme
-                                                .currentTheme.accentColor),
+                                        style: TextStyle(color: Colors.red),
                                       ),
                                       onPressed: () => {
                                         Navigator.of(context).pop(true),

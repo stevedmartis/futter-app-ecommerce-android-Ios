@@ -25,7 +25,7 @@ import "package:universal_html/html.dart" as html;
 import 'package:universal_platform/universal_platform.dart';
 
 class AddUpdateProductPage extends StatefulWidget {
-  AddUpdateProductPage({this.product, this.isEdit = false, this.category});
+  AddUpdateProductPage({this.product, @required this.isEdit, this.category});
 
   final ProfileStoreProduct product;
   final bool isEdit;
@@ -83,8 +83,10 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
     errorRequired = (widget.isEdit) ? false : true;
     nameCtrl.text = widget.product.name;
     descriptionCtrl.text = widget.product.description;
+    priceCtrl.text = widget.product.price.toString();
 
     setState(() {
+      if (widget.isEdit) images.addAll(widget.product.images);
       images.add("Add Image");
       images.add("Add Image");
       images.add("Add Image");
@@ -133,34 +135,6 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
 
     super.dispose();
   }
-
-/*   void _showPicker() {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return SafeArea(
-            child: Container(
-              child: new Wrap(
-                children: <Widget>[
-                  new ListTile(
-                      leading: new Icon(Icons.photo_library),
-                      title: new Text('Fotos en Galeria'),
-                      onTap: () {
-                        Navigator.push(context, singleUploadImageRoute());
-                      }),
-                  new ListTile(
-                    leading: new Icon(Icons.photo_camera),
-                    title: new Text('Camera'),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
-  } */
 
   @override
   Widget build(BuildContext context) {
@@ -274,7 +248,10 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
                                                 ),
                                               ))),
                               )
-                            : SingleImageUpload(images: images)),
+                            : SingleImageUpload(
+                                images: images,
+                                isEdit: widget.isEdit,
+                              )),
                   )
                 ],
               ),
@@ -299,40 +276,6 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
                         height: 20,
                       ),
                       _createPrice(),
-
-                      /*   Center(
-                        child: GestureDetector(
-                          onTap: () {
-                            getIamgePicker();
-                          },
-                          child: CircleAvatar(
-                            radius: 55,
-                            backgroundColor: Color(0xffFDCF09),
-                            child: _pickedImages != null
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(50),
-                                    child: Image.file(
-                                      _pickedImages,
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.fitHeight,
-                                    ),
-                                  )
-                                : Container(
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        borderRadius:
-                                            BorderRadius.circular(50)),
-                                    width: 100,
-                                    height: 100,
-                                    child: Icon(
-                                      Icons.camera_alt,
-                                      color: Colors.grey[800],
-                                    ),
-                                  ),
-                          ),
-                        ),
-                      ) */
 
                       //  _createVisibility()
                       //_createPrivacity(),
@@ -386,8 +329,6 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
         reader.readAsDataUrl(file);
 
         reader.onLoadEnd.listen((event) async {
-          print('name!! ' + file.name);
-          print('relativepath!!  ' + file.relativePath);
           _handleResult(reader.result, file);
 
           var _bytesData =
@@ -762,8 +703,7 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
       final productProvider =
           Provider.of<TabsViewScrollBLoC>(context, listen: false);
 
-      productProvider.addProductsByCategory(
-          newProduct, widget.category.id, this);
+      productProvider.addProductsByCategory(newProduct);
 
       // widget.bloc.addProductsByCategory(newProduct, widget.category.id, this);
 

@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:australti_ecommerce_app/models/grocery_Store.dart';
+import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_product.dart';
@@ -12,15 +16,22 @@ class GroceryStoreBLoC with ChangeNotifier {
   GroceryState groceryState = GroceryState.normal;
   List<GroceryProduct> catalog = List.unmodifiable(groceryProducts);
   List<GroceryProductItem> cart = [];
+  bool isReload = true;
+  final prefs = new AuthUserPreferences();
+
+  void changeToCart() {
+    groceryState = GroceryState.cart;
+    notifyListeners();
+  }
 
   void changeToNormal() {
     groceryState = GroceryState.normal;
     notifyListeners();
   }
 
-  void changeToCart() {
-    groceryState = GroceryState.cart;
-    notifyListeners();
+  void changeReaload() {
+    isReload = false;
+    //notifyListeners();
   }
 
   void changeToDetails() {
@@ -28,8 +39,14 @@ class GroceryStoreBLoC with ChangeNotifier {
     notifyListeners();
   }
 
+  void cartSavetoCart(List<GroceryProductItem> cartSave) {
+    cart = cartSave;
+    notifyListeners();
+  }
+
   void deleteProduct(GroceryProductItem productItem) {
     cart.remove(productItem);
+    totalPriceElements();
     notifyListeners();
   }
 
@@ -53,6 +70,8 @@ class GroceryStoreBLoC with ChangeNotifier {
     }
 
     cart.add(GroceryProductItem(product: product, quantity: quantity));
+
+    prefs.setCart = cart;
     notifyListeners();
   }
 
@@ -66,16 +85,6 @@ class GroceryStoreBLoC with ChangeNotifier {
         (previousValue, element) =>
             previousValue + (element.quantity * element.product.price),
       );
-}
-
-class GroceryProductItem {
-  GroceryProductItem({this.quantity = 1, @required this.product});
-  int quantity;
-  final ProfileStoreProduct product;
-
-  void increment(int newQuantity) {
-    quantity += newQuantity;
-  }
 }
 
 final groceryStoreBloc = GroceryStoreBLoC();

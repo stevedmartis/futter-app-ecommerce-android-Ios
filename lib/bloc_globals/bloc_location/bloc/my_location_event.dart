@@ -7,3 +7,9 @@ class OnLocationChange extends MyLocationEvent {
   final LatLng positionLocation;
   OnLocationChange(this.positionLocation);
 }
+
+class OnPalcesChange extends MyLocationEvent {
+  final List<PlaceSearch> searchResults;
+
+  OnPalcesChange(this.searchResults);
+}

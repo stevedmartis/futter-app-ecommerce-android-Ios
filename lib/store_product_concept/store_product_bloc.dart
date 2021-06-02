@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:australti_ecommerce_app/bloc_globals/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
@@ -85,31 +83,28 @@ class TabsViewScrollBLoC with ChangeNotifier {
     final item = tabs.firstWhere((item) => item.category.id == editCategory.id,
         orElse: () => null);
 
-    print(item);
-
     item.category.name = editCategory.name;
     item.category.description = editCategory.description;
     item.category.visibility = editCategory.visibility;
-
-    print(item);
-
-    print(rappiCategories);
 
     init(ticket, editCategory.store.user.uid);
   }
 
   void productsByCategory(String categoryId) {
     final category = rappiCategories.where((i) => i.id == categoryId);
-    print(category.single);
 
     productsByCategoryList = category.single.products;
   }
 
-  void addProductsByCategory(
-      ProfileStoreProduct product, String categoryId, TickerProvider ticket) {
+  void addProductsByCategory(ProfileStoreProduct product) {
     productsByCategoryList.add(product);
 
-    print(rappiCategories);
+    notifyListeners();
+  }
+
+  void removeProductById(String productId) {
+    productsByCategoryList.removeWhere((product) => product.id == productId);
+
     notifyListeners();
   }
 
@@ -222,11 +217,10 @@ class TabsViewScrollBLoC with ChangeNotifier {
     scrollController.dispose();
     tabController.dispose();
     imagesProducts.clear();
-
+    disposeImages();
     super.dispose();
   }
 
-  @override
   void disposeImages() {
     imagesProducts = [];
     imagesProducts.clear();

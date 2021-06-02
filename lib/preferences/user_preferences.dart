@@ -1,3 +1,10 @@
+import 'dart:convert';
+
+import 'package:australti_ecommerce_app/models/grocery_Store.dart';
+import 'package:australti_ecommerce_app/models/place_Search.dart';
+import 'package:australti_ecommerce_app/responses/place_search_response.dart';
+import 'package:geocoder/model.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthUserPreferences {
@@ -12,6 +19,11 @@ class AuthUserPreferences {
 
   SharedPreferences _prefs;
 
+  LatLng newPosition;
+  String addresName = '';
+  List<Address> addresses = [];
+  bool isLocationCurrent = false;
+
   initPrefs() async {
     this._prefs = await SharedPreferences.getInstance();
   }
@@ -22,6 +34,78 @@ class AuthUserPreferences {
 
   get token {
     return _prefs.getString('token') ?? "";
+  }
+
+  set setAddreses(Address address) {
+    Map<String, dynamic> map = {
+      'locality': address.locality,
+      'featureName': address.featureName,
+      'countryName': address.countryName,
+      'adminArea': address.adminArea
+    };
+    String rawJson = jsonEncode(map);
+
+    _prefs.setString('address', jsonEncode(rawJson));
+  }
+
+  get addressSave {
+    final address = json.decode(_prefs.getString('address') ?? '');
+    return jsonDecode(address);
+  }
+
+  set setLocationCurrent(bool isCurrent) {
+    _prefs.setBool('locationCurrent', isCurrent);
+  }
+
+  get locationCurrent {
+    return _prefs.getBool('locationCurrent') ?? false;
+  }
+
+  set setLocationSearch(bool isCurrent) {
+    _prefs.setBool('locationSearch', isCurrent);
+  }
+
+  get locationSearch {
+    return _prefs.getBool('locationSearch') ?? false;
+  }
+
+  set setSearchAddreses(PlaceSearch place) {
+    Map<String, dynamic> map = {
+      'description': place.description,
+      'placeId': place.placeId,
+      'mainText': place.structuredFormatting.mainText,
+      'secondaryText': place.structuredFormatting.secondaryText,
+      'number': place.structuredFormatting.number
+    };
+
+    String rawJson = jsonEncode(map);
+
+    _prefs.setString('placeSearch', jsonEncode(rawJson));
+  }
+
+  get addressSearchSave {
+    final place = json.decode(_prefs.getString('placeSearch') ?? '');
+
+    final fromjson = placeSearchFromJson(place);
+
+    return fromjson;
+  }
+
+  set setCart(List<GroceryProductItem> cart) {
+    final aa = cartProductsToJson(cart);
+
+    _prefs.setString('cart', aa);
+  }
+
+  get getCart {
+    final list = _prefs.getString('cart') ?? '';
+
+    final cart = cartProductsFromJson(list);
+
+    // GroceryProductItem.decode(cart);
+
+    print(cart);
+    return cart;
   }
 
   // GET y SET del Genero

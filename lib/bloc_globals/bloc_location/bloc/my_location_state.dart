@@ -3,16 +3,16 @@ part of 'my_location_bloc.dart';
 @immutable
 class MyLocationState {
   final bool following;
-  final bool isLocationExist;
+  final bool isLocationCurrent;
   final LatLng location;
 
   MyLocationState(
-      {this.following = true, this.isLocationExist = false, this.location});
+      {this.following = true, this.isLocationCurrent = false, this.location});
 
   MyLocationState copyWith(
-          {bool following, bool isLocationExist, LatLng location}) =>
+          {bool following, bool isLocationCurrent, LatLng location}) =>
       MyLocationState(
           following: following ?? this.following,
-          isLocationExist: isLocationExist ?? this.isLocationExist,
+          isLocationCurrent: isLocationCurrent ?? this.isLocationCurrent,
           location: location ?? this.location);
 }

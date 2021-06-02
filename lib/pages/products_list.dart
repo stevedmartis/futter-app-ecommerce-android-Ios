@@ -1,8 +1,6 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/pages/add_edit_product.dart';
-import 'package:australti_ecommerce_app/pages/carousel_images_product.dart';
-import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
@@ -35,11 +33,33 @@ Store storeAuth;
 class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
   final product = new ProfileStoreProduct(id: '', name: '');
 
+  ScrollController _scrollController;
+
   double get maxHeight => 400 + MediaQuery.of(context).padding.top;
   double get minHeight => MediaQuery.of(context).padding.bottom;
 
+  void _snapAppbar() {
+    final scrollDistance = maxHeight - minHeight;
+
+    print(_scrollController.offset);
+    if (_scrollController.offset > 0 &&
+        _scrollController.offset < scrollDistance) {
+      final double snapOffset =
+          _scrollController.offset / scrollDistance > 0.5 ? scrollDistance : 0;
+
+      Future.microtask(() => _scrollController.animateTo(snapOffset,
+          duration: Duration(milliseconds: 200), curve: Curves.easeIn));
+    }
+  }
+
+  bool get _showTitle {
+    return _scrollController.hasClients && _scrollController.offset >= 70;
+  }
+
   @override
   void initState() {
+    _scrollController = ScrollController()..addListener(() => setState(() {}));
+
     final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
 
     storeAuth = authBloc.storeAuth;
@@ -85,17 +105,26 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
 
     return SafeArea(
       child: Scaffold(
-        backgroundColor: currentTheme.scaffoldBackgroundColor,
+          backgroundColor: currentTheme.scaffoldBackgroundColor,
 
-        // tab bar view
-        body: CustomScrollView(
-            physics: const BouncingScrollPhysics(
-                parent: AlwaysScrollableScrollPhysics()),
-            slivers: <Widget>[
-              makeHeaderCustom(widget.category.name),
-              makeListProducts(context)
-            ]),
-      ),
+          // tab bar view
+
+          body: NotificationListener<ScrollEndNotification>(
+            onNotification: (_) {
+              _snapAppbar();
+
+              return false;
+            },
+            child: CustomScrollView(
+                physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics()),
+                controller: _scrollController,
+                slivers: <Widget>[
+                  makeHeaderCustom(widget.category.name),
+                  makeListProducts(context)
+                  //makeListProducts(context)
+                ]),
+          )),
     );
   }
 
@@ -113,6 +142,7 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
                 child: Container(
                     color: Colors.black,
                     child: CustomAppBarHeaderPages(
+                      showTitle: _showTitle,
                       title: title,
                       isAdd: true,
                       leading: true,
@@ -146,30 +176,44 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
   }
 
   Widget _buildProductsList() {
-    return Stack(
-      children: [
-        Container(
-          padding: EdgeInsets.only(top: 20, left: 20),
-          child: Text(
-            'Productos',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+    return Padding(
+      padding: EdgeInsets.all(20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            child: Text(
+              widget.category.name,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+            ),
           ),
-        ),
-        Container(
-          margin: EdgeInsets.only(top: 70),
-          child: ListView.builder(
-            shrinkWrap: true,
-            controller: widget.bloc.scrollController,
-            itemCount: productsByCategoryList.length,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            itemBuilder: (context, index) {
-              final item = productsByCategoryList[index];
+          Container(
+            padding: EdgeInsets.only(top: 10, left: 0),
+            child: Text(
+              'PRODUCTOS',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: Colors.grey),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 10),
+            child: ListView.builder(
+              shrinkWrap: true,
+              controller: widget.bloc.scrollController,
+              itemCount: productsByCategoryList.length,
+              padding: const EdgeInsets.symmetric(horizontal: 0),
+              itemBuilder: (context, index) {
+                final item = productsByCategoryList[index];
 
-              return _ProfileAuthStoreProductItem(item);
-            },
-          ),
-        )
-      ],
+                return _ProfileAuthStoreProductItem(item, widget.category);
+              },
+            ),
+          )
+        ],
+      ),
     );
   }
 }
@@ -198,8 +242,9 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
 } */
 
 class _ProfileAuthStoreProductItem extends StatelessWidget {
-  const _ProfileAuthStoreProductItem(this.product);
+  const _ProfileAuthStoreProductItem(this.product, this.category);
   final ProfileStoreProduct product;
+  final ProfileStoreCategory category;
 
   @override
   Widget build(BuildContext context) {
@@ -214,7 +259,10 @@ class _ProfileAuthStoreProductItem extends StatelessWidget {
               return FadeTransition(
                 opacity: animation,
                 child: ProductStoreDetails(
-                    product: product, onProductAdded: (int quantity) {}),
+                    category: category,
+                    isAuthUser: true,
+                    product: product,
+                    onProductAdded: (int quantity) {}),
               );
             },
           ),

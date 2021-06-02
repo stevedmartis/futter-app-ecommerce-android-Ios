@@ -58,6 +58,18 @@ class StoreBLoC with ChangeNotifier {
     //notifyListeners();
   }
 
+  Store getStoreByProducts(String storeId) {
+    final store = storesList.singleWhere((i) => i.user.uid == storeId);
+
+    return store;
+  }
+
+  Store getProductsByStore(String storeId) {
+    final store = storesList.singleWhere((i) => i.user.uid == storeId);
+
+    return store;
+  }
+
   void charge() {}
 
   void changeToLiqueur() {

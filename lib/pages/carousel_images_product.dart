@@ -12,8 +12,6 @@ class CarouselImagesProduct extends StatefulWidget {
 class _CarouselImagesProductState extends State<CarouselImagesProduct> {
   @override
   Widget build(BuildContext context) {
-    Size _size = MediaQuery.of(context).size;
-
     return Scaffold(
         resizeToAvoidBottomInset: false,
         body: SingleChildScrollView(

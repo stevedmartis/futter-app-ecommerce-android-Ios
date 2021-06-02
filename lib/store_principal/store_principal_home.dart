@@ -1,8 +1,11 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
+import 'package:australti_ecommerce_app/models/grocery_Store.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/store_principal/store_Service.dart';
@@ -13,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 
 class StorePrincipalHome extends StatefulWidget {
@@ -23,10 +27,13 @@ class StorePrincipalHome extends StatefulWidget {
 class _StorePrincipalHomeState extends State<StorePrincipalHome> {
   ScrollController _scrollController;
   bool _isVisible = true;
+  final prefs = new AuthUserPreferences();
 
   bool get _showTitle {
     return _scrollController.hasClients && _scrollController.offset >= 150;
   }
+
+  bool isItems = false;
 
   ValueNotifier<bool> notifierBottomBarVisible = ValueNotifier(true);
 
@@ -35,9 +42,15 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
   @override
   void initState() {
+    final bloc = Provider.of<GroceryStoreBLoC>(context, listen: false);
+
     // final bloc = CustomProvider.storeBlocIn(context);
     this.bottomControll();
     //  _scrollController = ScrollController()..addListener(() => setState(() {}));
+
+    if (bloc.isReload) this.getCartSave();
+
+    bloc.changeReaload();
 
     super.initState();
   }
@@ -92,13 +105,42 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     }
   }
 
+  getCartSave() async {
+    final bloc = Provider.of<GroceryStoreBLoC>(context, listen: false);
+
+    final stringCart = await getListCart('cart');
+
+    final cart = cartProductsFromJson(stringCart);
+    if (cart.length > 0) {
+      bloc.cartSavetoCart(cart);
+      bloc.totalCartElements();
+
+      setState(() {
+        isItems = bloc.totalCartElements() > 0 ? true : false;
+      });
+    }
+  }
+
+  Future<String> getListCart(String key) async {
+    SharedPreferences myPrefs = await SharedPreferences.getInstance();
+
+    return myPrefs.getString(key) ?? '[]';
+  }
+
+  Store storeAuth;
+
   @override
   Widget build(BuildContext context) {
     StoreService _selected = storeService.last;
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+    final authService = Provider.of<AuthenticationBLoC>(context);
 
     final bloc = Provider.of<StoreBLoC>(context);
-    final isItems = groceryStoreBloc.totalCartElements() > 0 ? true : false;
+
+    final groceryBloc = Provider.of<GroceryStoreBLoC>(context);
+
+    isItems = groceryBloc.totalCartElements() > 0 ? true : false;
+    storeAuth = authService.storeAuth;
 
     return Scaffold(
         backgroundColor: Colors.black,
@@ -119,7 +161,12 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                 leading: GestureDetector(
                   onTap: () {
                     {
-                      Navigator.push(context, profileAuthRoute(true));
+                      if (storeAuth.user.uid == '0') {
+                        authService.redirect = 'profile';
+                        Navigator.pushNamed(context, 'login');
+                      } else {
+                        Navigator.push(context, profileAuthRoute(true));
+                      }
                     }
                   },
                   child: Hero(
@@ -170,10 +217,10 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                             Positioned(
                               top: 29,
                               left: 22,
-                              child: (groceryStoreBloc.totalCartElements() > 0)
+                              child: (groceryBloc.totalCartElements() > 0)
                                   ? Container(
                                       child: Text(
-                                        groceryStoreBloc
+                                        groceryBloc
                                             .totalCartElements()
                                             .toString(),
                                         style: TextStyle(
@@ -603,6 +650,7 @@ Address nameAddress = Address(addressLine: '');
 class _StoreServiceDetailsState extends State<StoreServiceDetails>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
+  final prefs = new AuthUserPreferences();
 
   final _movement = -100.0;
 
@@ -614,6 +662,7 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
     );
 
     _controller.repeat(reverse: true);
+
     super.initState();
   }
 
@@ -669,54 +718,78 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                   ),
                 ),
               ),
-              Positioned(
-                  top: 20,
-                  left: 10,
-                  right: 10,
-                  height: 40,
-                  child: FadeInDown(
-                    child: (myLocationBloc.addresName != '')
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                child: Icon(
-                                  Icons.location_on,
-                                  color: currentTheme.accentColor,
-                                ),
+              if (prefs.locationCurrent)
+                Positioned(
+                    top: 20,
+                    left: 10,
+                    right: 10,
+                    height: 40,
+                    child: AnimatedOpacity(
+                        opacity: (prefs.locationCurrent) ? 1.0 : 0.0,
+                        duration: Duration(milliseconds: 200),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              child: Icon(
+                                Icons.location_on,
+                                color: currentTheme.accentColor,
                               ),
-                              SizedBox(
-                                width: 10,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  prefs.locationCurrent
+                                      ? '${prefs.addressSave['featureName']}'
+                                      : '...',
+                                  //'${state.location.latitude}',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: Colors.white70),
+                                )),
+                          ],
+                        ))),
+              if (prefs.locationSearch)
+                Positioned(
+                    top: 20,
+                    left: 10,
+                    right: 10,
+                    height: 40,
+                    child: AnimatedOpacity(
+                        opacity: (prefs.locationSearch) ? 1.0 : 0.0,
+                        duration: Duration(milliseconds: 200),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              child: Icon(
+                                Icons.location_on,
+                                color: currentTheme.accentColor,
                               ),
-                              Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    myLocationBloc.state.isLocationExist
-                                        ? '${myLocationBloc.addresName}'
-                                        : '...',
-                                    //'${state.location.latitude}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: Colors.white70),
-                                  )),
-                            ],
-                          )
-                        : Container(),
-                  )
-
-                  /* BlocBuilder<MyLocationBloc, MyLocationState>(
-                        builder: (context, state) {
-                      print(state);
-                      return Text(
-                        '${myLocationBloc.state.isLocationExist}',
-                        //'${state.location.latitude}',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
-                      );
-                    })), */
-                  ),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  prefs.locationSearch
+                                      ? '${prefs.addressSearchSave.mainText}'
+                                      : '...',
+                                  //'${state.location.latitude}',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: Colors.white70),
+                                )),
+                          ],
+                        ))),
             ],
           );
         });
@@ -724,7 +797,7 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
 }
 
 Widget createLocation() {
-  if (!myLocationBloc.state.isLocationExist)
+  if (!myLocationBloc.state.isLocationCurrent)
     return Text(
       '...',
       //'${state.location.latitude}',
@@ -732,7 +805,7 @@ Widget createLocation() {
     );
 
   return Text(
-    '${myLocationBloc.state.isLocationExist}',
+    '${myLocationBloc.state.isLocationCurrent}',
     //'${state.location.latitude}',
     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
   );

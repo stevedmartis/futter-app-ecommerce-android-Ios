@@ -134,10 +134,8 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
                     return Container(
                         child: _ProfileStoreCategoryItem(item.category));
                   } else {
-                    return (widget.isAuthUser)
-                        ? _ProfileAuthStoreProductItem(
-                            item.product, widget.isAuthUser)
-                        : _ProfileStoreProductItem(item.product);
+                    return _ProfileStoreProductItem(
+                        item.product, item.category);
                   }
                 },
               ),
@@ -203,96 +201,6 @@ class _ProfileStoreCategoryItem extends StatelessWidget {
   }
 }
 
-class _ProfileAuthStoreProductItem extends StatelessWidget {
-  const _ProfileAuthStoreProductItem(this.product, this.isAuthUser);
-  final ProfileStoreProduct product;
-  final bool isAuthUser;
-  @override
-  Widget build(BuildContext context) {
-    final currentTheme = Provider.of<ThemeChanger>(context);
-
-    return GestureDetector(
-      onTap: () async {
-        await Navigator.of(context).push(
-          PageRouteBuilder(
-            transitionDuration: const Duration(milliseconds: 800),
-            pageBuilder: (context, animation, __) {
-              return FadeTransition(
-                opacity: animation,
-                child: ProductStoreDetails(
-                    product: product, onProductAdded: (int quantity) {}),
-              );
-            },
-          ),
-        );
-      },
-      child: Container(
-        height: productHeight,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5),
-          child: Card(
-            elevation: 6,
-            shadowColor: Colors.black54,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            color: currentTheme.currentTheme.cardColor,
-            child: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Hero(
-                      tag: 'list_${product.name}',
-                      child: Image.network(product.images[0].url)),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        product.name,
-                        style: TextStyle(
-                          color: (currentTheme.customTheme)
-                              ? Colors.white
-                              : _textColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        product.description,
-                        maxLines: 2,
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 10,
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        '\$${product.price.toStringAsFixed(2)}',
-                        style: TextStyle(
-                          color: (currentTheme.customTheme)
-                              ? Colors.white
-                              : _textColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 void _listenNotification(context) {
   final notifiModel = Provider.of<NotificationModel>(context, listen: false);
   int number = notifiModel.numberNotifiBell;
@@ -306,20 +214,20 @@ void _listenNotification(context) {
 }
 
 class _ProfileStoreProductItem extends StatelessWidget {
-  const _ProfileStoreProductItem(
-    this.product,
-  );
+  const _ProfileStoreProductItem(this.product, this.category);
+
+  final ProfileStoreCategory category;
 
   final ProfileStoreProduct product;
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context);
 
-    //final bloc = Provider.of<GroceryStoreBLoC>(context);
+    final bloc = Provider.of<GroceryStoreBLoC>(context);
 
     return GestureDetector(
       onTap: () async {
-        groceryStoreBloc.changeToDetails();
+        bloc.changeToDetails();
         await Navigator.of(context).push(
           PageRouteBuilder(
             transitionDuration: const Duration(milliseconds: 800),
@@ -327,9 +235,11 @@ class _ProfileStoreProductItem extends StatelessWidget {
               return FadeTransition(
                 opacity: animation,
                 child: ProductStoreDetails(
+                    category: category,
+                    isAuthUser: true,
                     product: product,
                     onProductAdded: (int quantity) {
-                      groceryStoreBloc.addProduct(product, quantity);
+                      bloc.addProduct(product, quantity);
 
                       _listenNotification(context);
                     }),
@@ -337,7 +247,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
             },
           ),
         );
-        groceryStoreBloc.changeToNormal();
+        bloc.changeToNormal();
       },
       child: Container(
         height: productHeight,
@@ -355,7 +265,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Hero(
-                      tag: 'list_${product.name}',
+                      tag: 'list_${product.images[0].url + product.name + '0'}',
                       child: Image.network(product.images[0].url)),
                 ),
                 const SizedBox(width: 10),

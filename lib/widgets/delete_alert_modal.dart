@@ -52,7 +52,7 @@ showAlertDeleteModalMatCup(String title, String subTitle, context) {
           isDefaultAction: true,
           child: Text(
             'Eliminar',
-            style: TextStyle(color: currentTheme.accentColor),
+            style: TextStyle(color: Colors.red),
           ),
           onPressed: () => {
             Navigator.of(context).pop(true),

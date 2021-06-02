@@ -40,6 +40,7 @@ dependencies:
   mime_type: ^1.0.0
   path: ^1.8.0
   carousel_slider: ^3.0.0
+  sign_in_with_apple: ^3.0.0
  
  
 
@@ -52,6 +53,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/logos/
     - assets/empty/
     - assets/nike_shoes_store/
     - assets/vinyl_album/

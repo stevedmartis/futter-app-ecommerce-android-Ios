@@ -64,6 +64,7 @@ class ProfileStoreProduct {
       this.image,
       this.createdAt,
       this.updatedAt,
+      this.user,
       this.images});
   String id;
   String name;
@@ -74,19 +75,32 @@ class ProfileStoreProduct {
 
   DateTime createdAt;
   DateTime updatedAt;
+  String user;
 
   factory ProfileStoreProduct.fromJson(Map<String, dynamic> json) =>
       new ProfileStoreProduct(
         id: json["id"],
         name: json['name'],
         image: json["image"],
+        user: json["user"],
         description: json['description'],
         price: json["price"],
-        createdAt: DateTime.parse(json["createdAt"]),
-        updatedAt: DateTime.parse(json["updatedAt"]),
-
-        //images: List<Image>.from(json["images"].map((x) => Image.fromJson(x))),
+/*         createdAt: DateTime.parse(json["createdAt"]),
+        updatedAt: DateTime.parse(json["updatedAt"]), */
+        images: List<ImageProduct>.from(
+            json["images"].map((x) => ImageProduct.fromJson(x))),
       );
+
+  Map<String, dynamic> toJson() => {
+        //  "createAt": createdAt,
+        "description": description,
+        "id": id,
+        "images": List<dynamic>.from(images.map((x) => x.toJson())),
+        "name": name,
+        "price": price,
+        "updateAt": updatedAt,
+        "user": user
+      };
 }
 
 class ImageProduct {
@@ -101,6 +115,10 @@ class ImageProduct {
 
         //images: List<Image>.from(json["images"].map((x) => Image.fromJson(x))),
       );
+
+  Map<String, dynamic> toJson() => {
+        "url": url,
+      };
 }
 
 var rappiCategories = [
@@ -112,6 +130,7 @@ var rappiCategories = [
     name: 'Orden User',
     products: [
       ProfileStoreProduct(
+          user: '1',
           id: '1',
           name: 'Silim Lights user',
           description:
@@ -129,11 +148,12 @@ var rappiCategories = [
     privacity: '1',
     position: 1,
     id: '1-a',
-    store: Store(user: User(uid: '1-a')),
+    store: Store(user: User(uid: '1')),
     name: 'Orden Again',
     products: [
       ProfileStoreProduct(
-          id: '1',
+          user: '1',
+          id: '1-a',
           name: 'Silim Lights 1',
           description:
               'Beef-Bibimbap mit Reis, Bohnen, Spinat, Karotten, Shiitake-Pilzen, Sesamöl & Ei.',
@@ -148,11 +168,12 @@ var rappiCategories = [
   ProfileStoreCategory(
     privacity: '1',
     position: 2,
-    id: '1-b',
-    store: Store(user: User(uid: '1')),
+    id: '1-a',
+    store: Store(user: User(uid: '1-a')),
     name: 'Picker For You',
     products: [
       ProfileStoreProduct(
+          user: '1-a',
           id: '1',
           name: 'Wings of Incheon',
           description: 'Micro-Greens & gerösteten Erbsen, 4 Stk.',
@@ -167,11 +188,12 @@ var rappiCategories = [
   ProfileStoreCategory(
     privacity: '1',
     position: 3,
-    id: '1-c',
-    store: Store(user: User(uid: '1')),
+    id: '1-a',
+    store: Store(user: User(uid: '1-a')),
     name: 'Starters',
     products: [
       ProfileStoreProduct(
+          user: '1-a',
           id: '1',
           name: 'Late Sunset',
           description:
@@ -188,12 +210,13 @@ var rappiCategories = [
     privacity: '1',
     position: 4,
     id: '1-d',
-    store: Store(user: User(uid: '1')),
+    store: Store(user: User(uid: '2-b')),
     name: 'Sides',
     products: [
       ProfileStoreProduct(
+          user: '2-b',
           id: '1',
-          name: 'Rice',
+          name: 'Rice 2',
           description: 'Portion.',
           price: 4.00,
           images: [
@@ -209,10 +232,11 @@ var rappiCategories = [
     privacity: '1',
     position: 5,
     id: '1-e',
-    store: Store(user: User(uid: '2')),
+    store: Store(user: User(uid: '1')),
     name: 'Orden Again 2',
     products: [
       ProfileStoreProduct(
+          user: '1',
           id: '1',
           name: 'Silim Lights',
           description:
@@ -233,6 +257,7 @@ var rappiCategories = [
     name: 'Picker For You 2',
     products: [
       ProfileStoreProduct(
+          user: '2',
           id: '1',
           name: 'Sudogwon Millions',
           description:
@@ -249,10 +274,11 @@ var rappiCategories = [
     privacity: '1',
     position: 7,
     id: '1-g',
-    store: Store(user: User(uid: '2')),
+    store: Store(user: User(uid: '2-a')),
     name: 'Starters 2',
     products: [
       ProfileStoreProduct(
+          user: '2-a',
           id: '1',
           name: 'Haeundae Surf',
           description:
@@ -274,6 +300,7 @@ var rappiCategories = [
     products: [
       ProfileStoreProduct(
           id: '1',
+          user: '2',
           name: 'Rice',
           description: 'Portion.',
           price: 4.00,
