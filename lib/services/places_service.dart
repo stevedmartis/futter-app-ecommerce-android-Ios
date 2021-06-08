@@ -1,6 +1,4 @@
 import 'package:australti_ecommerce_app/models/place_Search.dart';
-import 'package:australti_ecommerce_app/responses/place_detail_response.dart';
-import 'package:australti_ecommerce_app/responses/places_search.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
@@ -12,7 +10,7 @@ class PlaceService with ChangeNotifier {
 
     final apiKey = 'AIzaSyB0tQN9KhupiyRjtxN6ZsbjryXWJDDRV-M';
     final urlFinal =
-        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$searchTerm&types=address&language=es_419&components=country:cl&key=${apiKey}';
+        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$searchTerm&types=address&language=es_419&components=country:cl&key=$apiKey';
 
     final resp = await http.get(Uri.parse(urlFinal));
 
@@ -23,7 +21,7 @@ class PlaceService with ChangeNotifier {
     return jsonResult.map((place) => PlaceSearch.fromJson(place)).toList();
   }
 
-  Future getRoadsAutocomplete(String searchTerm) async {
+  /*  Future getRoadsAutocomplete(String searchTerm) async {
     // this.authenticated = true;
 
     final apiKey = 'AIzaSyB0tQN9KhupiyRjtxN6ZsbjryXWJDDRV-M';
@@ -37,9 +35,9 @@ class PlaceService with ChangeNotifier {
     var jsonResult = json['predictions'] as List;
 
     //return jsonResult.malp((place) => PlaceSearch.fromJson(place)).toList();
-  }
+  } */
 
-  Future getAutocompleteDetails(String palceId) async {
+  /*  Future getAutocompleteDetails(String palceId) async {
     // this.authenticated = true;
 
     final apiKey = 'AIzaSyB0tQN9KhupiyRjtxN6ZsbjryXWJDDRV-M';
@@ -57,5 +55,5 @@ class PlaceService with ChangeNotifier {
     final sdf = geometryPlaceDetailFromJson(jsonResult.geometry);
 
     return jsonResult.map((place) => PlaceSearch.fromJson(place)).toList();
-  }
+  } */
 }

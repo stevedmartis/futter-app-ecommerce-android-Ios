@@ -46,7 +46,7 @@ class GroceryStoreList extends StatelessWidget {
               ),
               elevation: 8,
               shadowColor: Colors.black45,
-              color: Colors.white,
+              color: Colors.black,
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Column(

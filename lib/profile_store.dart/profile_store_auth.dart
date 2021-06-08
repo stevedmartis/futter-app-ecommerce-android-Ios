@@ -31,8 +31,6 @@ Store storeCurrent;
 
 class _ProfileStoreState extends State<ProfileStoreAuth>
     with TickerProviderStateMixin {
-  final _bloc = TabsViewScrollBLoC();
-
   AnimationController _animationController;
 
   double get maxHeight => 400 + MediaQuery.of(context).padding.top;
@@ -42,8 +40,11 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
   void initState() {
     final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
 
+    final productsBloc =
+        Provider.of<TabsViewScrollBLoC>(context, listen: false);
+
     storeCurrent = authBloc.storeAuth;
-    _bloc.init(this, storeCurrent.user.uid);
+    if (!productsBloc.initialOK) productsBloc.init(this, storeCurrent.user.uid);
 
     _animationController = AnimationController(
       vsync: this,
@@ -80,19 +81,19 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+    final productsBloc = Provider.of<TabsViewScrollBLoC>(context);
 
     return Scaffold(
         backgroundColor: currentTheme.scaffoldBackgroundColor,
         body: SafeArea(
             child: AnimatedBuilder(
-          animation: _bloc,
+          animation: productsBloc,
           builder: (_, __) => NestedScrollView(
-            controller: _bloc.scrollController2,
+            controller: productsBloc.scrollController2,
             headerSliverBuilder: (context, value) {
               return [
                 SliverPersistentHeader(
                   delegate: _ProfileStoreHeader(
-                      bloc: _bloc,
                       animationController: _animationController,
                       isAuthUser: widget.isAuthUser,
                       store: storeCurrent),
@@ -107,11 +108,11 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
                         color: currentTheme.scaffoldBackgroundColor,
                         alignment: Alignment.centerLeft,
                         child: TabBar(
-                          onTap: _bloc.onCategorySelected,
-                          controller: _bloc.tabController,
+                          onTap: productsBloc.onCategorySelected,
+                          controller: productsBloc.tabController,
                           indicatorWeight: 0.1,
                           isScrollable: true,
-                          tabs: _bloc.tabs
+                          tabs: productsBloc.tabs
                               .map((e) => _TabWidget(
                                     tabCategory: e,
                                   ))
@@ -125,11 +126,11 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
             // tab bar view
             body: Container(
               child: ListView.builder(
-                controller: _bloc.scrollController,
-                itemCount: _bloc.items.length,
+                controller: productsBloc.scrollController,
+                itemCount: productsBloc.items.length,
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 itemBuilder: (context, index) {
-                  final item = _bloc.items[index];
+                  final item = productsBloc.items[index];
                   if (item.isCategory) {
                     return Container(
                         child: _ProfileStoreCategoryItem(item.category));
@@ -336,13 +337,8 @@ const _minSubTitleSize = 12.0;
 
 class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
   _ProfileStoreHeader(
-      {this.bloc,
-      this.animationController,
-      this.isAuthUser,
-      @required this.store});
+      {this.animationController, this.isAuthUser, @required this.store});
   final AnimationController animationController;
-
-  final TabsViewScrollBLoC bloc;
 
   final bool isAuthUser;
   final Store store;
@@ -351,6 +347,9 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     final currentTheme = Provider.of<ThemeChanger>(context);
+
+    final productsBloc =
+        Provider.of<TabsViewScrollBLoC>(context, listen: false);
 
     final percent = 1 -
         ((maxExtent - shrinkOffset - minExtent) / (maxExtent - minExtent))
@@ -377,7 +376,7 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
     final username = storeCurrent.user.username;
 
     return GestureDetector(
-      onTap: () => bloc.snapAppbar(),
+      onTap: () => productsBloc.snapAppbar(),
       child: Container(
         color: currentTheme.currentTheme.scaffoldBackgroundColor,
         child: Stack(
@@ -462,9 +461,9 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
             ),
             (!isAuthUser)
                 ? ButtonFollow(
-                    percent: percent, bloc: bloc, left: leftTextMargin)
+                    percent: percent, bloc: productsBloc, left: leftTextMargin)
                 : ButtonEditProfile(
-                    percent: percent, bloc: bloc, left: leftTextMargin),
+                    percent: percent, bloc: productsBloc, left: leftTextMargin),
 
             /*  Positioned(
               bottom: 20.0,

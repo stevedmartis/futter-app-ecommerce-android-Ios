@@ -1,13 +1,10 @@
 import 'dart:ui';
 
-import 'package:australti_ecommerce_app/bloc_globals/bloc/search_places_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/bloc/search_places_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_cart.dart';
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';

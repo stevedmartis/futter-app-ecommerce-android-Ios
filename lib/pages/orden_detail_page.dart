@@ -1,6 +1,5 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/pages/add_edit_product.dart';
@@ -58,7 +57,6 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
   void _snapAppbar() {
     final scrollDistance = maxHeight - minHeight;
 
-    print(_scrollController.offset);
     if (_scrollController.offset > 0 &&
         _scrollController.offset < scrollDistance) {
       final double snapOffset =
@@ -134,7 +132,7 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
                     child: CustomAppBarHeaderPages(
               showTitle: _showTitle,
               title: title,
-              isAdd: true,
+
               leading: true,
               action: Container(),
               onPress: () => {
@@ -447,34 +445,36 @@ Widget _buildProductsList(context) {
         return FadeInLeft(
           delay: Duration(milliseconds: 100 * index),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
-            child: Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 70,
-                    height: 70,
-                    child: AspectRatio(
-                      aspectRatio: 1,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        child: Image.asset(
-                          'assets/travel_photos/rest_logo.jpeg',
-                          fit: BoxFit.cover,
-                        ),
+            padding: const EdgeInsets.symmetric(
+              vertical: 10.0,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  width: 70,
+                  height: 70,
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      child: Image.asset(
+                        'assets/rest_logo.jpeg',
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
                         margin: EdgeInsets.only(top: 5.0),
                         child: Text(
                           '${store.name}',
@@ -484,98 +484,97 @@ Widget _buildProductsList(context) {
                               fontSize: 18),
                         ),
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(top: 0.0),
-                            child: Text(
-                              '${products.length}',
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 15),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 5.0,
-                          ),
-                          Container(
-                            child: Text(
-                              bloc.cart.length == 1 ? 'Producto' : 'Productos',
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 15),
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                  Spacer(),
-                  Stack(
-                    textDirection: TextDirection.rtl,
-                    fit: StackFit.loose,
-                    clipBehavior: Clip.hardEdge,
-                    children: [
-                      Container(
-                        height: 50,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          itemCount:
-                              (products.length == 4) ? 3 : products.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            final product = products[index].product;
-
-                            return Container(
-                                margin: EdgeInsets.only(left: 5.0),
-                                alignment: Alignment.topRight,
-                                child: FadeInLeft(
-                                  delay: Duration(milliseconds: 200 * index),
-                                  child: Container(
-                                    width: 50,
-                                    height: 50,
-                                    child: CircleAvatar(
-                                      backgroundColor: Colors.white,
-                                      backgroundImage:
-                                          NetworkImage(product.images[0].url),
-                                    ),
-                                  ),
-                                ));
-                          },
-                        ),
-                      ),
-                      if (products.length == 3)
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
                         Container(
-                          child: FadeInRight(
-                            duration: Duration(milliseconds: 400),
-                            delay: Duration(milliseconds: 500),
-                            child: Container(
-                              decoration: new BoxDecoration(
-                                color: currentTheme.primaryColor,
-                                shape: BoxShape.circle,
-                              ),
-                              alignment: Alignment.centerRight,
-                              width: 30.0,
-                              height: 30.0,
-                              child: Center(
-                                  child: Text('+${products.length - 2}',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold))),
-                            ),
+                          margin: EdgeInsets.only(top: 0.0),
+                          child: Text(
+                            '${products.length}',
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 15),
                           ),
-                        )
-                    ],
-                  )
-                ],
-              ),
+                        ),
+                        SizedBox(
+                          width: 5.0,
+                        ),
+                        Container(
+                          child: Text(
+                            bloc.cart.length == 1 ? 'Producto' : 'Productos',
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 15),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                Spacer(),
+                Stack(
+                  textDirection: TextDirection.rtl,
+                  fit: StackFit.loose,
+                  clipBehavior: Clip.hardEdge,
+                  children: [
+                    Container(
+                      height: 50,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: (products.length == 3) ? 2 : products.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final product = products[index].product;
+
+                          return Container(
+                              margin: EdgeInsets.only(left: 5.0),
+                              alignment: Alignment.topRight,
+                              child: FadeInLeft(
+                                delay: Duration(milliseconds: 200 * index),
+                                child: Container(
+                                  width: 50,
+                                  height: 50,
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.white,
+                                    backgroundImage:
+                                        NetworkImage(product.images[0].url),
+                                  ),
+                                ),
+                              ));
+                        },
+                      ),
+                    ),
+                    if (products.length == 3)
+                      Container(
+                        child: FadeInRight(
+                          duration: Duration(milliseconds: 400),
+                          delay: Duration(milliseconds: 500),
+                          child: Container(
+                            decoration: new BoxDecoration(
+                              color: currentTheme.primaryColor,
+                              shape: BoxShape.circle,
+                            ),
+                            alignment: Alignment.centerRight,
+                            width: 30.0,
+                            height: 30.0,
+                            child: Center(
+                                child: Text('+${products.length - 2}',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold))),
+                          ),
+                        ),
+                      )
+                  ],
+                )
+              ],
             ),
           ),
         );

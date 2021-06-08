@@ -29,8 +29,6 @@ class ProfileStoreSelect extends StatefulWidget {
   _ProfileStoreState createState() => _ProfileStoreState();
 }
 
-Store storeAuth;
-
 class _ProfileStoreState extends State<ProfileStoreSelect>
     with TickerProviderStateMixin {
   final _bloc = TabsViewScrollBLoC();
@@ -42,9 +40,6 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
 
   @override
   void initState() {
-    final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
-
-    storeAuth = authBloc.storeAuth;
     _bloc.init(this, widget.store.user.uid);
 
     _animationController = AnimationController(

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:australti_ecommerce_app/models/grocery_Store.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
@@ -47,6 +45,7 @@ class GroceryStoreBLoC with ChangeNotifier {
   void deleteProduct(GroceryProductItem productItem) {
     cart.remove(productItem);
     totalPriceElements();
+    prefs.setCart = cart;
     notifyListeners();
   }
 

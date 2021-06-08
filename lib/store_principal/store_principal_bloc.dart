@@ -36,7 +36,6 @@ class StoreBLoC with ChangeNotifier {
     notifierBottom.value = showBottom;
 
     isVisible = showBottom;
-    //print(notifierBottom.value);
     notifyListeners();
   }
 

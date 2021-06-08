@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
 import 'custom_button.dart';
-import 'custom_input_field.dart';
+
 import 'fade_slide_transition.dart';
 
 class LoginForm extends StatelessWidget {
@@ -25,7 +25,6 @@ class LoginForm extends StatelessWidget {
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
     final space = height > 650 ? kSpaceM : kSpaceS;
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-    final authService = Provider.of<AuthenticationBLoC>(context);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: kPaddingL),
@@ -97,16 +96,17 @@ class LoginForm extends StatelessWidget {
           FadeSlideTransition(
             animation: animation,
             additionalOffset: 4 * space,
-            child: CustomButton(
-              color: currentTheme.scaffoldBackgroundColor,
-              textColor: Colors.white.withOpacity(0.5),
-              text: 'Continuar como invitado',
-              onPressed: () {
-                if (authService.redirect == 'vender')
-                  Provider.of<MenuModel>(context, listen: false).currentPage =
-                      2;
-                Navigator.pop(context);
-              },
+            child: Container(
+              padding: EdgeInsets.only(left: 30),
+              child: CustomButton(
+                color: currentTheme.scaffoldBackgroundColor,
+                textColor: Colors.white.withOpacity(0.5),
+                text: 'Volver al Inicio',
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+              ),
             ),
           ),
         ],
@@ -123,11 +123,11 @@ class LoginForm extends StatelessWidget {
     if (signInGoogleOk) {
       socketService.connect();
 
-      print(signInGoogleOk);
-
       if (authService.redirect == 'vender')
         Provider.of<MenuModel>(context, listen: false).currentPage = 2;
-      Navigator.pop(context);
+
+      if (authService.redirect == 'profile')
+        Navigator.push(context, profileAuthRoute(true));
     } else {
       // Mostara alerta
       showAlertError(context, 'Login incorrecto', 'El correo ya existe');

@@ -104,7 +104,6 @@ class AuthUserPreferences {
 
     // GroceryProductItem.decode(cart);
 
-    print(cart);
     return cart;
   }
 

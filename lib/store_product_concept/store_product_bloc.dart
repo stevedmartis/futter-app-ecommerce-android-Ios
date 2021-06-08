@@ -12,7 +12,10 @@ const productHeight = 110.0;
 class TabsViewScrollBLoC with ChangeNotifier {
   List<TabCategory> tabs = [];
 
+  bool loading = false;
+  List<ProfileStoreCategory> myCategories = [];
   List<ProfileStoreItem> items = [];
+  List<ProfileStoreItem> itemsOrder = [];
   List<ProfileStoreProduct> productsByCategoryList = [];
   TabController tabController;
   ScrollController scrollController = ScrollController();
@@ -23,8 +26,12 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
   List<http.MultipartFile> imagesProducts = [];
 
+  List<ProfileStoreCategory> storeCategoriesProducts = [];
+
   bool _listen = true;
   bool initial = true;
+
+  bool initialOK = false;
 
   bool isFollow = false;
 
@@ -33,8 +40,9 @@ class TabsViewScrollBLoC with ChangeNotifier {
   }
 
   void init(TickerProvider ticker, String storeUserId) {
-    final categoriesByStoreUserId =
-        rappiCategories.where((i) => i.store.user.uid == storeUserId).toList();
+    final categoriesByStoreUserId = storeCategoriesProducts
+        .where((i) => i.store.user.uid == storeUserId)
+        .toList();
 
     tabController =
         TabController(vsync: ticker, length: categoriesByStoreUserId.length);
@@ -47,7 +55,7 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
       offsetFrom = offsetTo;
       offsetTo = offsetFrom +
-          rappiCategories[i].products.length * productHeight +
+          storeCategoriesProducts[i].products.length * productHeight +
           categoryHeight;
 
       final item = tabs.firstWhere((item) => item.category.id == category.id,
@@ -58,23 +66,52 @@ class TabsViewScrollBLoC with ChangeNotifier {
       if (!exist)
         tabs.add(TabCategory(
           category: category,
-          selected: (i == 0),
+          selected: (category.position == 0),
           offsetFrom: offsetFrom,
           offsetTo: offsetTo,
         ));
 
-      items.add(ProfileStoreItem(category: category));
+      if (!exist) items.add(ProfileStoreItem(category: category));
       for (int j = 0; j < category.products.length; j++) {
         final product = category.products[j];
         items.add(ProfileStoreItem(product: product));
       }
+
+      tabs.sort((a, b) {
+        return a.category.position.compareTo(b.category.position);
+      });
     }
+
+    initialOK = true;
 
     scrollController.addListener(_onScrollListener);
   }
 
+  orderPosition(
+      TickerProvider ticket, List<ProfileStoreCategory> storeCategories) {
+    for (var orderItem in storeCategories) {
+      var item = tabs.firstWhere((item) => item.category.id == orderItem.id,
+          orElse: () => null);
+
+      item.category.position = orderItem.position;
+      item.selected = (orderItem.position == 0);
+
+      print(item);
+    }
+
+    print(tabs);
+
+    init(ticket, storeCategories[0].store.user.uid);
+    notifyListeners();
+  }
+
+  void changeLoading() {
+    loading = !loading;
+    notifyListeners();
+  }
+
   void addNewCategory(TickerProvider ticket, ProfileStoreCategory newCategory) {
-    rappiCategories.add(newCategory);
+    storeCategoriesProducts.add(newCategory);
 
     init(ticket, newCategory.store.user.uid);
   }
@@ -90,8 +127,18 @@ class TabsViewScrollBLoC with ChangeNotifier {
     init(ticket, editCategory.store.user.uid);
   }
 
+  void removeCategoryById(TickerProvider ticket, String categoryId) {
+    storeCategoriesProducts
+        .removeWhere((categories) => categories.id == categoryId);
+
+    print(storeCategoriesProducts);
+    init(ticket, storeCategoriesProducts[0].store.user.uid);
+
+    notifyListeners();
+  }
+
   void productsByCategory(String categoryId) {
-    final category = rappiCategories.where((i) => i.id == categoryId);
+    final category = storeCategoriesProducts.where((i) => i.id == categoryId);
 
     productsByCategoryList = category.single.products;
   }
@@ -304,7 +351,7 @@ class ProductBloc with Validators {
 }
 
 class TabCategory {
-  const TabCategory({
+  TabCategory({
     @required this.category,
     @required this.selected,
     @required this.offsetFrom,
@@ -319,7 +366,7 @@ class TabCategory {
       );
 
   final ProfileStoreCategory category;
-  final bool selected;
+  bool selected;
   final double offsetFrom;
   final double offsetTo;
 }

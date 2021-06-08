@@ -41,7 +41,6 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
   void _snapAppbar() {
     final scrollDistance = maxHeight - minHeight;
 
-    print(_scrollController.offset);
     if (_scrollController.offset > 0 &&
         _scrollController.offset < scrollDistance) {
       final double snapOffset =
@@ -63,7 +62,7 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
     final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
 
     storeAuth = authBloc.storeAuth;
-    widget.bloc.productsByCategory(widget.category.id);
+    // tabsViewScrollBLoC.productsByCategory(widget.category.id);
 
     final productsBloc =
         Provider.of<TabsViewScrollBLoC>(context, listen: false);

@@ -113,7 +113,7 @@ Widget roundedRectButton(
                   )
                 : Container(
                     alignment: Alignment.bottomCenter,
-                    width: _size.width / 1.7,
+                    width: _size.width / 1.15,
                     height: _size.height / 15,
                     decoration: ShapeDecoration(
                       shape: RoundedRectangleBorder(
@@ -171,7 +171,7 @@ Widget goPayCartBtnSubtotal(
                                   fontWeight: FontWeight.w500)),
                           Spacer(),
                           Text(
-                            'SubTotal:',
+                            'SubTotal: ',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 15,
@@ -192,21 +192,44 @@ Widget goPayCartBtnSubtotal(
                   )
                 : Container(
                     alignment: Alignment.bottomCenter,
-                    width: _size.width / 1.7,
-                    height: _size.height / 15,
+                    width: _size.width / 1.15,
+                    height: _size.height / 12,
                     decoration: ShapeDecoration(
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0)),
+                          borderRadius: BorderRadius.circular(20.0)),
                       gradient: LinearGradient(
                           colors: [Colors.grey[800], Colors.grey[800]],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight),
                     ),
-                    child: Text(title,
-                        style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500)),
+                    child: Container(
+                      padding: EdgeInsets.only(left: 20, right: 20),
+                      child: Row(
+                        children: [
+                          Text(title,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500)),
+                          Spacer(),
+                          Text(
+                            'SubTotal: ',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                          Text(
+                              '\$${bloc.totalPriceElements().toStringAsFixed(2)}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w300,
+                              ))
+                        ],
+                      ),
+                    ),
                     padding: EdgeInsets.only(top: 10, bottom: 16),
                   ),
       ],

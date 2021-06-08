@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/models/profile.dart';
+import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/pages/add_edit_category.dart';
+import 'package:australti_ecommerce_app/profile_store.dart/profile_store_user.dart';
+import 'package:australti_ecommerce_app/responses/store_categories_response.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/services/catalogo.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
@@ -31,7 +34,7 @@ class _CatalogosListPagePageState extends State<CatalogosListPage> {
 
   final category = new ProfileStoreCategory(id: '');
 
-  final _bloc = TabsViewScrollBLoC();
+  bool loading = false;
 
   @override
   void initState() {
@@ -51,7 +54,7 @@ class _CatalogosListPagePageState extends State<CatalogosListPage> {
   double get maxHeight => 400 + MediaQuery.of(context).padding.top;
   double get minHeight => MediaQuery.of(context).padding.bottom;
 
-  void _snapAppbar() {
+/*   void _snapAppbar() {
     final scrollDistance = maxHeight - minHeight;
 
     if (_scrollController.offset > 0 &&
@@ -62,7 +65,7 @@ class _CatalogosListPagePageState extends State<CatalogosListPage> {
       Future.microtask(() => _scrollController.animateTo(snapOffset,
           duration: Duration(milliseconds: 200), curve: Curves.easeIn));
     }
-  }
+  } */
 
   bool get _showTitle {
     return _scrollController.hasClients && _scrollController.offset >= 70;
@@ -78,8 +81,6 @@ class _CatalogosListPagePageState extends State<CatalogosListPage> {
         backgroundColor: currentTheme.scaffoldBackgroundColor,
         body: NotificationListener<ScrollEndNotification>(
           onNotification: (_) {
-            _snapAppbar();
-
             return false;
           },
           child: CustomScrollView(
@@ -101,9 +102,7 @@ class _CatalogosListPagePageState extends State<CatalogosListPage> {
   ) {
     return SliverList(
         delegate: SliverChildListDelegate([
-      CatalogsList(
-        bloc: _bloc,
-      ),
+      CatalogsList(bloc: tabsViewScrollBLoC, loading: loading),
     ]));
   }
 
@@ -127,9 +126,11 @@ class _CatalogosListPagePageState extends State<CatalogosListPage> {
                         action: Container(),
                         //   Container()
                         onPress: () => {
-                              Navigator.of(context).push(
-                                  createRouteAddEditCategory(
-                                      category, false, _bloc)),
+                              (loading)
+                                  ? null
+                                  : Navigator.of(context).push(
+                                      createRouteAddEditCategory(
+                                          category, false, tabsViewScrollBLoC)),
                             })))));
   }
 
@@ -144,9 +145,11 @@ class _CatalogosListPagePageState extends State<CatalogosListPage> {
 }
 
 class CatalogsList extends StatefulWidget {
-  CatalogsList({this.bloc});
+  CatalogsList({this.bloc, this.loading});
 
   final TabsViewScrollBLoC bloc;
+
+  final bool loading;
 
   @override
   _CatalogsListState createState() => _CatalogsListState();
@@ -161,15 +164,20 @@ class _CatalogsListState extends State<CatalogsList>
 
   ScrollController _hideBottomNavController;
   List<TabCategory> catalogos = [];
-  SlidableController slidableController;
 
+  List<TabCategory> catalogosOrderPosition = [];
+  SlidableController slidableController;
+  Store storeAuth;
   @override
   void initState() {
     super.initState();
 
     final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
+    final productsBloc =
+        Provider.of<TabsViewScrollBLoC>(context, listen: false);
 
-    widget.bloc.init(this, authBloc.storeAuth.user.uid);
+    storeAuth = authBloc.storeAuth;
+    if (!productsBloc.initialOK) productsBloc.init(this, storeAuth.user.uid);
 
     _chargeCatalogs();
 
@@ -179,9 +187,12 @@ class _CatalogsListState extends State<CatalogsList>
   _chargeCatalogs() async {
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
 
+    final productsBloc =
+        Provider.of<TabsViewScrollBLoC>(context, listen: false);
+
     profile = authService.profile;
 
-    catalogos = widget.bloc.tabs;
+    catalogos = productsBloc.tabs;
 
     //catalogoBloc.getMyCatalogos(profile.user.uid);
   }
@@ -290,20 +301,25 @@ class _CatalogsListState extends State<CatalogsList>
     ));
   }
  */
-/*   Future _deleteCategory(String id, int index) async {
+  Future _deleteCategory(String id, int index) async {
     final res = await this.catalogoService.deleteCatalogo(id);
+
+    final productsBloc =
+        Provider.of<TabsViewScrollBLoC>(context, listen: false);
+
     if (res) {
       setState(() {
         catalogos.removeAt(index);
 
+        productsBloc.removeCategoryById(this, id);
+
         return true;
-        // catalogoBloc.getMyCatalogos(profile.user.uid);
       });
 
       return true;
     }
   }
- */
+
   Widget _buildCatalogoWidget() {
     final currentTheme = Provider.of<ThemeChanger>(context);
     final size = MediaQuery.of(context).size;
@@ -330,7 +346,7 @@ class _CatalogsListState extends State<CatalogsList>
 
                   final visibiliy = item.visibility;
                   return Slidable.builder(
-                    key: Key(item.id),
+                    key: UniqueKey(),
                     controller: slidableController,
                     direction: Axis.horizontal,
                     dismissal: SlidableDismissal(
@@ -413,7 +429,7 @@ class _CatalogsListState extends State<CatalogsList>
                       onDismissed: (actionType) {
                         _showSnackBar(context, 'Catalogo Eliminado');
                         setState(() {
-                          catalogos.removeAt(index);
+                          _deleteCategory(item.id, index);
                         });
                       },
                     ),
@@ -550,15 +566,6 @@ class _CatalogsListState extends State<CatalogsList>
                                                         SizedBox(
                                                           width: 20,
                                                         ),
-                                                        FaIcon(
-                                                          FontAwesomeIcons
-                                                              .shoppingBag,
-                                                          size: 20,
-                                                          color: Colors.grey,
-                                                        ),
-                                                        SizedBox(
-                                                          width: 15,
-                                                        ),
                                                         Text(
                                                           'Productos: ',
                                                           maxLines: 2,
@@ -575,14 +582,14 @@ class _CatalogsListState extends State<CatalogsList>
                                                           ),
                                                         ),
                                                         Text(
-                                                          '$products',
+                                                          ' $products',
                                                           maxLines: 2,
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                           style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            fontSize: 13,
+                                                            fontSize: 15,
                                                             color: (currentTheme
                                                                     .customTheme)
                                                                 ? Colors.white
@@ -634,15 +641,39 @@ class _CatalogsListState extends State<CatalogsList>
                       if (newIndex > oldIndex) {
                         newIndex -= 1;
                       }
+
                       final TabCategory catalogo = catalogos.removeAt(oldIndex);
                       catalogo.category.position = newIndex;
                       catalogos.insert(newIndex, catalogo);
                     }),
-                    // _updateCatalogo(catalogos, newIndex, context, profile.user.uid)
+                    _updateCatalogo(catalogos)
                   }),
         ),
       ],
     );
+  }
+
+  _updateCatalogo(List<TabCategory> catalogos) async {
+    final List<ProfileStoreCategory> orderArray = [];
+    final productsBloc =
+        Provider.of<TabsViewScrollBLoC>(context, listen: false);
+
+    for (var item in catalogos) {
+      orderArray.add(item.category);
+    }
+    final resp = await this.catalogoService.updatePositionCatalogo(orderArray);
+
+    if (resp) {
+      final StoreCategoriesResponse respMyCategories = await this
+          .catalogoService
+          .getMyCategoriesProducts(storeAuth.user.uid);
+
+      if (respMyCategories.ok) {
+        productsBloc.orderPosition(
+            this, respMyCategories.storeCategoriesProducts);
+        _showSnackBar(context, 'Posición editada con exito!');
+      }
+    }
   }
 
   static Widget _getActionPane(int index) {

@@ -1,14 +1,13 @@
 import 'package:australti_ecommerce_app/android_messages_animation/main_android_messages_animation_app.dart';
-import 'package:australti_ecommerce_app/batman_sign_up/main_batman_sign_up_app.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_home.dart';
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/multiple_card_flow/multiple_card_flow.dart';
-import 'package:australti_ecommerce_app/nike_shoes_store/main_nike_shoes_store.dart';
 import 'package:australti_ecommerce_app/pages/categories_store.dart';
 import 'package:australti_ecommerce_app/pages/confirm_location.dart';
 import 'package:australti_ecommerce_app/pages/loading_page.dart';
 import 'package:australti_ecommerce_app/pages/login/login.dart';
+import 'package:australti_ecommerce_app/pages/onboarding/onboarding.dart';
 import 'package:australti_ecommerce_app/pages/orden_detail_page.dart';
 import 'package:australti_ecommerce_app/pages/products_list.dart';
 import 'package:australti_ecommerce_app/pages/single_image_upload.dart';
@@ -27,7 +26,7 @@ final Map<String, Widget Function(BuildContext)> appRoutes = {
 
 final pageRouter = <_Route>[
   _Route(Icons.play_arrow, 'flow', MainStoreServicesApp()),
-  _Route(Icons.play_arrow, 'nike', MainBatmanSignUpApp()),
+  _Route(Icons.play_arrow, 'loading', LoadingPage()),
   _Route(Icons.play_arrow, 'store', CatalogosListPage()),
   _Route(Icons.play_arrow, 'message', MainAndroidMessagesAnimationApp()),
   _Route(Icons.play_arrow, 'notifications', MultipleCardFlow()),
@@ -42,13 +41,13 @@ class _Route {
   _Route(this.icon, this.title, this.page);
 }
 
-Route loginRoute() {
+Route loginRoute(double screenHeight) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) => Login(
-      screenHeight: 300,
+      screenHeight: screenHeight,
     ),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      var begin = Offset(0.0, 1.0);
+      var begin = Offset(0.0, 0.0);
       var end = Offset.zero;
       var curve = Curves.ease;
 
@@ -177,4 +176,44 @@ Route confirmLocationImageRoute(PlaceSearch place) {
       );
     },
   );
+}
+
+Route onBoardCreateStoreRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) {
+      final screenHeight = MediaQuery.of(context).size.height;
+      return Onboarding(
+        screenHeight: screenHeight,
+      );
+    },
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: animation,
+        child: child,
+      );
+    },
+  );
+}
+
+class FadeRoute extends PageRouteBuilder {
+  final Widget page;
+  FadeRoute({this.page})
+      : super(
+          pageBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) =>
+              page,
+          transitionsBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) =>
+              FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+        );
 }

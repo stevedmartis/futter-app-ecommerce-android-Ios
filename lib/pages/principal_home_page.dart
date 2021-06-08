@@ -6,16 +6,15 @@ import 'package:animations/animations.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
-import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
-import 'package:australti_ecommerce_app/models/grocery_Store.dart';
-import 'package:australti_ecommerce_app/models/profile.dart';
+
 import 'package:australti_ecommerce_app/models/store.dart';
-import 'package:australti_ecommerce_app/models/user.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
-import 'package:australti_ecommerce_app/profile_store.dart/profile_store_user.dart';
+import 'package:australti_ecommerce_app/responses/store_categories_response.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:australti_ecommerce_app/services/catalogo.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
+import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/delete_alert_modal.dart';
 import 'package:australti_ecommerce_app/widgets/layout_menu.dart';
@@ -26,7 +25,6 @@ import 'package:flutter/rendering.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_platform/universal_platform.dart';
 
 class PrincipalPage extends StatefulWidget {
@@ -54,7 +52,9 @@ class _PrincipalPageState extends State<PrincipalPage>
 
     storeAuth = authService.storeAuth;
 
-    print(storeAuth);
+    storeAuth = authService.storeAuth;
+
+    categoriesStoreProducts();
 
     if (!isWeb) locationStatus();
     if (!isWeb) WidgetsBinding.instance.addObserver(this);
@@ -96,6 +96,25 @@ class _PrincipalPageState extends State<PrincipalPage>
     WidgetsBinding.instance.removeObserver(this);
     // this.socketService.socket.off('principal-message');
     super.dispose();
+  }
+
+  void categoriesStoreProducts() async {
+    final storeService =
+        Provider.of<StoreCategoiesService>(context, listen: false);
+
+    final StoreCategoriesResponse resp =
+        await storeService.getMyCategoriesProducts(storeAuth.user.uid);
+
+    final productsBloc =
+        Provider.of<TabsViewScrollBLoC>(context, listen: false);
+
+    print(resp);
+
+    if (resp.ok) {
+      productsBloc.storeCategoriesProducts = resp.storeCategoriesProducts;
+
+      print(productsBloc.storeCategoriesProducts);
+    }
   }
 
   bool _isDialogShowing = false;
@@ -348,7 +367,7 @@ class __PositionedMenuState extends State<_PositionedMenu> {
                                 ? Icons.favorite
                                 : Icons.favorite_outline,
                             onPressed: () {
-                              if (bloc.isVisible) _onItemTapped(1);
+                              // if (bloc.isVisible) _onItemTapped(1);
                             }),
                         GLMenuButton(
                             icon: (currentPage == 2)
@@ -357,7 +376,8 @@ class __PositionedMenuState extends State<_PositionedMenu> {
                             onPressed: () {
                               if (authService.storeAuth.user.uid == '0') {
                                 authService.redirect = 'vender';
-                                Navigator.push(context, loginRoute());
+                                Navigator.push(
+                                    context, onBoardCreateStoreRoute());
                               } else if (bloc.isVisible) _onItemTapped(2);
                             }),
                         GLMenuButton(

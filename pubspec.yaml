@@ -24,8 +24,6 @@ dependencies:
   socket_io_client: ^0.9.12
   animations: ^2.0.0
   animate_do: ^1.7.5
-  modal_bottom_sheet: ^2.0.0
-  dio: ^4.0.0
   geolocator: ^7.0.3
   google_maps_flutter: ^2.0.3
   flutter_bloc: ^7.0.0
@@ -38,7 +36,7 @@ dependencies:
   shared_preferences: ^2.0.5
   image_picker: ^0.7.5+2
   mime_type: ^1.0.0
-  path: ^1.8.0
+
   carousel_slider: ^3.0.0
   sign_in_with_apple: ^3.0.0
  
@@ -55,15 +53,8 @@ flutter:
     - assets/
     - assets/logos/
     - assets/empty/
-    - assets/nike_shoes_store/
-    - assets/vinyl_album/
-    - assets/dbrand_skin_selection/
-    - assets/multiple_card_flow/
-    - assets/grocery_store/
-    - assets/travel_photos/
-    - assets/batman_sign_up/
-    - assets/rappi_concept/
-    - assets/pizza_order/
+    - assets/on_board/
+
 
 
     

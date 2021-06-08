@@ -30,7 +30,7 @@ class ProfileStoreCategory {
       new ProfileStoreCategory(
           id: json["id"],
           name: json['name'],
-          store: json["store"],
+          store: Store.fromJson(json["store"]),
           position: json["position"],
           products: List<ProfileStoreProduct>.from(
               json["products"].map((x) => ProfileStoreProduct.fromJson(x))),
@@ -46,11 +46,10 @@ class ProfileStoreCategory {
   Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
-        "store": store,
-        "createdAt": createdAt,
-        "updatedAt": updatedAt,
+        "products": List<dynamic>.from(products.map((x) => x.toJson())),
+        "position": position,
+        "store": store.toJson(),
         "description": description,
-        "privacity": privacity,
         "visibility": visibility
       };
 }
@@ -59,13 +58,14 @@ class ProfileStoreProduct {
   ProfileStoreProduct(
       {@required this.id,
       @required this.name,
-      this.description,
-      this.price,
+      this.description = "",
+      this.price = 0,
       this.image,
       this.createdAt,
       this.updatedAt,
       this.user,
-      this.images});
+      this.images,
+      this.category});
   String id;
   String name;
   String description;
@@ -77,6 +77,7 @@ class ProfileStoreProduct {
   DateTime updatedAt;
   String user;
 
+  String category;
   factory ProfileStoreProduct.fromJson(Map<String, dynamic> json) =>
       new ProfileStoreProduct(
         id: json["id"],
@@ -85,6 +86,7 @@ class ProfileStoreProduct {
         user: json["user"],
         description: json['description'],
         price: json["price"],
+        category: json["category"],
 /*         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]), */
         images: List<ImageProduct>.from(
@@ -99,7 +101,8 @@ class ProfileStoreProduct {
         "name": name,
         "price": price,
         "updateAt": updatedAt,
-        "user": user
+        "user": user,
+        "category": category
       };
 }
 
@@ -123,7 +126,8 @@ class ImageProduct {
 
 var rappiCategories = [
   ProfileStoreCategory(
-    privacity: '1',
+    description: '',
+    visibility: true,
     position: 1,
     id: '1',
     store: Store(user: User(uid: '1')),
@@ -145,7 +149,8 @@ var rappiCategories = [
   ),
 
   ProfileStoreCategory(
-    privacity: '1',
+    description: '',
+    visibility: true,
     position: 1,
     id: '1-a',
     store: Store(user: User(uid: '1')),
@@ -166,7 +171,8 @@ var rappiCategories = [
     ],
   ),
   ProfileStoreCategory(
-    privacity: '1',
+    description: '',
+    visibility: true,
     position: 2,
     id: '1-a',
     store: Store(user: User(uid: '1-a')),
@@ -186,7 +192,8 @@ var rappiCategories = [
     ],
   ),
   ProfileStoreCategory(
-    privacity: '1',
+    description: '',
+    visibility: true,
     position: 3,
     id: '1-a',
     store: Store(user: User(uid: '1-a')),
@@ -207,7 +214,8 @@ var rappiCategories = [
     ],
   ),
   ProfileStoreCategory(
-    privacity: '1',
+    description: '',
+    visibility: true,
     position: 4,
     id: '1-d',
     store: Store(user: User(uid: '2-b')),
@@ -229,7 +237,8 @@ var rappiCategories = [
 
   //repeated items
   ProfileStoreCategory(
-    privacity: '1',
+    description: '',
+    visibility: true,
     position: 5,
     id: '1-e',
     store: Store(user: User(uid: '1')),
@@ -250,7 +259,8 @@ var rappiCategories = [
     ],
   ),
   ProfileStoreCategory(
-    privacity: '1',
+    description: '',
+    visibility: true,
     position: 6,
     id: '1-f',
     store: Store(user: User(uid: '2')),
@@ -271,7 +281,8 @@ var rappiCategories = [
     ],
   ),
   ProfileStoreCategory(
-    privacity: '1',
+    description: '',
+    visibility: true,
     position: 7,
     id: '1-g',
     store: Store(user: User(uid: '2-a')),
@@ -292,7 +303,8 @@ var rappiCategories = [
     ],
   ),
   ProfileStoreCategory(
-    privacity: '1',
+    description: '',
+    visibility: true,
     position: 8,
     id: '1-h',
     store: Store(user: User(uid: '2')),

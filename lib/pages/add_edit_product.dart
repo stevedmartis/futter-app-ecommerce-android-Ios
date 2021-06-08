@@ -5,8 +5,8 @@ import 'dart:typed_data';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
+import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/pages/single_image_upload.dart';
-import 'package:australti_ecommerce_app/services/catalogo.dart';
 import 'package:australti_ecommerce_app/services/product.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
@@ -45,6 +45,7 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
 
   final priceCtrl = TextEditingController();
 
+  Store storeAuth;
   // final potCtrl = TextEditingController();
 
   bool isNameChange = false;
@@ -80,11 +81,14 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
   int selectedValue;
   @override
   void initState() {
+    final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
+
+    storeAuth = authBloc.storeAuth;
+
     errorRequired = (widget.isEdit) ? false : true;
     nameCtrl.text = widget.product.name;
     descriptionCtrl.text = widget.product.description;
     priceCtrl.text = widget.product.price.toString();
-
     setState(() {
       if (widget.isEdit) images.addAll(widget.product.images);
       images.add("Add Image");
@@ -116,6 +120,11 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
           this.isAboutChange = true;
         else
           this.isAboutChange = false;
+
+        if (descriptionCtrl.text == "")
+          errorRequired = true;
+        else
+          errorRequired = false;
       });
     });
 
@@ -667,8 +676,7 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
   }
 
   _createProduct() async {
-    final catalogoService =
-        Provider.of<StoreCategoiesService>(context, listen: false);
+    // final catalogoService = Provider.of<StoreCategoiesService>(context, listen: false);
 
     final productService =
         Provider.of<StoreProductService>(context, listen: false);
@@ -682,12 +690,10 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
         ? widget.product.description
         : productBloc.description.trim();
 
-    final price = (priceCtrl.text == "")
-        ? widget.product.price
-        : productBloc.price.trim();
+    final price = priceCtrl.text;
 
     final imagesProduct = await productService.uploadImagesProducts(
-        tabsViewScrollBLoC.imagesProducts, '1');
+        tabsViewScrollBLoC.imagesProducts, storeAuth.user.uid);
 
     if (imagesProduct != null) {
       final newProduct = ProfileStoreProduct(
@@ -715,8 +721,7 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
   }
 
   _editProduct() async {
-    final catalogoService =
-        Provider.of<StoreCategoiesService>(context, listen: false);
+    // final catalogoService = Provider.of<StoreCategoiesService>(context, listen: false);
 
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
 

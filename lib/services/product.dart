@@ -6,7 +6,7 @@ import 'package:australti_ecommerce_app/responses/images_product_response.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:australti_ecommerce_app/global/enviroments.dart';
 import 'package:australti_ecommerce_app/responses/message_error_response.dart';
-import 'package:australti_ecommerce_app/responses/store_category_response.dart';
+import 'package:australti_ecommerce_app/responses/store_categories_response.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -110,11 +110,11 @@ class StoreProductService with ChangeNotifier {
         headers: {'Content-Type': 'application/json', 'x-token': token});
 
     if (resp.statusCode == 200) {
-      // final roomResponse = roomsResponseFromJson(resp.body);
+      final roomResponse = storeCategoriesResponseFromJson(resp.body);
 
       // this.rooms = roomResponse.rooms;
 
-      return true;
+      return roomResponse;
     } else {
       final respBody = jsonDecode(resp.body);
       return respBody['msg'];
@@ -136,9 +136,8 @@ class StoreProductService with ChangeNotifier {
 
     Map<String, String> headers = {
       "Content-Type": "image/mimeType",
-      "x-token":
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2MDJjNDIwOTJjMzVkMzUxNjBkNjdkYzMiLCJpYXQiOjE2MjE2MzI2NjYsImV4cCI6MTYyMTcxOTA2Nn0.kgxLy2tEI7DJhhE0Eoq74EV5lIZCPIF5HMrHr4Huq54",
-      'id': "602c42092c35d35160d67dc3",
+      "x-token": token,
+      'id': id,
     };
 
     final imageUploadRequest = http.MultipartRequest(
@@ -151,18 +150,43 @@ class StoreProductService with ChangeNotifier {
 
     imageUploadRequest.headers.addAll(headers);
 
-    final streamResponse = await imageUploadRequest.send();
+    final copyRequest = _copyRequest(imageUploadRequest);
+    final streamResponse = await copyRequest.send();
     final resp = await http.Response.fromStream(streamResponse);
 
     if (resp.statusCode != 200 && resp.statusCode != 201) {
-      print('Algo salio mal');
-
       return null;
     }
 
     final respUrl = imagesResponseFromJson(resp.body);
 
     return respUrl;
+  }
+
+  http.BaseRequest _copyRequest(http.BaseRequest request) {
+    http.BaseRequest requestCopy;
+
+    if (request is http.Request) {
+      requestCopy = http.Request(request.method, request.url)
+        ..encoding = request.encoding
+        ..bodyBytes = request.bodyBytes;
+    } else if (request is http.MultipartRequest) {
+      requestCopy = http.MultipartRequest(request.method, request.url)
+        ..fields.addAll(request.fields)
+        ..files.addAll(request.files);
+    } else if (request is http.StreamedRequest) {
+      throw Exception('copying streamed requests is not supported');
+    } else {
+      throw Exception('request type is unknown, cannot copy');
+    }
+
+    requestCopy
+      ..persistentConnection = request.persistentConnection
+      ..followRedirects = request.followRedirects
+      ..maxRedirects = request.maxRedirects
+      ..headers.addAll(request.headers);
+
+    return requestCopy;
   }
 
   Future multiPartFileImage(File image) async {

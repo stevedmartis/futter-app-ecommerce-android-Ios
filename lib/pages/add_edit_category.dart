@@ -1,9 +1,12 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
+import 'package:australti_ecommerce_app/responses/category_store_response.dart';
 import 'package:australti_ecommerce_app/services/catalogo.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/utils.dart';
+import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
+import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -120,9 +123,11 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
         backgroundColor:
             (currentTheme.customTheme) ? Colors.black : Colors.white,
         actions: [
-          (widget.isEdit)
-              ? _createButton(isControllerChangeEdit)
-              : _createButton(isControllerChange),
+          (!loading)
+              ? (widget.isEdit)
+                  ? _createButton(isControllerChangeEdit)
+                  : _createButton(isControllerChange)
+              : buildLoadingWidget(context),
         ],
         leading: IconButton(
           icon: Icon(
@@ -421,7 +426,8 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
   _createCatalogo() async {
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
 
-    // final uid = authService.profile.user.uid;
+    final catalogoService =
+        Provider.of<StoreCategoiesService>(context, listen: false);
 
     final name = (categoryBloc.name == null)
         ? widget.category.name
@@ -435,32 +441,31 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
     final newCategory = ProfileStoreCategory(
         id: '2-c',
         store: authService.storeAuth,
-        position: 5,
+        position: 0,
         name: name,
         visibility: isSwitchedVisibility,
         description: description,
         privacity: privacity,
         products: []);
 
-    widget.bloc.addNewCategory(this, newCategory);
+    final CategoryResponse createCatalogoResp =
+        await catalogoService.createCatalogo(newCategory);
 
-    Navigator.pop(context);
-
-    // final createCatalogoResp = await catalogoService.createCatalogo(newCategory);
-/* 
     if (createCatalogoResp != null) {
       if (createCatalogoResp.ok) {
         loading = false;
 
+        widget.bloc.addNewCategory(this, createCatalogoResp.category);
+
         Navigator.pop(context);
         setState(() {});
       } else {
-        showAlertError(context, 'Error', createCatalogoResp.msg);
+        showAlertError(context, 'Error', 'Error');
       }
     } else {
       showAlertError(
           context, 'Error del servidor', 'lo sentimos, Intentelo mas tarde');
-    } */
+    }
     //Navigator.pushReplacementNamed(context, '');
   }
 
@@ -477,36 +482,33 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
     final privacity = optionItemSelected;
 
     final editCategory = ProfileStoreCategory(
-      id: widget.category.id,
-      store: authService.storeAuth,
-      position: 5,
-      name: nameCtrl.text.trim(),
-      visibility: isSwitchedVisibility,
-      description: description,
-      privacity: privacity,
-    );
+        id: widget.category.id,
+        store: authService.storeAuth,
+        position: 5,
+        name: nameCtrl.text.trim(),
+        visibility: isSwitchedVisibility,
+        description: description,
+        privacity: privacity,
+        products: widget.category.products);
 
-    widget.bloc.editCategory(this, editCategory);
-    Navigator.pop(context);
+    final CategoryResponse editCatalogoRes =
+        await catalogoService.editCatalogo(editCategory);
 
-    //final editCatalogoRes = await catalogoService.editCatalogo(editCategory);
-
-    /*   if (editCatalogoRes != null) {
+    if (editCatalogoRes != null) {
       if (editCatalogoRes.ok) {
-        // widget.rooms.removeWhere((element) => element.id == editRoomRes.room.id)
-        //  plantBloc.getPlant(widget.plant);
-        setState(() {
-          loading = false;
-        });
+        loading = false;
+
+        widget.bloc.editCategory(this, editCatalogoRes.category);
 
         Navigator.pop(context);
+        setState(() {});
       } else {
-        showAlertError(context, 'Error', editCatalogoRes.msg);
+        showAlertError(context, 'Error', 'Error');
       }
     } else {
       showAlertError(
           context, 'Error del servidor', 'lo sentimos, Intentelo mas tarde');
-    } */
+    }
 
     //Navigator.pushReplacementNamed(context, '');
   }

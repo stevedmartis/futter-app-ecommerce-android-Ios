@@ -23,7 +23,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
   Widget build(BuildContext context) {
     final bloc = Provider.of<GroceryStoreBLoC>(context);
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-
+    final size = MediaQuery.of(context).size;
     return SafeArea(
       child: TweenAnimationBuilder<double>(
         duration: const Duration(milliseconds: 500),
@@ -40,17 +40,19 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Container(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Mi Bolsa',
-                      style: Theme.of(context).textTheme.headline4.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        'Mi Bolsa',
+                        style: Theme.of(context).textTheme.headline4.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
                     ),
                     Expanded(
                       child: ListView.builder(
@@ -60,10 +62,9 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                           return FadeInUp(
                             delay: Duration(milliseconds: 100 * index),
                             child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 15.0),
+                                padding: const EdgeInsets.only(top: 50.0),
                                 child: Slidable.builder(
-                                  key: Key(item.product.id),
+                                  key: UniqueKey(),
                                   controller: slidableController,
                                   direction: Axis.horizontal,
                                   actionPane: _getActionPane(index),
@@ -90,17 +91,24 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                                     Slidable.of(context);
 
                                                 state.dismiss();
+                                                setState(() {
+                                                  bloc.deleteProduct(item);
+                                                });
                                               },
                                             );
                                           }),
                                   child: SizedBox(
-                                    height: 70,
+                                    height: size.height / 10,
                                     child: ListTile(
-                                      leading: CircleAvatar(
-                                        backgroundColor: Colors.white,
-                                        backgroundImage: NetworkImage(
-                                          bloc.cart[index].product.images[0]
-                                              .url,
+                                      leading: Container(
+                                        width: 70,
+                                        height: 100,
+                                        child: CircleAvatar(
+                                          backgroundColor: Colors.white,
+                                          backgroundImage: NetworkImage(
+                                            bloc.cart[index].product.images[0]
+                                                .url,
+                                          ),
                                         ),
                                       ),
                                       title: Text(
@@ -144,26 +152,53 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                                     color: Colors.black),
                                                 child: Row(
                                                   children: [
-                                                    IconButton(
-                                                      padding: EdgeInsets.zero,
-                                                      constraints:
-                                                          BoxConstraints(),
-                                                      onPressed: () {
-                                                        if (item.quantity > 2) {
-                                                          setState(() {
-                                                            item.quantity--;
-                                                          });
-                                                        }
-                                                      },
-                                                      icon: Icon(
-                                                        Icons.remove,
-                                                        color: Colors.white,
-                                                        size: 25,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
+                                                    (item.quantity == 1)
+                                                        ? Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    right: 20),
+                                                            child:
+                                                                GestureDetector(
+                                                              onDoubleTap: () {
+                                                                bloc.deleteProduct(
+                                                                    item);
+
+                                                                /*     Slidable.of(context).open(
+                                                                    actionType:
+                                                                        SlideActionType
+                                                                            .secondary) */
+                                                              },
+                                                              child: Icon(
+                                                                Icons
+                                                                    .delete_outline,
+                                                                color: Colors
+                                                                    .white,
+                                                                size: 30,
+                                                              ),
+                                                            ),
+                                                          )
+                                                        : Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    right: 20),
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () {
+                                                                if (item.quantity >
+                                                                    0) {
+                                                                  setState(() {
+                                                                    item.quantity--;
+                                                                  });
+                                                                }
+                                                              },
+                                                              child: Icon(
+                                                                Icons.remove,
+                                                                color: Colors
+                                                                    .white,
+                                                                size: 30,
+                                                              ),
+                                                            ),
+                                                          ),
                                                     Container(
                                                       child: Text(
                                                         item.quantity
@@ -176,22 +211,22 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                                         ),
                                                       ),
                                                     ),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    IconButton(
-                                                      padding: EdgeInsets.zero,
-                                                      constraints:
-                                                          BoxConstraints(),
-                                                      onPressed: () {
+                                                    GestureDetector(
+                                                      onTap: () {
                                                         setState(() {
                                                           item.quantity++;
                                                         });
                                                       },
-                                                      icon: Icon(
-                                                        Icons.add,
-                                                        color: Colors.white,
-                                                        size: 25,
+                                                      child: Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 10,
+                                                                right: 20),
+                                                        child: Icon(
+                                                          Icons.add,
+                                                          color: Colors.white,
+                                                          size: 30,
+                                                        ),
                                                       ),
                                                     ),
                                                   ],
@@ -199,7 +234,6 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                               )
                                             ],
                                           ),
-                                          const SizedBox(height: 15),
                                         ],
                                       ),
                                       contentPadding: EdgeInsets.symmetric(

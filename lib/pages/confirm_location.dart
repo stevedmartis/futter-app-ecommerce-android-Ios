@@ -1,12 +1,8 @@
-import 'dart:async';
-
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/models/profile.dart';
 import 'package:australti_ecommerce_app/pages/add_edit_category.dart';
-import 'package:australti_ecommerce_app/routes/routes.dart';
-import 'package:australti_ecommerce_app/services/catalogo.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
@@ -20,9 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:universal_platform/universal_platform.dart';
 
 class ConfirmLocationPage extends StatefulWidget {
   ConfirmLocationPage(this.place);
@@ -43,8 +37,6 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
   @override
   void initState() {
     _scrollController = ScrollController()..addListener(() => setState(() {}));
-
-    final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
 
     addressSelectCtrl.text = widget.place.structuredFormatting.mainText;
     citySelectCtrl.text = widget.place.structuredFormatting.secondaryText;
@@ -69,13 +61,11 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
   }
 
   final FocusScopeNode _node = FocusScopeNode();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     // final roomsModel = Provider.of<Room>(context);
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-    final size = MediaQuery.of(context).size;
 
     return SafeArea(
         child: GestureDetector(
@@ -93,7 +83,10 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
               )),
           backgroundColor: Colors.black,
           body: Container(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.only(
+              left: 20,
+              right: 20,
+            ),
             child: GestureDetector(
                 onTap: () =>
                     FocusScope.of(context).requestFocus(new FocusNode()),
@@ -101,266 +94,200 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 200,
-                      child: Text(
-                        'Confirma tu dirección',
-                        maxLines: 2,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30,
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        child: Text(
+                          'Confirma tu dirección',
+                          maxLines: 2,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30,
+                          ),
                         ),
                       ),
                     ),
+
+                    // email
+
                     Expanded(
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: Container(
-                                padding: EdgeInsets.only(top: 10),
-                                child: Form(
-                                    key: _formKey,
-                                    child: FocusScope(
-                                      node: _node,
-                                      child: Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                          children: <Widget>[
-                                            // email
+                      flex: -1,
+                      child: Container(
+                        child: TextField(
+                          onEditingComplete: _node.nextFocus,
+                          controller: addressSelectCtrl,
+                          style: TextStyle(
+                            color: (currentTheme.accentColor),
+                          ),
+                          decoration: InputDecoration(
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white54,
+                              ),
+                            ),
+                            border: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            labelStyle: TextStyle(
+                              color: Colors.white54,
+                            ),
+                            // icon: Icon(Icons.perm_identity),
+                            //  fillColor: currentTheme.accentColor,
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: currentTheme.accentColor, width: 2.0),
+                            ),
+                            hintText: '',
+                            labelText: 'Calle y Número',
 
-                                            Expanded(
-                                              flex: -1,
-                                              child: Container(
-                                                child: TextField(
-                                                  onEditingComplete:
-                                                      _node.nextFocus,
-                                                  controller: addressSelectCtrl,
-                                                  style: TextStyle(
-                                                    color: (currentTheme
-                                                        .accentColor),
-                                                  ),
-                                                  decoration: InputDecoration(
-                                                    enabledBorder:
-                                                        UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                        color: Colors.white54,
-                                                      ),
-                                                    ),
-                                                    border:
-                                                        UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color: Colors.white),
-                                                    ),
-                                                    labelStyle: TextStyle(
-                                                      color: Colors.white54,
-                                                    ),
-                                                    // icon: Icon(Icons.perm_identity),
-                                                    //  fillColor: currentTheme.accentColor,
-                                                    focusedBorder:
-                                                        OutlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color: currentTheme
-                                                              .accentColor,
-                                                          width: 2.0),
-                                                    ),
-                                                    hintText: '',
-                                                    labelText: 'Dirección',
-
-                                                    //counterText: snapshot.data,
-                                                  ),
-                                                  /*  onChanged: (value) =>
-                                        myLocationBloc.searchPlaces(value), */
-                                                ),
-                                              ),
-                                            ),
-
-                                            Expanded(
-                                              flex: -1,
-                                              child: Container(
-                                                padding:
-                                                    EdgeInsets.only(top: 10),
-                                                child: TextField(
-                                                  onEditingComplete:
-                                                      _node.nextFocus,
-                                                  controller: citySelectCtrl,
-                                                  style: TextStyle(
-                                                    color: (currentTheme
-                                                        .accentColor),
-                                                  ),
-                                                  decoration: InputDecoration(
-                                                    enabledBorder:
-                                                        UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                        color: Colors.white54,
-                                                      ),
-                                                    ),
-                                                    border:
-                                                        UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color: Colors.white),
-                                                    ),
-                                                    labelStyle: TextStyle(
-                                                      color: Colors.white54,
-                                                    ),
-                                                    // icon: Icon(Icons.perm_identity),
-                                                    //  fillColor: currentTheme.accentColor,
-                                                    focusedBorder:
-                                                        OutlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color: currentTheme
-                                                              .accentColor,
-                                                          width: 2.0),
-                                                    ),
-                                                    hintText: '',
-                                                    labelText: 'Ciudad',
-
-                                                    //counterText: snapshot.data,
-                                                  ),
-                                                  /*  onChanged: (value) =>
-                                        myLocationBloc.searchPlaces(value), */
-                                                ),
-                                              ),
-                                            ),
-
-                                            Expanded(
-                                              flex: -1,
-                                              child: Container(
-                                                padding: EdgeInsets.only(
-                                                  top: 10,
-                                                ),
-                                                child: TextField(
-                                                    onEditingComplete:
-                                                        _node.nextFocus,
-                                                    controller: numberCtrl,
-                                                    keyboardType:
-                                                        TextInputType.number,
-                                                    style: TextStyle(
-                                                      color: (currentTheme
-                                                          .accentColor),
-                                                    ),
-                                                    decoration: InputDecoration(
-                                                      enabledBorder:
-                                                          UnderlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                          color: Colors.white54,
-                                                        ),
-                                                      ),
-                                                      border:
-                                                          UnderlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                      labelStyle: TextStyle(
-                                                        color: Colors.white54,
-                                                      ),
-                                                      // icon: Icon(Icons.perm_identity),
-                                                      //  fillColor: currentTheme.accentColor,
-                                                      focusedBorder:
-                                                          OutlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                            color: currentTheme
-                                                                .accentColor,
-                                                            width: 2.0),
-                                                      ),
-                                                      hintText: '',
-                                                      labelText:
-                                                          'Numero Departamento/Casa/Oficina',
-
-                                                      //counterText: snapshot.data,
-                                                    ),
-                                                    onChanged: (value) =>
-                                                        _blocLocation
-                                                            .changeNumberAddress(
-                                                                value)),
-                                              ),
-                                            ),
-                                            Spacer(),
-                                            StreamBuilder<String>(
-                                              stream: _blocLocation
-                                                  .numberAddress.stream,
-                                              builder: (context,
-                                                  AsyncSnapshot<String>
-                                                      snapshot) {
-                                                final places = snapshot.data;
-
-                                                bool isDisabled = false;
-                                                (places != null)
-                                                    ? (places != "")
-                                                        ? isDisabled = true
-                                                        : isDisabled = false
-                                                    : isDisabled = false;
-
-                                                return Expanded(
-                                                  flex: 0,
-                                                  child: GestureDetector(
-                                                    onTap: () {
-                                                      if (isDisabled) {
-                                                        var placeSearch = new PlaceSearch(
-                                                            description:
-                                                                addressSelectCtrl
-                                                                    .text,
-                                                            placeId: widget
-                                                                .place.placeId,
-                                                            structuredFormatting:
-                                                                new StructuredFormatting(
-                                                                    mainText:
-                                                                        addressSelectCtrl
-                                                                            .text,
-                                                                    secondaryText:
-                                                                        citySelectCtrl
-                                                                            .text,
-                                                                    number:
-                                                                        places));
-
-                                                        myLocationBloc
-                                                            .savePlaceSearchConfirm(
-                                                                placeSearch);
-
-                                                        FocusScope.of(context)
-                                                            .requestFocus(
-                                                                new FocusNode());
-
-                                                        Navigator.pop(context);
-                                                        Navigator.pop(context);
-                                                      }
-                                                    },
-                                                    child: Container(
-                                                      child: Center(
-                                                        child:
-                                                            roundedRectButton(
-                                                                'Confirmar',
-                                                                [
-                                                                  currentTheme
-                                                                      .primaryColor,
-                                                                  Color(
-                                                                      0xff3AFF3E),
-                                                                  Color(
-                                                                      0xff42FF00),
-                                                                  currentTheme
-                                                                      .primaryColor,
-                                                                ],
-                                                                false,
-                                                                isDisabled),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-
-                                            // password
-
-                                            // submit
-                                          ],
-                                        ),
-                                      ),
-                                    ))),
-                          )
-                        ],
+                            //counterText: snapshot.data,
+                          ),
+                          /*  onChanged: (value) =>
+                                      myLocationBloc.searchPlaces(value), */
+                        ),
                       ),
-                    )
+                    ),
+
+                    Expanded(
+                      flex: -1,
+                      child: Container(
+                        padding: EdgeInsets.only(top: 10),
+                        child: TextField(
+                          enabled: false,
+                          onEditingComplete: _node.nextFocus,
+                          controller: citySelectCtrl,
+                          style: TextStyle(
+                            color: (currentTheme.accentColor),
+                          ),
+                          decoration: InputDecoration(
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white54,
+                              ),
+                            ),
+                            border: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            labelStyle: TextStyle(
+                              color: Colors.white54,
+                            ),
+                            // icon: Icon(Icons.perm_identity),
+                            //  fillColor: currentTheme.accentColor,
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: currentTheme.accentColor, width: 2.0),
+                            ),
+                            hintText: '',
+                            labelText: 'Ciudad',
+
+                            //counterText: snapshot.data,
+                          ),
+                          /*  onChanged: (value) =>
+                                      myLocationBloc.searchPlaces(value), */
+                        ),
+                      ),
+                    ),
+
+                    Expanded(
+                      flex: -1,
+                      child: Container(
+                        padding: EdgeInsets.only(
+                          top: 10,
+                        ),
+                        child: TextField(
+                            onEditingComplete: _node.nextFocus,
+                            controller: numberCtrl,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(
+                              color: (currentTheme.accentColor),
+                            ),
+                            decoration: InputDecoration(
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white54,
+                                ),
+                              ),
+                              border: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white),
+                              ),
+                              labelStyle: TextStyle(
+                                color: Colors.white54,
+                              ),
+                              // icon: Icon(Icons.perm_identity),
+                              //  fillColor: currentTheme.accentColor,
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: currentTheme.accentColor,
+                                    width: 2.0),
+                              ),
+                              hintText: '',
+                              labelText: 'Piso/Apartamento',
+
+                              //counterText: snapshot.data,
+                            ),
+                            onChanged: (value) =>
+                                _blocLocation.changeNumberAddress(value)),
+                      ),
+                    ),
+                    Spacer(),
+                    StreamBuilder<String>(
+                      stream: _blocLocation.numberAddress.stream,
+                      builder: (context, AsyncSnapshot<String> snapshot) {
+                        final places = snapshot.data;
+
+                        bool isDisabled = false;
+                        (places != null)
+                            ? (places != "")
+                                ? isDisabled = true
+                                : isDisabled = false
+                            : isDisabled = false;
+
+                        return Expanded(
+                          flex: 0,
+                          child: GestureDetector(
+                            onTap: () {
+                              if (isDisabled) {
+                                var placeSearch = new PlaceSearch(
+                                    description: addressSelectCtrl.text,
+                                    placeId: widget.place.placeId,
+                                    structuredFormatting:
+                                        new StructuredFormatting(
+                                            mainText: addressSelectCtrl.text,
+                                            secondaryText: citySelectCtrl.text,
+                                            number: places));
+
+                                myLocationBloc
+                                    .savePlaceSearchConfirm(placeSearch);
+
+                                FocusScope.of(context)
+                                    .requestFocus(new FocusNode());
+
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              }
+                            },
+                            child: Container(
+                              child: Center(
+                                child: roundedRectButton(
+                                    'Confirmar',
+                                    [
+                                      currentTheme.primaryColor,
+                                      Color(0xff3AFF3E),
+                                      Color(0xff42FF00),
+                                      currentTheme.primaryColor,
+                                    ],
+                                    false,
+                                    isDisabled),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+
+                    // password
+
+                    // submit
                   ],
                 )),
           )),
@@ -461,7 +388,6 @@ class _CatalogsListState extends State<CatalogsList>
 
   Widget _buildFormAddressWidget() {
     final currentTheme = Provider.of<ThemeChanger>(context);
-    final size = MediaQuery.of(context).size;
 
     return Container(
       child: Column(
@@ -633,21 +559,6 @@ class _CatalogsListState extends State<CatalogsList>
         ],
       ),
     );
-  }
-
-  static Widget _getActionPane(int index) {
-    switch (index % 4) {
-      case 0:
-        return SlidableBehindActionPane();
-      case 1:
-        return SlidableStrechActionPane();
-      case 2:
-        return SlidableScrollActionPane();
-      case 3:
-        return SlidableDrawerActionPane();
-      default:
-        return null;
-    }
   }
 }
 

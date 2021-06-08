@@ -27,7 +27,7 @@ class Header extends StatelessWidget {
             animation: animation,
             additionalOffset: 0.0,
             child: Text(
-              'Bienvenido a Kiozer',
+              'Crea tu cuenta en Kiozer!',
               style: Theme.of(context)
                   .textTheme
                   .headline5
@@ -39,7 +39,7 @@ class Header extends StatelessWidget {
             animation: animation,
             additionalOffset: 16.0,
             child: Text(
-              '¡Crea tu cuenta para continuar!',
+              'Registrate para continuar.',
               style: Theme.of(context)
                   .textTheme
                   .subtitle1

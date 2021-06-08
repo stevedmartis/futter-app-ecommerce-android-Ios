@@ -11,20 +11,20 @@ class StoreService {
 final storeService = [
   StoreService(
       id: 1,
-      backImage: 'assets/travel_photos/rest6.jpg',
-      frontImage: 'assets/travel_photos/rest6.jpg',
+      backImage: 'assets/rest6.jpg',
+      frontImage: 'assets/rest6.jpg',
       name: 'Restaurantes',
       stores: 50),
   StoreService(
       id: 2,
-      backImage: 'assets/travel_photos/frutas_verduras3.jpeg',
-      frontImage: 'assets/travel_photos/frutas_verduras3.jpeg',
+      backImage: 'assets/frutas_verduras3.jpeg',
+      frontImage: 'assets/frutas_verduras3.jpeg',
       name: 'Mercados',
       stores: 20),
   StoreService(
       id: 3,
-      backImage: 'assets/travel_photos/licores1.jpeg',
-      frontImage: 'assets/travel_photos/licores1.jpeg',
+      backImage: 'assets/licores1.jpeg',
+      frontImage: 'assets/licores1.jpeg',
       name: 'Licores',
       stores: 15),
 /*   TravelPhoto(

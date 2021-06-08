@@ -101,62 +101,75 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
     final size = MediaQuery.of(context).size;
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
+    Color gradientStart = Color(0xffFF8236); //Change start gradient color here
+    Color gradientEnd = currentTheme.accentColor;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: currentTheme.scaffoldBackgroundColor,
-      body: Stack(
-        children: <Widget>[
-          AnimatedBuilder(
-            animation: _whiteTopClipperAnimation,
-            builder: (_, Widget child) {
-              return ClipPath(
-                clipper: WhiteTopClipper(
-                  yOffset: _whiteTopClipperAnimation.value,
-                ),
-                child: child,
-              );
-            },
-            child: Container(color: currentTheme.accentColor.withOpacity(0.10)),
-          ),
-          AnimatedBuilder(
-            animation: _greyTopClipperAnimation,
-            builder: (_, Widget child) {
-              return ClipPath(
-                clipper: GreyTopClipper(
-                  yOffset: _greyTopClipperAnimation.value,
-                ),
-                child: child,
-              );
-            },
-            child: Container(color: currentTheme.accentColor),
-          ),
-          AnimatedBuilder(
-            animation: _blueTopClipperAnimation,
-            builder: (_, Widget child) {
-              return ClipPath(
-                clipper: BlueTopClipper(
-                  yOffset: _blueTopClipperAnimation.value,
-                ),
-                child: child,
-              );
-            },
-            child: Container(color: currentTheme.scaffoldBackgroundColor),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: kPaddingL),
-              child: Column(
-                children: <Widget>[
-                  Header(animation: _headerTextAnimation),
-                  SizedBox(
-                    height: size.height / 4.1,
+      body: Container(
+        child: Stack(
+          children: <Widget>[
+            AnimatedBuilder(
+              animation: _whiteTopClipperAnimation,
+              builder: (_, Widget child) {
+                return ClipPath(
+                  clipper: WhiteTopClipper(
+                    yOffset: _whiteTopClipperAnimation.value,
                   ),
-                  LoginForm(animation: _formElementAnimation),
-                ],
+                  child: child,
+                );
+              },
+              child:
+                  Container(color: currentTheme.accentColor.withOpacity(0.10)),
+            ),
+            AnimatedBuilder(
+                animation: _greyTopClipperAnimation,
+                builder: (_, Widget child) {
+                  return ClipPath(
+                    clipper: GreyTopClipper(
+                      yOffset: _greyTopClipperAnimation.value,
+                    ),
+                    child: child,
+                  );
+                },
+                child: Container(
+                  decoration: new BoxDecoration(
+                    gradient: new LinearGradient(
+                        colors: [gradientStart, gradientEnd],
+                        begin: const FractionalOffset(0.5, 0.0),
+                        end: const FractionalOffset(0.0, 0.5),
+                        stops: [0.0, 1.0],
+                        tileMode: TileMode.clamp),
+                  ),
+                )),
+            AnimatedBuilder(
+              animation: _blueTopClipperAnimation,
+              builder: (_, Widget child) {
+                return ClipPath(
+                  clipper: BlueTopClipper(
+                    yOffset: _blueTopClipperAnimation.value,
+                  ),
+                  child: child,
+                );
+              },
+              child: Container(color: currentTheme.scaffoldBackgroundColor),
+            ),
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: kPaddingL),
+                child: Column(
+                  children: <Widget>[
+                    Header(animation: _headerTextAnimation),
+                    SizedBox(
+                      height: size.height / 4.1,
+                    ),
+                    LoginForm(animation: _formElementAnimation),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -159,8 +159,6 @@ class _SingleImageUploadState extends State<SingleImageUpload> {
     final fileMultiPart = await productService.multiPartFileImage(file);
 
     tabsViewScrollBLoC.addImageProduct(fileMultiPart);
-
-    print(tabsViewScrollBLoC.imagesProducts);
   }
 }
 

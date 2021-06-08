@@ -157,30 +157,33 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
             controller: _scrollController,
             slivers: [
               SliverAppBar(
+                leadingWidth: 60,
                 backgroundColor: Colors.black,
-                leading: GestureDetector(
-                  onTap: () {
-                    {
-                      if (storeAuth.user.uid == '0') {
-                        authService.redirect = 'profile';
-                        Navigator.pushNamed(context, 'login');
-                      } else {
-                        Navigator.push(context, profileAuthRoute(true));
+                leading: Container(
+                  width: 100,
+                  height: 100,
+                  margin: EdgeInsets.only(left: 10, top: 10),
+                  child: GestureDetector(
+                    onTap: () {
+                      {
+                        if (storeAuth.user.uid == '0') {
+                          authService.redirect = 'profile';
+                          Navigator.push(context, loginRoute(0));
+                        } else {
+                          Navigator.push(context, profileAuthRoute(true));
+                        }
                       }
-                    }
-                  },
-                  child: Hero(
-                    tag: 'user_auth_avatar',
-                    child: Container(
-                        margin: EdgeInsets.only(left: 10, top: 10),
-                        width: 100,
-                        height: 100,
-                        decoration: new BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: new DecorationImage(
-                                fit: BoxFit.fill,
-                                image: new AssetImage(
-                                    currentProfile.imageAvatar)))),
+                    },
+                    child: Hero(
+                      tag: 'user_auth_avatar',
+                      child: Container(
+                          decoration: new BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: new DecorationImage(
+                                  fit: BoxFit.fill,
+                                  image: new AssetImage(
+                                      currentProfile.imageAvatar)))),
+                    ),
                   ),
                 ),
                 actions: [
@@ -214,9 +217,8 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                                       size: 35,
                                     ),
                             ),
-                            Positioned(
-                              top: 29,
-                              left: 22,
+                            Container(
+                              margin: EdgeInsets.only(left: 22, top: 30),
                               child: (groceryBloc.totalCartElements() > 0)
                                   ? Container(
                                       child: Text(
@@ -590,7 +592,7 @@ class StoreCard extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     child: Image.asset(
-                      'assets/travel_photos/rest_logo.jpeg',
+                      'assets/rest_logo.jpeg',
                       fit: BoxFit.cover,
                     ),
                   ),

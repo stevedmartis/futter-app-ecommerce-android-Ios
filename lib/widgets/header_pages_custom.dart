@@ -61,7 +61,7 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(width: 20),
+          SizedBox(width: 10),
           (widget.leading)
               ? Container(
                   decoration: BoxDecoration(
@@ -98,14 +98,15 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                   onTap: () {
                     {
                       if (storeAuth.user.uid == '0') {
-                        Navigator.pushNamed(context, 'login');
+                        authService.redirect = 'profile';
+                        Navigator.push(context, loginRoute(0));
                       } else {
                         Navigator.push(context, profileAuthRoute(true));
                       }
                     }
                   },
                   child: Container(
-                    padding: EdgeInsets.only(bottom: 15),
+                    padding: EdgeInsets.only(top: 7, bottom: 10),
                     child: Hero(
                       tag: 'user_auth_avatar-header',
                       child: Container(
