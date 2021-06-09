@@ -74,6 +74,7 @@ class TabsViewScrollBLoC with ChangeNotifier {
       if (!exist) items.add(ProfileStoreItem(category: category));
       for (int j = 0; j < category.products.length; j++) {
         final product = category.products[j];
+
         items.add(ProfileStoreItem(product: product));
       }
 
@@ -132,6 +133,7 @@ class TabsViewScrollBLoC with ChangeNotifier {
         .removeWhere((categories) => categories.id == categoryId);
 
     print(storeCategoriesProducts);
+
     init(ticket, storeCategoriesProducts[0].store.user.uid);
 
     notifyListeners();
@@ -143,8 +145,12 @@ class TabsViewScrollBLoC with ChangeNotifier {
     productsByCategoryList = category.single.products;
   }
 
-  void addProductsByCategory(ProfileStoreProduct product) {
+  void addProductsByCategory(
+      TickerProvider ticket, ProfileStoreProduct product) {
     productsByCategoryList.add(product);
+
+    tabs = [];
+    init(ticket, product.user);
 
     notifyListeners();
   }

@@ -4,6 +4,7 @@ import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -264,10 +265,17 @@ class _ProfileStoreProductItem extends StatelessWidget {
             child: Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(5.0),
                   child: Hero(
                       tag: 'list_${product.images[0].url + product.name + '0'}',
-                      child: Image.network(product.images[0].url)),
+                      child: Material(
+                          type: MaterialType.transparency,
+                          child: Container(
+                              width: 100,
+                              child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: cachedNetworkImage(
+                                      product.images[0].url))))),
                 ),
                 const SizedBox(width: 10),
                 Expanded(

@@ -69,7 +69,7 @@ class ProfileStoreProduct {
   String id;
   String name;
   String description;
-  double price;
+  int price;
   String image;
   List<ImageProduct> images;
 
@@ -87,8 +87,8 @@ class ProfileStoreProduct {
         description: json['description'],
         price: json["price"],
         category: json["category"],
-/*         createdAt: DateTime.parse(json["createdAt"]),
-        updatedAt: DateTime.parse(json["updatedAt"]), */
+        createdAt: DateTime.parse(json["createdAt"]),
+        updatedAt: DateTime.parse(json["updatedAt"]),
         images: List<ImageProduct>.from(
             json["images"].map((x) => ImageProduct.fromJson(x))),
       );
@@ -100,7 +100,8 @@ class ProfileStoreProduct {
         "images": List<dynamic>.from(images.map((x) => x.toJson())),
         "name": name,
         "price": price,
-        "updateAt": updatedAt,
+        "createdAt": createdAt,
+        "updatedAt": updatedAt,
         "user": user,
         "category": category
       };
@@ -139,7 +140,7 @@ var rappiCategories = [
           name: 'Silim Lights user',
           description:
               'Beef-Bibimbap mit Reis, Bohnen, Spinat, Karotten, Shiitake-Pilzen, Sesamöl & Ei.',
-          price: 26.50,
+          price: 2650,
           images: [
             ImageProduct(
                 url:
@@ -162,7 +163,7 @@ var rappiCategories = [
           name: 'Silim Lights 1',
           description:
               'Beef-Bibimbap mit Reis, Bohnen, Spinat, Karotten, Shiitake-Pilzen, Sesamöl & Ei.',
-          price: 26.50,
+          price: 2650,
           images: [
             ImageProduct(
                 url:
@@ -183,7 +184,7 @@ var rappiCategories = [
           id: '1',
           name: 'Wings of Incheon',
           description: 'Micro-Greens & gerösteten Erbsen, 4 Stk.',
-          price: 29.50,
+          price: 2950,
           images: [
             ImageProduct(
                 url:
@@ -205,7 +206,7 @@ var rappiCategories = [
           name: 'Late Sunset',
           description:
               'Korean Fried Chicken, Dirty Cheese Sauce & Artisan Sauce.',
-          price: 14.50,
+          price: 1450,
           images: [
             ImageProduct(
                 url:
@@ -226,7 +227,7 @@ var rappiCategories = [
           id: '1',
           name: 'Rice 2',
           description: 'Portion.',
-          price: 4.00,
+          price: 400,
           images: [
             ImageProduct(
                 url:
@@ -250,7 +251,7 @@ var rappiCategories = [
           name: 'Silim Lights',
           description:
               'Beef-Bibimbap mit Reis, Bohnen, Spinat, Karotten, Shiitake-Pilzen, Sesamöl & Ei.',
-          price: 26.50,
+          price: 2650,
           images: [
             ImageProduct(
                 url:
@@ -272,7 +273,7 @@ var rappiCategories = [
           name: 'Sudogwon Millions',
           description:
               'Steamed bao-sandwiches with kimchi, pickled cucumber and mango cubes.',
-          price: 26.50,
+          price: 2650,
           images: [
             ImageProduct(
                 url:
@@ -294,7 +295,7 @@ var rappiCategories = [
           name: 'Haeundae Surf',
           description:
               'Chicken-Bibimbap mit Reis, Bohnen, Spinat, Karotten, Shiitake- Pilzen, Sesamöl, gerösteten Zwiebeln & Ei.',
-          price: 23.50,
+          price: 2350,
           images: [
             ImageProduct(
                 url:
@@ -315,7 +316,7 @@ var rappiCategories = [
           user: '2',
           name: 'Rice',
           description: 'Portion.',
-          price: 4.00,
+          price: 400,
           images: [
             ImageProduct(
                 url:

@@ -1,5 +1,6 @@
 import 'package:australti_ecommerce_app/controller/slide_controller.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/material.dart';
 
 class CarouselImagesProduct extends StatefulWidget {
@@ -37,10 +38,8 @@ class _CarouselImagesProductState extends State<CarouselImagesProduct> {
                     widget.images.length,
                     (index) => Padding(
                       padding: const EdgeInsets.all(12.0),
-                      child: Image.network(
+                      child: cachedNetworkImage(
                         widget.images[index].url,
-                        fit: BoxFit.contain,
-                        height: MediaQuery.of(context).size.height * 0.36,
                       ),
                     ),
                   )),

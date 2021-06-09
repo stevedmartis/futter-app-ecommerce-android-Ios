@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/responses/images_product_response.dart';
+import 'package:australti_ecommerce_app/responses/product_response.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:australti_ecommerce_app/global/enviroments.dart';
 import 'package:australti_ecommerce_app/responses/message_error_response.dart';
@@ -29,23 +30,21 @@ class StoreProductService with ChangeNotifier {
 
   final _storage = new FlutterSecureStorage();
 
-  Future createCatalogo(ProfileStoreCategory category) async {
+  Future createProduct(ProfileStoreProduct product) async {
     // this.authenticated = true;
 
-    final urlFinal = Uri.https('${Environment.apiUrl}', '/api/catalogo/new');
+    final urlFinal = ('${Environment.apiUrl}/api/product/new');
 
     final token = await this._storage.read(key: 'token');
 
-    final resp = await http.post(urlFinal,
-        body: jsonEncode(catalogo),
+    final resp = await http.post(Uri.parse(urlFinal),
+        body: jsonEncode(product),
         headers: {'Content-Type': 'application/json', 'x-token': token});
 
     if (resp.statusCode == 200) {
-      // final roomResponse = roomsResponseFromJson(resp.body);
-      final catalogoResponse = storeCategoriesResponseFromJson(resp.body);
-      // this.rooms = roomResponse.rooms;
+      final productResponse = productResponseFromJson(resp.body);
 
-      return catalogoResponse;
+      return productResponse;
     } else {
       final respBody = errorMessageResponseFromJson(resp.body);
 

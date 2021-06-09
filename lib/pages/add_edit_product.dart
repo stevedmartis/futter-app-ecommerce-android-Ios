@@ -7,6 +7,9 @@ import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/pages/single_image_upload.dart';
+import 'package:australti_ecommerce_app/responses/product_response.dart';
+import 'package:australti_ecommerce_app/responses/store_categories_response.dart';
+import 'package:australti_ecommerce_app/services/catalogo.dart';
 import 'package:australti_ecommerce_app/services/product.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
@@ -44,6 +47,7 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
   final descriptionCtrl = TextEditingController();
 
   final priceCtrl = TextEditingController();
+  final catalogoService = new StoreCategoiesService();
 
   Store storeAuth;
   // final potCtrl = TextEditingController();
@@ -697,27 +701,45 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
 
     if (imagesProduct != null) {
       final newProduct = ProfileStoreProduct(
-        id: '2-c',
-        name: name,
-        price: double.parse(price),
-        description: description,
-        images: imagesProduct.images,
-      );
+          id: '2-c',
+          name: name,
+          price: int.parse(price),
+          description: description,
+          images: imagesProduct.images,
+          category: widget.category.id,
+          user: widget.category.store.user.uid);
 
-      loading = false;
+      final ProductResponse resp =
+          await productService.createProduct(newProduct);
 
-      final productProvider =
-          Provider.of<TabsViewScrollBLoC>(context, listen: false);
+      if (resp.ok) {
+        loading = false;
 
-      productProvider.addProductsByCategory(newProduct);
+        final productProvider =
+            Provider.of<TabsViewScrollBLoC>(context, listen: false);
 
-      // widget.bloc.addProductsByCategory(newProduct, widget.category.id, this);
+        productProvider.addProductsByCategory(this, resp.product);
 
-      Navigator.pop(context);
+        _showSnackBar(context, 'Producto creado con exito!');
+
+        Navigator.pop(context);
+      }
     } else {
       showAlertError(
           context, 'Error del servidor', 'lo sentimos, Intentelo mas tarde');
     }
+  }
+
+  void _showSnackBar(BuildContext context, String text) {
+    final currentTheme = Provider.of<ThemeChanger>(context, listen: false);
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor:
+            (currentTheme.customTheme) ? Colors.black : Colors.black,
+        content: Text(text,
+            style: TextStyle(
+              color: (currentTheme.customTheme) ? Colors.white : Colors.white,
+            ))));
   }
 
   _editProduct() async {

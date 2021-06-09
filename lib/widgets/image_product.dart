@@ -1,3 +1,4 @@
+import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/material.dart';
 
 class OnboardingMessages extends StatelessWidget {
@@ -26,7 +27,7 @@ class OnboardingMessages extends StatelessWidget {
           margin: EdgeInsets.only(top: _size.height / 20, left: 0),
           width: _size.width,
           height: _size.height,
-          child: Image.network(image)),
+          child: cachedNetworkImage(image)),
     );
   }
 }

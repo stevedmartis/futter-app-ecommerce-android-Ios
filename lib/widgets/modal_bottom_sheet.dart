@@ -109,7 +109,7 @@ showMaterialCupertinoBottomSheetLocation(BuildContext context, String titulo,
                                   width: 2.0),
                             ),
                             hintText: '',
-                            labelText: 'Escribe tu dirección completa',
+                            labelText: 'Calle y número',
 
                             //counterText: snapshot.data,
                           ),

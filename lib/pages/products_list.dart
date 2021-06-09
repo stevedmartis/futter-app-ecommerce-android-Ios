@@ -4,6 +4,7 @@ import 'package:australti_ecommerce_app/pages/add_edit_product.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
+import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/product_detail.dart';
@@ -281,10 +282,16 @@ class _ProfileAuthStoreProductItem extends StatelessWidget {
             child: Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(5.0),
                   child: Hero(
                       tag: 'list_${product.images[0].url + product.name + '0'}',
-                      child: Image.network(product.images[0].url)),
+                      child: Container(
+                          width: 100,
+                          child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12.0)),
+                              child:
+                                  cachedNetworkImage(product.images[0].url)))),
                 ),
                 const SizedBox(width: 10),
                 Expanded(

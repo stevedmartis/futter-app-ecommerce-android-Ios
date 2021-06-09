@@ -1,5 +1,6 @@
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -31,14 +32,12 @@ class _CarouselWithIndicatorState
             widget.images.length,
             (index) => Container(
               child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  borderRadius: BorderRadius.all(Radius.circular(12.0)),
                   child: Hero(
                     tag: widget.tag + '$index',
                     child: Container(
-                      child: Image.network(
+                      child: cachedNetworkImageDetail(
                         widget.images[index].url,
-                        fit: BoxFit.contain,
-                        height: MediaQuery.of(context).size.height * 0.36,
                       ),
                     ),
                   )),

@@ -428,6 +428,7 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
 
     final catalogoService =
         Provider.of<StoreCategoiesService>(context, listen: false);
+    final bloc = Provider.of<TabsViewScrollBLoC>(context, listen: false);
 
     final name = (categoryBloc.name == null)
         ? widget.category.name
@@ -455,7 +456,7 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
       if (createCatalogoResp.ok) {
         loading = false;
 
-        widget.bloc.addNewCategory(this, createCatalogoResp.category);
+        bloc.addNewCategory(this, createCatalogoResp.category);
 
         Navigator.pop(context);
         setState(() {});
@@ -474,6 +475,8 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
         Provider.of<StoreCategoiesService>(context, listen: false);
 
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+
+    final bloc = Provider.of<TabsViewScrollBLoC>(context, listen: false);
 
     final description = (descriptionCtrl.text == "")
         ? widget.category.description
@@ -498,7 +501,7 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
       if (editCatalogoRes.ok) {
         loading = false;
 
-        widget.bloc.editCategory(this, editCatalogoRes.category);
+        bloc.editCategory(this, editCatalogoRes.category);
 
         Navigator.pop(context);
         setState(() {});

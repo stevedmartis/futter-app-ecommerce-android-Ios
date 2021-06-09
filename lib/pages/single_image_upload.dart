@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:australti_ecommerce_app/services/product.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -80,14 +81,14 @@ class _SingleImageUploadState extends State<SingleImageUpload> {
           ImageProduct uploadModel = widget.images[index];
 
           return Container(
+            width: 150,
+            height: 150,
             child: Card(
               clipBehavior: Clip.antiAlias,
               child: Stack(
                 children: <Widget>[
-                  Image.network(
+                  cachedNetworkImage(
                     uploadModel.url,
-                    width: 150,
-                    height: 150,
                   ),
                   Positioned(
                     right: 5,

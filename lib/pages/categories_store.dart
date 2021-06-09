@@ -330,7 +330,10 @@ class _CatalogsListState extends State<CatalogsList>
           padding: EdgeInsets.only(top: 20, left: 20),
           child: Text(
             'Mis Catalogos',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 30,
+                color: currentTheme.currentTheme.accentColor),
           ),
         ),
         Container(
