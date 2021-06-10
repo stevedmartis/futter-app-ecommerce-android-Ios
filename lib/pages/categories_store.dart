@@ -14,6 +14,7 @@ import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
+import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -430,7 +431,7 @@ class _CatalogsListState extends State<CatalogsList>
                             }) as FutureOr<bool>;
                       } as FutureOr<bool> Function(SlideActionType),
                       onDismissed: (actionType) {
-                        _showSnackBar(context, 'Catalogo Eliminado');
+                        showSnackBar(context, 'Catalogo Eliminado');
                         setState(() {
                           _deleteCategory(item.id, index);
                         });
@@ -674,7 +675,7 @@ class _CatalogsListState extends State<CatalogsList>
       if (respMyCategories.ok) {
         productsBloc.orderPosition(
             this, respMyCategories.storeCategoriesProducts);
-        _showSnackBar(context, 'Posición editada con exito!');
+        showSnackBar(context, 'Posición editada con exito!');
       }
     }
   }
@@ -693,17 +694,6 @@ class _CatalogsListState extends State<CatalogsList>
         return null;
     }
   }
-}
-
-void _showSnackBar(BuildContext context, String text) {
-  final currentTheme = Provider.of<ThemeChanger>(context, listen: false);
-
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      backgroundColor: (currentTheme.customTheme) ? Colors.black : Colors.black,
-      content: Text(text,
-          style: TextStyle(
-            color: (currentTheme.customTheme) ? Colors.white : Colors.white,
-          ))));
 }
 
 Route createRouteAddEditCategory(

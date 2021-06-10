@@ -2,6 +2,7 @@ import 'package:australti_ecommerce_app/models/profile.dart';
 import 'package:australti_ecommerce_app/provider/store_provider.dart';
 import 'package:australti_ecommerce_app/responses/store_response.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -140,7 +141,7 @@ class DataSearch extends SearchDelegate {
             );
           } else {
             return Center(
-              child: CircularProgressIndicator(),
+              child: buildLoadingWidget(context),
             );
           }
         },

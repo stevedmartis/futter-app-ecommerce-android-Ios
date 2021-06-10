@@ -104,6 +104,12 @@ class _SingleImageUploadState extends State<SingleImageUpload> {
                           widget.images
                               .replaceRange(index, index + 1, ['Add Image']);
                         });
+
+                        final productService = Provider.of<StoreProductService>(
+                            context,
+                            listen: false);
+
+                        productService.imagesChange = true;
                       },
                     ),
                   ),
@@ -158,6 +164,7 @@ class _SingleImageUploadState extends State<SingleImageUpload> {
         Provider.of<StoreProductService>(context, listen: false);
 
     final fileMultiPart = await productService.multiPartFileImage(file);
+    productService.imagesChange = true;
 
     tabsViewScrollBLoC.addImageProduct(fileMultiPart);
   }

@@ -562,17 +562,6 @@ class _CatalogsListState extends State<CatalogsList>
   }
 }
 
-void _showSnackBar(BuildContext context, String text) {
-  final currentTheme = Provider.of<ThemeChanger>(context, listen: false);
-
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      backgroundColor: (currentTheme.customTheme) ? Colors.black : Colors.black,
-      content: Text(text,
-          style: TextStyle(
-            color: (currentTheme.customTheme) ? Colors.white : Colors.white,
-          ))));
-}
-
 Route createRouteAddEditCategory(
     ProfileStoreCategory category, bool isEdit, TabsViewScrollBLoC bloc) {
   return PageRouteBuilder(

@@ -21,12 +21,21 @@ class StoreProductService with ChangeNotifier {
   final prefs = new AuthUserPreferences();
   ProfileStoreCategory _catalogo;
 
+  bool _imagesChanges = false;
+
   ProfileStoreCategory get catalogo => this._catalogo;
 
   set catalogo(ProfileStoreCategory valor) {
     this._catalogo = valor;
     // notifyListeners();
   }
+
+  set imagesChange(bool value) {
+    this._imagesChanges = value;
+    notifyListeners();
+  }
+
+  bool get isImagesChange => this._imagesChanges;
 
   final _storage = new FlutterSecureStorage();
 
@@ -52,23 +61,22 @@ class StoreProductService with ChangeNotifier {
     }
   }
 
-  Future editCatalogo(ProfileStoreCategory catalogo) async {
+  Future editProduct(ProfileStoreProduct product) async {
     // this.authenticated = true;
 
     final token = await this._storage.read(key: 'token');
-    final urlFinal =
-        Uri.https('${Environment.apiUrl}', '/api/catalogo/update/catalogo');
+    final urlFinal = ('${Environment.apiUrl}/api/product/update/product');
 
-    final resp = await http.post(urlFinal,
-        body: jsonEncode(catalogo),
+    final resp = await http.post(Uri.parse(urlFinal),
+        body: jsonEncode(product),
         headers: {'Content-Type': 'application/json', 'x-token': token});
 
     if (resp.statusCode == 200) {
       // final roomResponse = roomsResponseFromJson(resp.body);
-      final catalogoResponse = storeCategoriesResponseFromJson(resp.body);
+      final productResponse = productResponseFromJson(resp.body);
       // this.rooms = roomResponse.rooms;
 
-      return catalogoResponse;
+      return productResponse;
     } else {
       final respBody = errorMessageResponseFromJson(resp.body);
 
@@ -76,14 +84,13 @@ class StoreProductService with ChangeNotifier {
     }
   }
 
-  Future deleteCatalogo(String catalogoId) async {
+  Future deleteProduct(String catalogoId) async {
     final token = await this._storage.read(key: 'token');
 
-    final urlFinal =
-        Uri.https('${Environment.apiUrl}', '/api/catalogo/delete/$catalogoId');
+    final urlFinal = ('${Environment.apiUrl}/api/product/delete/$catalogoId');
 
     try {
-      await http.delete(urlFinal,
+      await http.delete(Uri.parse(urlFinal),
           headers: {'Content-Type': 'application/json', 'x-token': token});
 
       return true;

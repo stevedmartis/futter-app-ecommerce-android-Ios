@@ -143,7 +143,7 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
         centerTitle: true,
         title: (widget.isEdit)
             ? Text(
-                'Edit catalogo',
+                'Editar catalogo',
                 style: TextStyle(
                     color: (currentTheme.customTheme)
                         ? Colors.white

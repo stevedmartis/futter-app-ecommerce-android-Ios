@@ -15,6 +15,7 @@ import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/utils.dart';
+import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
 import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 import 'package:flutter/material.dart';
 
@@ -166,9 +167,11 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
         backgroundColor:
             (currentTheme.customTheme) ? Colors.black : Colors.white,
         actions: [
-          (widget.isEdit)
-              ? _createButton(isControllerChangeEdit)
-              : _createButton(isControllerChange),
+          (!loading)
+              ? (widget.isEdit)
+                  ? _createButton(isControllerChangeEdit)
+                  : _createButton(isControllerChange)
+              : buildLoadingWidget(context),
         ],
         leading: IconButton(
           icon: Icon(
@@ -184,7 +187,7 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
         centerTitle: true,
         title: (widget.isEdit)
             ? Text(
-                'Edit catalogo',
+                'Editar producto',
                 style: TextStyle(
                     color: (currentTheme.customTheme)
                         ? Colors.white
@@ -654,6 +657,8 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
   ) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
+    final productService = Provider.of<StoreProductService>(context);
+
     return GestureDetector(
         child: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -661,14 +666,16 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
             child: Text(
               (widget.isEdit) ? 'Guardar' : 'Crear',
               style: TextStyle(
-                  color: (isControllerChange && !errorRequired)
+                  color: (isControllerChange && !errorRequired ||
+                          productService.isImagesChange)
                       ? currentTheme.accentColor
                       : Colors.grey,
                   fontSize: 18),
             ),
           ),
         ),
-        onTap: isControllerChange && !errorRequired && !loading
+        onTap: isControllerChange && !errorRequired && !loading ||
+                productService.isImagesChange
             ? () => {
                   setState(() {
                     loading = true;
@@ -713,14 +720,16 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
           await productService.createProduct(newProduct);
 
       if (resp.ok) {
-        loading = false;
-
         final productProvider =
             Provider.of<TabsViewScrollBLoC>(context, listen: false);
 
         productProvider.addProductsByCategory(this, resp.product);
 
-        _showSnackBar(context, 'Producto creado con exito!');
+        setState(() {
+          loading = false;
+        });
+
+        showSnackBar(context, 'Producto creado con exito!');
 
         Navigator.pop(context);
       }
@@ -730,40 +739,104 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
     }
   }
 
-  void _showSnackBar(BuildContext context, String text) {
-    final currentTheme = Provider.of<ThemeChanger>(context, listen: false);
-
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        backgroundColor:
-            (currentTheme.customTheme) ? Colors.black : Colors.black,
-        content: Text(text,
-            style: TextStyle(
-              color: (currentTheme.customTheme) ? Colors.white : Colors.white,
-            ))));
-  }
-
   _editProduct() async {
     // final catalogoService = Provider.of<StoreCategoiesService>(context, listen: false);
 
-    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+    final productService =
+        Provider.of<StoreProductService>(context, listen: false);
 
-    final description = (descriptionCtrl.text == "")
-        ? widget.product.description
-        : descriptionCtrl.text.trim();
+    final name = nameCtrl.text;
+    final description = descriptionCtrl.text;
 
-    final privacity = optionItemSelected;
+    final price = priceCtrl.text;
 
-    final editCategory = ProfileStoreCategory(
-      id: widget.product.id,
-      store: authService.storeAuth,
-      position: 5,
-      name: nameCtrl.text.trim(),
-      visibility: isSwitchedVisibility,
-      description: description,
-      privacity: privacity,
-    );
+    List<ImageProduct> imagesFinal = [];
 
-    Navigator.pop(context);
+    final item =
+        images.firstWhere((item) => item is ImageProduct, orElse: () => null);
+
+    if (item != null) {
+      imagesFinal.add(item);
+      print(item);
+    }
+
+    if (tabsViewScrollBLoC.imagesProducts.length != 0) {
+      final imagesProduct = await productService.uploadImagesProducts(
+          tabsViewScrollBLoC.imagesProducts, storeAuth.user.uid);
+
+      if (imagesProduct != null) {
+        for (var item in imagesProduct.images) {
+          imagesFinal.add(item);
+        }
+
+        print(imagesFinal);
+
+        print(widget.product.images);
+
+        final productEdit = ProfileStoreProduct(
+            id: widget.product.id,
+            name: name,
+            price: int.parse(price),
+            description: description,
+            images: imagesFinal,
+            category: widget.category.id,
+            user: widget.category.store.user.uid);
+
+        final ProductResponse resp =
+            await productService.editProduct(productEdit);
+
+        if (resp.ok) {
+          final productProvider =
+              Provider.of<TabsViewScrollBLoC>(context, listen: false);
+
+          productProvider.editProduct(this, resp.product);
+
+          setState(() {
+            loading = false;
+          });
+
+          showSnackBar(context, 'Producto editado con exito');
+
+          Navigator.pop(context);
+        }
+
+        Navigator.pop(context);
+      } else {
+        showAlertError(
+            context, 'Error del servidor', 'lo sentimos, Intentelo mas tarde');
+      }
+    } else {
+      print(imagesFinal);
+
+      final productEdit = ProfileStoreProduct(
+          id: widget.product.id,
+          name: name,
+          price: int.parse(price),
+          description: description,
+          images: imagesFinal,
+          category: widget.category.id,
+          user: widget.category.store.user.uid);
+
+      final ProductResponse resp =
+          await productService.editProduct(productEdit);
+
+      if (resp.ok) {
+        final productProvider =
+            Provider.of<TabsViewScrollBLoC>(context, listen: false);
+
+        productProvider.editProduct(this, resp.product);
+
+        setState(() {
+          loading = false;
+        });
+
+        showSnackBar(context, 'Producto editado con exito');
+
+        Navigator.pop(context);
+      }
+
+      Navigator.pop(context);
+    }
 
     //final editCatalogoRes = await catalogoService.editCatalogo(editCategory);
 

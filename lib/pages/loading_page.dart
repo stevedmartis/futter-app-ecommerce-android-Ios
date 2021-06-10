@@ -1,6 +1,7 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
+import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,16 +13,11 @@ class LoadingPage extends StatelessWidget {
         future: checkLoginState(context),
         builder: (context, snapshot) {
           return Center(
-            child: _buildLoadingWidget(context),
+            child: buildLoadingWidget(context),
           );
         },
       ),
     );
-  }
-
-  Widget _buildLoadingWidget(context) {
-    return Container(
-        height: 400.0, child: Center(child: CircularProgressIndicator()));
   }
 
   Future checkLoginState(BuildContext context) async {

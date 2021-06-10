@@ -150,13 +150,29 @@ class TabsViewScrollBLoC with ChangeNotifier {
     productsByCategoryList.add(product);
 
     tabs = [];
+    items = [];
     init(ticket, product.user);
 
     notifyListeners();
   }
 
-  void removeProductById(String productId) {
+  void removeProductById(TickerProvider ticket, String productId, String user) {
     productsByCategoryList.removeWhere((product) => product.id == productId);
+
+    tabs = [];
+    items = [];
+    init(ticket, user);
+    notifyListeners();
+  }
+
+  void editProduct(TickerProvider ticket, ProfileStoreProduct product) {
+    final item = productsByCategoryList
+        .firstWhere((item) => item.id == product.id, orElse: () => null);
+
+    item.name = product.name;
+    item.description = product.description;
+    item.price = product.price;
+    item.images = product.images;
 
     notifyListeners();
   }

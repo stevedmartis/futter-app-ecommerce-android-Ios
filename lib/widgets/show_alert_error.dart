@@ -1,5 +1,7 @@
+import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:universal_platform/universal_platform.dart';
 
 showAlertError(BuildContext context, String titulo, String subtitulo) {
@@ -38,4 +40,15 @@ showAlertError(BuildContext context, String titulo, String subtitulo) {
               ],
             ));
   }
+}
+
+showSnackBar(BuildContext context, String text) {
+  final currentTheme = Provider.of<ThemeChanger>(context, listen: false);
+
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.black,
+      content: Text(text,
+          style: TextStyle(
+            color: (currentTheme.customTheme) ? Colors.white : Colors.white,
+          ))));
 }

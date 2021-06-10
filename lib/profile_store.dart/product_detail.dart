@@ -1,9 +1,11 @@
 import 'package:australti_ecommerce_app/pages/products_list.dart';
+import 'package:australti_ecommerce_app/services/product.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/utils.dart';
 import 'package:australti_ecommerce_app/widgets/carousel_images_indicator.dart';
 import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
+import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
@@ -26,9 +28,12 @@ class ProductStoreDetails extends StatefulWidget {
   _GroceryStoreDetailsState createState() => _GroceryStoreDetailsState();
 }
 
-class _GroceryStoreDetailsState extends State<ProductStoreDetails> {
+class _GroceryStoreDetailsState extends State<ProductStoreDetails>
+    with TickerProviderStateMixin {
   String heroTag = '';
   int quantity = 1;
+
+  final productService = new StoreProductService();
 
   void _addToCart(BuildContext context) {
     setState(() {
@@ -219,15 +224,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails> {
                                       style: TextStyle(color: Colors.red),
                                     ),
                                     onPressed: () {
-                                      final productProvider =
-                                          Provider.of<TabsViewScrollBLoC>(
-                                              context,
-                                              listen: false);
-                                      productProvider
-                                          .removeProductById(widget.product.id);
-
-                                      Navigator.pop(context);
-                                      Navigator.pop(context);
+                                      _deleteProduct();
                                     },
                                   )
                                 ],
@@ -236,9 +233,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails> {
                                     'Cancelar',
                                     style: TextStyle(color: Colors.grey),
                                   ),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
+                                  onPressed: () {},
                                 ));
                             showCupertinoModalPopup(
                                 context: context,
@@ -264,6 +259,23 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails> {
         ),
       ),
     );
+  }
+
+  Future _deleteProduct() async {
+    final productProvider =
+        Provider.of<TabsViewScrollBLoC>(context, listen: false);
+    final res = await this.productService.deleteProduct(widget.product.id);
+
+    if (res) {
+      productProvider.removeProductById(
+          this, widget.product.id, widget.product.user);
+      setState(() {});
+
+      showSnackBar(context, 'Producto eliminado');
+
+      Navigator.pop(context);
+      Navigator.pop(context);
+    }
   }
 
   int index = 0;

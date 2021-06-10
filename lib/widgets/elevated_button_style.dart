@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
+import 'circular_progress.dart';
+
 elevatedButtonCustom(
     {BuildContext context,
     String title,
@@ -90,7 +92,7 @@ Widget roundedRectButton(
       alignment: Alignment(1.0, 0.0),
       children: <Widget>[
         (loading)
-            ? _buildLoadingWidget()
+            ? buildLoadingWidget(context)
             : (isDisable)
                 ? Container(
                     alignment: Alignment.bottomCenter,
@@ -146,7 +148,7 @@ Widget goPayCartBtnSubtotal(
       alignment: Alignment(1.0, 0.0),
       children: <Widget>[
         (loading)
-            ? _buildLoadingWidget()
+            ? buildLoadingWidget(context)
             : (isDisable)
                 ? Container(
                     alignment: Alignment.bottomCenter,
@@ -235,9 +237,4 @@ Widget goPayCartBtnSubtotal(
       ],
     );
   });
-}
-
-Widget _buildLoadingWidget() {
-  return Container(
-      height: 50.0, child: Center(child: CircularProgressIndicator()));
 }
