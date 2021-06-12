@@ -15,8 +15,8 @@ class OnboardingPageIndicator extends StatelessWidget {
 
   Color _getPageIndicatorColor(int pageIndex) {
     return currentPage > pageIndex
-        ? Colors.black
-        : Colors.black.withOpacity(0.25);
+        ? Color(0xFF131313)
+        : Color(0xFF131313).withOpacity(0.25);
   }
 
   double get indicatorGap => pi / 12;

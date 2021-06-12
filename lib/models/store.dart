@@ -12,65 +12,67 @@ Store storeFromJson(String str) => Store.fromJson(json.decode(str));
 String storeToJson(Store data) => json.encode(data.toJson());
 
 class Store {
-  const Store({
+  Store({
     this.id = "",
     @required this.user,
     this.about = "",
     this.products = 0,
     this.name = "",
-    this.image = "",
+    this.lastName = "",
+    this.imageAvatar = "",
     this.timeDelivery,
     this.percentOff,
     this.trophys = 0,
     this.isEco = false,
     this.service,
-    this.createAt,
-    this.updateAt,
+    this.createdAt,
+    this.updatedAt,
   });
 
   final String id;
   final User user;
-  final String about;
-  final int products;
-  final String name;
-  final String image;
+  String about;
+  int products;
+  String name;
+  String lastName;
+  String imageAvatar;
   final int service;
-  final String timeDelivery;
-  final int percentOff;
-  final int trophys;
-  final bool isEco;
-  final String createAt;
-  final String updateAt;
+  String timeDelivery;
+  int percentOff;
+  int trophys;
+  bool isEco;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   factory Store.fromJson(Map<String, dynamic> json) => Store(
         id: json["id"],
         user: User.fromJson(json["user"]),
         about: json["about"],
-        products: json["products"],
         name: json["name"],
-        image: json["image"],
+        lastName: json["lastName"],
+        imageAvatar: json["imageAvatar"],
         service: json["service"],
         timeDelivery: json["time_delivery"],
         percentOff: json["percentOff"],
         trophys: json["trophys"],
         isEco: json["isEco"],
-        createAt: json["createAt"],
-        updateAt: json["updateAt"],
+        createdAt: DateTime.parse(json["createdAt"]),
+        updatedAt: DateTime.parse(json["updatedAt"]),
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "user": user,
         "about": about,
-        "products": products,
         "name": name,
-        "image": image,
+        "lastName": lastName,
+        "imageAvatar": imageAvatar,
         "service": service,
-        "time_delivery": timeDelivery,
+        "timeDelivery": timeDelivery,
         "percentOff": percentOff,
         "trophys": trophys,
         "isEco": isEco,
-        "createAt": createAt,
-        "updateAt": updateAt,
+        "createdAt": updatedAt,
+        "updatedAt": updatedAt,
       };
 }

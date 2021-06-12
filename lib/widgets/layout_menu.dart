@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +15,10 @@ class GLMenuButton {
 
   GLMenuButton({this.onPressed, this.icon});
 }
+
+Color backgroundColor = Colors.white;
+Color activeColor = Colors.black;
+Color inactiveColor = Colors.blueGrey;
 
 class GridLayoutMenu extends StatelessWidget {
   final bool show;
@@ -46,13 +51,6 @@ class GridLayoutMenu extends StatelessWidget {
                     duration: Duration(milliseconds: 500),
                     opacity: (show) ? 0.7 : 0,
                     child: Builder(builder: (BuildContext context) {
-                      Provider.of<_MenuModel>(context).backgroundColor =
-                          this.backgroundColor;
-                      Provider.of<_MenuModel>(context).activeColor =
-                          this.activeColor;
-                      Provider.of<_MenuModel>(context).inactiveColor =
-                          this.inactiveColor;
-
                       return GLMenuBackGround(child: _MenuItems(items));
                     })),
               ),
@@ -61,12 +59,6 @@ class GridLayoutMenu extends StatelessWidget {
               duration: Duration(milliseconds: 500),
               opacity: (show) ? 1.0 : 0,
               child: Builder(builder: (BuildContext context) {
-                Provider.of<_MenuModel>(context).backgroundColor =
-                    this.backgroundColor;
-                Provider.of<_MenuModel>(context).activeColor = this.activeColor;
-                Provider.of<_MenuModel>(context).inactiveColor =
-                    this.inactiveColor;
-
                 return GLMenuBackGround(child: _MenuItems(items));
               })),
     );
@@ -118,13 +110,13 @@ class _GridLayoutMenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final intemSelected = Provider.of<_MenuModel>(context).itemSelected;
+    final intemSelected = Provider.of<MenuModel>(context).currentPage;
 
-    final menuProvider = Provider.of<_MenuModel>(context);
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
     return GestureDetector(
       onTap: () {
-        Provider.of<_MenuModel>(context, listen: false).itemSelected = index;
+        Provider.of<MenuModel>(context, listen: false).currentPage = index;
         item.onPressed();
       },
       behavior: HitTestBehavior.translucent,
@@ -133,9 +125,8 @@ class _GridLayoutMenuButton extends StatelessWidget {
         child: Icon(
           item.icon,
           size: (intemSelected == index) ? 35 : 30,
-          color: (intemSelected == index)
-              ? menuProvider.activeColor
-              : menuProvider.inactiveColor,
+          color:
+              (intemSelected == index) ? currentTheme.accentColor : Colors.grey,
         ),
       ),
     );
@@ -143,10 +134,6 @@ class _GridLayoutMenuButton extends StatelessWidget {
 }
 
 class _MenuModel with ChangeNotifier {
-  Color backgroundColor = Colors.white;
-  Color activeColor = Colors.black;
-  Color inactiveColor = Colors.blueGrey;
-
   int _itemSelected = 0;
 
   int get itemSelected => this._itemSelected;

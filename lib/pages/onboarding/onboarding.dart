@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -223,6 +224,9 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
 
   Future<void> _goToLogin() async {
     await _rippleAnimationController.forward();
+    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+
+    authService.redirect = 'profile';
 
     Navigator.of(context).push(loginRoute(widget.screenHeight));
   }

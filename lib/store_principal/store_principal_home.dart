@@ -11,6 +11,7 @@ import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/store_principal/store_Service.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:australti_ecommerce_app/widgets/modal_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -160,32 +161,40 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                 leadingWidth: 60,
                 backgroundColor: Colors.black,
                 leading: Container(
-                  width: 100,
-                  height: 100,
-                  margin: EdgeInsets.only(left: 10, top: 10),
-                  child: GestureDetector(
-                    onTap: () {
-                      {
-                        if (storeAuth.user.uid == '0') {
-                          authService.redirect = 'profile';
-                          Navigator.push(context, loginRoute(0));
-                        } else {
-                          Navigator.push(context, profileAuthRoute(true));
+                    width: 100,
+                    height: 100,
+                    margin: EdgeInsets.only(left: 10, top: 10),
+                    child: GestureDetector(
+                      onTap: () {
+                        {
+                          if (storeAuth.user.uid == '0') {
+                            authService.redirect = 'profile';
+                            Navigator.push(context, loginRoute(0));
+                          } else {
+                            Navigator.push(context, profileAuthRoute(true));
+                          }
                         }
-                      }
-                    },
-                    child: Hero(
-                      tag: 'user_auth_avatar',
+                      },
                       child: Container(
-                          decoration: new BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: new DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: new AssetImage(
-                                      currentProfile.imageAvatar)))),
-                    ),
-                  ),
-                ),
+                          width: 100,
+                          height: 100,
+                          child: Hero(
+                            tag: 'user_auth_avatar',
+                            child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(100.0)),
+                              child: (authService.storeAuth.imageAvatar != "")
+                                  ? Container(
+                                      width: 150,
+                                      height: 150,
+                                      child: cachedNetworkImage(
+                                        authService.storeAuth.imageAvatar,
+                                      ),
+                                    )
+                                  : Image.asset(currentProfile.imageAvatar),
+                            ),
+                          )),
+                    )),
                 actions: [
                   Swing(
                     animate: isItems,

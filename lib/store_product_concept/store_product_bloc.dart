@@ -86,6 +86,8 @@ class TabsViewScrollBLoC with ChangeNotifier {
     initialOK = true;
 
     scrollController.addListener(_onScrollListener);
+
+    scrollController2.addListener(_onScrollListener);
   }
 
   orderPosition(
@@ -222,17 +224,6 @@ class TabsViewScrollBLoC with ChangeNotifier {
     if (scrollController2.offset >= 250 || initial) {
       await scrollController2.animateTo(
         0.0,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.linear,
-      );
-      initial = false;
-    }
-  }
-
-  void initSnapAppbar() async {
-    if (scrollController2.offset == 0.0) {
-      await scrollController2.animateTo(
-        260.0,
         duration: const Duration(milliseconds: 200),
         curve: Curves.linear,
       );

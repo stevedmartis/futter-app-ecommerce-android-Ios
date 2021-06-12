@@ -1,4 +1,5 @@
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -51,4 +52,26 @@ showSnackBar(BuildContext context, String text) {
           style: TextStyle(
             color: (currentTheme.customTheme) ? Colors.white : Colors.white,
           ))));
+}
+
+showModalLoading(BuildContext context) {
+  bool isIos = UniversalPlatform.isIOS;
+  bool isAndroid = UniversalPlatform.isAndroid;
+  bool isWeb = UniversalPlatform.isWeb;
+  if (isAndroid) {
+    return showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+                content: Center(
+              child: buildLoadingWidget(context),
+            )));
+  } else if (isIos || isWeb) {
+    showCupertinoDialog(
+        context: context,
+        builder: (_) => CupertinoAlertDialog(
+              content: Center(
+                child: buildLoadingWidget(context),
+              ),
+            ));
+  }
 }

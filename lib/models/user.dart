@@ -9,18 +9,20 @@ User usuarioFromJson(String str) => User.fromJson(json.decode(str));
 String usuarioToJson(User data) => json.encode(data.toJson());
 
 class User {
-  const User({this.online, this.username, this.email, this.uid});
+  const User({this.online, this.username, this.email, this.uid, this.first});
 
   final bool online;
   final String username;
   final String email;
   final String uid;
+  final bool first;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         online: json["online"],
         username: json["username"],
         email: json["email"],
         uid: json["uid"],
+        first: json["first"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -28,5 +30,6 @@ class User {
         "username": username,
         "email": email,
         "uid": uid,
+        "first": first
       };
 }

@@ -9,6 +9,7 @@ import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -46,12 +47,15 @@ class MyApp extends StatelessWidget {
 
     final currentTheme = Provider.of<ThemeChanger>(context);
 
-    return MaterialApp(
-      theme: currentTheme.currentTheme,
-      debugShowCheckedModeBanner: false,
-      color: currentTheme.currentTheme.scaffoldBackgroundColor,
-      initialRoute: 'loading',
-      routes: appRoutes,
+    return FeatureDiscovery(
+      recordStepsInSharedPreferences: false,
+      child: MaterialApp(
+        theme: currentTheme.currentTheme,
+        debugShowCheckedModeBanner: false,
+        color: currentTheme.currentTheme.scaffoldBackgroundColor,
+        initialRoute: 'loading',
+        routes: appRoutes,
+      ),
     );
   }
 }

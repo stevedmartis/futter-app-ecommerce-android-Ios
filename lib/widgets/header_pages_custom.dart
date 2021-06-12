@@ -6,6 +6,8 @@ import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/image_cached.dart';
+import 'package:feature_discovery/feature_discovery.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -38,6 +40,18 @@ class CustomAppBarHeaderPages extends StatefulWidget {
 class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
   @override
   void initState() {
+    final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
+
+    if (authBloc.storeAuth.user.first)
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        FeatureDiscovery.discoverFeatures(context, <String>[
+          'feature1',
+          'feature2',
+          'feature3',
+          'feature4',
+        ]);
+      });
+
     super.initState();
   }
 
@@ -50,8 +64,6 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
     final currentTheme = Provider.of<ThemeChanger>(context);
 
     final profile = authService.profile;
-
-    // final size = MediaQuery.of(context).size;
 
     storeAuth = authService.storeAuth;
 
@@ -106,20 +118,24 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                     }
                   },
                   child: Container(
-                    padding: EdgeInsets.only(top: 7, bottom: 10),
-                    child: Hero(
-                      tag: 'user_auth_avatar-header',
-                      child: Container(
-                          width: 50,
-                          height: 50,
-                          decoration: new BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: new DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: new AssetImage(
-                                      currentProfile.imageAvatar)))),
-                    ),
-                  ),
+                      width: 50,
+                      height: 50,
+                      child: Hero(
+                        tag: 'user_auth_avatar-header',
+                        child: ClipRRect(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(100.0)),
+                          child: (authService.storeAuth.imageAvatar != "")
+                              ? Container(
+                                  width: 150,
+                                  height: 150,
+                                  child: cachedNetworkImage(
+                                    authService.storeAuth.imageAvatar,
+                                  ),
+                                )
+                              : Image.asset(currentProfile.imageAvatar),
+                        ),
+                      )),
                 ),
           Expanded(
             child: Center(
@@ -149,36 +165,89 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                 )
               : Container(),
           if (widget.isAdd)
-            Container(
-              padding: EdgeInsets.only(right: 0),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: currentTheme.currentTheme.cardColor),
-              child: Row(
-                children: [
-                  Material(
-                    color: currentTheme.currentTheme.cardColor,
-                    borderRadius: BorderRadius.circular(20),
-                    child: InkWell(
-                      splashColor: Colors.grey,
-                      borderRadius: BorderRadius.circular(20),
-                      radius: 30,
-                      onTap: () => widget.onPress(),
-                      highlightColor: Colors.grey,
+            (authService.storeAuth.user.first)
+                ? Container(
+                    child: DescribedFeatureOverlay(
+                      targetColor: Colors.black,
+                      featureId: 'feature1',
+                      tapTarget: Icon(
+                        Icons.add,
+                        color: currentTheme.currentTheme.accentColor,
+                        size: 35,
+                      ),
+                      backgroundColor: currentTheme.currentTheme.accentColor,
+                      overflowMode: OverflowMode.extendBackground,
+                      title: const Text('Crear nuevo!'),
+                      description: Column(children: <Widget>[
+                        const Text(
+                            'Toca este boton para crear un nuevo Catalogo'),
+                        SizedBox(
+                          height: 50,
+                        )
+                      ]),
                       child: Container(
-                        width: 34,
-                        height: 34,
-                        child: Icon(
-                          Icons.add,
-                          color: currentTheme.currentTheme.accentColor,
-                          size: 30,
+                        padding: EdgeInsets.only(right: 0),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: currentTheme.currentTheme.cardColor),
+                        child: Row(
+                          children: [
+                            Material(
+                              color: currentTheme.currentTheme.cardColor,
+                              borderRadius: BorderRadius.circular(20),
+                              child: InkWell(
+                                splashColor: Colors.grey,
+                                borderRadius: BorderRadius.circular(20),
+                                radius: 30,
+                                onTap: () => widget.onPress(),
+                                highlightColor: Colors.grey,
+                                child: Container(
+                                  width: 34,
+                                  height: 34,
+                                  child: Icon(
+                                    Icons.add,
+                                    color:
+                                        currentTheme.currentTheme.accentColor,
+                                    size: 30,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
+                  )
+                : Container(
+                    padding: EdgeInsets.only(right: 0),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: currentTheme.currentTheme.cardColor),
+                    child: Row(
+                      children: [
+                        Material(
+                          color: currentTheme.currentTheme.cardColor,
+                          borderRadius: BorderRadius.circular(20),
+                          child: InkWell(
+                            splashColor: Colors.grey,
+                            borderRadius: BorderRadius.circular(20),
+                            radius: 30,
+                            onTap: () => widget.onPress(),
+                            highlightColor: Colors.grey,
+                            child: Container(
+                              width: 34,
+                              height: 34,
+                              child: Icon(
+                                Icons.add,
+                                color: currentTheme.currentTheme.accentColor,
+                                size: 30,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
-            ),
           SizedBox(
             width: 10,
           )

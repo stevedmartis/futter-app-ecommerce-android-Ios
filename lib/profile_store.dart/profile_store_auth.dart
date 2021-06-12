@@ -2,9 +2,13 @@ import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/pages/onboarding/pages/menu_drawer.dart';
+import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
+import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
+import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -28,8 +32,6 @@ class ProfileStoreAuth extends StatefulWidget {
   _ProfileStoreState createState() => _ProfileStoreState();
 }
 
-Store storeCurrent;
-
 class _ProfileStoreState extends State<ProfileStoreAuth>
     with TickerProviderStateMixin {
   AnimationController _animationController;
@@ -39,19 +41,28 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
 
   @override
   void initState() {
-    final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
-
     final productsBloc =
         Provider.of<TabsViewScrollBLoC>(context, listen: false);
+    final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
 
-    storeCurrent = authBloc.storeAuth;
-    if (!productsBloc.initialOK) productsBloc.init(this, storeCurrent.user.uid);
+    if (!productsBloc.initialOK)
+      productsBloc.init(this, authBloc.storeAuth.user.uid);
 
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
       reverseDuration: const Duration(milliseconds: 1300),
     );
+
+    if (authBloc.storeAuth.user.first)
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        FeatureDiscovery.discoverFeatures(context, <String>[
+          'feature1',
+          'feature2',
+          'feature3',
+          'feature4',
+        ]);
+      });
 
     super.initState();
   }
@@ -83,8 +94,63 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final productsBloc = Provider.of<TabsViewScrollBLoC>(context);
+    final authBloc = Provider.of<AuthenticationBLoC>(context);
 
     return Scaffold(
+        floatingActionButton: (authBloc.storeAuth.user.first)
+            ? Container(
+                padding: EdgeInsets.only(bottom: 40, left: 30),
+                alignment: Alignment.bottomCenter,
+                child: DescribedFeatureOverlay(
+                    targetColor: Colors.black,
+                    featureId: 'feature1',
+                    tapTarget: Icon(
+                      Icons.storefront,
+                      color: currentTheme.accentColor,
+                      size: 35,
+                    ),
+                    backgroundColor: currentTheme.accentColor,
+                    overflowMode: OverflowMode.extendBackground,
+                    title: const Text('Crea tus Catalogos!'),
+                    description: Column(children: <Widget>[
+                      const Text(
+                          'Para crear tus Catalogos, Produtos y que tu tienda este Abierta/visible a los compradores y puedan econtrarte.'),
+                      SizedBox(
+                        height: 50,
+                      )
+                    ]),
+                    child: FloatingActionButton(
+                      backgroundColor: currentTheme.accentColor,
+                      onPressed: () {
+                        Navigator.push(context, principalHomeRoute());
+                        Provider.of<MenuModel>(context, listen: false)
+                            .currentPage = 2;
+                      },
+                      tooltip: 'Mis catalogos',
+                      child: Icon(
+                        Icons.storefront,
+                        color: Colors.black,
+                      ),
+                    )),
+              )
+            : Container(
+                padding: EdgeInsets.only(bottom: 40, left: 30),
+                alignment: Alignment.bottomCenter,
+                child: FloatingActionButton(
+                  backgroundColor: currentTheme.accentColor,
+                  onPressed: () {
+                    Navigator.push(context, principalHomeRoute());
+                    Provider.of<MenuModel>(context, listen: false).currentPage =
+                        2;
+                  },
+                  tooltip: 'Mis catalogos',
+                  child: Icon(
+                    Icons.storefront,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+        endDrawer: PrincipalMenu(),
         backgroundColor: currentTheme.scaffoldBackgroundColor,
         body: SafeArea(
             child: AnimatedBuilder(
@@ -97,7 +163,7 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
                   delegate: _ProfileStoreHeader(
                       animationController: _animationController,
                       isAuthUser: widget.isAuthUser,
-                      store: storeCurrent),
+                      store: authBloc.storeAuth),
                   pinned: true,
                 ),
                 SliverPersistentHeader(
@@ -351,6 +417,8 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
   final bool isAuthUser;
   final Store store;
 
+  GlobalKey<ScaffoldState> scaffolKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -358,6 +426,8 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
 
     final productsBloc =
         Provider.of<TabsViewScrollBLoC>(context, listen: false);
+
+    final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
 
     final percent = 1 -
         ((maxExtent - shrinkOffset - minExtent) / (maxExtent - minExtent))
@@ -381,7 +451,7 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
     final textMovement = 5.0;
     final leftTextMargin = maxMargin + (textMovement * percent);
 
-    final username = storeCurrent.user.username;
+    final username = authBloc.storeAuth.user.username;
 
     return GestureDetector(
       onTap: () => productsBloc.snapAppbar(),
@@ -397,7 +467,18 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                         ? Colors.white
                         : Colors.black),
                 iconSize: 25,
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => {
+                  if (authBloc.storeAuth.user.first)
+                    {
+                      Navigator.push(context, principalHomeRoute()),
+                      Provider.of<MenuModel>(context, listen: false)
+                          .currentPage = 0,
+                    }
+                  else
+                    {
+                      Navigator.pop(context),
+                    }
+                },
                 color: Colors.blueAccent,
               ),
             ),
@@ -490,16 +571,21 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                     .clamp(20.0, _bottomMarginDisc),
                 left: (_leftMarginDisc * (1 - percent))
                     .clamp(20.0, _leftMarginDisc),
-                height: currentImageSize,
                 child: Hero(
                   tag: (isAuthUser)
                       ? 'user_auth_avatar'
                       : 'user_auth_avatar_list',
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(100.0)),
-                    child: Image.asset(
-                      currentProfile.imageAvatar,
-                    ),
+                    child: (authBloc.storeAuth.imageAvatar != "")
+                        ? Container(
+                            height: currentImageSize,
+                            width: currentImageSize,
+                            child: cachedNetworkImage(
+                              authBloc.storeAuth.imageAvatar,
+                            ),
+                          )
+                        : Image.asset(currentProfile.imageAvatar),
                   ),
                 )),
             Positioned(
@@ -524,9 +610,7 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                         ? Colors.white
                         : Colors.black),
                 iconSize: 30,
-                onPressed: () =>
-                    //  Navigator.pushReplacement(context, createRouteProfile()),
-                    Navigator.pop(context),
+                onPressed: () => {Scaffold.of(context).openEndDrawer()},
                 color: Colors.blueAccent,
               ),
             ),
@@ -664,11 +748,8 @@ class _ButtonEditProfileState extends State<ButtonEditProfile> {
                               color: Colors.black, fontWeight: FontWeight.bold),
                         ),
                       ),
-                      onPressed: () => {
-                            setState(() {
-                              this.changeFollow();
-                            })
-                          }),
+                      onPressed: () =>
+                          {Navigator.push(context, profileEditRoute())}),
                 ))
             : Positioned(
                 top: 90,
@@ -689,11 +770,8 @@ class _ButtonEditProfileState extends State<ButtonEditProfile> {
                               fontSize: 15),
                         ),
                       ),
-                      onPressed: () => {
-                            setState(() {
-                              this.changeFollow();
-                            })
-                          }),
+                      onPressed: () =>
+                          {Navigator.push(context, profileEditRoute())}),
                 )),
       ],
     );

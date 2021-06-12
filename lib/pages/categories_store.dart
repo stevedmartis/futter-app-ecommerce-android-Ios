@@ -4,7 +4,6 @@ import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/models/profile.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/pages/add_edit_category.dart';
-import 'package:australti_ecommerce_app/profile_store.dart/profile_store_user.dart';
 import 'package:australti_ecommerce_app/responses/store_categories_response.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/services/catalogo.dart';
@@ -15,6 +14,7 @@ import 'package:australti_ecommerce_app/store_product_concept/store_product_data
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
 import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
+import 'package:feature_discovery/feature_discovery.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -54,19 +54,6 @@ class _CatalogosListPagePageState extends State<CatalogosListPage> {
 
   double get maxHeight => 400 + MediaQuery.of(context).padding.top;
   double get minHeight => MediaQuery.of(context).padding.bottom;
-
-/*   void _snapAppbar() {
-    final scrollDistance = maxHeight - minHeight;
-
-    if (_scrollController.offset > 0 &&
-        _scrollController.offset < scrollDistance) {
-      final double snapOffset =
-          _scrollController.offset / scrollDistance > 0.5 ? scrollDistance : 0;
-
-      Future.microtask(() => _scrollController.animateTo(snapOffset,
-          duration: Duration(milliseconds: 200), curve: Curves.easeIn));
-    }
-  } */
 
   bool get _showTitle {
     return _scrollController.hasClients && _scrollController.offset >= 70;

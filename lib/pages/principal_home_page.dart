@@ -9,7 +9,6 @@ import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
-import 'package:australti_ecommerce_app/responses/store_categories_response.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/services/catalogo.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
@@ -49,8 +48,6 @@ class _PrincipalPageState extends State<PrincipalPage>
     this.socketService = Provider.of<SocketService>(context, listen: false);
 
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
-
-    storeAuth = authService.storeAuth;
 
     storeAuth = authService.storeAuth;
 
@@ -102,8 +99,7 @@ class _PrincipalPageState extends State<PrincipalPage>
     final storeService =
         Provider.of<StoreCategoiesService>(context, listen: false);
 
-    final StoreCategoriesResponse resp =
-        await storeService.getMyCategoriesProducts(storeAuth.user.uid);
+    final resp = await storeService.getMyCategoriesProducts(storeAuth.user.uid);
 
     final productsBloc =
         Provider.of<TabsViewScrollBLoC>(context, listen: false);
@@ -332,8 +328,7 @@ class __PositionedMenuState extends State<_PositionedMenu> {
       widthView = widthView - 300;
     }
 
-    final currentPage =
-        Provider.of<MenuModel>(context, listen: false).currentPage;
+    final currentPage = Provider.of<MenuModel>(context).currentPage;
     final authService = Provider.of<AuthenticationBLoC>(context);
 
     return Positioned(
@@ -371,11 +366,11 @@ class __PositionedMenuState extends State<_PositionedMenu> {
                             }),
                         GLMenuButton(
                             icon: (currentPage == 2)
-                                ? Icons.store
-                                : Icons.store_outlined,
+                                ? Icons.storefront
+                                : Icons.storefront_outlined,
                             onPressed: () {
                               if (authService.storeAuth.user.uid == '0') {
-                                authService.redirect = 'vender';
+                                // authService.redirect = 'vender';
                                 Navigator.push(
                                     context, onBoardCreateStoreRoute());
                               } else if (bloc.isVisible) _onItemTapped(2);
