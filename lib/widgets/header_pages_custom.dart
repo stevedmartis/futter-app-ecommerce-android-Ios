@@ -46,9 +46,6 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         FeatureDiscovery.discoverFeatures(context, <String>[
           'feature1',
-          'feature2',
-          'feature3',
-          'feature4',
         ]);
       });
 
@@ -109,10 +106,11 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
               : GestureDetector(
                   onTap: () {
                     {
+                      authService.redirect = 'profile';
                       if (storeAuth.user.uid == '0') {
-                        authService.redirect = 'profile';
-                        Navigator.push(context, loginRoute(0));
+                        Navigator.push(context, onBoardCreateStoreRoute());
                       } else {
+                        authService.redirect = 'header';
                         Navigator.push(context, profileAuthRoute(true));
                       }
                     }
@@ -165,7 +163,7 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                 )
               : Container(),
           if (widget.isAdd)
-            (authService.storeAuth.user.first)
+            (storeAuth.user.first)
                 ? Container(
                     child: DescribedFeatureOverlay(
                       targetColor: Colors.black,

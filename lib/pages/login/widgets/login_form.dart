@@ -1,4 +1,5 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
+import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
@@ -24,7 +25,6 @@ class LoginForm extends StatelessWidget {
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
     final space = height > 650 ? kSpaceM : kSpaceS;
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-    final authService = Provider.of<AuthenticationBLoC>(context);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: kPaddingL),
@@ -103,10 +103,10 @@ class LoginForm extends StatelessWidget {
                 textColor: Colors.white.withOpacity(0.5),
                 text: 'Volver al Inicio',
                 onPressed: () {
-                  if (authService.redirect == 'profile') {
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  }
+                  final menuBloc =
+                      Provider.of<MenuModel>(context, listen: false);
+                  menuBloc.currentPage = 0;
+                  Navigator.push(context, principalHomeRoute());
                 },
               ),
             ),
@@ -125,13 +125,22 @@ class LoginForm extends StatelessWidget {
     if (signInAppleOk) {
       socketService.connect();
 
-      if (authService.redirect == 'vender')
-        Navigator.push(context, profileEditRoute());
-
       //  Provider.of<MenuModel>(context, listen: false).currentPage = 2;
 
-      if (authService.redirect == 'profile')
+      if (authService.redirect == 'profile' &&
+          authService.storeAuth.user.first) {
         Navigator.push(context, profileEditRoute());
+      } else if (authService.redirect == 'vender' &&
+          authService.storeAuth.user.first) {
+        Provider.of<MenuModel>(context, listen: false).currentPage = 2;
+        Navigator.push(context, principalHomeRoute());
+      }
+
+      if (!authService.storeAuth.user.first) {
+        Provider.of<MenuModel>(context, listen: false).currentPage = 0;
+        Navigator.push(context, principalHomeRoute());
+      }
+
       //Navigator.push(context, profileAuthRoute(true));
     } else {
       // Mostara alerta

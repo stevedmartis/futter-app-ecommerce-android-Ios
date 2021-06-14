@@ -1,4 +1,3 @@
-import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/models/profile.dart';
@@ -66,6 +65,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
   Widget build(BuildContext context) {
     // final roomsModel = Provider.of<Room>(context);
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+    final size = MediaQuery.of(context).size;
 
     return SafeArea(
         child: GestureDetector(
@@ -97,8 +97,9 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                     Expanded(
                       flex: 2,
                       child: Container(
+                        width: size.width / 2,
                         child: Text(
-                          'Confirma tu dirección',
+                          'Confirmar dirección',
                           maxLines: 2,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -373,9 +374,7 @@ class _CatalogsListState extends State<CatalogsList>
   void initState() {
     super.initState();
 
-    final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
-
-    widget.bloc.init(this, authBloc.storeAuth.user.uid);
+    widget.bloc.init(this, context);
 
     addressSelectCtrl.text = widget.place.structuredFormatting.mainText;
     citySelectCtrl.text = widget.place.structuredFormatting.secondaryText;

@@ -46,12 +46,21 @@ class StoreCategoiesService with ChangeNotifier {
   Future createCatalogo(ProfileStoreCategory category) async {
     // this.authenticated = true;
 
+    print(category);
     final urlFinal = ('${Environment.apiUrl}/api/catalogo/new');
+
+    final data = {
+      'description': category.description,
+      'name': category.name,
+      'position': category.position,
+      'uid': category.store.user.uid,
+      'visibility': category.visibility,
+    };
 
     final token = await this._storage.read(key: 'token');
 
     final resp = await http.post(Uri.parse(urlFinal),
-        body: jsonEncode(category),
+        body: jsonEncode(data),
         headers: {'Content-Type': 'application/json', 'x-token': token});
 
     if (resp.statusCode == 200) {
@@ -67,14 +76,23 @@ class StoreCategoiesService with ChangeNotifier {
     }
   }
 
-  Future editCatalogo(ProfileStoreCategory catalogo) async {
+  Future editCatalogo(ProfileStoreCategory category) async {
     // this.authenticated = true;
+
+    final data = {
+      'id': category.id,
+      'description': category.description,
+      'name': category.name,
+      'position': category.position,
+      'uid': category.store.user.uid,
+      'visibility': category.visibility,
+    };
 
     final token = await this._storage.read(key: 'token');
     final urlFinal = ('${Environment.apiUrl}/api/catalogo/update/catalogo');
 
     final resp = await http.post(Uri.parse(urlFinal),
-        body: jsonEncode(catalogo),
+        body: jsonEncode(data),
         headers: {'Content-Type': 'application/json', 'x-token': token});
 
     if (resp.statusCode == 200) {
@@ -105,7 +123,7 @@ class StoreCategoiesService with ChangeNotifier {
     }
   }
 
-  Future updatePositionCatalogo(List<ProfileStoreCategory> catalogos) async {
+  Future updatePositionCatalogo(List<Map<String, Object>> catalogos) async {
     // this.authenticated = true;
 
     final urlFinal = ('${Environment.apiUrl}/api/catalogo/update/position');

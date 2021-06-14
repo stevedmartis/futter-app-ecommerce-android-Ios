@@ -362,18 +362,22 @@ class __PositionedMenuState extends State<_PositionedMenu> {
                                 ? Icons.favorite
                                 : Icons.favorite_outline,
                             onPressed: () {
-                              // if (bloc.isVisible) _onItemTapped(1);
+                              if (bloc.isVisible) _onItemTapped(1);
                             }),
                         GLMenuButton(
                             icon: (currentPage == 2)
                                 ? Icons.storefront
                                 : Icons.storefront_outlined,
                             onPressed: () {
+                              authService.redirect = 'vender';
                               if (authService.storeAuth.user.uid == '0') {
-                                // authService.redirect = 'vender';
                                 Navigator.push(
                                     context, onBoardCreateStoreRoute());
-                              } else if (bloc.isVisible) _onItemTapped(2);
+                              } else if (bloc.isVisible) {
+                                if (authService.storeAuth.user.first)
+                                  Navigator.push(context, principalHomeRoute());
+                                _onItemTapped(2);
+                              }
                             }),
                         GLMenuButton(
                             icon: (currentPage == 3)

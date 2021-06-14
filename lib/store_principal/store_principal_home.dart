@@ -169,8 +169,9 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                         {
                           if (storeAuth.user.uid == '0') {
                             authService.redirect = 'profile';
-                            Navigator.push(context, loginRoute(0));
+                            Navigator.push(context, onBoardCreateStoreRoute());
                           } else {
+                            authService.redirect = 'home';
                             Navigator.push(context, profileAuthRoute(true));
                           }
                         }
@@ -690,6 +691,7 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
 // From coordinates
 
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+    final _size = MediaQuery.of(context).size;
 
     return AnimatedBuilder(
         animation: _controller,
@@ -752,11 +754,14 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                               width: 10,
                             ),
                             Container(
+                                width: _size.width / 2,
                                 alignment: Alignment.center,
                                 child: Text(
                                   prefs.locationCurrent
                                       ? '${prefs.addressSave['featureName']}'
                                       : '...',
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
                                   //'${state.location.latitude}',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -788,11 +793,14 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                               width: 10,
                             ),
                             Container(
+                                width: _size.width / 2,
                                 alignment: Alignment.center,
                                 child: Text(
                                   prefs.locationSearch
                                       ? '${prefs.addressSearchSave.mainText}'
                                       : '...',
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
                                   //'${state.location.latitude}',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,

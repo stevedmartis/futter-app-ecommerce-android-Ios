@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -111,12 +112,14 @@ class _GridLayoutMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final intemSelected = Provider.of<MenuModel>(context).currentPage;
+    final authBloc = Provider.of<AuthenticationBLoC>(context);
 
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
     return GestureDetector(
       onTap: () {
-        Provider.of<MenuModel>(context, listen: false).currentPage = index;
+        if (authBloc.storeAuth.user.uid != "0")
+          Provider.of<MenuModel>(context, listen: false).currentPage = index;
         item.onPressed();
       },
       behavior: HitTestBehavior.translucent,

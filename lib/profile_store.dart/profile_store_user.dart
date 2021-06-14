@@ -40,7 +40,7 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
 
   @override
   void initState() {
-    _bloc.init(this, widget.store.user.uid);
+    _bloc.init(this, context);
 
     _animationController = AnimationController(
       vsync: this,

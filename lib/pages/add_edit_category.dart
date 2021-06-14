@@ -66,7 +66,7 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
     errorRequired = (widget.isEdit) ? false : true;
     nameCtrl.text = widget.category.name;
     descriptionCtrl.text = widget.category.description;
-    optionItemSelected = widget.category.privacity;
+
     isSwitchedVisibility = widget.category.visibility;
 
     //  plantBloc.imageUpdate.add(true);
@@ -437,8 +437,6 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
         ? widget.category.description
         : categoryBloc.description.trim();
 
-    final privacity = optionItemSelected;
-
     final newCategory = ProfileStoreCategory(
         id: '2-c',
         store: authService.storeAuth,
@@ -446,8 +444,9 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
         name: name,
         visibility: isSwitchedVisibility,
         description: description,
-        privacity: privacity,
-        products: []);
+        products: [],
+        createdAt: authService.storeAuth.createdAt,
+        updatedAt: authService.storeAuth.updatedAt);
 
     final CategoryResponse createCatalogoResp =
         await catalogoService.createCatalogo(newCategory);
@@ -456,7 +455,7 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
       if (createCatalogoResp.ok) {
         loading = false;
 
-        bloc.addNewCategory(this, createCatalogoResp.category);
+        bloc.addNewCategory(this, createCatalogoResp.category, context);
 
         Navigator.pop(context);
         setState(() {});
@@ -482,8 +481,6 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
         ? widget.category.description
         : descriptionCtrl.text.trim();
 
-    final privacity = optionItemSelected;
-
     final editCategory = ProfileStoreCategory(
         id: widget.category.id,
         store: authService.storeAuth,
@@ -491,7 +488,6 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
         name: nameCtrl.text.trim(),
         visibility: isSwitchedVisibility,
         description: description,
-        privacity: privacity,
         products: widget.category.products);
 
     final CategoryResponse editCatalogoRes =
@@ -501,7 +497,7 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
       if (editCatalogoRes.ok) {
         loading = false;
 
-        bloc.editCategory(this, editCatalogoRes.category);
+        bloc.editCategory(this, editCatalogoRes.category, context);
 
         Navigator.pop(context);
         setState(() {});

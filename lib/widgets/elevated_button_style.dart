@@ -108,7 +108,7 @@ Widget roundedRectButton(
                     ),
                     child: Text(title,
                         style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontSize: 18,
                             fontWeight: FontWeight.w500)),
                     padding: EdgeInsets.only(top: 10, bottom: 16),
@@ -128,7 +128,7 @@ Widget roundedRectButton(
                     child: Text(title,
                         style: TextStyle(
                             color: Colors.grey,
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.w500)),
                     padding: EdgeInsets.only(top: 10, bottom: 16),
                   ),

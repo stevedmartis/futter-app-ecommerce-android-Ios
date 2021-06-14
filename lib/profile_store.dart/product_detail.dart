@@ -268,7 +268,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
 
     if (res) {
       productProvider.removeProductById(
-          this, widget.product.id, widget.product.user);
+          this, widget.product.id, widget.product.user, context);
       setState(() {});
 
       showSnackBar(context, 'Producto eliminado');

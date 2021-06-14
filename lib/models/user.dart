@@ -9,7 +9,8 @@ User usuarioFromJson(String str) => User.fromJson(json.decode(str));
 String usuarioToJson(User data) => json.encode(data.toJson());
 
 class User {
-  const User({this.online, this.username, this.email, this.uid, this.first});
+  const User(
+      {this.online, this.username, this.email, this.uid, this.first = false});
 
   final bool online;
   final String username;

@@ -59,7 +59,6 @@ class EditProfilePageState extends State<EditProfilePage> {
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
     store = authService.storeAuth;
 
-    authService.redirect = (store.user.first) ? 'first' : 'profile';
     usernameCtrl.text = store.user.username;
     nameCtrl.text = store.name;
     aboutCtrl.text = store.about;
@@ -827,10 +826,11 @@ class EditProfilePageState extends State<EditProfilePage> {
             });
 
             showSnackBar(context, 'Perfil editado con exito!');
-
-            (storeProfile.user.first)
-                ? Navigator.push(context, profileAuthRoute(true))
-                : Navigator.pop(context);
+            if (storeProfile.user.first && authService.redirect == 'profile') {
+              Navigator.push(context, profileAuthRoute(true));
+            } else {
+              Navigator.pop(context);
+            }
           } else {
             showAlertError(context, 'Error', '');
           }
@@ -850,10 +850,11 @@ class EditProfilePageState extends State<EditProfilePage> {
           });
 
           showSnackBar(context, 'Perfil editado con exito!');
-
-          (storeProfile.user.first)
-              ? Navigator.push(context, profileAuthRoute(true))
-              : Navigator.pop(context);
+          if (storeProfile.user.first && authService.redirect == 'profile') {
+            Navigator.push(context, profileAuthRoute(true));
+          } else {
+            Navigator.pop(context);
+          }
         } else {
           showAlertError(context, 'Error', '');
         }

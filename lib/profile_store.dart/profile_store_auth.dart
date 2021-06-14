@@ -8,7 +8,6 @@ import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
-import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -43,26 +42,14 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
   void initState() {
     final productsBloc =
         Provider.of<TabsViewScrollBLoC>(context, listen: false);
-    final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
 
-    if (!productsBloc.initialOK)
-      productsBloc.init(this, authBloc.storeAuth.user.uid);
+    if (!productsBloc.initialOK) productsBloc.init(this, context);
 
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
       reverseDuration: const Duration(milliseconds: 1300),
     );
-
-    if (authBloc.storeAuth.user.first)
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        FeatureDiscovery.discoverFeatures(context, <String>[
-          'feature1',
-          'feature2',
-          'feature3',
-          'feature4',
-        ]);
-      });
 
     super.initState();
   }
@@ -74,8 +61,6 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
 
   @override
   void dispose() {
-    _animationController.dispose();
-
     super.dispose();
   }
 
@@ -97,118 +82,64 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
     final authBloc = Provider.of<AuthenticationBLoC>(context);
 
     return Scaffold(
-        floatingActionButton: (authBloc.storeAuth.user.first)
-            ? Container(
-                padding: EdgeInsets.only(bottom: 40, left: 30),
-                alignment: Alignment.bottomCenter,
-                child: DescribedFeatureOverlay(
-                    targetColor: Colors.black,
-                    featureId: 'feature1',
-                    tapTarget: Icon(
-                      Icons.storefront,
-                      color: currentTheme.accentColor,
-                      size: 35,
-                    ),
-                    backgroundColor: currentTheme.accentColor,
-                    overflowMode: OverflowMode.extendBackground,
-                    title: const Text('Crea tus Catalogos!'),
-                    description: Column(children: <Widget>[
-                      const Text(
-                          'Para crear tus Catalogos, Produtos y que tu tienda este Abierta/visible a los compradores y puedan econtrarte.'),
-                      SizedBox(
-                        height: 50,
-                      )
-                    ]),
-                    child: FloatingActionButton(
-                      backgroundColor: currentTheme.accentColor,
-                      onPressed: () {
-                        Navigator.push(context, principalHomeRoute());
-                        Provider.of<MenuModel>(context, listen: false)
-                            .currentPage = 2;
-                      },
-                      tooltip: 'Mis catalogos',
-                      child: Icon(
-                        Icons.storefront,
-                        color: Colors.black,
-                      ),
-                    )),
-              )
-            : Container(
-                padding: EdgeInsets.only(bottom: 40, left: 30),
-                alignment: Alignment.bottomCenter,
-                child: FloatingActionButton(
-                  backgroundColor: currentTheme.accentColor,
-                  onPressed: () {
-                    Navigator.push(context, principalHomeRoute());
-                    Provider.of<MenuModel>(context, listen: false).currentPage =
-                        2;
-                  },
-                  tooltip: 'Mis catalogos',
-                  child: Icon(
-                    Icons.storefront,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
         endDrawer: PrincipalMenu(),
         backgroundColor: currentTheme.scaffoldBackgroundColor,
         body: SafeArea(
             child: AnimatedBuilder(
           animation: productsBloc,
           builder: (_, __) => NestedScrollView(
-            controller: productsBloc.scrollController2,
-            headerSliverBuilder: (context, value) {
-              return [
-                SliverPersistentHeader(
-                  delegate: _ProfileStoreHeader(
-                      animationController: _animationController,
-                      isAuthUser: widget.isAuthUser,
-                      store: authBloc.storeAuth),
-                  pinned: true,
-                ),
-                SliverPersistentHeader(
-                  pinned: true,
-                  delegate: SliverAppBarDelegate(
-                      minHeight: 70,
-                      maxHeight: 70,
-                      child: Container(
-                        color: currentTheme.scaffoldBackgroundColor,
-                        alignment: Alignment.centerLeft,
-                        child: TabBar(
-                          onTap: productsBloc.onCategorySelected,
-                          controller: productsBloc.tabController,
-                          indicatorWeight: 0.1,
-                          isScrollable: true,
-                          tabs: productsBloc.tabs
-                              .map((e) => _TabWidget(
-                                    tabCategory: e,
-                                  ))
-                              .toList(),
-                        ),
-                      )),
-                ),
-              ];
-            },
+              controller: productsBloc.scrollController2,
+              headerSliverBuilder: (context, value) {
+                return [
+                  SliverPersistentHeader(
+                    delegate: _ProfileStoreHeader(
+                        animationController: _animationController,
+                        isAuthUser: widget.isAuthUser,
+                        store: authBloc.storeAuth),
+                    pinned: true,
+                  ),
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: SliverAppBarDelegate(
+                        minHeight: 70,
+                        maxHeight: 70,
+                        child: Container(
+                          color: currentTheme.scaffoldBackgroundColor,
+                          alignment: Alignment.centerLeft,
+                          child: TabBar(
+                            onTap: productsBloc.onCategorySelected,
+                            controller: productsBloc.tabController,
+                            indicatorWeight: 0.1,
+                            isScrollable: true,
+                            tabs: productsBloc.tabs
+                                .map((e) => _TabWidget(
+                                      tabCategory: e,
+                                    ))
+                                .toList(),
+                          ),
+                        )),
+                  ),
+                ];
+              },
 
-            // tab bar view
-            body: Container(
-              child: ListView.builder(
-                controller: productsBloc.scrollController,
-                itemCount: productsBloc.items.length,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemBuilder: (context, index) {
-                  final item = productsBloc.items[index];
-                  if (item.isCategory) {
-                    return Container(
-                        child: _ProfileStoreCategoryItem(item.category));
-                  } else {
-                    return _ProfileStoreProductItem(
-                        item.product, item.category);
-                  }
-                },
-              ),
-            ),
-          ),
+              // tab bar view
+              body: Container(
+                child: ListView.builder(
+                  controller: productsBloc.scrollController,
+                  itemCount: productsBloc.items.length,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemBuilder: (context, index) {
+                    final item = productsBloc.items[index];
+                    if (item.isCategory) {
+                      return Container(
+                          child: _ProfileStoreCategoryItem(item.category));
+                    } else {
+                      return _ProfileStoreProductItem(
+                          item.product, item.category);
+                    }
+                  },
+                ),
+              )),
         )));
   }
 }
@@ -454,7 +385,9 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
     final username = authBloc.storeAuth.user.username;
 
     return GestureDetector(
-      onTap: () => productsBloc.snapAppbar(),
+      onTap: () => {
+        productsBloc.snapAppbar(),
+      },
       child: Container(
         color: currentTheme.currentTheme.scaffoldBackgroundColor,
         child: Stack(
@@ -566,14 +499,18 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                 ),
               ),
             ), */
+
             Positioned(
                 bottom: (_bottomMarginDisc * (1 - percent))
                     .clamp(20.0, _bottomMarginDisc),
                 left: (_leftMarginDisc * (1 - percent))
                     .clamp(20.0, _leftMarginDisc),
+                height: currentImageSize,
                 child: Hero(
                   tag: (isAuthUser)
-                      ? 'user_auth_avatar'
+                      ? (authBloc.redirect != 'header')
+                          ? 'user_auth_avatar'
+                          : 'user_auth_avatar-header'
                       : 'user_auth_avatar_list',
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(100.0)),

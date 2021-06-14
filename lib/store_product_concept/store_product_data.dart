@@ -10,7 +10,6 @@ class ProfileStoreCategory {
       this.store,
       this.createdAt,
       this.position,
-      this.privacity,
       this.updatedAt,
       this.description = "",
       this.visibility = true});
@@ -22,7 +21,7 @@ class ProfileStoreCategory {
   DateTime createdAt;
   DateTime updatedAt;
   int position;
-  String privacity;
+
   String description;
   bool visibility;
 
@@ -37,7 +36,6 @@ class ProfileStoreCategory {
           createdAt: DateTime.parse(json["createdAt"]),
           updatedAt: DateTime.parse(json["updatedAt"]),
           description: json["description"],
-          privacity: json["privacity"],
           visibility: json["visibility"]
 
           //images: List<Image>.from(json["images"].map((x) => Image.fromJson(x))),
@@ -50,7 +48,9 @@ class ProfileStoreCategory {
         "position": position,
         "store": store.toJson(),
         "description": description,
-        "visibility": visibility
+        "visibility": visibility,
+        "createdAt": createdAt,
+        "updatedAt": updatedAt
       };
 }
 

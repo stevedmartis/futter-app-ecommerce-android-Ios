@@ -722,7 +722,7 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
         final productProvider =
             Provider.of<TabsViewScrollBLoC>(context, listen: false);
 
-        productProvider.addProductsByCategory(this, resp.product);
+        productProvider.addProductsByCategory(this, resp.product, context);
 
         setState(() {
           loading = false;

@@ -1,7 +1,9 @@
+import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:http/http.dart' as http;
 
@@ -39,9 +41,11 @@ class TabsViewScrollBLoC with ChangeNotifier {
     imagesProducts.add(file);
   }
 
-  void init(TickerProvider ticker, String storeUserId) {
+  void init(TickerProvider ticker, BuildContext context) {
+    final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
+
     final categoriesByStoreUserId = storeCategoriesProducts
-        .where((i) => i.store.user.uid == storeUserId)
+        .where((i) => i.store.user.uid == authBloc.storeAuth.user.uid)
         .toList();
 
     tabController =
@@ -87,24 +91,18 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
     scrollController.addListener(_onScrollListener);
 
-    scrollController2.addListener(_onScrollListener);
+    if (authBloc.storeAuth.user.first && categoriesByStoreUserId.length == 0)
+      scrollController2 = ScrollController()..addListener(() => {});
   }
 
-  orderPosition(
-      TickerProvider ticket, List<ProfileStoreCategory> storeCategories) {
-    for (var orderItem in storeCategories) {
-      var item = tabs.firstWhere((item) => item.category.id == orderItem.id,
-          orElse: () => null);
+  orderPosition(TickerProvider ticket,
+      List<ProfileStoreCategory> storeCategories, BuildContext context) {
+    items = [];
+    tabs = [];
 
-      item.category.position = orderItem.position;
-      item.selected = (orderItem.position == 0);
+    storeCategoriesProducts = storeCategories;
 
-      print(item);
-    }
-
-    print(tabs);
-
-    init(ticket, storeCategories[0].store.user.uid);
+    init(ticket, context);
     notifyListeners();
   }
 
@@ -113,13 +111,15 @@ class TabsViewScrollBLoC with ChangeNotifier {
     notifyListeners();
   }
 
-  void addNewCategory(TickerProvider ticket, ProfileStoreCategory newCategory) {
+  void addNewCategory(TickerProvider ticket, ProfileStoreCategory newCategory,
+      BuildContext context) {
     storeCategoriesProducts.add(newCategory);
 
-    init(ticket, newCategory.store.user.uid);
+    init(ticket, context);
   }
 
-  void editCategory(TickerProvider ticket, ProfileStoreCategory editCategory) {
+  void editCategory(TickerProvider ticket, ProfileStoreCategory editCategory,
+      BuildContext context) {
     final item = tabs.firstWhere((item) => item.category.id == editCategory.id,
         orElse: () => null);
 
@@ -127,16 +127,19 @@ class TabsViewScrollBLoC with ChangeNotifier {
     item.category.description = editCategory.description;
     item.category.visibility = editCategory.visibility;
 
-    init(ticket, editCategory.store.user.uid);
+    init(ticket, context);
   }
 
-  void removeCategoryById(TickerProvider ticket, String categoryId) {
+  void removeCategoryById(TickerProvider ticket, String categoryId, String uid,
+      BuildContext context) {
     storeCategoriesProducts
         .removeWhere((categories) => categories.id == categoryId);
 
-    print(storeCategoriesProducts);
+    tabs.removeWhere((tab) => tab.category.id == categoryId);
 
-    init(ticket, storeCategoriesProducts[0].store.user.uid);
+    items.removeWhere((item) => item.category.id == categoryId);
+
+    init(ticket, context);
 
     notifyListeners();
   }
@@ -147,23 +150,24 @@ class TabsViewScrollBLoC with ChangeNotifier {
     productsByCategoryList = category.single.products;
   }
 
-  void addProductsByCategory(
-      TickerProvider ticket, ProfileStoreProduct product) {
+  void addProductsByCategory(TickerProvider ticket, ProfileStoreProduct product,
+      BuildContext context) {
     productsByCategoryList.add(product);
 
     tabs = [];
     items = [];
-    init(ticket, product.user);
+    init(ticket, context);
 
     notifyListeners();
   }
 
-  void removeProductById(TickerProvider ticket, String productId, String user) {
+  void removeProductById(TickerProvider ticket, String productId, String user,
+      BuildContext context) {
     productsByCategoryList.removeWhere((product) => product.id == productId);
 
     tabs = [];
     items = [];
-    init(ticket, user);
+    init(ticket, context);
     notifyListeners();
   }
 
@@ -273,8 +277,8 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
   @override
   void dispose() {
-    scrollController.removeListener(_onScrollListener);
-    scrollController.dispose();
+    scrollController?.dispose();
+    scrollController2?.dispose();
     tabController.dispose();
     imagesProducts.clear();
     disposeImages();
