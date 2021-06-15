@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:australti_ecommerce_app/global/enviroments.dart';
 import 'package:australti_ecommerce_app/models/auth_response.dart';
+import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/models/profile.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/models/user.dart';
@@ -66,12 +67,34 @@ class AuthenticationBLoC with ChangeNotifier {
 
       showModalLoading(context);
 
+      String address = '';
+      String city = '';
+      int number = 0;
+      double long = 0;
+      double lat = 0;
+
+      if (prefs.locationCurrent) {
+        address = prefs.addressSave['featureName'];
+        city = prefs.addressSave['adminArea'];
+      } else if (prefs.locationSearch) {
+        address = prefs.addressSearchSave.mainText;
+        city = prefs.addressSearchSave.secondaryText;
+        number = int.parse(prefs.addressSearchSave.number);
+        long = prefs.longSearch;
+        lat = prefs.latSearch;
+      }
+
       final res = await this.siginWithApple(
           credential.authorizationCode,
           credential.email,
           credential.givenName,
           useBundleId,
-          credential.state);
+          credential.state,
+          address,
+          city,
+          number,
+          long,
+          lat);
 
       print(res);
 
@@ -80,6 +103,78 @@ class AuthenticationBLoC with ChangeNotifier {
       return res;
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future signInWitchGoogle() async {
+    try {
+      print('her');
+      final account = await _googleSignIn.signIn();
+
+      final googleKey = await account.authentication;
+
+      String address = '';
+      String city = '';
+      int number = 0;
+      double long = 0;
+      double lat = 0;
+
+      if (prefs.locationCurrent) {
+        address = prefs.addressSave['featureName'];
+        city = prefs.addressSave['adminArea'];
+      } else if (prefs.locationSearch) {
+        address = prefs.addressSearchSave.mainText;
+        city = prefs.addressSearchSave.secondaryText;
+        number = int.parse(prefs.addressSearchSave.number);
+        long = prefs.longSearch;
+        lat = prefs.latSearch;
+      }
+
+      final authBack = await siginWithGoogleBack(
+          googleKey.idToken, address, city, number, long, lat);
+
+      return authBack;
+    } catch (e) {
+      print('error signin google');
+      print(e);
+    }
+  }
+
+  Future siginWithGoogleBack(token, String address, String city, int number,
+      double long, double lat) async {
+    final urlFinal = ('${Environment.apiUrl}/api/google/sign-in');
+
+    final resp = await http.post(Uri.parse(urlFinal),
+        body: jsonEncode({
+          'token': token,
+          'address': address,
+          'city': city,
+          'numberAddress': number,
+          'long': long,
+          'lat': lat
+        }),
+        headers: {'Content-Type': 'application/json'});
+
+    if (resp.statusCode == 200) {
+      final loginResponse = loginResponseFromJson(resp.body);
+
+      storeAuth = loginResponse.store;
+
+      var placeStore = new PlaceSearch(
+          description: storeAuth.user.uid,
+          placeId: storeAuth.user.uid,
+          structuredFormatting: new StructuredFormatting(
+              mainText: storeAuth.address,
+              secondaryText: storeAuth.city,
+              number: storeAuth.number));
+
+      prefs.setLocationSearch = true;
+      prefs.setSearchAddreses = placeStore;
+      _guardarToken(loginResponse.token);
+
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -171,6 +266,17 @@ class AuthenticationBLoC with ChangeNotifier {
 
       storeAuth = loginResponse.store;
 
+      var placeStore = new PlaceSearch(
+          description: storeAuth.user.uid,
+          placeId: storeAuth.user.uid,
+          structuredFormatting: new StructuredFormatting(
+              mainText: storeAuth.address,
+              secondaryText: storeAuth.city,
+              number: storeAuth.number));
+
+      prefs.setLocationSearch = true;
+      prefs.setSearchAddreses = placeStore;
+
       return true;
     } else {
       final respBody = jsonDecode(resp.body);
@@ -178,8 +284,17 @@ class AuthenticationBLoC with ChangeNotifier {
     }
   }
 
-  Future siginWithApple(String code, String email, String firstName,
-      bool useBundleId, String state) async {
+  Future siginWithApple(
+      String code,
+      String email,
+      String firstName,
+      bool useBundleId,
+      String state,
+      String address,
+      String city,
+      int number,
+      double long,
+      double lat) async {
     final urlFinal = '${Environment.apiUrl}/api/apple/sign_in_with_apple';
 
     final data = {
@@ -187,6 +302,11 @@ class AuthenticationBLoC with ChangeNotifier {
       'email': email,
       'firstName': firstName,
       'useBundleId': useBundleId,
+      'address': address,
+      'city': city,
+      'numberAddress': number,
+      'long': long,
+      'lat': lat,
       if (state != null) 'state': state
     };
     final resp = await http.post(Uri.parse(urlFinal),
@@ -197,6 +317,16 @@ class AuthenticationBLoC with ChangeNotifier {
 
       storeAuth = loginResponse.store;
 
+      var placeStore = new PlaceSearch(
+          description: storeAuth.user.uid,
+          placeId: storeAuth.user.uid,
+          structuredFormatting: new StructuredFormatting(
+              mainText: storeAuth.address,
+              secondaryText: storeAuth.city,
+              number: storeAuth.number));
+
+      prefs.setLocationSearch = true;
+      prefs.setSearchAddreses = placeStore;
       _guardarToken(loginResponse.token);
 
       // await getProfileByUserId(this.profile.user.uid);
@@ -269,6 +399,17 @@ class AuthenticationBLoC with ChangeNotifier {
       final loginResponse = loginResponseFromJson(resp.body);
 
       storeAuth = loginResponse.store;
+
+      var placeStore = new PlaceSearch(
+          description: storeAuth.user.uid,
+          placeId: storeAuth.user.uid,
+          structuredFormatting: new StructuredFormatting(
+              mainText: storeAuth.address,
+              secondaryText: storeAuth.city,
+              number: storeAuth.number));
+
+      prefs.setLocationSearch = true;
+      prefs.setSearchAddreses = placeStore;
 
       return true;
     } else {

@@ -39,8 +39,8 @@ class ThemeChanger with ChangeNotifier {
           accentColor: Color(0xffFEB42C),
           primaryColor: Color(0xff32D73F),
           brightness: Brightness.dark,
-          scaffoldBackgroundColor: Color(0xFF131313),
-          cardColor: Color(0xFF262626),
+          scaffoldBackgroundColor: Color(0xFF0F0F0F),
+          cardColor: Color(0xFF1E1E1E),
           textTheme: TextTheme(bodyText1: TextStyle(color: Colors.white)),
         );
         break;
@@ -75,10 +75,10 @@ class ThemeChanger with ChangeNotifier {
       _currentTheme = ThemeData.dark().copyWith(
         accentColor: Color(0xFF00649FE),
         primaryColor: Color(0xFFA39FA2).withOpacity(0.50),
-        cardColor: Color(0xFF262626),
+        cardColor: Color(0xFF1E1E1E),
         brightness: Brightness.dark,
         primaryColorLight: Colors.white,
-        scaffoldBackgroundColor: Color(0xFF131313), // gummetal
+        scaffoldBackgroundColor: Color(0xFF0F0F0F), // gummetal
         textTheme: TextTheme(bodyText1: TextStyle(color: Colors.white)),
       );
     } else {

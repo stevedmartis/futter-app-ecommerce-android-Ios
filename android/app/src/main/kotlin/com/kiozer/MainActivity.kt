@@ -1,4 +1,4 @@
-package com.flutter_ecommerce_app
+package com.kiozer
 
 import io.flutter.embedding.android.FlutterActivity
 

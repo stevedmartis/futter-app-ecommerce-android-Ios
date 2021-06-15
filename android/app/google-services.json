@@ -1,0 +1,43 @@
+{
+  "project_info": {
+    "project_number": "639303241258",
+    "project_id": "kiozer",
+    "storage_bucket": "kiozer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:639303241258:android:f6744914ce812143abfd53",
+        "android_client_info": {
+          "package_name": "com.kiozer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "639303241258-66inubs9vrafm7pkb9bogd93m69l4khn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kiozer",
+            "certificate_hash": "c1bf4f4b2a50e46d066cd384b7fc6b95944c5ee0"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNlH_8qfzpPTgzNzg6NmNjIGlwvoz_it4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "639303241258-80ht1peb9glatcqnl055qtalmfjh485d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -778,8 +778,8 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
             price: int.parse(price),
             description: description,
             images: imagesFinal,
-            category: widget.category.id,
-            user: widget.category.store.user.uid);
+            category: widget.product.category,
+            user: storeAuth.user.uid);
 
         final ProductResponse resp =
             await productService.editProduct(productEdit);
@@ -813,8 +813,8 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
           price: int.parse(price),
           description: description,
           images: imagesFinal,
-          category: widget.category.id,
-          user: widget.category.store.user.uid);
+          category: widget.product.category,
+          user: storeAuth.user.uid);
 
       final ProductResponse resp =
           await productService.editProduct(productEdit);

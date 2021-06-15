@@ -25,6 +25,11 @@ class Store {
     this.trophys = 0,
     this.isEco = false,
     this.service,
+    this.address = "",
+    this.city = "",
+    this.number = "",
+    this.latitude = 0,
+    this.longitude = 0,
     this.createdAt,
     this.updatedAt,
   });
@@ -36,6 +41,13 @@ class Store {
   String name;
   String lastName;
   String imageAvatar;
+
+  String address;
+  String city;
+  String number;
+  double latitude;
+  double longitude;
+
   final int service;
   String timeDelivery;
   int percentOff;
@@ -56,6 +68,11 @@ class Store {
         percentOff: json["percentOff"],
         trophys: json["trophys"],
         isEco: json["isEco"],
+        address: json["address"],
+        city: json["city"],
+        number: json["numberAddress"],
+        latitude: json["latitude"],
+        longitude: json["longitude"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
       );
@@ -72,6 +89,11 @@ class Store {
         "percentOff": percentOff,
         "trophys": trophys,
         "isEco": isEco,
+        "address": address,
+        "city": city,
+        "number": number,
+        "latitude": latitude,
+        "longitude": longitude,
         "createdAt": updatedAt,
         "updatedAt": updatedAt,
       };

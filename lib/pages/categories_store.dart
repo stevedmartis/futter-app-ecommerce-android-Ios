@@ -167,12 +167,8 @@ class _CatalogsListState extends State<CatalogsList>
   }
 
   _chargeCatalogs() async {
-    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
-
     final productsBloc =
         Provider.of<TabsViewScrollBLoC>(context, listen: false);
-
-    profile = authService.profile;
 
     catalogos = productsBloc.tabs;
 
@@ -471,14 +467,9 @@ class _CatalogsListState extends State<CatalogsList>
                               }),
                           child: Container(
                             decoration: BoxDecoration(
-                              color: (currentTheme.customTheme)
-                                  ? Colors.black
-                                  : Colors.white,
-                            ),
+                                color: currentTheme.currentTheme.cardColor),
                             child: Material(
-                              color: (currentTheme.customTheme)
-                                  ? Colors.black
-                                  : Colors.white,
+                              color: currentTheme.currentTheme.cardColor,
                               child: InkWell(
                                 splashColor: Colors.white,
                                 radius: 30,
@@ -689,7 +680,6 @@ class _CatalogsListState extends State<CatalogsList>
         'id': item.category.id,
         'name': item.category.name,
         'description': item.category.description,
-        'products': item.category.products,
         'position': item.category.position
       };
       orderArray.add(category);

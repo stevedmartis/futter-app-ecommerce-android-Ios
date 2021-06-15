@@ -99,12 +99,20 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
   }
 
   savePlaceSearchConfirm(PlaceSearch value) async {
-    // final resp2 = await placeService.getAutocompleteDetails(searchTerm);
-
     place = value;
     isLocationSearch = true;
     prefs.setLocationSearch = true;
     prefs.setSearchAddreses = value;
+
+    final resp = await placeService.getAutocompleteDetails(value.placeId);
+
+    print(resp);
+
+    prefs.setLatSearch = resp.first;
+    prefs.setLongSearch = resp.last;
+
+    print(prefs.latSearch);
+
     notifyListeners();
   }
 
@@ -114,10 +122,6 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
     _numberAddress?.close();
     super.dispose();
   }
-}
-
-void getAddressFromCoordinates(double lat, double long) async {
-  //print("${first.featureName} : ${first.addressLine}");
 }
 
 final myLocationBloc = MyLocationBloc();

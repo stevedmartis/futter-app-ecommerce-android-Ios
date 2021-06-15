@@ -254,15 +254,14 @@ class _ProfileStoreProductItem extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Card(
             elevation: 6,
-            shadowColor: Colors.black54,
+            shadowColor: Colors.black,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
             color: currentTheme.currentTheme.cardColor,
             child: Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
+                Container(
                   child: Hero(
                       tag: 'list_${product.images[0].url + product.name + '0'}',
                       child: Material(

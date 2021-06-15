@@ -69,6 +69,22 @@ class AuthUserPreferences {
     return _prefs.getBool('locationSearch') ?? false;
   }
 
+  set setLongSearch(double long) {
+    _prefs.setDouble('longitude', long);
+  }
+
+  get longSearch {
+    return _prefs.getDouble('longitude') ?? false;
+  }
+
+  set setLatSearch(double lat) {
+    _prefs.setDouble('latitude', lat);
+  }
+
+  get latSearch {
+    return _prefs.getDouble('latitude') ?? false;
+  }
+
   set setSearchAddreses(PlaceSearch place) {
     Map<String, dynamic> map = {
       'description': place.description,

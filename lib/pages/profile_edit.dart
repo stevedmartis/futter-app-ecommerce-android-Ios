@@ -45,6 +45,10 @@ class EditProfilePageState extends State<EditProfilePage> {
   final passCtrl = TextEditingController();
   final lastName = TextEditingController();
 
+  final addressCtrl = TextEditingController();
+  final cityCtrl = TextEditingController();
+  final numberCtrl = TextEditingController();
+
   bool isUsernameChange = false;
   bool isNameChange = false;
   bool isAboutChange = false;
@@ -64,6 +68,10 @@ class EditProfilePageState extends State<EditProfilePage> {
     aboutCtrl.text = store.about;
 
     emailCtrl.text = store.user.email;
+
+    addressCtrl.text = store.address;
+    cityCtrl.text = store.city;
+    numberCtrl.text = store.number;
 
     usernameCtrl.addListener(() {
       setState(() {
@@ -420,6 +428,20 @@ class EditProfilePageState extends State<EditProfilePage> {
                             SizedBox(
                               height: 10,
                             ),
+
+                            _createAddress(),
+                            SizedBox(
+                              height: 10,
+                            ),
+
+                            _createCity(),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            _createNumber(),
+                            SizedBox(
+                              height: 10,
+                            ),
                             _createPassword(passCtrl),
                             SizedBox(
                               height: 30,
@@ -678,6 +700,148 @@ class EditProfilePageState extends State<EditProfilePage> {
                 ),
                 hintText: '',
                 labelText: 'Nombre',
+                //counterText: snapshot.data,
+                errorText: snapshot.error),
+            onChanged: storeProfileBloc.changeName,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _createAddress() {
+    return StreamBuilder(
+      stream: storeProfileBloc.nameStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        final currentTheme = Provider.of<ThemeChanger>(context);
+
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          child: TextField(
+            style: TextStyle(
+              color: (currentTheme.customTheme) ? Colors.white : Colors.black,
+            ),
+            controller: addressCtrl,
+            //  keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: (currentTheme.customTheme)
+                        ? Colors.white54
+                        : Colors.black54,
+                  ),
+                ),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                labelStyle: TextStyle(
+                  color: (currentTheme.customTheme)
+                      ? Colors.white54
+                      : Colors.black54,
+                ),
+                // icon: Icon(Icons.perm_identity),
+                //  fillColor: currentTheme.accentColor,
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: currentTheme.currentTheme.accentColor, width: 2.0),
+                ),
+                hintText: '',
+                labelText: 'Calle y numero',
+                //counterText: snapshot.data,
+                errorText: snapshot.error),
+            onChanged: storeProfileBloc.changeName,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _createCity() {
+    return StreamBuilder(
+      stream: storeProfileBloc.nameStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        final currentTheme = Provider.of<ThemeChanger>(context);
+
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          child: TextField(
+            enabled: false,
+            style: TextStyle(
+              color: (currentTheme.customTheme) ? Colors.white : Colors.black,
+            ),
+            controller: cityCtrl,
+            //  keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: (currentTheme.customTheme)
+                        ? Colors.white54
+                        : Colors.black54,
+                  ),
+                ),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                labelStyle: TextStyle(
+                  color: (currentTheme.customTheme)
+                      ? Colors.white54
+                      : Colors.black54,
+                ),
+                // icon: Icon(Icons.perm_identity),
+                //  fillColor: currentTheme.accentColor,
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: currentTheme.currentTheme.accentColor, width: 2.0),
+                ),
+                hintText: '',
+                labelText: 'Localidad',
+                //counterText: snapshot.data,
+                errorText: snapshot.error),
+            onChanged: storeProfileBloc.changeName,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _createNumber() {
+    return StreamBuilder(
+      stream: storeProfileBloc.nameStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        final currentTheme = Provider.of<ThemeChanger>(context);
+
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          child: TextField(
+            style: TextStyle(
+              color: (currentTheme.customTheme) ? Colors.white : Colors.black,
+            ),
+            controller: numberCtrl,
+            //  keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: (currentTheme.customTheme)
+                        ? Colors.white54
+                        : Colors.black54,
+                  ),
+                ),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                labelStyle: TextStyle(
+                  color: (currentTheme.customTheme)
+                      ? Colors.white54
+                      : Colors.black54,
+                ),
+                // icon: Icon(Icons.perm_identity),
+                //  fillColor: currentTheme.accentColor,
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: currentTheme.currentTheme.accentColor, width: 2.0),
+                ),
+                hintText: '',
+                labelText: 'Numero',
                 //counterText: snapshot.data,
                 errorText: snapshot.error),
             onChanged: storeProfileBloc.changeName,

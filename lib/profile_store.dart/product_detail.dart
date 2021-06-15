@@ -88,69 +88,72 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                             ),
                       ),
                       const SizedBox(height: 20),
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(vertical: 5),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(25),
-                              color: Colors.grey[200],
-                            ),
-                            child: Row(
-                              children: [
-                                const SizedBox(width: 10),
-                                IconButton(
-                                  onPressed: () {
-                                    if (quantity > 2) {
-                                      setState(() {
-                                        quantity--;
-                                      });
-                                    }
-                                  },
-                                  icon: Icon(
-                                    Icons.remove,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0),
-                                  child: Text(
-                                    quantity.toString(),
-                                    style: TextStyle(
+                      if (!widget.isAuthUser)
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(25),
+                                color: Colors.grey[200],
+                              ),
+                              child: Row(
+                                children: [
+                                  const SizedBox(width: 10),
+                                  IconButton(
+                                    onPressed: () {
+                                      if (quantity > 2) {
+                                        setState(() {
+                                          quantity--;
+                                        });
+                                      }
+                                    },
+                                    icon: Icon(
+                                      Icons.remove,
                                       color: Colors.black,
                                     ),
                                   ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      quantity++;
-                                    });
-                                  },
-                                  icon: Icon(
-                                    Icons.add,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                              ],
-                            ),
-                          ),
-                          Spacer(),
-                          Text(
-                            '\$${widget.product.price}',
-                            style:
-                                Theme.of(context).textTheme.headline4.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20.0),
+                                    child: Text(
+                                      quantity.toString(),
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                      ),
                                     ),
-                          ),
-                        ],
-                      ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        quantity++;
+                                      });
+                                    },
+                                    icon: Icon(
+                                      Icons.add,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                ],
+                              ),
+                            ),
+                            Spacer(),
+                            Text(
+                              '\$${widget.product.price}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline4
+                                  .copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ],
+                        ),
                       const SizedBox(height: 15),
                       Text(
-                        'Sobre el producto',
+                        'Descripción',
                         style: Theme.of(context).textTheme.subtitle1.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
