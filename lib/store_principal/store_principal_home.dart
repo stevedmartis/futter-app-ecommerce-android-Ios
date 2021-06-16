@@ -169,7 +169,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                         {
                           if (storeAuth.user.uid == '0') {
                             authService.redirect = 'profile';
-                            Navigator.push(context, onBoardCreateStoreRoute());
+                            Navigator.push(context, loginRoute(100));
                           } else {
                             authService.redirect = 'home';
                             Navigator.push(context, profileAuthRoute(true));
@@ -779,35 +779,43 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                     child: AnimatedOpacity(
                         opacity: (prefs.locationSearch) ? 1.0 : 0.0,
                         duration: Duration(milliseconds: 200),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              child: Icon(
-                                Icons.location_on,
-                                color: currentTheme.accentColor,
+                        child: Container(
+                          alignment: Alignment.center,
+                          width: 100,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                alignment: Alignment.centerRight,
+                                child: Icon(
+                                  Icons.location_on,
+                                  color: currentTheme.accentColor,
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Container(
-                                width: _size.width / 2,
-                                alignment: Alignment.center,
-                                child: Text(
-                                  prefs.locationSearch
-                                      ? '${prefs.addressSearchSave.mainText}'
-                                      : '...',
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  //'${state.location.latitude}',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                      color: Colors.white70),
-                                )),
-                          ],
+                              SizedBox(
+                                width: 10,
+                              ),
+                              SizedBox(
+                                width: _size.width / 3,
+                                child: Container(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      prefs.locationSearch
+                                          ? '${prefs.addressSearchSave.mainText}'
+                                          : '...',
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      softWrap: false,
+                                      //'${state.location.latitude}',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                          color: Colors.white70),
+                                    )),
+                              ),
+                            ],
+                          ),
                         ))),
             ],
           );

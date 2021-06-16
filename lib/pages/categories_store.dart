@@ -23,6 +23,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_platform/universal_platform.dart';
+import '../global/extension.dart';
 
 class CatalogosListPage extends StatefulWidget {
   @override
@@ -505,7 +506,8 @@ class _CatalogsListState extends State<CatalogsList>
                                                                 .start,
                                                         children: <Widget>[
                                                           Text(
-                                                            item.name,
+                                                            item.name
+                                                                .capitalize(),
                                                             maxLines: 2,
                                                             overflow:
                                                                 TextOverflow

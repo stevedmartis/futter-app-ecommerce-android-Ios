@@ -40,7 +40,7 @@ class PlaceService with ChangeNotifier {
   Future getAutocompleteDetails(String palceId) async {
     // this.authenticated = true;
 
-    final apiKey = 'AIzaSyD_lFpA7YI75XFW12HdnpS32Y8q3k-v31Q';
+    final apiKey = 'AIzaSyB0tQN9KhupiyRjtxN6ZsbjryXWJDDRV-M';
     final urlFinal =
         'https://maps.googleapis.com/maps/api/place/details/json?place_id=$palceId&key=$apiKey';
 

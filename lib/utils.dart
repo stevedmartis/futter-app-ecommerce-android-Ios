@@ -1,5 +1,7 @@
+import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Utils {
   static List<Widget> modelBuilder<M>(
@@ -27,25 +29,20 @@ class Utils {
     @required VoidCallback onClicked,
   }) =>
       showCupertinoModalPopup(
-        context: context,
-        builder: (context) => CupertinoActionSheet(
-          actions: [
-            child,
-          ],
-          cancelButton: CupertinoActionSheetAction(
-            child: Text('Done'),
-            onPressed: onClicked,
-          ),
-        ),
-      );
+          context: context,
+          builder: (context) {
+            final currentTheme =
+                Provider.of<ThemeChanger>(context, listen: false).currentTheme;
 
-  static void showSnackBar(BuildContext context, String text) {
-    final snackBar = SnackBar(
-      content: Text(text, style: TextStyle(fontSize: 24)),
-    );
-
-    ScaffoldMessenger.of(context)
-      ..removeCurrentSnackBar()
-      ..showSnackBar(snackBar);
-  }
+            return CupertinoActionSheet(
+              actions: [
+                child,
+              ],
+              cancelButton: CupertinoActionSheetAction(
+                child: Text('Guardar',
+                    style: TextStyle(color: currentTheme.primaryColor)),
+                onPressed: onClicked,
+              ),
+            );
+          });
 }

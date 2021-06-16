@@ -17,6 +17,7 @@ import 'package:australti_ecommerce_app/store_product_concept/store_product_data
 import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
+import '../global/extension.dart';
 
 const _blueColor = Color(0xFF00649FE);
 const _textHighColor = Color(0xFF241E1E);
@@ -164,7 +165,7 @@ class _TabWidget extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            tabCategory.category.name,
+            tabCategory.category.name.capitalize(),
             style: TextStyle(
               color: (selected) ? currentTheme.primaryColor : Colors.grey,
               fontWeight: FontWeight.bold,
@@ -189,7 +190,7 @@ class _ProfileStoreCategoryItem extends StatelessWidget {
       height: categoryHeight,
       alignment: Alignment.centerLeft,
       child: Text(
-        category.name,
+        category.name.capitalize(),
         style: TextStyle(
           color: (!currentTheme.customTheme) ? Colors.black54 : Colors.white54,
           fontSize: 16,
@@ -454,9 +455,12 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                     ),
                   ),
                   AnimatedContainer(
+                    width: size.width / 3,
                     duration: Duration(milliseconds: 100),
                     child: Text(
                       '@$username',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                       style: TextStyle(
                         fontSize: subTitleSize,
                         letterSpacing: -0.5,

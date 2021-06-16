@@ -13,7 +13,6 @@ import 'package:australti_ecommerce_app/services/product.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/utils.dart';
 import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
 import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 import 'package:flutter/material.dart';
@@ -76,8 +75,6 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
 
   int index = 0;
 
-  static List<String> values = ['Publico', 'Privado'];
-
   List<Object> images = [];
 
   final picker = ImagePicker();
@@ -112,7 +109,7 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
         else
           this.isNameChange = false;
 
-        if (nameCtrl.text == "")
+        if (nameCtrl.text == "" || nameCtrl.text.length < 5)
           errorRequired = true;
         else
           errorRequired = false;
@@ -547,33 +544,6 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
     );
   }
 
-  Widget buildCustomPicker() => SizedBox(
-        height: 300,
-        child: CupertinoPicker(
-          itemExtent: 64,
-          diameterRatio: 0.7,
-          looping: true,
-          onSelectedItemChanged: (index) => setState(() => this.index = index),
-          // selectionOverlay: Container(),
-          selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
-            background: Colors.pink.withOpacity(0.12),
-          ),
-          children: Utils.modelBuilder<String>(
-            values,
-            (index, value) {
-              final isSelected = this.index == index;
-              final color = isSelected ? Colors.pink : Colors.black;
-
-              return Center(
-                child: Text(
-                  value,
-                  style: TextStyle(color: color, fontSize: 24),
-                ),
-              );
-            },
-          ),
-        ),
-      );
 /* 
   TextEditingController _controller = TextEditingController();
   Future<void> _selectedNumber(BuildContext context) async {

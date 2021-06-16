@@ -78,7 +78,7 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
         else
           this.isNameChange = false;
 
-        if (nameCtrl.text == "")
+        if (nameCtrl.text == "" || nameCtrl.text.length < 5)
           errorRequired = true;
         else
           errorRequired = false;

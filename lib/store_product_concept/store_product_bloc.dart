@@ -65,22 +65,27 @@ class TabsViewScrollBLoC with ChangeNotifier {
       final item = tabs.firstWhere((item) => item.category.id == category.id,
           orElse: () => null);
 
+      category.position = i;
+
       final exist = (item != null) ? true : false;
 
       if (!exist)
         tabs.add(TabCategory(
           category: category,
-          selected: (category.position == 0),
+          selected:
+              (category.position == 0 || categoriesByStoreUserId.length == 1),
           offsetFrom: offsetFrom,
           offsetTo: offsetTo,
         ));
 
       if (!exist) items.add(ProfileStoreItem(category: category));
-      for (int j = 0; j < category.products.length; j++) {
-        final product = category.products[j];
 
-        items.add(ProfileStoreItem(product: product));
-      }
+      if (!exist)
+        for (int j = 0; j < category.products.length; j++) {
+          final product = category.products[j];
+
+          items.add(ProfileStoreItem(product: product));
+        }
 
       tabs.sort((a, b) {
         return a.category.position.compareTo(b.category.position);
@@ -132,12 +137,12 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
   void removeCategoryById(TickerProvider ticket, String categoryId, String uid,
       BuildContext context) {
+    tabs = [];
+    items = [];
     storeCategoriesProducts
         .removeWhere((categories) => categories.id == categoryId);
 
     tabs.removeWhere((tab) => tab.category.id == categoryId);
-
-    items.removeWhere((item) => item.category.id == categoryId);
 
     init(ticket, context);
 
@@ -161,12 +166,17 @@ class TabsViewScrollBLoC with ChangeNotifier {
     notifyListeners();
   }
 
-  void removeProductById(TickerProvider ticket, String productId, String user,
-      BuildContext context) {
-    productsByCategoryList.removeWhere((product) => product.id == productId);
+  void removeProductById(TickerProvider ticket, ProfileStoreProduct product,
+      String user, BuildContext context) {
+    final item = tabs.firstWhere((item) => item.category.id == product.category,
+        orElse: () => null);
+
+    item.category.products.removeWhere((product) => product.id == product.id);
+    productsByCategoryList.removeWhere((product) => product.id == product.id);
 
     tabs = [];
     items = [];
+
     init(ticket, context);
     notifyListeners();
   }
@@ -301,11 +311,15 @@ class CategoryBloc with Validators {
   // Recuperar los datos del Stream
   Stream<String> get nameStream =>
       _nameController.stream.transform(validationNameRequired);
-  Stream<String> get descriptionStream => _descriptionController.stream;
+  Stream<String> get descriptionStream =>
+      _descriptionController.stream.transform(validationOk);
 
   // Insertar valores al Stream
   Function(String) get changeName => _nameController.sink.add;
   Function(String) get changeDescription => _descriptionController.sink.add;
+
+  Stream<bool> get formValidStream =>
+      Rx.combineLatest2(nameStream, descriptionStream, (a, b) => true);
 
   Stream<bool> get privacityStream => _privacityController.stream;
 

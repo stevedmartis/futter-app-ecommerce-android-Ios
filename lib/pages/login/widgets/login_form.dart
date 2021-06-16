@@ -134,8 +134,9 @@ class LoginForm extends StatelessWidget {
         Navigator.push(context, profileEditRoute());
       } else if (authService.redirect == 'vender' &&
           authService.storeAuth.user.first) {
-        Provider.of<MenuModel>(context, listen: false).currentPage = 2;
-        Navigator.push(context, principalHomeRoute());
+        Navigator.push(context, profileEditRoute());
+        /*   Provider.of<MenuModel>(context, listen: false).currentPage = 2;
+        Navigator.push(context, principalHomeRoute()); */
       }
 
       if (!authService.storeAuth.user.first) {
@@ -153,7 +154,6 @@ class LoginForm extends StatelessWidget {
   }
 
   _signInGoogle(BuildContext context) async {
-    final socketService = Provider.of<SocketService>(context, listen: false);
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
 
     final signInGoogleOk = await authService.signInWitchGoogle();
@@ -164,8 +164,7 @@ class LoginForm extends StatelessWidget {
         Navigator.push(context, profileEditRoute());
       } else if (authService.redirect == 'vender' &&
           authService.storeAuth.user.first) {
-        Provider.of<MenuModel>(context, listen: false).currentPage = 2;
-        Navigator.push(context, principalHomeRoute());
+        Navigator.push(context, profileEditRoute());
       }
 
       if (!authService.storeAuth.user.first) {

@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:provider/provider.dart';
+import '../global/extension.dart';
 
 class ProductStoreDetails extends StatefulWidget {
   const ProductStoreDetails({
@@ -74,7 +75,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                         ),
                       ),
                       Text(
-                        widget.product.name,
+                        widget.product.name.capitalize(),
                         style: Theme.of(context).textTheme.headline5.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -271,7 +272,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
 
     if (res) {
       productProvider.removeProductById(
-          this, widget.product.id, widget.product.user, context);
+          this, widget.product, widget.product.user, context);
       setState(() {});
 
       showSnackBar(context, 'Producto eliminado');

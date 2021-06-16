@@ -30,6 +30,15 @@ class AuthenticationBLoC with ChangeNotifier {
 
   bool get isImageProfileChange => this._imageProfileChanges;
 
+  int _serviceSelect = 0;
+  set serviceChange(int value) {
+    this._serviceSelect = value;
+
+    notifyListeners();
+  }
+
+  int get serviceSelect => this._serviceSelect;
+
   AuthState authState = AuthState.isStore;
   static String redirectUri =
       '${Environment.apiUrl}/api/apple/callbacks/sign_in_with_apple';
@@ -206,6 +215,8 @@ class AuthenticationBLoC with ChangeNotifier {
 
   set storeAuth(Store valor) {
     this._storeAuth = valor;
+
+    serviceChange = valor.service;
     notifyListeners();
   }
 
@@ -237,7 +248,7 @@ class AuthenticationBLoC with ChangeNotifier {
   }
 
   Future editProfile(String uid, String username, String about, String name,
-      String email, String password, String imageAvatar) async {
+      String email, String password, String imageAvatar, int service) async {
     // this.authenticated = true;
 
     final urlFinal = ('${Environment.apiUrl}/api/store/edit');
@@ -249,7 +260,8 @@ class AuthenticationBLoC with ChangeNotifier {
       'about': about,
       'email': email,
       'password': password,
-      'imageAvatar': imageAvatar
+      'imageAvatar': imageAvatar,
+      'service': service
     };
 
     String token = '';
