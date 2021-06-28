@@ -726,7 +726,6 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
 
     if (item != null) {
       imagesFinal.add(item);
-      print(item);
     }
 
     if (tabsViewScrollBLoC.imagesProducts.length != 0) {
@@ -737,10 +736,6 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
         for (var item in imagesProduct.images) {
           imagesFinal.add(item);
         }
-
-        print(imagesFinal);
-
-        print(widget.product.images);
 
         final productEdit = ProfileStoreProduct(
             id: widget.product.id,
@@ -775,8 +770,6 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
             context, 'Error del servidor', 'lo sentimos, Intentelo mas tarde');
       }
     } else {
-      print(imagesFinal);
-
       final productEdit = ProfileStoreProduct(
           id: widget.product.id,
           name: name,

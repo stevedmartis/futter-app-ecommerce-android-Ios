@@ -7,6 +7,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc/store_profile.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/pages/single_image_upload.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
@@ -23,7 +24,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_platform/universal_platform.dart';
@@ -49,6 +49,8 @@ class EditProfilePageState extends State<EditProfilePage> {
   final passCtrl = TextEditingController();
   final lastName = TextEditingController();
 
+  final categoryCtrl = TextEditingController();
+
   final addressCtrl = TextEditingController();
   final cityCtrl = TextEditingController();
   final numberCtrl = TextEditingController();
@@ -62,6 +64,10 @@ class EditProfilePageState extends State<EditProfilePage> {
   bool isCityChange = false;
   bool isNumberChange = false;
   bool errorRequired = false;
+
+  bool isSwitched = false;
+
+  bool isSwitchChange = false;
 
   ImageUploadModel uploadImageFile;
 
@@ -81,7 +87,7 @@ class EditProfilePageState extends State<EditProfilePage> {
     numberCtrl.text = store.number;
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (!store.user.first) openSheetBottom();
+      if (store.user.first) openSheetBottom();
     });
 
     usernameCtrl.addListener(() {
@@ -234,6 +240,13 @@ class EditProfilePageState extends State<EditProfilePage> {
         : '';
 
     final itemData = base64.decode(stripped);
+
+    if (authService.serviceSelect == 1) categoryCtrl.text = 'Restaurante';
+
+    if (authService.serviceSelect == 2)
+      categoryCtrl.text = 'Frutería/Verdulería';
+    if (authService.serviceSelect == 3)
+      categoryCtrl.text = 'Licorería/Botillería';
 
     return SafeArea(
       child: Scaffold(
@@ -460,126 +473,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                             EdgeInsets.symmetric(horizontal: 25, vertical: 0),
                         child: Column(
                           children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  (authService.serviceSelect > 0)
-                                      ? (authService.serviceSelect == 1)
-                                          ? FadeIn(
-                                              child: Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.restaurant_menu,
-                                                    size: 25,
-                                                    color: Colors.white,
-                                                  ),
-                                                  SizedBox(
-                                                    width: 20,
-                                                  ),
-                                                  Text(
-                                                    'Restaurante',
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 15),
-                                                  )
-                                                ],
-                                              ),
-                                            )
-                                          : (authService.serviceSelect == 2)
-                                              ? FadeIn(
-                                                  child: Row(
-                                                    children: [
-                                                      FaIcon(
-                                                        FontAwesomeIcons.lemon,
-                                                        size: 25,
-                                                        color: Colors.white,
-                                                      ),
-                                                      SizedBox(
-                                                        width: 20,
-                                                      ),
-                                                      Text(
-                                                        'Frutería/Verdulería',
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 15),
-                                                      )
-                                                    ],
-                                                  ),
-                                                )
-                                              : (authService.serviceSelect == 3)
-                                                  ? FadeIn(
-                                                      child: Row(
-                                                        children: [
-                                                          FaIcon(
-                                                            FontAwesomeIcons
-                                                                .wineBottle,
-                                                            size: 25,
-                                                            color: Colors.white,
-                                                          ),
-                                                          SizedBox(
-                                                            width: 20,
-                                                          ),
-                                                          Text(
-                                                            'Licorería/Botillería',
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize: 15),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    )
-                                                  : Container()
-                                      : Text(
-                                          'Sin Categoria',
-                                          style: TextStyle(
-                                              color: Colors.grey, fontSize: 15),
-                                        ),
-                                  Spacer(),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        color: currentTheme
-                                            .currentTheme.cardColor),
-                                    child: Row(
-                                      children: [
-                                        Material(
-                                          color: currentTheme
-                                              .currentTheme.cardColor,
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          child: InkWell(
-                                            splashColor: Colors.grey,
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            radius: 30,
-                                            onTap: () {
-                                              showSelectServiceMaterialCupertinoBottomSheet(
-                                                  context);
-                                            },
-                                            highlightColor: Colors.grey,
-                                            child: Container(
-                                              width: 34,
-                                              height: 34,
-                                              child: Icon(
-                                                Icons.edit,
-                                                color: currentTheme
-                                                    .currentTheme.accentColor,
-                                                size: 25,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
+                            _createCategory(),
 
                             SizedBox(
                               height: 10,
@@ -730,6 +624,36 @@ class EditProfilePageState extends State<EditProfilePage> {
     return filemMultiPart;
   }
 
+/*   Widget _createSwitch() {
+    final currentTheme = Provider.of<ThemeChanger>(context);
+
+    return Container(
+        child: ListTile(
+      //leading: FaIcon(FontAwesomeIcons.moon, color: accentColor),
+      title: Text(
+        'Mostrar al publico',
+        style: TextStyle(
+            color:
+                (currentTheme.customTheme) ? Colors.white54 : Colors.black54),
+      ),
+      trailing: Switch.adaptive(
+        activeColor: currentTheme.currentTheme.accentColor,
+        value: isSwitchChange,
+        onChanged: (value) {
+          setState(() {
+            isSwitched = value;
+
+            if (isSwitched != store.visibility) {
+              this.isSwitchChange = true;
+            } else {
+              this.isSwitchChange = false;
+            }
+          });
+        },
+      ),
+    ));
+  } */
+
   Widget _createButton(bool isUsernameChange, bool isAboutChange,
       bool isEmailChange, bool isNameChange, bool isPassChange) {
     return StreamBuilder(
@@ -867,6 +791,59 @@ class EditProfilePageState extends State<EditProfilePage> {
                 //counterText: snapshot.data,
                 errorText: snapshot.error),
             onChanged: storeProfileBloc.changeUsername,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _createCategory() {
+    return StreamBuilder(
+      stream: storeProfileBloc.categoryStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        final currentTheme = Provider.of<ThemeChanger>(context);
+
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          child: TextField(
+            style: TextStyle(
+              color: (currentTheme.customTheme) ? Colors.white : Colors.black,
+            ),
+            controller: categoryCtrl,
+            showCursor: true,
+            readOnly: true,
+            onTap: () {
+              showSelectServiceMaterialCupertinoBottomSheet(context);
+              FocusScope.of(context).requestFocus(new FocusNode());
+            },
+            //  keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: (currentTheme.customTheme)
+                        ? Colors.white54
+                        : Colors.black54,
+                  ),
+                ),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                labelStyle: TextStyle(
+                  color: (currentTheme.customTheme)
+                      ? Colors.white54
+                      : Colors.black54,
+                ),
+                // icon: Icon(Icons.perm_identity),
+                //  fillColor: currentTheme.accentColor,
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: currentTheme.currentTheme.accentColor, width: 2.0),
+                ),
+                hintText: '',
+                labelText: 'Tipo de Tienda',
+                //counterText: snapshot.data,
+                errorText: snapshot.error),
+            onChanged: storeProfileBloc.changeCategory,
           ),
         );
       },
@@ -1146,15 +1123,12 @@ class EditProfilePageState extends State<EditProfilePage> {
                       ? Colors.white54
                       : Colors.black54,
                 ),
-                // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                       color: currentTheme.currentTheme.accentColor, width: 2.0),
                 ),
                 hintText: '',
                 labelText: 'Contraseña',
-                //counterText: snapshot.data,
                 errorText: snapshot.error),
             onChanged: storeProfileBloc.changePassword,
           ),
@@ -1205,7 +1179,8 @@ class EditProfilePageState extends State<EditProfilePage> {
             if (storeProfile.user.first && authService.redirect == 'profile') {
               Navigator.push(context, profileAuthRoute(true));
             } else {
-              Navigator.pop(context);
+              Provider.of<MenuModel>(context, listen: false).currentPage = 0;
+              Navigator.push(context, principalHomeRoute());
             }
           } else {
             showAlertError(context, 'Error', '');
@@ -1236,7 +1211,8 @@ class EditProfilePageState extends State<EditProfilePage> {
           if (storeProfile.user.first && authService.redirect == 'profile') {
             Navigator.push(context, profileAuthRoute(true));
           } else {
-            Navigator.pop(context);
+            Provider.of<MenuModel>(context, listen: false).currentPage = 2;
+            Navigator.push(context, principalHomeRoute());
           }
         } else {
           showAlertError(context, 'Error', '');
@@ -1245,7 +1221,6 @@ class EditProfilePageState extends State<EditProfilePage> {
         showAlertError(
             context, 'Error del servidor', 'lo sentimos, Intentelo mas tarde');
       }
-      //Navigator.pushReplacementNamed(context, '');
     }
   }
 }

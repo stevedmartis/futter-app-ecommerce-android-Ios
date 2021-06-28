@@ -1,10 +1,12 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:animations/animations.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/models/grocery_Store.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/pages/search_principal_page.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
@@ -130,9 +132,10 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
   Store storeAuth;
 
+  StoreService _selected = storeService.first;
+
   @override
   Widget build(BuildContext context) {
-    StoreService _selected = storeService.last;
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final authService = Provider.of<AuthenticationBLoC>(context);
 
@@ -147,6 +150,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
         backgroundColor: Colors.black,
         body: NotificationListener<ScrollEndNotification>(
           onNotification: (_) {
+            print(_scrollController.offset);
             _snapAppbar();
 
             return false;
@@ -281,7 +285,26 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                     ),
                   ),
                   centerTitle: true,
-                  title: Container(child: MyTextField(_showTitle)),
+                  title: OpenContainer(
+                      closedElevation: 5,
+                      openElevation: 5,
+                      closedColor: (_showTitle)
+                          ? currentTheme.cardColor
+                          : Colors.black.withOpacity(0.20),
+                      openColor: (_showTitle)
+                          ? currentTheme.cardColor
+                          : Colors.black.withOpacity(0.20),
+                      transitionType: ContainerTransitionType.fade,
+                      openShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      closedShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      openBuilder: (_, closeContainer) {
+                        return SearchPrincipalPage();
+                      },
+                      closedBuilder: (_, openContainer) {
+                        return Container(child: MyTextField(_showTitle));
+                      }),
                 ),
               ),
               SliverAppBar(
@@ -414,9 +437,6 @@ class StoresListByService extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-/*     final isRest = bloc.storeState != StoreState.restaurant ? true : false;
-
-    print(isRest); */
     final bloc = Provider.of<StoreBLoC>(context);
 
     return SizedBox(
@@ -429,8 +449,10 @@ class StoresListByService extends StatelessWidget {
 
             return Stack(
               children: [
-                StoreCard(
-                  store: store,
+                FadeIn(
+                  child: StoreCard(
+                    store: store,
+                  ),
                 ),
               ],
             );
@@ -444,7 +466,7 @@ class HeaderCustom extends StatefulWidget {
   _HeaderCustomState createState() => _HeaderCustomState();
 }
 
-StoreService selected = storeService.last;
+StoreService selected = storeService.first;
 
 class _HeaderCustomState extends State<HeaderCustom> {
   @override
@@ -487,9 +509,9 @@ class _HeaderCustomState extends State<HeaderCustom> {
 }
 
 void _changeService(StoreBLoC bloc, int id) {
-  if (id == 1) {
+  if (id == 2) {
     bloc.changeToRestaurant();
-  } else if (id == 2) {
+  } else if (id == 1) {
     bloc.changeToMarket();
   } else if (id == 3) {
     bloc.changeToLiqueur();
@@ -754,7 +776,7 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                               width: 10,
                             ),
                             Container(
-                                width: _size.width / 2,
+                                width: _size.width / 3,
                                 alignment: Alignment.center,
                                 child: Text(
                                   prefs.locationCurrent
@@ -765,7 +787,7 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                                   //'${state.location.latitude}',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 18,
+                                      fontSize: 15,
                                       color: Colors.white70),
                                 )),
                           ],
@@ -810,7 +832,7 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                                       //'${state.location.latitude}',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 18,
+                                          fontSize: 15,
                                           color: Colors.white70),
                                     )),
                               ),
@@ -873,7 +895,8 @@ class MyTextField extends StatelessWidget {
                   child: Text('Buscar ...',
                       style: TextStyle(color: Colors.white, fontSize: 14))),
               Expanded(
-                child: Container(
+                child: AnimatedContainer(
+                    duration: Duration(milliseconds: 200),
                     alignment: Alignment.topRight,
                     child: Container(
                       width: 40,

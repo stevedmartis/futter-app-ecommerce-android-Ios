@@ -32,6 +32,15 @@ class Validators {
     }
   });
 
+  final validationAddressRequired =
+      StreamTransformer<String, String>.fromHandlers(handleData: (text, sink) {
+    if (text.length >= 15) {
+      sink.add(text);
+    } else {
+      sink.addError('Ingresa Dirección (Calle y numero)');
+    }
+  });
+
   final validationWattsRequired =
       StreamTransformer<String, String>.fromHandlers(handleData: (text, sink) {
     if (text.length >= 1) {

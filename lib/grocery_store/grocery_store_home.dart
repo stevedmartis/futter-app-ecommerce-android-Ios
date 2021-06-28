@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile_store_user.dart';
@@ -163,21 +164,18 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                                                                   '${bloc.cart[index].product.name}' +
                                                                   'details' +
                                                                   '0',
-                                                              child:
-                                                                  CircleAvatar(
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .white,
-                                                                backgroundImage:
-                                                                    NetworkImage(
-                                                                  bloc
-                                                                      .cart[
-                                                                          index]
-                                                                      .product
-                                                                      .images[0]
-                                                                      .url,
-                                                                ),
-                                                              ),
+                                                              child: Container(
+                                                                  width: 50,
+                                                                  height: 50,
+                                                                  child: ClipRRect(
+                                                                      borderRadius: BorderRadius.all(Radius.circular(100.0)),
+                                                                      child: cachedNetworkImage(
+                                                                        bloc
+                                                                            .cart[index]
+                                                                            .product
+                                                                            .images[0]
+                                                                            .url,
+                                                                      ))),
                                                             ),
                                                             Positioned(
                                                               right: 0,

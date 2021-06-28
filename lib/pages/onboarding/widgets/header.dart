@@ -27,6 +27,7 @@ class Header extends StatelessWidget {
               icon: Icon(
                 Icons.chevron_left,
                 size: 40,
+                color: Colors.black,
               )),
         ),
 
@@ -39,7 +40,7 @@ class Header extends StatelessWidget {
           child: Text(
             'Skip',
             style: Theme.of(context).textTheme.subtitle1.copyWith(
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
           ),
         ),

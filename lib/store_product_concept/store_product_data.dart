@@ -94,14 +94,13 @@ class ProfileStoreProduct {
       );
 
   Map<String, dynamic> toJson() => {
-        //  "createAt": createdAt,
+        "updatedAt": updatedAt.toIso8601String(),
+        "createdAt": createdAt.toIso8601String(),
         "description": description,
         "id": id,
         "images": List<dynamic>.from(images.map((x) => x.toJson())),
         "name": name,
         "price": price,
-        "createdAt": createdAt,
-        "updatedAt": updatedAt,
         "user": user,
         "category": category
       };

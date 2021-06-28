@@ -46,7 +46,6 @@ class StoreCategoiesService with ChangeNotifier {
   Future createCatalogo(ProfileStoreCategory category) async {
     // this.authenticated = true;
 
-    print(category);
     final urlFinal = ('${Environment.apiUrl}/api/catalogo/new');
 
     final data = {
@@ -64,9 +63,7 @@ class StoreCategoiesService with ChangeNotifier {
         headers: {'Content-Type': 'application/json', 'x-token': token});
 
     if (resp.statusCode == 200) {
-      // final roomResponse = roomsResponseFromJson(resp.body);
       final catalogoResponse = categoryResponseFromJson(resp.body);
-      // this.rooms = roomResponse.rooms;
 
       return catalogoResponse;
     } else {

@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
+import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -101,16 +102,16 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                     height: size.height / 10,
                                     child: ListTile(
                                       leading: Container(
-                                        width: 70,
-                                        height: 100,
-                                        child: CircleAvatar(
-                                          backgroundColor: Colors.white,
-                                          backgroundImage: NetworkImage(
-                                            bloc.cart[index].product.images[0]
-                                                .url,
-                                          ),
-                                        ),
-                                      ),
+                                          width: 50,
+                                          height: 100,
+                                          child: ClipRRect(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(100.0)),
+                                              child: cachedNetworkImage(bloc
+                                                  .cart[index]
+                                                  .product
+                                                  .images[0]
+                                                  .url))),
                                       title: Text(
                                         '${item.product.name}',
                                         style: TextStyle(
@@ -242,68 +243,6 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                     ),
                                   ),
                                 )),
-
-                            /*  Dismissible(
-                                key: UniqueKey(),
-                                direction: DismissDirection.endToStart,
-                                onDismissed: (direction) => {
-                                  setState(() {
-                                    groceryStoreBloc.deleteProduct(item);
-                                  })
-                                },
-                                background: Container(
-                                    alignment: Alignment.centerRight,
-                                    decoration: BoxDecoration(
-                                      color: Colors.red,
-                                    ),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.only(right: 10),
-                                          child: Icon(
-                                            Icons.delete,
-                                            color: Colors.black,
-                                            size: 25,
-                                          ),
-                                        ),
-                                      ],
-                                    )),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Expanded(
-                                      child: CircleAvatar(
-                                        backgroundColor: Colors.white,
-                                        backgroundImage: NetworkImage(
-                                          groceryStoreBloc.cart[index].product
-                                              .images[0].url,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 15),
-                                    Expanded(
-                                        child: Text(item.quantity.toString())),
-                                    const SizedBox(width: 10),
-                                    Text('x'),
-                                    const SizedBox(width: 10),
-                                    Text(item.product.name),
-                                    Spacer(),
-                                    Text(
-                                        '\$${(item.product.price * item.quantity).toStringAsFixed(2)}'),
-                                    const SizedBox(width: 10),
-                                  ],
-                                ),
-                              
-                              
-                              
-                              ),
-                            
-                            
-                             */
                           );
                         },
                       ),
@@ -312,29 +251,6 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                 ),
               ),
             ),
-            /*  Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Row(
-                children: [
-                  Text(
-                    'Total:',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Spacer(),
-                  Text(
-                    '\$${groceryStoreBloc.totalPriceElements().toStringAsFixed(2)}',
-                    style: Theme.of(context).textTheme.headline4.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                  )
-                ],
-              ),
-            ), */
             const SizedBox(height: 15),
             GestureDetector(
               onTap: () => {
@@ -349,24 +265,16 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                 child: Container(
                   child: Center(
                     child: goPayCartBtnSubtotal(
-                        'Ir a pagar',
-                        [
-                          currentTheme.primaryColor,
-                          currentTheme.primaryColor,
-                        ],
-                        false,
-                        bloc.cart.length > 0),
+                      'Ir a pagar',
+                      [
+                        currentTheme.primaryColor,
+                        currentTheme.primaryColor,
+                      ],
+                      false,
+                      bloc.cart.length > 0,
+                    ),
                   ),
                 ),
-
-                /* elevatedButtonCustom(
-
-                      context: context,
-                      title: 'Continuar compa',
-                      onPress: () {
-                        print('hello');
-                        Navigator.push(context, ordenDetailImageRoute());
-                      }) */
               ),
             )
           ],

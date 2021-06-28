@@ -74,7 +74,7 @@ class AuthUserPreferences {
   }
 
   get longSearch {
-    return _prefs.getDouble('longitude') ?? false;
+    return _prefs.getDouble('longitude') ?? 0.0;
   }
 
   set setLatSearch(double lat) {
@@ -82,7 +82,7 @@ class AuthUserPreferences {
   }
 
   get latSearch {
-    return _prefs.getDouble('latitude') ?? false;
+    return _prefs.getDouble('latitude') ?? 0.0;
   }
 
   set setSearchAddreses(PlaceSearch place) {
@@ -108,9 +108,9 @@ class AuthUserPreferences {
   }
 
   set setCart(List<GroceryProductItem> cart) {
-    final aa = cartProductsToJson(cart);
+    final cartSave = cartProductsToJson(cart);
 
-    _prefs.setString('cart', aa);
+    _prefs.setString('cart', cartSave);
   }
 
   get getCart {

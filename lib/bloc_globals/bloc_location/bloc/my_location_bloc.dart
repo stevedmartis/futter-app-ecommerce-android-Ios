@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:australti_ecommerce_app/bloc_globals/bloc/validators.dart';
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/services/places_service.dart';
@@ -49,14 +50,13 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
       add(OnLocationChange(newPosition));
     });
 
-/* 
     Geolocator.getPositionStream(
             desiredAccuracy: LocationAccuracy.high, distanceFilter: 10)
         .listen((Position position) {
       newPosition = new LatLng(position.latitude, position.longitude);
 
       add(OnLocationChange(newPosition));
-    }); */
+    });
   }
 
   void disposePositionLocation() {
@@ -106,12 +106,8 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
 
     final resp = await placeService.getAutocompleteDetails(value.placeId);
 
-    print(resp);
-
     prefs.setLatSearch = resp.first;
     prefs.setLongSearch = resp.last;
-
-    print(prefs.latSearch);
 
     notifyListeners();
   }
@@ -121,6 +117,48 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
     _searchResults?.close();
     _numberAddress?.close();
     super.dispose();
+  }
+}
+
+class LocationBloc with Validators {
+  final _addressController = BehaviorSubject<String>();
+
+  final _descriptionController = BehaviorSubject<String>();
+
+  final _privacityController = BehaviorSubject<bool>();
+
+  final _priceController = BehaviorSubject<String>();
+
+  // Recuperar los datos del Stream
+  Stream<String> get addressStream =>
+      _addressController.stream.transform(validationAddressRequired);
+  Stream<String> get descriptionStream => _descriptionController.stream;
+
+  // Insertar valores al Stream
+  Function(String) get changeAddress => _addressController.sink.add;
+  Function(String) get changeDescription => _descriptionController.sink.add;
+
+  Stream<bool> get privacityStream => _privacityController.stream;
+
+  Stream<String> get priceSteam => _priceController.stream;
+
+  Function(String) get changePrice => _priceController.sink.add;
+
+  // Obtener el último valor ingresado a los streams
+  String get name => _addressController.value;
+  String get description => _descriptionController.value;
+  bool get privacity => _privacityController.value;
+  String get price => _priceController.value;
+
+  dispose() {
+    _privacityController?.close();
+
+    _addressController?.close();
+
+    _descriptionController?.close();
+    _priceController?.close();
+
+    //  _roomsController?.close();
   }
 }
 

@@ -22,7 +22,7 @@ class IconContainer extends StatelessWidget {
       child: Icon(
         icon,
         size: 32.0,
-        color: kWhite,
+        color: Colors.black,
       ),
     );
   }

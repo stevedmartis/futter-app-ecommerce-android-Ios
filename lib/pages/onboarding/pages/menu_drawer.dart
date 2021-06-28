@@ -46,7 +46,7 @@ class PrincipalMenu extends StatelessWidget {
 
                     prefs.setToken = '';
                     (UniversalPlatform.isWeb)
-                        ? prefs.setToken = ''
+                        ? authService.logoutWeb()
                         : authService.logout();
                     Navigator.pushNamedAndRemoveUntil(
                         context, "login", (Route<dynamic> route) => false);

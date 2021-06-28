@@ -9,8 +9,10 @@ import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
+import 'package:australti_ecommerce_app/responses/stores_list_principal_response.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/services/catalogo.dart';
+import 'package:australti_ecommerce_app/services/stores_Services.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
@@ -52,6 +54,12 @@ class _PrincipalPageState extends State<PrincipalPage>
     storeAuth = authService.storeAuth;
 
     categoriesStoreProducts();
+
+    if (storeAuth.user.uid != '0') {
+      myStoreslistServices();
+    } else {
+      storeslistServices();
+    }
 
     if (!isWeb) locationStatus();
     if (!isWeb) WidgetsBinding.instance.addObserver(this);
@@ -104,12 +112,38 @@ class _PrincipalPageState extends State<PrincipalPage>
     final productsBloc =
         Provider.of<TabsViewScrollBLoC>(context, listen: false);
 
-    print(resp);
-
     if (resp.ok) {
       productsBloc.storeCategoriesProducts = resp.storeCategoriesProducts;
+    }
+  }
 
-      print(productsBloc.storeCategoriesProducts);
+  void myStoreslistServices() async {
+    final storeService = Provider.of<StoreService>(context, listen: false);
+
+    final StoresListResponse resp =
+        await storeService.getStoresListServices(storeAuth.user.uid);
+
+    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
+
+    if (resp.ok) {
+      storeBloc.storesListInitial = resp.storeListServices;
+
+      storeBloc.changeToMarket();
+    }
+  }
+
+  void storeslistServices() async {
+    final storeService = Provider.of<StoreService>(context, listen: false);
+
+    final StoresListResponse resp =
+        await storeService.getStoresListServices(storeAuth.user.uid);
+
+    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
+
+    if (resp.ok) {
+      storeBloc.storesListInitial = resp.storeListServices;
+
+      storeBloc.changeToMarket();
     }
   }
 
@@ -215,11 +249,6 @@ class _PrincipalPageState extends State<PrincipalPage>
         _isDialogShowing = true;
       });
       showModalGpsLocation();
-      //  showMaterialCupertinoBottomSheetLocation(context, 'hello', 'hello2');
-
-      /*  final status = await Permission.location.request();
-      print(status);
-      accessGps(status); */
     } else if (isPermanentlyDenied) {
       final status = await Permission.location.request();
 

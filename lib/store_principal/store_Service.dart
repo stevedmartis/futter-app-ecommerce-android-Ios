@@ -11,16 +11,16 @@ class StoreService {
 final storeService = [
   StoreService(
       id: 1,
-      backImage: 'assets/rest6.jpg',
-      frontImage: 'assets/rest6.jpg',
-      name: 'Restaurantes',
-      stores: 50),
-  StoreService(
-      id: 2,
       backImage: 'assets/frutas_verduras3.jpeg',
       frontImage: 'assets/frutas_verduras3.jpeg',
       name: 'Mercados',
       stores: 20),
+  StoreService(
+      id: 2,
+      backImage: 'assets/rest6.jpg',
+      frontImage: 'assets/rest6.jpg',
+      name: 'Restaurantes',
+      stores: 50),
   StoreService(
       id: 3,
       backImage: 'assets/licores1.jpeg',

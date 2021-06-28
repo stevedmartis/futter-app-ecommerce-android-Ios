@@ -13,6 +13,7 @@ import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/pages/profile_edit.dart';
 import 'package:australti_ecommerce_app/pages/orden_detail_page.dart';
 import 'package:australti_ecommerce_app/pages/products_list.dart';
+import 'package:australti_ecommerce_app/pages/search_principal_page.dart';
 import 'package:australti_ecommerce_app/pages/single_image_upload.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile_store_auth.dart';
 import 'package:australti_ecommerce_app/store_principal/main_store_principal.dart';
@@ -269,6 +270,26 @@ Route onBoardCreateStoreRoute() {
         child: child,
       );
     },
+  );
+}
+
+Route createRouteSearch() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        SearchPrincipalPage(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(1.0, 0.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+    transitionDuration: Duration(milliseconds: 400),
   );
 }
 

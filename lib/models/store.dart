@@ -12,27 +12,27 @@ Store storeFromJson(String str) => Store.fromJson(json.decode(str));
 String storeToJson(Store data) => json.encode(data.toJson());
 
 class Store {
-  Store({
-    this.id = "",
-    @required this.user,
-    this.about = "",
-    this.products = 0,
-    this.name = "",
-    this.lastName = "",
-    this.imageAvatar = "",
-    this.timeDelivery,
-    this.percentOff,
-    this.trophys = 0,
-    this.isEco = false,
-    this.service,
-    this.address = "",
-    this.city = "",
-    this.number = "",
-    this.latitude = 0,
-    this.longitude = 0,
-    this.createdAt,
-    this.updatedAt,
-  });
+  Store(
+      {this.id = "",
+      @required this.user,
+      this.about = "",
+      this.products = 0,
+      this.name = "",
+      this.lastName = "",
+      this.imageAvatar = "",
+      this.timeDelivery,
+      this.percentOff,
+      this.trophys = 0,
+      this.isEco = false,
+      this.service,
+      this.address = "",
+      this.city = "",
+      this.number = "",
+      this.latitude = 0,
+      this.longitude = 0,
+      this.createdAt,
+      this.updatedAt,
+      this.visibility = true});
 
   final String id;
   final User user;
@@ -47,6 +47,7 @@ class Store {
   String number;
   double latitude;
   double longitude;
+  bool visibility;
 
   final int service;
   String timeDelivery;
@@ -70,6 +71,7 @@ class Store {
         isEco: json["isEco"],
         address: json["address"],
         city: json["city"],
+        visibility: json["visibility"],
         number: json["numberAddress"],
         latitude: json["latitude"],
         longitude: json["longitude"],
@@ -91,6 +93,7 @@ class Store {
         "isEco": isEco,
         "address": address,
         "city": city,
+        "visibility": visibility,
         "number": number,
         "latitude": latitude,
         "longitude": longitude,

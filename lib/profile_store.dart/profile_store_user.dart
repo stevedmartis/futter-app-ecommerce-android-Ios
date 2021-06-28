@@ -1,8 +1,11 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
+import 'package:australti_ecommerce_app/services/catalogo.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +16,7 @@ import 'package:australti_ecommerce_app/store_product_concept/store_product_data
 import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
+import '../global/extension.dart';
 
 const _blueColor = Color(0xFF00649FE);
 const _textHighColor = Color(0xFF241E1E);
@@ -35,20 +39,44 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
 
   AnimationController _animationController;
 
+  bool loading = false;
+
   double get maxHeight => 400 + MediaQuery.of(context).padding.top;
   double get minHeight => MediaQuery.of(context).padding.bottom;
 
   @override
   void initState() {
-    _bloc.init(this, context);
-
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-      reverseDuration: const Duration(milliseconds: 1300),
-    );
+    categoriesStoreProducts();
 
     super.initState();
+  }
+
+  void categoriesStoreProducts() async {
+    setState(() {
+      loading = true;
+    });
+
+    final storeService =
+        Provider.of<StoreCategoiesService>(context, listen: false);
+
+    final resp =
+        await storeService.getMyCategoriesProducts(widget.store.user.uid);
+
+    if (resp.ok) {
+      _bloc.storeCategoriesProducts = resp.storeCategoriesProducts;
+
+      _bloc.initStoreSelect(this, context, widget.store);
+
+      _animationController = AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 500),
+        reverseDuration: const Duration(milliseconds: 1300),
+      );
+
+      setState(() {
+        loading = false;
+      });
+    }
   }
 
   @override
@@ -103,40 +131,56 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                       child: Container(
                         color: currentTheme.scaffoldBackgroundColor,
                         alignment: Alignment.centerLeft,
-                        child: TabBar(
-                          onTap: _bloc.onCategorySelected,
-                          controller: _bloc.tabController,
-                          indicatorWeight: 0.1,
-                          isScrollable: true,
-                          tabs: _bloc.tabs
-                              .map((e) => _TabWidget(
-                                    tabCategory: e,
-                                  ))
-                              .toList(),
-                        ),
+                        child: (!loading)
+                            ? TabBar(
+                                onTap: _bloc.onCategorySelected,
+                                controller: _bloc.tabController,
+                                indicatorWeight: 0.1,
+                                isScrollable: true,
+                                tabs: _bloc.tabs
+                                    .map((e) => (e.category.products.length > 0)
+                                        ? FadeInLeft(
+                                            child: _TabWidget(
+                                              tabCategory: e,
+                                            ),
+                                          )
+                                        : Container())
+                                    .toList(),
+                              )
+                            : Container(),
                       )),
                 ),
               ];
             },
 
             // tab bar view
-            body: Container(
-              child: ListView.builder(
-                controller: _bloc.scrollController,
-                itemCount: _bloc.items.length,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemBuilder: (context, index) {
-                  final item = _bloc.items[index];
-                  if (item.isCategory) {
-                    return Container(
-                        child: _ProfileStoreCategoryItem(item.category));
-                  } else {
-                    return _ProfileStoreProductItem(
-                        item.product, item.category);
-                  }
-                },
-              ),
-            ),
+            body: (!loading)
+                ? Container(
+                    child: ListView.builder(
+                      controller: _bloc.scrollController,
+                      itemCount: _bloc.items.length,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      itemBuilder: (context, index) {
+                        final item = _bloc.items[index];
+                        if (item.isCategory) {
+                          return FadeIn(
+                            child: Container(
+                                child:
+                                    _ProfileStoreCategoryItem(item.category)),
+                          );
+                        } else {
+                          return FadeIn(
+                            child: _ProfileStoreProductItem(
+                                item.product, item.category),
+                          );
+                        }
+                      },
+                    ),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.only(bottom: 200.0),
+                    child: buildLoadingWidget(context),
+                  ),
           ),
         )));
   }
@@ -162,7 +206,7 @@ class _TabWidget extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            tabCategory.category.name,
+            tabCategory.category.name.capitalize(),
             style: TextStyle(
               color: (selected) ? currentTheme.primaryColor : Colors.grey,
               fontWeight: FontWeight.bold,
@@ -187,7 +231,7 @@ class _ProfileStoreCategoryItem extends StatelessWidget {
       height: categoryHeight,
       alignment: Alignment.centerLeft,
       child: Text(
-        category.name,
+        category.name.capitalize(),
         style: TextStyle(
           color: (!currentTheme.customTheme) ? Colors.black54 : Colors.white54,
           fontSize: 16,
@@ -259,8 +303,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
             color: currentTheme.currentTheme.cardColor,
             child: Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
+                Container(
                   child: Hero(
                       tag: 'list_${product.images[0].url + product.name + '0'}',
                       child: Material(
@@ -437,9 +480,12 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                     ),
                   ),
                   AnimatedContainer(
+                    width: size.width / 3,
                     duration: Duration(milliseconds: 100),
                     child: Text(
                       '@$username',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                       style: TextStyle(
                         fontSize: subTitleSize,
                         letterSpacing: -0.5,
@@ -493,9 +539,15 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                       : 'user_auth_avatar_list',
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(100.0)),
-                    child: Image.asset(
-                      currentProfile.imageAvatar,
-                    ),
+                    child: (store.imageAvatar != "")
+                        ? Container(
+                            height: currentImageSize,
+                            width: currentImageSize,
+                            child: cachedNetworkImage(
+                              store.imageAvatar,
+                            ),
+                          )
+                        : Image.asset(currentProfile.imageAvatar),
                   ),
                 )),
             Positioned(

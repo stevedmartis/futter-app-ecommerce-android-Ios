@@ -1,5 +1,6 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/validators.dart';
+import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:flutter/rendering.dart';
@@ -39,6 +40,54 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
   void addImageProduct(http.MultipartFile file) {
     imagesProducts.add(file);
+  }
+
+  void initStoreSelect(
+      TickerProvider ticker, BuildContext context, Store store) {
+    final categoriesByStoreUserId = storeCategoriesProducts
+        .where((i) => i.store.user.uid == store.user.uid)
+        .toList();
+
+    tabController =
+        TabController(vsync: ticker, length: categoriesByStoreUserId.length);
+
+    double offsetFrom = 0.0;
+    double offsetTo = 0.0;
+
+    for (int i = 0; i < categoriesByStoreUserId.length; i++) {
+      final category = categoriesByStoreUserId[i];
+
+      offsetFrom = offsetTo;
+      offsetTo = offsetFrom +
+          storeCategoriesProducts[i].products.length * productHeight +
+          categoryHeight;
+
+      category.position = i;
+
+      tabs.add(TabCategory(
+        category: category,
+        selected:
+            (category.position == 0 || categoriesByStoreUserId.length == 1),
+        offsetFrom: offsetFrom,
+        offsetTo: offsetTo,
+      ));
+
+      for (int j = 0; j < category.products.length; j++) {
+        final product = category.products[j];
+
+        items.add(ProfileStoreItem(product: product));
+      }
+
+      tabs.sort((a, b) {
+        return a.category.position.compareTo(b.category.position);
+      });
+    }
+
+    initialOK = true;
+
+    scrollController.addListener(_onScrollListener);
+
+    scrollController2 = ScrollController()..addListener(() => {});
   }
 
   void init(TickerProvider ticker, BuildContext context) {
@@ -131,6 +180,13 @@ class TabsViewScrollBLoC with ChangeNotifier {
     item.category.name = editCategory.name;
     item.category.description = editCategory.description;
     item.category.visibility = editCategory.visibility;
+
+    final categoryExit = storeCategoriesProducts
+        .firstWhere((item) => item.id == editCategory.id, orElse: () => null);
+
+    categoryExit.name = editCategory.name;
+    categoryExit.description = editCategory.description;
+    categoryExit.visibility = editCategory.visibility;
 
     init(ticket, context);
   }

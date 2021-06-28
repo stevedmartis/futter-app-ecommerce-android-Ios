@@ -105,8 +105,6 @@ class AuthenticationBLoC with ChangeNotifier {
           long,
           lat);
 
-      print(res);
-
       Navigator.pop(context);
 
       return res;
@@ -117,7 +115,6 @@ class AuthenticationBLoC with ChangeNotifier {
 
   Future signInWitchGoogle() async {
     try {
-      print('her');
       final account = await _googleSignIn.signIn();
 
       final googleKey = await account.authentication;
@@ -228,11 +225,27 @@ class AuthenticationBLoC with ChangeNotifier {
   }
 
   Future _guardarToken(String token) async {
+    prefs.setLocationSearch = false;
+
+    prefs.setLocationCurrent = false;
     return await _storage.write(key: 'token', value: token);
   }
 
   Future logout() async {
     await _storage.delete(key: 'token');
+
+    prefs.setLocationSearch = false;
+
+    prefs.setLocationCurrent = false;
+
+    //signOut();
+  }
+
+  Future logoutWeb() async {
+    prefs.setToken = '';
+    prefs.setLocationSearch = false;
+
+    prefs.setLocationCurrent = false;
 
     //signOut();
   }

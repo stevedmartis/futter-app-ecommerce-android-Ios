@@ -50,8 +50,6 @@ class GroceryStoreBLoC with ChangeNotifier {
   }
 
   double getTotalCartElements() {
-    //final newList = storesList.where((i) => i.service == 1).toList();
-
     return cart.fold<double>(
       0.0,
       (previousValue, element) =>

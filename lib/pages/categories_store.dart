@@ -100,21 +100,19 @@ class _CatalogosListPagePageState extends State<CatalogosListPage> {
             maxHeight: 60,
             child: Container(
                 color: Colors.black,
-                child: Container(
-                    color: Colors.black,
-                    child: CustomAppBarHeaderPages(
-                        showTitle: _showTitle,
-                        title: title,
-                        isAdd: true,
-                        action: Container(),
-                        //   Container()
-                        onPress: () => {
-                              (loading)
-                                  ? null
-                                  : Navigator.of(context).push(
-                                      createRouteAddEditCategory(
-                                          category, false, tabsViewScrollBLoC)),
-                            })))));
+                child: CustomAppBarHeaderPages(
+                    showTitle: _showTitle,
+                    title: title,
+                    isAdd: true,
+                    action: Container(),
+                    //   Container()
+                    onPress: () => {
+                          (loading)
+                              ? null
+                              : Navigator.of(context).push(
+                                  createRouteAddEditCategory(
+                                      category, false, tabsViewScrollBLoC)),
+                        }))));
   }
 
   void addBandToList(String name) {

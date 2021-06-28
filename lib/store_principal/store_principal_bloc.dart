@@ -1,6 +1,5 @@
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
-import 'package:australti_ecommerce_app/store_product_concept/stores_data.dart';
 import 'package:flutter/material.dart';
 
 enum StoreState {
@@ -12,8 +11,10 @@ const showBottomInit = true;
 
 class StoreBLoC with ChangeNotifier {
   StoreState storeState = StoreState.restaurant;
-  List<Store> storesListState =
-      storesList.where((i) => i.service == 1).toList();
+  List<Store> storesListState = [];
+
+  List<Store> storesListInitial = [];
+
   List<GroceryProductItem> cart = [];
   final notifierTotal = ValueNotifier(1);
   // final notifierBottom = ValueNotifier<bool>(true);
@@ -25,11 +26,11 @@ class StoreBLoC with ChangeNotifier {
   void changeToRestaurant() {
     storeState = StoreState.restaurant;
 
-    final newList = storesList.where((i) => i.service == 1).toList();
+    final newList = storesListInitial.where((i) => i.service == 2).toList();
 
     storesListState = newList;
-    notifierTotal.value = 3;
-    //notifyListeners();
+    notifierTotal.value = 2;
+    notifyListeners();
   }
 
   void bottomNavigation(bool showBottom) {
@@ -49,22 +50,22 @@ class StoreBLoC with ChangeNotifier {
   void changeToMarket() {
     storeState = StoreState.market;
 
-    final newList = storesList.where((i) => i.service == 2).toList();
+    final newList = storesListInitial.where((i) => i.service == 1).toList();
 
     storesListState = newList;
 
-    notifierTotal.value = 2;
-    //notifyListeners();
+    notifierTotal.value = 1;
+    notifyListeners();
   }
 
   Store getStoreByProducts(String storeId) {
-    final store = storesList.singleWhere((i) => i.user.uid == storeId);
+    final store = storesListInitial.singleWhere((i) => i.user.uid == storeId);
 
     return store;
   }
 
   Store getProductsByStore(String storeId) {
-    final store = storesList.singleWhere((i) => i.user.uid == storeId);
+    final store = storesListInitial.singleWhere((i) => i.user.uid == storeId);
 
     return store;
   }
@@ -74,10 +75,10 @@ class StoreBLoC with ChangeNotifier {
   void changeToLiqueur() {
     storeState = StoreState.liqueur;
 
-    final newList = storesList.where((i) => i.service == 3).toList();
+    final newList = storesListInitial.where((i) => i.service == 3).toList();
 
     storesListState = newList;
-    notifierTotal.value = 1;
+    notifierTotal.value = 3;
     notifyListeners();
   }
 

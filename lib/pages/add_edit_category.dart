@@ -455,6 +455,10 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
       if (createCatalogoResp.ok) {
         loading = false;
 
+        authService.storeAuth.user.first = false;
+
+        authService.storeAuth = authService.storeAuth;
+
         bloc.addNewCategory(this, createCatalogoResp.category, context);
 
         Navigator.pop(context);

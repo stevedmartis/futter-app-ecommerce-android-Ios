@@ -29,6 +29,8 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
 
   final _blocLocation = MyLocationBloc();
 
+  final locationBloc = LocationBloc();
+
   final addressSelectCtrl = TextEditingController();
   final citySelectCtrl = TextEditingController();
   final numberCtrl = TextEditingController();
@@ -111,42 +113,50 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
 
                     // email
 
-                    Expanded(
-                      flex: -1,
-                      child: Container(
-                        child: TextField(
-                          onEditingComplete: _node.nextFocus,
-                          controller: addressSelectCtrl,
-                          style: TextStyle(
-                            color: (currentTheme.accentColor),
-                          ),
-                          decoration: InputDecoration(
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.white54,
+                    StreamBuilder(
+                      stream: locationBloc.addressStream,
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        return Expanded(
+                          flex: -1,
+                          child: Container(
+                            child: TextField(
+                              onEditingComplete: _node.nextFocus,
+                              controller: addressSelectCtrl,
+                              style: TextStyle(
+                                color: (currentTheme.accentColor),
                               ),
-                            ),
-                            border: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
-                            ),
-                            labelStyle: TextStyle(
-                              color: Colors.white54,
-                            ),
-                            // icon: Icon(Icons.perm_identity),
-                            //  fillColor: currentTheme.accentColor,
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: currentTheme.accentColor, width: 2.0),
-                            ),
-                            hintText: '',
-                            labelText: 'Calle y Número',
+                              decoration: InputDecoration(
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.white54,
+                                    ),
+                                  ),
+                                  border: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                  ),
+                                  labelStyle: TextStyle(
+                                    color: Colors.white54,
+                                  ),
+                                  // icon: Icon(Icons.perm_identity),
+                                  //  fillColor: currentTheme.accentColor,
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: currentTheme.accentColor,
+                                        width: 2.0),
+                                  ),
+                                  hintText: '',
+                                  labelText: 'Calle y Número',
+                                  errorText: snapshot.error),
+                              onChanged: locationBloc.changeAddress,
 
-                            //counterText: snapshot.data,
-                          ),
-                          /*  onChanged: (value) =>
+                              //counterText: snapshot.data,
+
+                              /*  onChanged: (value) =>
                                       myLocationBloc.searchPlaces(value), */
-                        ),
-                      ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
 
                     Expanded(
@@ -269,7 +279,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                             },
                             child: Container(
                               child: Center(
-                                child: roundedRectButton(
+                                child: confirmLocation(
                                     'Confirmar',
                                     [
                                       currentTheme.primaryColor,

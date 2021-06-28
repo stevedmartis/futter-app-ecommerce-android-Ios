@@ -27,7 +27,7 @@ class Header extends StatelessWidget {
             animation: animation,
             additionalOffset: 0.0,
             child: Text(
-              'Crea tu cuenta en Kiozer!',
+              'Crea tu cuenta en Liefey!',
               style: Theme.of(context)
                   .textTheme
                   .headline5

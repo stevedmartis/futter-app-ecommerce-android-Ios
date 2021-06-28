@@ -54,31 +54,6 @@ elevatedButtonCustom(
           ),
           onPressed: () => onPress()),
     ),
-
-    /*  ElevatedButton(
-      onPressed: () {
-        print('Hi there');
-      },
-      style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.zero,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(40))),
-      child: Ink(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                colors: [currentTheme.primaryColor, currentTheme.primaryColor]),
-            borderRadius: BorderRadius.circular(40)),
-        child: Container(
-          width: 300,
-          height: 70,
-          alignment: Alignment.center,
-          child: Text(
-            title,
-            style: TextStyle(fontSize: 24, fontStyle: FontStyle.italic),
-          ),
-        ),
-      ),
-    ), */
   );
 }
 
@@ -137,8 +112,72 @@ Widget roundedRectButton(
   });
 }
 
-Widget goPayCartBtnSubtotal(
+Widget confirmLocation(
     String title, List<Color> gradient, bool isEndIconVisible, bool isDisable) {
+  return Builder(builder: (BuildContext context) {
+    final _size = MediaQuery.of(context).size;
+
+    return Stack(
+      alignment: Alignment(1.0, 0.0),
+      children: <Widget>[
+        (loading)
+            ? buildLoadingWidget(context)
+            : (isDisable)
+                ? Container(
+                    alignment: Alignment.bottomCenter,
+                    width: _size.width / 1.15,
+                    height: _size.height / 13,
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0)),
+                      gradient: LinearGradient(
+                          colors: gradient,
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight),
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.only(left: 20, right: 20),
+                      child: Text(title,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500)),
+                    ),
+                    padding: EdgeInsets.only(top: 10, bottom: 16),
+                  )
+                : Container(
+                    alignment: Alignment.bottomCenter,
+                    width: _size.width / 1.15,
+                    height: _size.height / 13,
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0)),
+                      gradient: LinearGradient(
+                          colors: [Colors.grey[800], Colors.grey[800]],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight),
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.only(left: 20, right: 20),
+                      child: Text(title,
+                          style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500)),
+                    ),
+                    padding: EdgeInsets.only(top: 10, bottom: 16),
+                  ),
+      ],
+    );
+  });
+}
+
+Widget goPayCartBtnSubtotal(
+  String title,
+  List<Color> gradient,
+  bool isEndIconVisible,
+  bool isDisable,
+) {
   return Builder(builder: (BuildContext context) {
     final _size = MediaQuery.of(context).size;
 
@@ -163,9 +202,19 @@ Widget goPayCartBtnSubtotal(
                           end: Alignment.bottomRight),
                     ),
                     child: Container(
-                      padding: EdgeInsets.only(left: 20, right: 20),
+                      padding: EdgeInsets.only(left: 10, right: 20),
                       child: Row(
                         children: [
+                          CircleAvatar(
+                            backgroundColor: Colors.green[800],
+                            child: Text(
+                              bloc.totalCartElements().toString(),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
+                          ),
+                          SizedBox(width: 10),
                           Text(title,
                               style: TextStyle(
                                   color: Colors.white,
@@ -205,9 +254,19 @@ Widget goPayCartBtnSubtotal(
                           end: Alignment.bottomRight),
                     ),
                     child: Container(
-                      padding: EdgeInsets.only(left: 20, right: 20),
+                      padding: EdgeInsets.only(left: 10, right: 20),
                       child: Row(
                         children: [
+                          CircleAvatar(
+                            backgroundColor: Colors.black,
+                            child: Text(
+                              bloc.totalCartElements().toString(),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
+                          ),
+                          SizedBox(width: 10),
                           Text(title,
                               style: TextStyle(
                                   color: Colors.white,

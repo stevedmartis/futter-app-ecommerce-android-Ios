@@ -103,7 +103,7 @@ showSelectServiceMaterialCupertinoBottomSheet(context) {
               Container(
                 padding: EdgeInsets.only(top: 20, bottom: 10),
                 child: Text(
-                  "Que es tu tienda?",
+                  "Tipo de tienda",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 18,
