@@ -13,6 +13,7 @@ import 'package:australti_ecommerce_app/store_product_concept/store_product_data
 import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
+import '../global/extension.dart';
 
 const _blueColor = Color(0xFF00649FE);
 const _textColor = Color(0xFF5C5657);
@@ -184,7 +185,7 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
         children: [
           Container(
             child: Text(
-              widget.category.name,
+              widget.category.name.capitalize(),
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
             ),
           ),
@@ -299,7 +300,7 @@ class _ProfileAuthStoreProductItem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        product.name,
+                        product.name.capitalize(),
                         style: TextStyle(
                           color: (currentTheme.customTheme)
                               ? Colors.white
@@ -309,14 +310,15 @@ class _ProfileAuthStoreProductItem extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 5),
-                      Text(
-                        product.description,
-                        maxLines: 2,
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 10,
+                      if (product.description != "")
+                        Text(
+                          product.description.capitalize(),
+                          maxLines: 2,
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 10,
+                          ),
                         ),
-                      ),
                       const SizedBox(height: 5),
                       Text(
                         '\$${product.price}',

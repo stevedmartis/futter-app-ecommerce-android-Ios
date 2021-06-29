@@ -434,6 +434,7 @@ class AuthenticationBLoC with ChangeNotifier {
               number: storeAuth.number));
 
       prefs.setLocationSearch = true;
+      prefs.setLocationCurrent = false;
       prefs.setSearchAddreses = placeStore;
 
       return true;

@@ -4,10 +4,12 @@ import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/pages/add_edit_product.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
+import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
+import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
@@ -208,32 +210,31 @@ SliverToBoxAdapter addressDeliveryInfo(context) {
                                   color: Colors.grey),
                             ),
                           ),
-                          if (prefs.locationCurrent)
-                            Container(
-                              width: size.width / 1.7,
-                              child: Text(
-                                prefs.locationCurrent
-                                    ? '${prefs.addressSave['featureName']}'
-                                    : '...',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 20,
-                                    color: Colors.white),
-                              ),
-                            ),
-                          if (prefs.locationSearch)
-                            Container(
-                              width: size.width / 1.7,
-                              child: Text(
-                                prefs.locationSearch
-                                    ? '${prefs.addressSearchSave.mainText}'
-                                    : '...',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 20,
-                                    color: Colors.white),
-                              ),
-                            ),
+                          (prefs.locationCurrent)
+                              ? Container(
+                                  width: size.width / 1.7,
+                                  child: Text(
+                                    prefs.locationCurrent
+                                        ? '${prefs.addressSave['featureName']}'
+                                        : '...',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 20,
+                                        color: Colors.white),
+                                  ),
+                                )
+                              : Container(
+                                  width: size.width / 1.7,
+                                  child: Text(
+                                    prefs.locationSearch
+                                        ? '${prefs.addressSearchSave.mainText}'
+                                        : '...',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 20,
+                                        color: Colors.white),
+                                  ),
+                                ),
                         ],
                       ),
                     ],
@@ -247,96 +248,95 @@ SliverToBoxAdapter addressDeliveryInfo(context) {
             padding: const EdgeInsets.only(left: 25.0, right: 25),
             child: Divider(),
           ),
-          if (prefs.locationCurrent)
-            Container(
-              padding: EdgeInsets.only(left: 20, bottom: 10, top: 10),
-              child: Row(
-                children: [
-                  Container(
-                    child: Icon(
-                      Icons.home,
-                      color: Colors.grey,
-                    ),
+          (prefs.locationCurrent)
+              ? Container(
+                  padding: EdgeInsets.only(left: 20, bottom: 10, top: 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        child: Icon(
+                          Icons.home,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          prefs.locationCurrent
+                              ? '${prefs.addressSave['adminArea']}'
+                              : '...',
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: 20,
+                              color: Colors.grey),
+                        ),
+                      ),
+                      Spacer(),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          prefs.locationSearch
+                              ? '${prefs.addressSave['locality']}'
+                              : '...',
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: 18,
+                              color: Colors.grey),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    width: 10,
+                )
+              : Container(
+                  padding: EdgeInsets.only(left: 20, bottom: 10, top: 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        child: Icon(
+                          Icons.home,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          prefs.locationSearch
+                              ? '${prefs.addressSearchSave.number}'
+                              : '...',
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: 20,
+                              color: Colors.grey),
+                        ),
+                      ),
+                      Spacer(),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          prefs.locationSearch
+                              ? '${prefs.addressSearchSave.secondaryText}'
+                              : '...',
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: 18,
+                              color: Colors.grey),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                    ],
                   ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      prefs.locationCurrent
-                          ? '${prefs.addressSave['adminArea']}'
-                          : '...',
-                      style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          fontSize: 20,
-                          color: Colors.grey),
-                    ),
-                  ),
-                  Spacer(),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      prefs.locationSearch
-                          ? '${prefs.addressSave['locality']}'
-                          : '...',
-                      style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          fontSize: 18,
-                          color: Colors.grey),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                ],
-              ),
-            ),
-          if (prefs.locationSearch)
-            Container(
-              padding: EdgeInsets.only(left: 20, bottom: 10, top: 10),
-              child: Row(
-                children: [
-                  Container(
-                    child: Icon(
-                      Icons.home,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      prefs.locationSearch
-                          ? '${prefs.addressSearchSave.number}'
-                          : '...',
-                      style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          fontSize: 20,
-                          color: Colors.grey),
-                    ),
-                  ),
-                  Spacer(),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      prefs.locationSearch
-                          ? '${prefs.addressSearchSave.secondaryText}'
-                          : '...',
-                      style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          fontSize: 18,
-                          color: Colors.grey),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                ],
-              ),
-            ),
+                ),
           Divider(),
           SizedBox(
             height: 10,
@@ -422,6 +422,8 @@ Widget _buildProductsList(context) {
 
   final bloc = Provider.of<GroceryStoreBLoC>(context);
 
+  final storeBloc = Provider.of<StoreBLoC>(context);
+
   bloc.cart
       .forEach((e) => map.update(e.product.user, (x) => e, ifAbsent: () => e));
 
@@ -459,10 +461,13 @@ Widget _buildProductsList(context) {
                     aspectRatio: 1,
                     child: ClipRRect(
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      child: Image.asset(
-                        'assets/rest_logo.jpeg',
-                        fit: BoxFit.cover,
-                      ),
+                      child: (store.imageAvatar != "")
+                          ? Container(
+                              child: cachedNetworkImage(
+                                store.imageAvatar,
+                              ),
+                            )
+                          : Image.asset(currentProfile.imageAvatar),
                     ),
                   ),
                 ),

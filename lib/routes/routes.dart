@@ -108,7 +108,7 @@ Route profileCartRoute(Store store) {
     pageBuilder: (context, animation, secondaryAnimation) =>
         GroceryStoreHome(store),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      var begin = Offset(-0.5, 0.0);
+      var begin = Offset(0.0, -0.1);
       var end = Offset.zero;
       var curve = Curves.ease;
 

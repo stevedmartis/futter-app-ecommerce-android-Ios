@@ -24,11 +24,11 @@ Widget cachedNetworkImageDetail(String image) {
   return CachedNetworkImage(
     imageUrl: image,
     imageBuilder: (context, imageProvider) => Container(
-      height: MediaQuery.of(context).size.height * 0.36,
+      width: MediaQuery.of(context).size.width / 1.3,
       decoration: BoxDecoration(
         image: DecorationImage(
             image: imageProvider,
-            fit: BoxFit.cover,
+            fit: BoxFit.fitWidth,
             colorFilter:
                 ColorFilter.mode(Colors.transparent, BlendMode.colorBurn)),
       ),

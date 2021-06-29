@@ -1178,9 +1178,12 @@ class EditProfilePageState extends State<EditProfilePage> {
             showSnackBar(context, 'Perfil editado con exito!');
             if (storeProfile.user.first && authService.redirect == 'profile') {
               Navigator.push(context, profileAuthRoute(true));
-            } else {
-              Provider.of<MenuModel>(context, listen: false).currentPage = 0;
+            } else if (storeProfile.user.first &&
+                authService.redirect == 'vender') {
+              Provider.of<MenuModel>(context, listen: false).currentPage = 2;
               Navigator.push(context, principalHomeRoute());
+            } else {
+              Navigator.pop(context);
             }
           } else {
             showAlertError(context, 'Error', '');
@@ -1210,9 +1213,12 @@ class EditProfilePageState extends State<EditProfilePage> {
           showSnackBar(context, 'Perfil editado con exito!');
           if (storeProfile.user.first && authService.redirect == 'profile') {
             Navigator.push(context, profileAuthRoute(true));
-          } else {
+          } else if (storeProfile.user.first &&
+              authService.redirect == 'vender') {
             Provider.of<MenuModel>(context, listen: false).currentPage = 2;
             Navigator.push(context, principalHomeRoute());
+          } else {
+            Navigator.pop(context);
           }
         } else {
           showAlertError(context, 'Error', '');

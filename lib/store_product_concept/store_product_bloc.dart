@@ -75,7 +75,7 @@ class TabsViewScrollBLoC with ChangeNotifier {
       for (int j = 0; j < category.products.length; j++) {
         final product = category.products[j];
 
-        items.add(ProfileStoreItem(product: product));
+        items.add(ProfileStoreItem(category: category, product: product));
       }
 
       tabs.sort((a, b) {
@@ -85,7 +85,7 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
     initialOK = true;
 
-    scrollController.addListener(_onScrollListener);
+    //scrollController.addListener(_onScrollListener);
 
     scrollController2 = ScrollController()..addListener(() => {});
   }

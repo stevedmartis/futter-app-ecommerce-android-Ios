@@ -683,7 +683,9 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
           description: description,
           images: imagesProduct.images,
           category: widget.category.id,
-          user: widget.category.store.user.uid);
+          user: widget.category.store.user.uid,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now());
 
       final ProductResponse resp =
           await productService.createProduct(newProduct);
@@ -744,7 +746,9 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
             description: description,
             images: imagesFinal,
             category: widget.product.category,
-            user: storeAuth.user.uid);
+            user: storeAuth.user.uid,
+            createdAt: widget.product.createdAt,
+            updatedAt: widget.product.updatedAt);
 
         final ProductResponse resp =
             await productService.editProduct(productEdit);
@@ -777,7 +781,9 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
           description: description,
           images: imagesFinal,
           category: widget.product.category,
-          user: storeAuth.user.uid);
+          user: storeAuth.user.uid,
+          createdAt: widget.product.createdAt,
+          updatedAt: widget.product.updatedAt);
 
       final ProductResponse resp =
           await productService.editProduct(productEdit);

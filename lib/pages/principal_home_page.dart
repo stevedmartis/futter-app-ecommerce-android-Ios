@@ -249,7 +249,9 @@ class _PrincipalPageState extends State<PrincipalPage>
         _isDialogShowing = true;
       });
       showModalGpsLocation();
-    } else if (isPermanentlyDenied) {
+    } else if (isPermanentlyDenied &&
+        !prefs.locationCurrent &&
+        !prefs.locationSearch) {
       final status = await Permission.location.request();
 
       accessGps(status);

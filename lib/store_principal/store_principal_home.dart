@@ -17,10 +17,12 @@ import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:australti_ecommerce_app/widgets/modal_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
+import '../global/extension.dart';
 
 class StorePrincipalHome extends StatefulWidget {
   @override
@@ -147,7 +149,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     storeAuth = authService.storeAuth;
 
     return Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: currentTheme.scaffoldBackgroundColor,
         body: NotificationListener<ScrollEndNotification>(
           onNotification: (_) {
             print(_scrollController.offset);
@@ -163,7 +165,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
             slivers: [
               SliverAppBar(
                 leadingWidth: 60,
-                backgroundColor: Colors.black,
+                backgroundColor: currentTheme.scaffoldBackgroundColor,
                 leading: Container(
                     width: 100,
                     height: 100,
@@ -319,17 +321,14 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                       child: Material(
                           type: MaterialType.transparency,
                           child: Container(
-                              color: Colors.black,
-                              child: Container(
-                                color: Colors.black,
-                                child: StoreServicesList(
-                                  onPhotoSelected: (item) => {
-                                    _changeService(bloc, item.id),
-                                    setState(() {
-                                      _selected = item;
-                                    })
-                                  },
-                                ),
+                              color: currentTheme.scaffoldBackgroundColor,
+                              child: StoreServicesList(
+                                onPhotoSelected: (item) => {
+                                  _changeService(bloc, item.id),
+                                  setState(() {
+                                    _selected = item;
+                                  })
+                                },
                               ))),
                     )
                   ],
@@ -379,6 +378,8 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 SliverPersistentHeader makeHeaderPrincipal(context) {
   final size = MediaQuery.of(context).size;
 
+  final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
   return SliverPersistentHeader(
       floating: true,
       pinned: true,
@@ -386,7 +387,7 @@ SliverPersistentHeader makeHeaderPrincipal(context) {
           minHeight: 120,
           maxHeight: size.height / 1.55,
           child: Container(
-              color: Colors.black,
+              color: currentTheme.scaffoldBackgroundColor,
               child: Container(color: Colors.black, child: HeaderCustom()))));
 }
 
@@ -399,6 +400,8 @@ SliverPersistentHeader makeSpaceTitle() {
 }
 
 SliverPersistentHeader makeHeaderTitle(context, String titleService) {
+  final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
   return SliverPersistentHeader(
       pinned: true,
       delegate: SliverCustomHeaderDelegate(
@@ -406,7 +409,7 @@ SliverPersistentHeader makeHeaderTitle(context, String titleService) {
           maxHeight: 45,
           child: FadeIn(
             child: Container(
-              color: Colors.black,
+              color: currentTheme.scaffoldBackgroundColor,
               child: Padding(
                 padding: const EdgeInsets.only(top: 10.0, left: 10),
                 child: Text(
@@ -606,6 +609,8 @@ class StoreCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
     final id = store.id;
     return GestureDetector(
       onTap: () {
@@ -623,10 +628,13 @@ class StoreCard extends StatelessWidget {
                   aspectRatio: 1,
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    child: Image.asset(
-                      'assets/rest_logo.jpeg',
-                      fit: BoxFit.cover,
-                    ),
+                    child: (store.imageAvatar != "")
+                        ? Container(
+                            child: cachedNetworkImage(
+                              store.imageAvatar,
+                            ),
+                          )
+                        : Image.asset(currentProfile.imageAvatar),
                   ),
                 ),
               ),
@@ -636,28 +644,75 @@ class StoreCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    const SizedBox(height: 10),
-                    Expanded(
+                    Container(
                       child: Text(
-                        '${store.name}',
+                        '${store.name.capitalize()}',
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 20),
                       ),
                     ),
-                    Expanded(
-                      child: Text(
-                        'Nice days in a good place',
-                        style: TextStyle(color: Colors.white),
+                    Container(
+                      child: Container(
+                        child: Text(
+                          '${store.about.capitalize()}',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: TextStyle(
+                              fontSize: 15,
+                              letterSpacing: -0.5,
+                              color: Colors.white54),
+                        ),
                       ),
                     ),
-                    Expanded(
-                      child: Text(
-                        '15 - 30 min',
-                        style: TextStyle(color: Colors.grey),
-                      ),
+                    Row(
+                      children: [
+                        /*  Icon(Icons.delivery_dining,
+                            size: 20, color: Colors.white54),
+                        SizedBox(width: 5.0), */
+                        Container(
+                          child: Text(
+                            '${store.timeDelivery}',
+                            style: TextStyle(color: Colors.white54),
+                          ),
+                        ),
+                      ],
                     ),
+                    if (store.percentOff != 0)
+                      Container(
+                        padding: EdgeInsets.only(top: 5.0),
+                        child: Row(
+                          children: [
+                            Stack(
+                              children: [
+                                FaIcon(FontAwesomeIcons.certificate,
+                                    size: 15, color: Colors.blueAccent),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                    left: 4,
+                                    top: 4,
+                                  ),
+                                  child: FaIcon(FontAwesomeIcons.percent,
+                                      size: 7,
+                                      color:
+                                          currentTheme.scaffoldBackgroundColor),
+                                ),
+                              ],
+                            ),
+                            SizedBox(width: 5.0),
+                            Container(
+                              child: Text(
+                                'Hasta ${store.percentOff}% OFF',
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.blueAccent,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
                   ],
                 ),
               ),
@@ -753,63 +808,20 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                   ),
                 ),
               ),
-              if (prefs.locationCurrent)
-                Positioned(
-                    top: 20,
-                    left: 10,
-                    right: 10,
-                    height: 40,
-                    child: AnimatedOpacity(
-                        opacity: (prefs.locationCurrent) ? 1.0 : 0.0,
-                        duration: Duration(milliseconds: 200),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              child: Icon(
-                                Icons.location_on,
-                                color: currentTheme.accentColor,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Container(
-                                width: _size.width / 3,
-                                alignment: Alignment.center,
-                                child: Text(
-                                  prefs.locationCurrent
-                                      ? '${prefs.addressSave['featureName']}'
-                                      : '...',
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  //'${state.location.latitude}',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15,
-                                      color: Colors.white70),
-                                )),
-                          ],
-                        ))),
-              if (prefs.locationSearch)
-                Positioned(
-                    top: 20,
-                    left: 10,
-                    right: 10,
-                    height: 40,
-                    child: AnimatedOpacity(
-                        opacity: (prefs.locationSearch) ? 1.0 : 0.0,
-                        duration: Duration(milliseconds: 200),
-                        child: Container(
-                          alignment: Alignment.center,
-                          width: 100,
+              (prefs.locationCurrent)
+                  ? Positioned(
+                      top: 20,
+                      left: 10,
+                      right: 10,
+                      height: 40,
+                      child: AnimatedOpacity(
+                          opacity: (prefs.locationCurrent) ? 1.0 : 0.0,
+                          duration: Duration(milliseconds: 200),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Container(
-                                alignment: Alignment.centerRight,
                                 child: Icon(
                                   Icons.location_on,
                                   color: currentTheme.accentColor,
@@ -818,27 +830,69 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                               SizedBox(
                                 width: 10,
                               ),
-                              SizedBox(
-                                width: _size.width / 3,
-                                child: Container(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      prefs.locationSearch
-                                          ? '${prefs.addressSearchSave.mainText}'
-                                          : '...',
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                      softWrap: false,
-                                      //'${state.location.latitude}',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
-                                          color: Colors.white70),
-                                    )),
-                              ),
+                              Container(
+                                  width: _size.width / 3,
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    prefs.locationCurrent
+                                        ? '${prefs.addressSave['featureName']}'
+                                        : '...',
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    //'${state.location.latitude}',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                        color: Colors.white70),
+                                  )),
                             ],
-                          ),
-                        ))),
+                          )))
+                  : Positioned(
+                      top: 20,
+                      left: 10,
+                      right: 10,
+                      height: 40,
+                      child: AnimatedOpacity(
+                          opacity: (prefs.locationSearch) ? 1.0 : 0.0,
+                          duration: Duration(milliseconds: 200),
+                          child: Container(
+                            alignment: Alignment.center,
+                            width: 100,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  alignment: Alignment.centerRight,
+                                  child: Icon(
+                                    Icons.location_on,
+                                    color: currentTheme.accentColor,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                SizedBox(
+                                  width: _size.width / 3,
+                                  child: Container(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        prefs.locationSearch
+                                            ? '${prefs.addressSearchSave.mainText}'
+                                            : '...',
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        softWrap: false,
+                                        //'${state.location.latitude}',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15,
+                                            color: Colors.white70),
+                                      )),
+                                ),
+                              ],
+                            ),
+                          ))),
             ],
           );
         });

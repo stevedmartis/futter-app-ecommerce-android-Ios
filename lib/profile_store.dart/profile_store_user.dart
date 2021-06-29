@@ -60,7 +60,7 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
         Provider.of<StoreCategoiesService>(context, listen: false);
 
     final resp =
-        await storeService.getMyCategoriesProducts(widget.store.user.uid);
+        await storeService.getAllCategoriesProducts(widget.store.user.uid);
 
     if (resp.ok) {
       _bloc.storeCategoriesProducts = resp.storeCategoriesProducts;
@@ -138,13 +138,15 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                                 indicatorWeight: 0.1,
                                 isScrollable: true,
                                 tabs: _bloc.tabs
-                                    .map((e) => (e.category.products.length > 0)
-                                        ? FadeInLeft(
-                                            child: _TabWidget(
-                                              tabCategory: e,
-                                            ),
-                                          )
-                                        : Container())
+                                    .map((e) =>
+                                        (e.category.products.length > 0 &&
+                                                e.category.visibility)
+                                            ? FadeInLeft(
+                                                child: _TabWidget(
+                                                  tabCategory: e,
+                                                ),
+                                              )
+                                            : Container())
                                     .toList(),
                               )
                             : Container(),
@@ -162,18 +164,12 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       itemBuilder: (context, index) {
                         final item = _bloc.items[index];
-                        if (item.isCategory) {
-                          return FadeIn(
-                            child: Container(
-                                child:
-                                    _ProfileStoreCategoryItem(item.category)),
-                          );
-                        } else {
-                          return FadeIn(
-                            child: _ProfileStoreProductItem(
-                                item.product, item.category),
-                          );
-                        }
+                        return (item.category.visibility)
+                            ? FadeIn(
+                                child: _ProfileStoreProductItem(
+                                    item.product, item.category),
+                              )
+                            : Container();
                       },
                     ),
                   )
@@ -213,29 +209,6 @@ class _TabWidget extends StatelessWidget {
               fontSize: 13,
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ProfileStoreCategoryItem extends StatelessWidget {
-  const _ProfileStoreCategoryItem(this.category);
-  final ProfileStoreCategory category;
-
-  @override
-  Widget build(BuildContext context) {
-    final currentTheme = Provider.of<ThemeChanger>(context);
-
-    return Container(
-      height: categoryHeight,
-      alignment: Alignment.centerLeft,
-      child: Text(
-        category.name.capitalize(),
-        style: TextStyle(
-          color: (!currentTheme.customTheme) ? Colors.black54 : Colors.white54,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -321,7 +294,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        product.name,
+                        product.name.capitalize(),
                         style: TextStyle(
                           color: (currentTheme.customTheme)
                               ? Colors.white
@@ -534,9 +507,7 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                     .clamp(20.0, _leftMarginDisc),
                 height: currentImageSize,
                 child: Hero(
-                  tag: (isAuthUser)
-                      ? 'user_auth_avatar'
-                      : 'user_auth_avatar_list',
+                  tag: 'user_auth_avatar_list_${store.id}',
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(100.0)),
                     child: (store.imageAvatar != "")

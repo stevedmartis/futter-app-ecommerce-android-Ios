@@ -43,6 +43,29 @@ class StoreCategoiesService with ChangeNotifier {
     }
   }
 
+  Future getAllCategoriesProducts(String uid) async {
+    // this.authenticated = true;
+
+    final token = await this._storage.read(key: 'token');
+    final urlFinal =
+        ('${Environment.apiUrl}/api/catalogo/all/catalogos/products/user/$uid');
+
+    final resp = await http.get(Uri.parse(urlFinal),
+        headers: {'Content-Type': 'application/json', 'x-token': token});
+
+    if (resp.statusCode == 200) {
+      // final roomResponse = roomsResponseFromJson(resp.body);
+      final catalogoResponse = storeCategoriesResponseFromJson(resp.body);
+      // this.rooms = roomResponse.rooms;
+
+      return catalogoResponse;
+    } else {
+      final respBody = errorMessageResponseFromJson(resp.body);
+
+      return respBody;
+    }
+  }
+
   Future createCatalogo(ProfileStoreCategory category) async {
     // this.authenticated = true;
 
