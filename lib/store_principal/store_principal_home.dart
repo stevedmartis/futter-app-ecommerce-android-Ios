@@ -822,10 +822,8 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Container(
-                                child: Icon(
-                                  Icons.location_on,
-                                  color: currentTheme.accentColor,
-                                ),
+                                child: Icon(Icons.location_on,
+                                    color: currentTheme.accentColor, size: 22),
                               ),
                               SizedBox(
                                 width: 10,
@@ -842,7 +840,7 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                                     //'${state.location.latitude}',
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 15,
+                                        fontSize: 13,
                                         color: Colors.white70),
                                   )),
                             ],
@@ -886,7 +884,7 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                                         //'${state.location.latitude}',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 15,
+                                            fontSize: 13,
                                             color: Colors.white70),
                                       )),
                                 ),

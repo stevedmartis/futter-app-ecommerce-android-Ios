@@ -264,13 +264,18 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                           child: GestureDetector(
                             onTap: () {
                               if (isDisabled) {
+                                final location =
+                                    widget.place.description.split(",")[1];
+
+                                print(location);
+
                                 var placeSearch = new PlaceSearch(
                                     description: addressSelectCtrl.text,
                                     placeId: widget.place.placeId,
                                     structuredFormatting:
                                         new StructuredFormatting(
                                             mainText: addressSelectCtrl.text,
-                                            secondaryText: citySelectCtrl.text,
+                                            secondaryText: location.trim(),
                                             number: places));
 
                                 myLocationBloc

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:australti_ecommerce_app/bloc_globals/bloc/validators.dart';
+import 'package:australti_ecommerce_app/models/place_Current.dart';
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/services/places_service.dart';
@@ -50,9 +51,9 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
       add(OnLocationChange(newPosition));
     });
 
-    Geolocator.getPositionStream(
-            desiredAccuracy: LocationAccuracy.high, distanceFilter: 10)
-        .listen((Position position) {
+    Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    ).then((Position position) {
       newPosition = new LatLng(position.latitude, position.longitude);
 
       add(OnLocationChange(newPosition));
@@ -71,19 +72,51 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
       yield state.copyWith(
           isLocationCurrent: true, location: event.positionLocation);
 
-      final coordinates =
-          new Coordinates(newPosition.latitude, newPosition.longitude);
-      addresses =
-          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      final AddressesCurrent resp = await placeService.getAddressByLocation(
+          newPosition.latitude.toString(), newPosition.longitude.toString());
 
-      addresName = addresses.first.featureName;
-      isLocationCurrent = true;
-      prefs.setAddreses = addresses[0];
+      print(resp);
 
-      prefs.setLatSearch = newPosition.latitude;
-      prefs.setLongSearch = newPosition.longitude;
+      if (resp.results.length > 0) {
+        final addressComponent = resp.results[0].addressComponents;
 
-      prefs.setLocationCurrent = true;
+        final addressNumber = addressComponent[0].longName;
+
+        final address = addressComponent[1].longName;
+
+        final addressFinal = '$address, $addressNumber';
+
+        final city = addressComponent[2].longName;
+        final country = addressComponent[6].longName;
+
+        final countryCode = addressComponent[6].shortName;
+
+        final adminArea = addressComponent[5].longName;
+
+        final newAddress = Address(
+            addressLine: '$addressFinal, $city, $country',
+            adminArea: adminArea,
+            coordinates:
+                Coordinates(newPosition.latitude, newPosition.longitude),
+            countryCode: countryCode,
+            countryName: country,
+            featureName: addressFinal,
+            locality: city,
+            postalCode: null,
+            subAdminArea: null,
+            subLocality: city,
+            subThoroughfare: null,
+            thoroughfare: address);
+
+        addresName = addressFinal;
+
+        prefs.setAddreses = newAddress;
+
+        prefs.setLatSearch = newPosition.latitude;
+        prefs.setLongSearch = newPosition.longitude;
+
+        prefs.setLocationCurrent = true;
+      }
     }
   }
 

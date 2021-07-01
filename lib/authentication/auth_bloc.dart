@@ -85,7 +85,7 @@ class AuthenticationBLoC with ChangeNotifier {
 
       if (prefs.locationCurrent) {
         address = prefs.addressSave['featureName'];
-        city = prefs.addressSave['adminArea'];
+        city = prefs.addressSave['locality'];
       } else if (prefs.locationSearch) {
         address = prefs.addressSearchSave.mainText;
         city = prefs.addressSearchSave.secondaryText;
@@ -128,7 +128,9 @@ class AuthenticationBLoC with ChangeNotifier {
 
       if (prefs.locationCurrent) {
         address = prefs.addressSave['featureName'];
-        city = prefs.addressSave['adminArea'];
+        city = prefs.addressSave['locality'];
+        long = prefs.longSearch;
+        lat = prefs.latSearch;
       } else if (prefs.locationSearch) {
         address = prefs.addressSearchSave.mainText;
         city = prefs.addressSearchSave.secondaryText;
@@ -157,7 +159,7 @@ class AuthenticationBLoC with ChangeNotifier {
 
       if (prefs.locationCurrent) {
         address = prefs.addressSave['featureName'];
-        city = prefs.addressSave['adminArea'];
+        city = prefs.addressSave['locality'];
         long = prefs.longSearch;
         lat = prefs.latSearch;
       } else if (prefs.locationSearch) {
