@@ -9,6 +9,7 @@ import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/models/user.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -138,6 +139,37 @@ class AuthenticationBLoC with ChangeNotifier {
 
       final authBack = await siginWithGoogleBack(
           googleKey.idToken, address, city, number, long, lat);
+
+      return authBack;
+    } catch (e) {
+      print('error signin google');
+      print(e);
+    }
+  }
+
+  Future signInWithPhone(String phone, String code) async {
+    try {
+      String address = '';
+      String city = '';
+      int number = 0;
+      double long = 0;
+      double lat = 0;
+
+      if (prefs.locationCurrent) {
+        address = prefs.addressSave['featureName'];
+        city = prefs.addressSave['adminArea'];
+        long = prefs.longSearch;
+        lat = prefs.latSearch;
+      } else if (prefs.locationSearch) {
+        address = prefs.addressSearchSave.mainText;
+        city = prefs.addressSearchSave.secondaryText;
+        number = int.parse(prefs.addressSearchSave.number);
+        long = prefs.longSearch;
+        lat = prefs.latSearch;
+      }
+
+      final authBack = await siginWithPhoneBack(
+          phone, code, address, city, number, long, lat);
 
       return authBack;
     } catch (e) {
@@ -351,6 +383,53 @@ class AuthenticationBLoC with ChangeNotifier {
               number: storeAuth.number));
 
       prefs.setLocationSearch = true;
+      prefs.setLocationCurrent = false;
+      prefs.setSearchAddreses = placeStore;
+      _guardarToken(loginResponse.token);
+
+      // await getProfileByUserId(this.profile.user.uid);
+
+      return true;
+    } else {
+      return false;
+    }
+
+    // await getProfileByUserId(this.profile.user.uid);
+  }
+
+  Future siginWithPhoneBack(String numberPhone, String code, String address,
+      String city, int number, double long, double lat) async {
+    final urlFinal = '${Environment.apiUrl}/api/login/sign_in_with_phone';
+
+    final data = {
+      'phone': numberPhone,
+      'code': 'code',
+      'email': '',
+      'firstName': '',
+      'address': address,
+      'city': city,
+      'numberAddress': number,
+      'long': long,
+      'lat': lat,
+    };
+    final resp = await http.post(Uri.parse(urlFinal),
+        body: jsonEncode(data), headers: {'Content-Type': 'application/json'});
+
+    if (resp.statusCode == 200) {
+      final loginResponse = loginResponseFromJson(resp.body);
+
+      storeAuth = loginResponse.store;
+
+      var placeStore = new PlaceSearch(
+          description: storeAuth.user.uid,
+          placeId: storeAuth.user.uid,
+          structuredFormatting: new StructuredFormatting(
+              mainText: storeAuth.address,
+              secondaryText: storeAuth.city,
+              number: storeAuth.number));
+
+      prefs.setLocationSearch = true;
+      prefs.setLocationCurrent = false;
       prefs.setSearchAddreses = placeStore;
       _guardarToken(loginResponse.token);
 

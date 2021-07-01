@@ -297,12 +297,6 @@ SliverToBoxAdapter addressDeliveryInfo(context) {
                   padding: EdgeInsets.only(left: 20, bottom: 10, top: 10),
                   child: Row(
                     children: [
-                      Container(
-                        child: Icon(
-                          Icons.home,
-                          color: Colors.grey,
-                        ),
-                      ),
                       SizedBox(
                         width: 10,
                       ),

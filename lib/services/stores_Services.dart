@@ -46,4 +46,24 @@ class StoreService with ChangeNotifier {
       return respBody;
     }
   }
+
+  Future getStoresLocationListServices(String location) async {
+    final urlFinal =
+        ('${Environment.apiUrl}/api/store/stores/location/list/principal/$location');
+
+    final resp = await http.get(Uri.parse(urlFinal), headers: {
+      'Content-Type': 'application/json',
+    });
+
+    if (resp.statusCode == 200) {
+      final StoresListResponse storesListResponse =
+          storesListResponseFromJson(resp.body);
+
+      return storesListResponse;
+    } else {
+      final respBody = errorMessageResponseFromJson(resp.body);
+
+      return respBody;
+    }
+  }
 }

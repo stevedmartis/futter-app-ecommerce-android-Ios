@@ -6,6 +6,7 @@ import 'package:australti_ecommerce_app/multiple_card_flow/multiple_card_flow.da
 import 'package:australti_ecommerce_app/pages/categories_store.dart';
 import 'package:australti_ecommerce_app/pages/confirm_location.dart';
 import 'package:australti_ecommerce_app/pages/discovery_demo.dart';
+import 'package:australti_ecommerce_app/pages/get_phone/firebase/auth/phone_auth/get_phone.dart';
 import 'package:australti_ecommerce_app/pages/loading_page.dart';
 import 'package:australti_ecommerce_app/pages/login/login.dart';
 import 'package:australti_ecommerce_app/pages/onboarding/onboarding.dart';
@@ -108,7 +109,7 @@ Route profileCartRoute(Store store) {
     pageBuilder: (context, animation, secondaryAnimation) =>
         GroceryStoreHome(store),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      var begin = Offset(0.0, -0.1);
+      var begin = Offset(0.0, 1.0);
       var end = Offset.zero;
       var curve = Curves.ease;
 
@@ -167,7 +168,7 @@ Route ordenDetailImageRoute() {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) => OrdenDetailPage(),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      var begin = Offset(0.0, 0.1);
+      var begin = Offset(0.0, 1.0);
       var end = Offset.zero;
       var curve = Curves.ease;
 
@@ -277,6 +278,26 @@ Route createRouteSearch() {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) =>
         SearchPrincipalPage(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(1.0, 0.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+    transitionDuration: Duration(milliseconds: 400),
+  );
+}
+
+Route createRoutePhone() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        PhoneAuthGetPhone(),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = Offset(1.0, 0.0);
       var end = Offset.zero;

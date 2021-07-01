@@ -44,14 +44,29 @@ showAlertError(BuildContext context, String titulo, String subtitulo) {
 }
 
 showSnackBar(BuildContext context, String text) {
-  final currentTheme = Provider.of<ThemeChanger>(context, listen: false);
+  final currentTheme =
+      Provider.of<ThemeChanger>(context, listen: false).currentTheme;
 
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      backgroundColor: Colors.black,
-      content: Text(text,
-          style: TextStyle(
-            color: (currentTheme.customTheme) ? Colors.white : Colors.white,
-          ))));
+      elevation: 6.0,
+      backgroundColor: currentTheme.primaryColor,
+      behavior: SnackBarBehavior.floating,
+      content: Text(text, style: TextStyle(color: Colors.white))));
+}
+
+void showFloating(BuildContext context) {
+  final currentTheme =
+      Provider.of<ThemeChanger>(context, listen: false).currentTheme;
+
+  SnackBar(
+    elevation: 6.0,
+    backgroundColor: currentTheme.accentColor,
+    behavior: SnackBarBehavior.floating,
+    content: Text(
+      "Snack bar test",
+      style: TextStyle(color: Colors.white),
+    ),
+  );
 }
 
 showModalLoading(BuildContext context) {
@@ -63,15 +78,19 @@ showModalLoading(BuildContext context) {
         context: context,
         builder: (_) => AlertDialog(
                 content: Center(
-              child: buildLoadingWidget(context),
-            )));
+                    child: Row(children: [
+              buildLoadingWidget(context),
+              Text('Por favor, espere')
+            ]))));
   } else if (isIos || isWeb) {
     showCupertinoDialog(
         context: context,
         builder: (_) => CupertinoAlertDialog(
               content: Center(
-                child: buildLoadingWidget(context),
-              ),
+                  child: Row(children: [
+                buildLoadingWidget(context),
+                Text('Por favor, espere')
+              ])),
             ));
   }
 }

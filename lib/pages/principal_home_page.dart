@@ -56,7 +56,7 @@ class _PrincipalPageState extends State<PrincipalPage>
     categoriesStoreProducts();
 
     if (storeAuth.user.uid != '0') {
-      myStoreslistServices();
+      storesByLocationlistServices(storeAuth.city);
     } else {
       storeslistServices();
     }
@@ -240,6 +240,7 @@ class _PrincipalPageState extends State<PrincipalPage>
       }
     } else if (isGranted && serviceEnabled) {
       if (prefs.locationCurrent || prefs.locationSearch) {
+        return;
       } else {
         accessGps(PermissionStatus.granted);
       }
@@ -265,6 +266,9 @@ class _PrincipalPageState extends State<PrincipalPage>
           showMaterialCupertinoBottomSheetLocation(context, 'hello', 'hello2',
               () {
             myLocationBloc.initPositionLocation();
+
+            storesByLocationlistServices(prefs.addressSearchSave.secondaryText);
+
             Navigator.pop(context);
           }, () {
             Navigator.pop(context);
@@ -298,6 +302,22 @@ class _PrincipalPageState extends State<PrincipalPage>
 
         break;
       default:
+    }
+  }
+
+  void storesByLocationlistServices(String location) async {
+    final storeService = Provider.of<StoreService>(context, listen: false);
+
+    final StoresListResponse resp =
+        await storeService.getStoresLocationListServices(location);
+
+    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
+
+    if (resp.ok) {
+      storeBloc.storesListInitial = [];
+      storeBloc.storesListInitial = resp.storeListServices;
+
+      storeBloc.changeToMarket();
     }
   }
 

@@ -80,6 +80,9 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
       isLocationCurrent = true;
       prefs.setAddreses = addresses[0];
 
+      prefs.setLatSearch = newPosition.latitude;
+      prefs.setLongSearch = newPosition.longitude;
+
       prefs.setLocationCurrent = true;
     }
   }

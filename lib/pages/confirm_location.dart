@@ -2,7 +2,10 @@ import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_locat
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/models/profile.dart';
 import 'package:australti_ecommerce_app/pages/add_edit_category.dart';
+import 'package:australti_ecommerce_app/responses/stores_list_principal_response.dart';
+import 'package:australti_ecommerce_app/services/stores_Services.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
+import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
@@ -99,7 +102,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                     Expanded(
                       flex: 2,
                       child: Container(
-                        width: size.width / 2,
+                        width: size.width,
                         child: Text(
                           'Confirmar dirección',
                           maxLines: 2,
@@ -125,6 +128,9 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                               style: TextStyle(
                                 color: (currentTheme.accentColor),
                               ),
+                              inputFormatters: <TextInputFormatter>[
+                                LengthLimitingTextInputFormatter(5),
+                              ],
                               decoration: InputDecoration(
                                   enabledBorder: UnderlineInputBorder(
                                     borderSide: BorderSide(
@@ -270,6 +276,9 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                 myLocationBloc
                                     .savePlaceSearchConfirm(placeSearch);
 
+                                storesByLocationlistServices(
+                                    citySelectCtrl.text);
+
                                 FocusScope.of(context)
                                     .requestFocus(new FocusNode());
 
@@ -279,7 +288,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                             },
                             child: Container(
                               child: Center(
-                                child: confirmLocation(
+                                child: confirmButton(
                                     'Confirmar',
                                     [
                                       currentTheme.primaryColor,
@@ -313,6 +322,22 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                 
                 //makeListProducts(context)
               ]), */
+  }
+
+  void storesByLocationlistServices(String location) async {
+    final storeService = Provider.of<StoreService>(context, listen: false);
+
+    final StoresListResponse resp =
+        await storeService.getStoresLocationListServices(location);
+
+    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
+
+    if (resp.ok) {
+      storeBloc.storesListInitial = [];
+      storeBloc.storesListInitial = resp.storeListServices;
+
+      storeBloc.changeToMarket();
+    }
   }
 
   SliverList makeListCatalogos(

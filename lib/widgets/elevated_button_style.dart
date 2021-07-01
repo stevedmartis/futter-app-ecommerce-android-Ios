@@ -112,7 +112,7 @@ Widget roundedRectButton(
   });
 }
 
-Widget confirmLocation(
+Widget confirmButton(
     String title, List<Color> gradient, bool isEndIconVisible, bool isDisable) {
   return Builder(builder: (BuildContext context) {
     final _size = MediaQuery.of(context).size;

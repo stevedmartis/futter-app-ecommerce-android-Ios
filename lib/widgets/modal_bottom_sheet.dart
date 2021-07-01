@@ -6,6 +6,7 @@ import 'package:australti_ecommerce_app/grocery_store/grocery_store_cart.dart';
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -139,6 +140,8 @@ showSelectServiceMaterialCupertinoBottomSheet(context) {
                   onTap: () => {
                     authService.serviceChange = 1,
                     Navigator.of(context).pop(),
+                    showSnackBar(
+                        context, 'Tu tienda aparecera en "Restaurantes" '),
                   },
                   child: ListTile(
                       tileColor: (currentTheme.customTheme)
@@ -186,6 +189,7 @@ showSelectServiceMaterialCupertinoBottomSheet(context) {
                   onTap: () => {
                     authService.serviceChange = 2,
                     Navigator.of(context).pop(),
+                    showSnackBar(context, 'Tu tienda aparecera en "Mercados" '),
                   },
                   child: ListTile(
                       tileColor: (currentTheme.customTheme)
@@ -232,6 +236,8 @@ showSelectServiceMaterialCupertinoBottomSheet(context) {
                   onTap: () => {
                     authService.serviceChange = 3,
                     Navigator.of(context).pop(),
+                    showSnackBar(
+                        context, 'Tu tienda aparecera en "Licorerias" '),
                   },
                   child: ListTile(
                       tileColor: (currentTheme.customTheme)

@@ -74,7 +74,9 @@ class LoginForm extends StatelessWidget {
               color: Colors.green,
               textColor: kWhite,
               text: 'Con tu número celular',
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, createRoutePhone());
+              },
               image: const Icon(
                 Icons.phone_iphone,
                 color: Colors.white,
