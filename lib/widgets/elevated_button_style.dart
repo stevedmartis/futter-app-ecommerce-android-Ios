@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -21,9 +23,9 @@ elevatedButtonCustom(
       height: 60,
       decoration: ShapeDecoration(
         shape: StadiumBorder(),
-        gradient: LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.bottomCenter,
+        gradient: RadialGradient(
+          center: Alignment(0.7, -0.6), // near the top right
+          radius: 0.2,
           colors: [
             if (!isEdit) currentTheme.primaryColor.withOpacity(0.90),
             if (!isEdit) Color(0xff3AFF4D),
@@ -37,6 +39,7 @@ elevatedButtonCustom(
             if (isDelete)
               currentTheme.scaffoldBackgroundColor.withOpacity(0.90),
           ],
+          stops: <double>[0.4, 1.0],
         ),
       ),
       child: MaterialButton(

@@ -450,15 +450,22 @@ class StoresListByService extends StatelessWidget {
           itemBuilder: (BuildContext ctxt, int index) {
             final store = bloc.storesListState[index];
 
-            return Stack(
-              children: [
-                FadeIn(
-                  child: StoreCard(
-                    store: store,
-                  ),
-                ),
-              ],
-            );
+            return (bloc.storesListState.length) > 0
+                ? Stack(
+                    children: [
+                      FadeIn(
+                        child: StoreCard(
+                          store: store,
+                        ),
+                      ),
+                    ],
+                  )
+                : Container(
+                    margin: EdgeInsets.only(top: 20),
+                    child: Center(
+                      child: Text('No hay tiendas cercanas a tu ubicación'),
+                    ),
+                  );
           }),
     );
   }

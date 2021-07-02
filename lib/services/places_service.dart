@@ -44,8 +44,6 @@ class PlaceService with ChangeNotifier {
         'https://maps.googleapis.com/maps/api/geocode/json?latlng=$long,$lat&sensor=true&key=$apiKey';
     final resp = await http.get(Uri.parse(urlFinal2));
 
-    var json = convert.jsonDecode(resp.body);
-
     var jsonResult = addressCurrentFromJson(resp.body);
 
     return jsonResult;

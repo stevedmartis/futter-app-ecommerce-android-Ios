@@ -88,7 +88,7 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
           lightCardOffsetAnimation: _slideAnimationLightCard,
           darkCardOffsetAnimation: _slideAnimationDarkCard,
           textColumn: CommunityTextColumn(
-            title: 'Vende en Liefey!',
+            title: 'Vende en Freeily!',
             text:
                 'Crea tu Tienda con tus catalogos y productos, recibe clientes, vende y gana!',
           ),

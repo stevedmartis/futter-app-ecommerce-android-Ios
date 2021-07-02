@@ -57,6 +57,8 @@ class _PrincipalPageState extends State<PrincipalPage>
 
     if (storeAuth.user.uid != '0') {
       storesByLocationlistServices(storeAuth.city);
+    } else if (prefs.isLocationCurrent) {
+      storesByLocationlistServices(prefs.addressSave['locality']);
     } else {
       storeslistServices();
     }
@@ -267,7 +269,7 @@ class _PrincipalPageState extends State<PrincipalPage>
               () {
             myLocationBloc.initPositionLocation();
 
-            storesByLocationlistServices(prefs.addressSearchSave.secondaryText);
+            storesByLocationlistServices(prefs.addressSave['locality']);
 
             Navigator.pop(context);
           }, () {
