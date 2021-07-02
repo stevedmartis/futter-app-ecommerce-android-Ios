@@ -61,8 +61,8 @@ class AuthUserPreferences {
     return _prefs.getBool('locationCurrent') ?? false;
   }
 
-  set setLocationSearch(bool isCurrent) {
-    _prefs.setBool('locationSearch', isCurrent);
+  set setLocationSearch(bool value) {
+    _prefs.setBool('locationSearch', value);
   }
 
   get locationSearch {

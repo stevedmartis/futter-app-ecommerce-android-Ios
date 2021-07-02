@@ -237,6 +237,7 @@ class _PrincipalPageState extends State<PrincipalPage>
       final status = await Permission.location.request();
 
       if (prefs.locationCurrent || prefs.locationSearch) {
+        return;
       } else {
         accessGps(status);
       }

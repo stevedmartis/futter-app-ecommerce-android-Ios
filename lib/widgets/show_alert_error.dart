@@ -80,7 +80,7 @@ showModalLoading(BuildContext context) {
                 content: Center(
                     child: Row(children: [
               buildLoadingWidget(context),
-              Text('Por favor, espere')
+              Text(' Por favor, espere')
             ]))));
   } else if (isIos || isWeb) {
     showCupertinoDialog(
@@ -89,7 +89,7 @@ showModalLoading(BuildContext context) {
               content: Center(
                   child: Row(children: [
                 buildLoadingWidget(context),
-                Text('Por favor, espere')
+                Text(' Por favor, espere')
               ])),
             ));
   }

@@ -121,13 +121,13 @@ class LoginForm extends StatelessWidget {
   }
 
   _signIApple(BuildContext context) async {
-    final socketService = Provider.of<SocketService>(context, listen: false);
+    final slocketService = Provider.of<SocketService>(context, listen: false);
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
 
     final signInAppleOk = await authService.appleSignIn(context);
 
     if (signInAppleOk) {
-      socketService.connect();
+      slocketService.connect();
 
       //  Provider.of<MenuModel>(context, listen: false).currentPage = 2;
 
@@ -156,11 +156,14 @@ class LoginForm extends StatelessWidget {
   }
 
   _signInGoogle(BuildContext context) async {
+    final slocketService = Provider.of<SocketService>(context, listen: false);
+
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
 
-    final signInGoogleOk = await authService.signInWitchGoogle();
+    final signInGoogleOk = await authService.signInWitchGoogle(context);
 
     if (signInGoogleOk) {
+      slocketService.connect();
       if (authService.redirect == 'profile' &&
           authService.storeAuth.user.first) {
         Navigator.push(context, profileEditRoute());

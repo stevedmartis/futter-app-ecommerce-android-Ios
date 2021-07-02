@@ -114,7 +114,7 @@ class AuthenticationBLoC with ChangeNotifier {
     }
   }
 
-  Future signInWitchGoogle() async {
+  Future signInWitchGoogle(context) async {
     try {
       final account = await _googleSignIn.signIn();
 
@@ -125,6 +125,8 @@ class AuthenticationBLoC with ChangeNotifier {
       int number = 0;
       double long = 0;
       double lat = 0;
+
+      showModalLoading(context);
 
       if (prefs.locationCurrent) {
         address = prefs.addressSave['featureName'];
@@ -208,9 +210,13 @@ class AuthenticationBLoC with ChangeNotifier {
               secondaryText: storeAuth.city,
               number: storeAuth.number));
 
-      prefs.setLocationSearch = true;
-      prefs.setSearchAddreses = placeStore;
       _guardarToken(loginResponse.token);
+
+      prefs.setLocationSearch = true;
+      prefs.setLocationCurrent = false;
+      prefs.setSearchAddreses = placeStore;
+
+      print(prefs.locationSearch);
 
       return true;
     } else {
@@ -384,10 +390,13 @@ class AuthenticationBLoC with ChangeNotifier {
               secondaryText: storeAuth.city,
               number: storeAuth.number));
 
+      _guardarToken(loginResponse.token);
+
       prefs.setLocationSearch = true;
       prefs.setLocationCurrent = false;
       prefs.setSearchAddreses = placeStore;
-      _guardarToken(loginResponse.token);
+
+      print(prefs.locationSearch);
 
       // await getProfileByUserId(this.profile.user.uid);
 
@@ -517,6 +526,8 @@ class AuthenticationBLoC with ChangeNotifier {
       prefs.setLocationSearch = true;
       prefs.setLocationCurrent = false;
       prefs.setSearchAddreses = placeStore;
+
+      print(prefs.locationSearch);
 
       return true;
     } else {

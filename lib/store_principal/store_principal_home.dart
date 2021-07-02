@@ -746,7 +746,6 @@ Address nameAddress = Address(addressLine: '');
 class _StoreServiceDetailsState extends State<StoreServiceDetails>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
-  final prefs = new AuthUserPreferences();
 
   final _movement = -100.0;
 
@@ -775,6 +774,8 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
 // From coordinates
 
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+    final prefsAuthBloc = Provider.of<AuthenticationBLoC>(context).prefs;
+
     final _size = MediaQuery.of(context).size;
 
     return AnimatedBuilder(
@@ -815,14 +816,14 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                   ),
                 ),
               ),
-              (prefs.locationCurrent)
+              (prefsAuthBloc.locationCurrent)
                   ? Positioned(
                       top: 20,
                       left: 10,
                       right: 10,
                       height: 40,
                       child: AnimatedOpacity(
-                          opacity: (prefs.locationCurrent) ? 1.0 : 0.0,
+                          opacity: (prefsAuthBloc.locationCurrent) ? 1.0 : 0.0,
                           duration: Duration(milliseconds: 200),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -839,8 +840,8 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                                   width: _size.width / 3,
                                   alignment: Alignment.center,
                                   child: Text(
-                                    prefs.locationCurrent
-                                        ? '${prefs.addressSave['featureName']}'
+                                    prefsAuthBloc.locationCurrent
+                                        ? '${prefsAuthBloc.addressSave['featureName']}'
                                         : '...',
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
@@ -858,7 +859,7 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                       right: 10,
                       height: 40,
                       child: AnimatedOpacity(
-                          opacity: (prefs.locationSearch) ? 1.0 : 0.0,
+                          opacity: (prefsAuthBloc.locationSearch) ? 1.0 : 0.0,
                           duration: Duration(milliseconds: 200),
                           child: Container(
                             alignment: Alignment.center,
@@ -882,8 +883,8 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                                   child: Container(
                                       alignment: Alignment.center,
                                       child: Text(
-                                        prefs.locationSearch
-                                            ? '${prefs.addressSearchSave.mainText}'
+                                        prefsAuthBloc.locationSearch
+                                            ? '${prefsAuthBloc.addressSearchSave.mainText}'
                                             : '...',
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
