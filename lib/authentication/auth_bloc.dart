@@ -301,7 +301,7 @@ class AuthenticationBLoC with ChangeNotifier {
   }
 
   Future editProfile(String uid, String username, String about, String name,
-      String email, String password, String imageAvatar, int service) async {
+      String password, String imageAvatar, int service) async {
     // this.authenticated = true;
 
     final urlFinal = ('${Environment.apiUrl}/api/store/edit');
@@ -311,7 +311,6 @@ class AuthenticationBLoC with ChangeNotifier {
       'username': username,
       'name': name,
       'about': about,
-      'email': email,
       'password': password,
       'imageAvatar': imageAvatar,
       'service': service
@@ -343,6 +342,88 @@ class AuthenticationBLoC with ChangeNotifier {
       prefs.setSearchAddreses = placeStore;
 
       return true;
+    } else {
+      final respBody = jsonDecode(resp.body);
+      return respBody['msg'];
+    }
+  }
+
+  Future editServiceStoreProfile(String uid, service) async {
+    // this.authenticated = true;
+
+    final urlFinal = ('${Environment.apiUrl}/api/store/edit/service');
+
+    final data = {'uid': uid, 'service': service};
+
+    String token = '';
+    (UniversalPlatform.isWeb)
+        ? token = prefs.token
+        : token = await this._storage.read(key: 'token');
+
+    final resp = await http.post(Uri.parse(urlFinal),
+        body: jsonEncode(data),
+        headers: {'Content-Type': 'application/json', 'x-token': token});
+
+    if (resp.statusCode == 200) {
+      final loginResponse = loginResponseFromJson(resp.body);
+
+      storeAuth = loginResponse.store;
+
+      var placeStore = new PlaceSearch(
+          description: storeAuth.user.uid,
+          placeId: storeAuth.user.uid,
+          structuredFormatting: new StructuredFormatting(
+              mainText: storeAuth.address,
+              secondaryText: storeAuth.city,
+              number: storeAuth.number));
+
+      prefs.setLocationSearch = true;
+      prefs.setSearchAddreses = placeStore;
+
+      return true;
+    } else {
+      final respBody = jsonDecode(resp.body);
+      return respBody['msg'];
+    }
+  }
+
+  Future editInfoContactStoreProfile(
+      String uid, String email, String phone) async {
+    // this.authenticated = true;
+
+    final urlFinal = ('${Environment.apiUrl}/api/store/edit/contact/info');
+
+    final data = {'uid': uid, 'email': email, 'phone': phone};
+
+    String token = '';
+    (UniversalPlatform.isWeb)
+        ? token = prefs.token
+        : token = await this._storage.read(key: 'token');
+
+    final resp = await http.post(Uri.parse(urlFinal),
+        body: jsonEncode(data),
+        headers: {'Content-Type': 'application/json', 'x-token': token});
+
+    if (resp.statusCode == 200) {
+      final loginResponse = loginResponseFromJson(resp.body);
+
+      storeAuth = loginResponse.store;
+
+      var placeStore = new PlaceSearch(
+          description: storeAuth.user.uid,
+          placeId: storeAuth.user.uid,
+          structuredFormatting: new StructuredFormatting(
+              mainText: storeAuth.address,
+              secondaryText: storeAuth.city,
+              number: storeAuth.number));
+
+      prefs.setLocationSearch = true;
+      prefs.setSearchAddreses = placeStore;
+
+      return true;
+    } else if (resp.statusCode == 400) {
+      final respBody = jsonDecode(resp.body);
+      return respBody['msg'];
     } else {
       final respBody = jsonDecode(resp.body);
       return respBody['msg'];

@@ -80,11 +80,8 @@ class EditProfilePageState extends State<EditProfilePage> {
     nameCtrl.text = store.name;
     aboutCtrl.text = store.about;
 
-    emailCtrl.text = store.user.email;
-
     addressCtrl.text = store.address;
     cityCtrl.text = store.city;
-    numberCtrl.text = store.number;
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
       if (store.user.first) openSheetBottom();
@@ -232,6 +229,7 @@ class EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context);
+    final size = MediaQuery.of(context).size;
 
     final authService = Provider.of<AuthenticationBLoC>(context);
 
@@ -297,7 +295,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                       itemExtent: 20,
                       delegate: SliverChildListDelegate([Container()])),
                   SliverFixedExtentList(
-                      itemExtent: 190,
+                      itemExtent: size.height,
                       delegate: SliverChildListDelegate([
                         Column(
                           children: [
@@ -463,21 +461,6 @@ class EditProfilePageState extends State<EditProfilePage> {
                             Divider(
                               height: 1,
                             ),
-                          ],
-                        )
-                      ])),
-                  SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 25, vertical: 0),
-                        child: Column(
-                          children: <Widget>[
-                            _createCategory(),
-
-                            SizedBox(
-                              height: 10,
-                            ),
                             _createName(nameCtrl),
                             SizedBox(
                               height: 10,
@@ -486,39 +469,98 @@ class EditProfilePageState extends State<EditProfilePage> {
                             SizedBox(
                               height: 10,
                             ),
-
                             _createAbout(aboutCtrl),
-                            SizedBox(
-                              height: 10,
+                            SizedBox(height: 20),
+                            Divider(
+                              height: 1,
                             ),
-                            // _createLastName(bloc),
-                            _createEmail(emailCtrl),
-                            SizedBox(
-                              height: 10,
-                            ),
+                            SizedBox(height: 15),
+                            if (store.user.first && store.service == 0)
+                              MaterialButton(
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  shape: StadiumBorder(),
+                                  child: Text(
+                                    'Cambiar a Cuenta Vendedor',
+                                    style: TextStyle(
+                                        color: currentTheme
+                                            .currentTheme.accentColor,
+                                        fontSize: 15),
+                                  ),
+                                  onPressed: () {
+                                    FocusScope.of(context)
+                                        .requestFocus(new FocusNode());
 
-                            _createAddress(),
-                            SizedBox(
-                              height: 10,
-                            ),
-
-                            _createCity(),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            _createNumber(),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            _createPassword(passCtrl),
-                            SizedBox(
-                              height: 30,
-                            ),
-
-                            SizedBox(
-                              height: 50,
-                            ),
+                                    Navigator.push(
+                                        context, onBoardCreateStoreRoute());
+                                  }),
+                            if (!store.user.first && store.service != 0)
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                                width: size.width,
+                                child: Text(
+                                  'Información pública de la tienda',
+                                  maxLines: 2,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                            if (!store.user.first && store.service != 0)
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 5.0, vertical: 5.0),
+                                child: Column(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        FocusScope.of(context)
+                                            .requestFocus(new FocusNode());
+                                        Navigator.push(context,
+                                            selectCategoryStoreRoute());
+                                      },
+                                      child: ListTile(
+                                        leading: Text('Categoría',
+                                            style: TextStyle(fontSize: 18)),
+                                        title: Container(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(categoryCtrl.text,
+                                              style: TextStyle(
+                                                  color: Colors.grey)),
+                                        ),
+                                        trailing: Icon(Icons.chevron_right,
+                                            color: Colors.grey),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        FocusScope.of(context)
+                                            .requestFocus(new FocusNode());
+                                        Navigator.push(
+                                            context, contactoInfoStoreRoute());
+                                      },
+                                      child: ListTile(
+                                        leading: Text('Opciones de contacto',
+                                            style: TextStyle(fontSize: 18)),
+                                        trailing: Icon(Icons.chevron_right,
+                                            color: Colors.grey),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              )
                           ],
+                        )
+                      ])),
+                  SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                        child: Column(
+                          children: <Widget>[],
                         ),
                       )),
                 ]),
@@ -703,53 +745,6 @@ class EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget _createEmail(TextEditingController emailCtl) {
-    return StreamBuilder(
-      stream: storeProfileBloc.emailStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        final currentTheme = Provider.of<ThemeChanger>(context);
-
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
-          child: TextField(
-            style: TextStyle(
-              color: (currentTheme.customTheme) ? Colors.white : Colors.black,
-            ),
-            controller: emailCtl,
-            keyboardType: TextInputType.emailAddress,
-            decoration: InputDecoration(
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: (currentTheme.customTheme)
-                        ? Colors.white54
-                        : Colors.black54,
-                  ),
-                ),
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                labelStyle: TextStyle(
-                  color: (currentTheme.customTheme)
-                      ? Colors.white54
-                      : Colors.black54,
-                ),
-                // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: currentTheme.currentTheme.accentColor, width: 2.0),
-                ),
-                hintText: '',
-                labelText: 'Email *',
-                //counterText: snapshot.data,
-                errorText: snapshot.error),
-            onChanged: storeProfileBloc.changeEmail,
-          ),
-        );
-      },
-    );
-  }
-
   Widget _createUsername(TextEditingController usernameCtrl) {
     return StreamBuilder(
       stream: storeProfileBloc.usernameSteam,
@@ -791,59 +786,6 @@ class EditProfilePageState extends State<EditProfilePage> {
                 //counterText: snapshot.data,
                 errorText: snapshot.error),
             onChanged: storeProfileBloc.changeUsername,
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _createCategory() {
-    return StreamBuilder(
-      stream: storeProfileBloc.categoryStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        final currentTheme = Provider.of<ThemeChanger>(context);
-
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
-          child: TextField(
-            style: TextStyle(
-              color: (currentTheme.customTheme) ? Colors.white : Colors.black,
-            ),
-            controller: categoryCtrl,
-            showCursor: true,
-            readOnly: true,
-            onTap: () {
-              showSelectServiceMaterialCupertinoBottomSheet(context);
-              FocusScope.of(context).requestFocus(new FocusNode());
-            },
-            //  keyboardType: TextInputType.emailAddress,
-            decoration: InputDecoration(
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: (currentTheme.customTheme)
-                        ? Colors.white54
-                        : Colors.black54,
-                  ),
-                ),
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                labelStyle: TextStyle(
-                  color: (currentTheme.customTheme)
-                      ? Colors.white54
-                      : Colors.black54,
-                ),
-                // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: currentTheme.currentTheme.accentColor, width: 2.0),
-                ),
-                hintText: '',
-                labelText: 'Tipo de Tienda',
-                //counterText: snapshot.data,
-                errorText: snapshot.error),
-            onChanged: storeProfileBloc.changeCategory,
           ),
         );
       },
@@ -992,53 +934,6 @@ class EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget _createNumber() {
-    return StreamBuilder(
-      stream: storeProfileBloc.nameStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        final currentTheme = Provider.of<ThemeChanger>(context);
-
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
-          child: TextField(
-            style: TextStyle(
-              color: (currentTheme.customTheme) ? Colors.white : Colors.black,
-            ),
-            controller: numberCtrl,
-            //  keyboardType: TextInputType.emailAddress,
-            decoration: InputDecoration(
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: (currentTheme.customTheme)
-                        ? Colors.white54
-                        : Colors.black54,
-                  ),
-                ),
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                labelStyle: TextStyle(
-                  color: (currentTheme.customTheme)
-                      ? Colors.white54
-                      : Colors.black54,
-                ),
-                // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: currentTheme.currentTheme.accentColor, width: 2.0),
-                ),
-                hintText: '',
-                labelText: 'Numero',
-                //counterText: snapshot.data,
-                errorText: snapshot.error),
-            onChanged: storeProfileBloc.changeName,
-          ),
-        );
-      },
-    );
-  }
-
   Widget _createAbout(TextEditingController aboutCtrl) {
     return StreamBuilder(
       stream: storeProfileBloc.aboutStream,
@@ -1057,7 +952,7 @@ class EditProfilePageState extends State<EditProfilePage> {
               controller: aboutCtrl,
               //  keyboardType: TextInputType.emailAddress,
 
-              maxLines: 3,
+              maxLines: 1,
               // any number you need (It works as the rows for the textarea)
               keyboardType: TextInputType.multiline,
               decoration: InputDecoration(
@@ -1084,54 +979,10 @@ class EditProfilePageState extends State<EditProfilePage> {
                         width: 2.0),
                   ),
                   hintText: '',
-                  labelText: 'Sobre mi',
+                  labelText: 'Presentación',
                   //counterText: snapshot.data,
                   errorText: snapshot.error),
               onChanged: storeProfileBloc.changeAbout),
-        );
-      },
-    );
-  }
-
-  Widget _createPassword(TextEditingController passCtrl) {
-    return StreamBuilder(
-      stream: storeProfileBloc.passwordStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        final currentTheme = Provider.of<ThemeChanger>(context);
-
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
-          child: TextField(
-            style: TextStyle(
-              color: (currentTheme.customTheme) ? Colors.white : Colors.black,
-            ),
-            controller: passCtrl,
-            obscureText: true,
-            decoration: InputDecoration(
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: (currentTheme.customTheme)
-                        ? Colors.white54
-                        : Colors.black54,
-                  ),
-                ),
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                labelStyle: TextStyle(
-                  color: (currentTheme.customTheme)
-                      ? Colors.white54
-                      : Colors.black54,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: currentTheme.currentTheme.accentColor, width: 2.0),
-                ),
-                hintText: '',
-                labelText: 'Contraseña',
-                errorText: snapshot.error),
-            onChanged: storeProfileBloc.changePassword,
-          ),
         );
       },
     );
@@ -1145,8 +996,6 @@ class EditProfilePageState extends State<EditProfilePage> {
     final username = usernameCtrl.text.trim();
 
     final name = nameCtrl.text.trim();
-
-    final email = emailCtrl.text.trim();
 
     final password = passCtrl.text.trim();
 
@@ -1164,7 +1013,6 @@ class EditProfilePageState extends State<EditProfilePage> {
             username,
             about,
             name,
-            email,
             password,
             resp,
             authService.serviceSelect);
@@ -1199,7 +1047,6 @@ class EditProfilePageState extends State<EditProfilePage> {
           username,
           about,
           name,
-          email,
           password,
           storeProfile.imageAvatar,
           authService.serviceSelect);

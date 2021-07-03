@@ -10,7 +10,7 @@ class Validators {
     if (regExp.hasMatch(email)) {
       sink.add(email);
     } else {
-      sink.addError('Email invalido');
+      sink.addError('Correo electrónico invalido');
     }
   });
 
@@ -29,6 +29,15 @@ class Validators {
       sink.add(text);
     } else {
       sink.addError('Nombre debe ser mayor a 5 caracteres');
+    }
+  });
+
+  final validationNumberPhoneRequired =
+      StreamTransformer<String, String>.fromHandlers(handleData: (text, sink) {
+    if (text.length >= 9) {
+      sink.add(text);
+    } else {
+      sink.addError('Número de telefono invalido');
     }
   });
 

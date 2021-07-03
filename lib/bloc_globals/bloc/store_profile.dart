@@ -12,6 +12,8 @@ class StoreProfileBloc with Validators {
   final _imageUpdateCtrl = BehaviorSubject<bool>();
   final _categoryController = BehaviorSubject<String>();
 
+  final _numberController = BehaviorSubject<String>();
+
   // Recuperar los datos del Stream
   Stream<String> get emailStream =>
       _emailController.stream.transform(validarEmail);
@@ -25,6 +27,10 @@ class StoreProfileBloc with Validators {
   Stream<String> get lastNameStream => _lastNameController.stream;
 
   Stream<String> get categoryStream => _categoryController.stream;
+
+  Stream<String> get numberStream =>
+      _numberController.stream.transform(validationNumberPhoneRequired);
+
   BehaviorSubject<bool> get imageUpdate => _imageUpdateCtrl;
 
   Stream<bool> get formValidStream => CombineLatestStream.combine3(
@@ -37,7 +43,7 @@ class StoreProfileBloc with Validators {
   Function(String) get changeName => _nameController.sink.add;
   Function(String) get changeLastName => _lastNameController.sink.add;
   Function(String) get changeAbout => _aboutController.sink.add;
-
+  Function(String) get changeNumber => _numberController.sink.add;
   Function(String) get changeCategory => _categoryController.sink.add;
 
   // Obtener el último valor ingresado a los streams
@@ -58,6 +64,7 @@ class StoreProfileBloc with Validators {
     _passwordController?.close();
     _usernameController?.close();
     _nameController?.close();
+    _numberController?.close();
     _lastNameController?.close();
     _aboutController?.close();
   }

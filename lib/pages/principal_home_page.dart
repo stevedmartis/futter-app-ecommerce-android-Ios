@@ -425,8 +425,7 @@ class __PositionedMenuState extends State<_PositionedMenu> {
                             onPressed: () {
                               authService.redirect = 'vender';
                               if (authService.storeAuth.user.uid == '0') {
-                                Navigator.push(
-                                    context, onBoardCreateStoreRoute());
+                                Navigator.push(context, loginRoute(100));
                               } else if (bloc.isVisible) {
                                 if (authService.storeAuth.user.first)
                                   Navigator.push(context, principalHomeRoute());

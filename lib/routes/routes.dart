@@ -3,6 +3,8 @@ import 'package:australti_ecommerce_app/grocery_store/grocery_store_home.dart';
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/multiple_card_flow/multiple_card_flow.dart';
+import 'package:australti_ecommerce_app/pages/account_store/category_store.dart';
+import 'package:australti_ecommerce_app/pages/account_store/contact_info_store.dart';
 import 'package:australti_ecommerce_app/pages/categories_store.dart';
 import 'package:australti_ecommerce_app/pages/confirm_location.dart';
 import 'package:australti_ecommerce_app/pages/discovery_demo.dart';
@@ -264,6 +266,34 @@ Route onBoardCreateStoreRoute() {
       return Onboarding(
         screenHeight: screenHeight,
       );
+    },
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: animation,
+        child: child,
+      );
+    },
+  );
+}
+
+Route selectCategoryStoreRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return CategorySelectStore();
+    },
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: animation,
+        child: child,
+      );
+    },
+  );
+}
+
+Route contactoInfoStoreRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return ContactInfoStore();
     },
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       return FadeTransition(

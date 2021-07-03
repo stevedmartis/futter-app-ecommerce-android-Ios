@@ -64,25 +64,6 @@ class CountryProvider with ChangeNotifier {
     }
   }
 
-  ///  This will be the listener for searching the query entered by user for their country, (dialog pop-up),
-  ///  searches for the query and returns list of countries matching the query by adding the results to the sink of [searchResults]
-  void _search() {
-    String query = searchController.text;
-    print(query);
-    if (query.length == 0 || query.length == 1) {
-      searchResults = countries;
-    } else {
-      List<Country> _results = [];
-      countries.forEach((Country c) {
-        if (c.toString().toLowerCase().contains(query.toLowerCase()))
-          _results.add(c);
-      });
-      searchResults = _results;
-      print("results length: ${searchResults.length}");
-//      print('added few countries based on search ${searchResults.length}');
-    }
-  }
-
   void resetSearch() {
     searchResults = countries;
   }

@@ -1,7 +1,4 @@
-import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
-import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class Header extends StatelessWidget {
   final VoidCallback onSkip;
@@ -20,9 +17,10 @@ class Header extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: IconButton(
               onPressed: () {
-                final menuBloc = Provider.of<MenuModel>(context, listen: false);
+                Navigator.pop(context);
+                /* final menuBloc = Provider.of<MenuModel>(context, listen: false);
                 menuBloc.currentPage = 0;
-                Navigator.push(context, principalHomeRoute());
+                Navigator.push(context, principalHomeRoute()); */
               },
               icon: Icon(
                 Icons.chevron_left,

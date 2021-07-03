@@ -108,7 +108,7 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                     {
                       authService.redirect = 'profile';
                       if (storeAuth.user.uid == '0') {
-                        Navigator.push(context, onBoardCreateStoreRoute());
+                        Navigator.push(context, loginRoute(100));
                       } else {
                         authService.redirect = 'header';
                         Navigator.push(context, profileAuthRoute(true));

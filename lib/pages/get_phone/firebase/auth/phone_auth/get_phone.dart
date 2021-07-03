@@ -32,9 +32,6 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
     super.dispose();
   }
 
-  final scaffoldKey =
-      GlobalKey<ScaffoldState>(debugLabel: "scaffold-get-phone");
-
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
@@ -134,9 +131,11 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
                                         width: 2.0),
                                   ),
                                   hintText: '',
-                                  prefix: Text('+56 '),
+                                  prefix: Text('+56 ',
+                                      style: TextStyle(
+                                          color: currentTheme.accentColor)),
                                   labelText: 'Numero celular',
-                                  suffixIcon: Container(
+                                  prefixIcon: Container(
                                     child: (UniversalPlatform.isAndroid)
                                         ? Icon(Icons.phone_android,
                                             color: (isDisabled)
