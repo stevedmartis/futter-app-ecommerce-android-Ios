@@ -9,7 +9,9 @@ import 'package:australti_ecommerce_app/bloc_globals/bloc/store_profile.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/pages/single_image_upload.dart';
+import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
+import 'package:australti_ecommerce_app/responses/place_search_response.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/services/product.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
@@ -70,6 +72,7 @@ class EditProfilePageState extends State<EditProfilePage> {
   bool isSwitchChange = false;
 
   ImageUploadModel uploadImageFile;
+  final prefs = new AuthUserPreferences();
 
   @override
   void initState() {
@@ -239,12 +242,19 @@ class EditProfilePageState extends State<EditProfilePage> {
 
     final itemData = base64.decode(stripped);
 
-    if (authService.serviceSelect == 1) categoryCtrl.text = 'Restaurante';
+    final PlacesSearch address = prefs.addressSearchSave;
 
-    if (authService.serviceSelect == 2)
+    final isEmail = (authService.storeAuth.user.email != "");
+    final isPhone = (authService.storeAuth.user.email != "0");
+
+    if (authService.storeAuth.service == 1) categoryCtrl.text = 'Restaurante';
+
+    if (authService.storeAuth.service == 2)
       categoryCtrl.text = 'Frutería/Verdulería';
-    if (authService.serviceSelect == 3)
+    if (authService.storeAuth.service == 3)
       categoryCtrl.text = 'Licorería/Botillería';
+
+    print(address);
 
     return SafeArea(
       child: Scaffold(
@@ -544,6 +554,46 @@ class EditProfilePageState extends State<EditProfilePage> {
                                       child: ListTile(
                                         leading: Text('Opciones de contacto',
                                             style: TextStyle(fontSize: 18)),
+                                        title: Container(
+                                          alignment: Alignment.centerRight,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              if (isEmail)
+                                                Icon(Icons.email,
+                                                    color: Colors.grey),
+                                              SizedBox(width: 10),
+                                              if (isPhone)
+                                                (UniversalPlatform.isAndroid)
+                                                    ? Icon(Icons.phone_android,
+                                                        color: Colors.grey)
+                                                    : Icon(Icons.phone_iphone,
+                                                        color: Colors.grey),
+                                            ],
+                                          ),
+                                        ),
+                                        trailing: Icon(Icons.chevron_right,
+                                            color: Colors.grey),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        FocusScope.of(context)
+                                            .requestFocus(new FocusNode());
+                                        Navigator.push(context,
+                                            locationStoreRoute(address));
+                                      },
+                                      child: ListTile(
+                                        leading: Text('Dirección',
+                                            style: TextStyle(fontSize: 18)),
+                                        title: Container(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                              prefs.addressSearchSave.mainText,
+                                              style: TextStyle(
+                                                  color: Colors.grey)),
+                                        ),
                                         trailing: Icon(Icons.chevron_right,
                                             color: Colors.grey),
                                       ),
@@ -713,8 +763,8 @@ class EditProfilePageState extends State<EditProfilePage> {
             isAboutChange ||
             isAddressChange ||
             isCityChange ||
-            isNameChange ||
-            authService.serviceSelect != store.service;
+            isNameChange;
+        //  authService.serviceSelect != store.service;
 
         return GestureDetector(
             child: Padding(
@@ -830,101 +880,6 @@ class EditProfilePageState extends State<EditProfilePage> {
                 ),
                 hintText: '',
                 labelText: 'Nombre',
-                //counterText: snapshot.data,
-                errorText: snapshot.error),
-            onChanged: storeProfileBloc.changeName,
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _createAddress() {
-    return StreamBuilder(
-      stream: storeProfileBloc.nameStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        final currentTheme = Provider.of<ThemeChanger>(context);
-
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
-          child: TextField(
-            style: TextStyle(
-              color: (currentTheme.customTheme) ? Colors.white : Colors.black,
-            ),
-            controller: addressCtrl,
-            //  keyboardType: TextInputType.emailAddress,
-            decoration: InputDecoration(
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: (currentTheme.customTheme)
-                        ? Colors.white54
-                        : Colors.black54,
-                  ),
-                ),
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                labelStyle: TextStyle(
-                  color: (currentTheme.customTheme)
-                      ? Colors.white54
-                      : Colors.black54,
-                ),
-                // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: currentTheme.currentTheme.accentColor, width: 2.0),
-                ),
-                hintText: '',
-                labelText: 'Calle y numero',
-                //counterText: snapshot.data,
-                errorText: snapshot.error),
-            onChanged: storeProfileBloc.changeName,
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _createCity() {
-    return StreamBuilder(
-      stream: storeProfileBloc.nameStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        final currentTheme = Provider.of<ThemeChanger>(context);
-
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
-          child: TextField(
-            enabled: false,
-            style: TextStyle(
-              color: (currentTheme.customTheme) ? Colors.white : Colors.black,
-            ),
-            controller: cityCtrl,
-            //  keyboardType: TextInputType.emailAddress,
-            decoration: InputDecoration(
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: (currentTheme.customTheme)
-                        ? Colors.white54
-                        : Colors.black54,
-                  ),
-                ),
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                labelStyle: TextStyle(
-                  color: (currentTheme.customTheme)
-                      ? Colors.white54
-                      : Colors.black54,
-                ),
-                // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: currentTheme.currentTheme.accentColor, width: 2.0),
-                ),
-                hintText: '',
-                labelText: 'Localidad',
                 //counterText: snapshot.data,
                 errorText: snapshot.error),
             onChanged: storeProfileBloc.changeName,

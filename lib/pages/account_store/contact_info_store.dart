@@ -1,6 +1,7 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc/store_profile.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 
 import 'package:australti_ecommerce_app/theme/theme.dart';
@@ -28,12 +29,16 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
   final emailCtl = TextEditingController();
   final numberCtrl = TextEditingController();
 
+  final prefs = new AuthUserPreferences();
+
   bool isEmailChange = false;
   bool isNumberChange = false;
   bool loading = false;
   Store store;
   @override
   void initState() {
+    _scrollController = ScrollController()..addListener(() => setState(() {}));
+
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
     store = authService.storeAuth;
 
@@ -74,6 +79,12 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
     showSelectServiceMaterialCupertinoBottomSheet(context);
   }
 
+  ScrollController _scrollController;
+
+  bool get _showTitle {
+    return _scrollController.hasClients && _scrollController.offset >= 70;
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
@@ -93,7 +104,9 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
             onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
             child: Scaffold(
                 appBar: AppBar(
-                  backgroundColor: Colors.black,
+                  title:
+                      _showTitle ? Text('Información de contacto') : Text(''),
+                  backgroundColor: currentTheme.scaffoldBackgroundColor,
                   leading: IconButton(
                     color: currentTheme.accentColor,
                     icon: Icon(
@@ -118,6 +131,7 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
                 ),
                 backgroundColor: Colors.black,
                 body: CustomScrollView(
+                    controller: _scrollController,
                     physics: const BouncingScrollPhysics(
                         parent: AlwaysScrollableScrollPhysics()),
                     slivers: <Widget>[
@@ -299,7 +313,10 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
 
         showSnackBar(context, 'Información de contacto guardada');
 
-        Navigator.push(context, profileEditRoute());
+        (store.user.first || store.service == 0)
+            ? Navigator.push(
+                context, locationStoreRoute(prefs.addressSearchSave))
+            : Navigator.pop(context);
       } else {
         setState(() {
           loading = false;

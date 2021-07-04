@@ -1,10 +1,16 @@
+import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/models/place_Search.dart';
+import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/responses/place_search_response.dart';
 import 'package:australti_ecommerce_app/responses/stores_list_principal_response.dart';
+import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/services/stores_Services.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
+import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,16 +18,17 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-class ConfirmLocationPage extends StatefulWidget {
-  ConfirmLocationPage(this.place);
-  final PlaceSearch place;
+class LocationStorePage extends StatefulWidget {
+  LocationStorePage(this.place);
+  final PlacesSearch place;
   @override
-  _ConfirmLocationPagetate createState() => _ConfirmLocationPagetate();
+  _LocationStorePageState createState() => _LocationStorePageState();
 }
 
-class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
+class _LocationStorePageState extends State<LocationStorePage> {
   final _blocLocation = MyLocationBloc();
-
+  bool loading = false;
+  Store store;
   final locationBloc = LocationBloc();
 
   final addressSelectCtrl = TextEditingController();
@@ -32,9 +39,9 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
   void initState() {
     _scrollController = ScrollController()..addListener(() => setState(() {}));
 
-    addressSelectCtrl.text = widget.place.structuredFormatting.mainText;
-    citySelectCtrl.text = widget.place.structuredFormatting.secondaryText;
-
+    addressSelectCtrl.text = widget.place.mainText;
+    citySelectCtrl.text = widget.place.secondaryText;
+    numberCtrl.text = (widget.place.number == '0') ? '' : widget.place.number;
     super.initState();
   }
 
@@ -67,7 +74,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
             onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
             child: Scaffold(
                 appBar: AppBar(
-                  title: _showTitle ? Text('Confirmar dirección') : Text(''),
+                  title: _showTitle ? Text('Editar dirección') : Text(''),
                   backgroundColor: Colors.black,
                   leading: IconButton(
                     color: currentTheme.accentColor,
@@ -78,52 +85,39 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                     onPressed: () => Navigator.pop(context),
                   ),
                   actions: [
-                    StreamBuilder<String>(
-                      stream: _blocLocation.numberAddress.stream,
-                      builder: (context, AsyncSnapshot<String> snapshot) {
-                        final places = snapshot.data;
+                    (!loading)
+                        ? StreamBuilder<String>(
+                            stream: _blocLocation.numberAddress.stream,
+                            builder: (context, AsyncSnapshot<String> snapshot) {
+                              final places = snapshot.data;
 
-                        bool isDisabled = false;
-                        (places != null)
-                            ? (places != "")
-                                ? isDisabled = true
-                                : isDisabled = false
-                            : isDisabled = false;
+                              bool isDisabled = false;
+                              (places != null)
+                                  ? (places != "")
+                                      ? isDisabled = true
+                                      : isDisabled = false
+                                  : isDisabled = false;
 
-                        return IconButton(
-                          color: (!isDisabled)
-                              ? Colors.grey
-                              : currentTheme.accentColor,
-                          icon: Icon(
-                            Icons.check,
-                            size: 35,
-                          ),
-                          onPressed: () {
-                            if (isDisabled) {
-                              var placeSearch = new PlaceSearch(
-                                  description: addressSelectCtrl.text,
-                                  placeId: widget.place.placeId,
-                                  structuredFormatting:
-                                      new StructuredFormatting(
-                                          mainText: addressSelectCtrl.text,
-                                          secondaryText: citySelectCtrl.text,
-                                          number: places));
+                              return IconButton(
+                                color: (!isDisabled)
+                                    ? Colors.grey
+                                    : currentTheme.accentColor,
+                                icon: Icon(
+                                  Icons.check,
+                                  size: 35,
+                                ),
+                                onPressed: () {
+                                  FocusScope.of(context)
+                                      .requestFocus(new FocusNode());
 
-                              myLocationBloc
-                                  .savePlaceSearchConfirm(placeSearch);
-
-                              storesByLocationlistServices(citySelectCtrl.text);
-
-                              FocusScope.of(context)
-                                  .requestFocus(new FocusNode());
-
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                            }
-                          },
-                        );
-                      },
-                    ),
+                                  if (isDisabled) {
+                                    _editAddress();
+                                  }
+                                },
+                              );
+                            },
+                          )
+                        : buildLoadingWidget(context),
                   ],
                 ),
                 backgroundColor: Colors.black,
@@ -141,7 +135,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                 Container(
                                   width: size.width,
                                   child: Text(
-                                    'Confirmar dirección',
+                                    'Editar dirección',
                                     maxLines: 2,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -309,6 +303,41 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
       storeBloc.storesListInitial = resp.storeListServices;
 
       storeBloc.changeToMarket();
+    }
+  }
+
+  _editAddress() async {
+    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+
+    final storeProfile = authService.storeAuth;
+
+    final address = addressSelectCtrl.text.trim();
+    final number = numberCtrl.text.trim();
+
+    setState(() {
+      loading = true;
+    });
+
+    final editProfileOk = await authService.editAddressStoreProfile(
+        storeProfile.user.uid, address, number);
+
+    if (editProfileOk != null) {
+      if (editProfileOk == true) {
+        setState(() {
+          loading = false;
+        });
+
+        showSnackBar(context, 'Categoria guardada');
+
+        (storeProfile.user.first || storeProfile.service == 0)
+            ? Navigator.push(context, profileEditRoute())
+            : Navigator.pop(context);
+      } else {
+        showAlertError(context, 'Error', 'Intente más tarde.');
+      }
+    } else {
+      showAlertError(
+          context, 'Error del servidor', 'lo sentimos, Intentelo mas tarde');
     }
   }
 }

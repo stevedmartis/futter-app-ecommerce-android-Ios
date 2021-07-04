@@ -370,10 +370,8 @@ showMaterialCupertinoBottomSheetLocation(BuildContext context, String titulo,
                                           final place = places[index];
                                           return ListTile(
                                             onTap: () => {
-                                              Navigator.push(
-                                                  context,
-                                                  confirmLocationImageRoute(
-                                                      place)),
+                                              Navigator.push(context,
+                                                  confirmLocationRoute(place)),
                                               FocusScope.of(context)
                                                   .requestFocus(
                                                       new FocusNode()),

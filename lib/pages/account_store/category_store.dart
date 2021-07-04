@@ -29,6 +29,8 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
     store = authService.storeAuth;
 
+    authService.serviceChange = store.service;
+
     SchedulerBinding.instance.addPostFrameCallback((_) {
       if (store.user.first) openSheetBottom();
     });
@@ -60,88 +62,231 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
       categoryCtrl.text = 'Licorería/Botillería';
 
     return SafeArea(
-        child: GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
-      child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.black,
-            leading: IconButton(
-              color: currentTheme.accentColor,
-              icon: Icon(
-                Icons.chevron_left,
-                size: 40,
+        child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: currentTheme.scaffoldBackgroundColor,
+              leading: IconButton(
+                color: currentTheme.accentColor,
+                icon: Icon(
+                  Icons.chevron_left,
+                  size: 40,
+                ),
+                onPressed: () => Navigator.pop(context),
               ),
-              onPressed: () => Navigator.pop(context),
+              actions: [
+                (!loading)
+                    ? IconButton(
+                        color: (authService.serviceSelect != store.service)
+                            ? currentTheme.accentColor
+                            : Colors.grey,
+                        icon: Icon(
+                          Icons.check,
+                          size: 35,
+                        ),
+                        onPressed: () {
+                          if (authService.serviceSelect != store.service)
+                            _editProfile();
+                        })
+                    : buildLoadingWidget(context),
+              ],
             ),
-            actions: [
-              (!loading)
-                  ? IconButton(
-                      color: (authService.serviceSelect != store.service)
-                          ? currentTheme.accentColor
-                          : Colors.grey,
-                      icon: Icon(
-                        Icons.check,
-                        size: 35,
-                      ),
-                      onPressed: () {
-                        if (authService.serviceSelect != store.service)
-                          _editProfile();
-                      })
-                  : buildLoadingWidget(context),
-            ],
-          ),
-          backgroundColor: Colors.black,
-          body: Container(
-            padding: EdgeInsets.only(
-              left: 20,
-              right: 20,
-            ),
-            child: GestureDetector(
-                onTap: () =>
-                    FocusScope.of(context).requestFocus(new FocusNode()),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: size.width,
-                      child: Text(
-                        '¿En qué categoria te calificarías?',
-                        maxLines: 2,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30,
+            backgroundColor: currentTheme.scaffoldBackgroundColor,
+            body: Container(
+              padding: EdgeInsets.only(
+                left: 10,
+                right: 10,
+              ),
+              child: GestureDetector(
+                  onTap: () =>
+                      FocusScope.of(context).requestFocus(new FocusNode()),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: size.width,
+                        child: Text(
+                          '¿En qué categoria te calificarías?',
+                          maxLines: 2,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30,
+                          ),
                         ),
                       ),
-                    ),
 
-                    SizedBox(height: 10),
-                    Container(
-                      width: size.width,
-                      child: Text(
-                        'Las categorias ayudan a las personas a encontrarte.',
-                        maxLines: 2,
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.normal,
-                          fontSize: 18,
+                      SizedBox(height: 10),
+                      Container(
+                        width: size.width,
+                        child: Text(
+                          'Las categorias ayudan a las personas a encontrarte.',
+                          maxLines: 2,
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.normal,
+                            fontSize: 18,
+                          ),
                         ),
                       ),
-                    ),
 
-                    SizedBox(height: 20),
+                      SizedBox(height: 20),
 
-                    // email
+                      // email
 
-                    _createCategory(),
+                      _createCategory(),
 
-                    // password
+                      Padding(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom),
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.50,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              SizedBox(
+                                height: 10.0,
+                                child: Center(
+                                  child: Container(
+                                      margin: EdgeInsetsDirectional.only(
+                                          start: 0.0, end: 0.0),
+                                      height: 1.0,
+                                      color: Colors.black54.withOpacity(0.20)),
+                                ),
+                              ),
+                              Material(
+                                color: currentTheme.scaffoldBackgroundColor,
+                                child: InkWell(
+                                  onTap: () => {
+                                    authService.serviceChange = 1,
+                                  },
+                                  child: ListTile(
+                                      tileColor:
+                                          currentTheme.scaffoldBackgroundColor,
+                                      title: Text(
+                                        'Restaurante',
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      trailing: (authService.serviceSelect == 1)
+                                          ? Container(
+                                              child: Icon(Icons.check_circle,
+                                                  color:
+                                                      currentTheme.primaryColor,
+                                                  size: 30.0),
+                                            )
+                                          : Container(
+                                              child: Icon(Icons.circle_outlined,
+                                                  color: Colors.grey,
+                                                  size: 30.0),
+                                            )
 
-                    // submit
-                  ],
-                )),
-          )),
-    ));
+                                      //trailing:
+                                      ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5.0,
+                                child: Center(
+                                  child: Container(
+                                      margin: EdgeInsetsDirectional.only(
+                                          start: 0.0, end: 0.0),
+                                      height: 1.0,
+                                      color: Colors.black54.withOpacity(0.20)),
+                                ),
+                              ),
+                              Material(
+                                color: currentTheme.scaffoldBackgroundColor,
+                                child: InkWell(
+                                  onTap: () => {
+                                    authService.serviceChange = 2,
+                                  },
+                                  child: ListTile(
+                                      tileColor:
+                                          currentTheme.scaffoldBackgroundColor,
+                                      title: Text(
+                                        'Fruteria/Verduleria',
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      trailing: (authService.serviceSelect == 2)
+                                          ? Container(
+                                              child: Icon(Icons.check_circle,
+                                                  color:
+                                                      currentTheme.primaryColor,
+                                                  size: 30.0),
+                                            )
+                                          : Container(
+                                              child: Icon(Icons.circle_outlined,
+                                                  color: Colors.grey,
+                                                  size: 30.0),
+                                            )),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5.0,
+                                child: Center(
+                                  child: Container(
+                                      margin: EdgeInsetsDirectional.only(
+                                          start: 0.0, end: 0.0),
+                                      height: 1.0,
+                                      color: Colors.black54.withOpacity(0.20)),
+                                ),
+                              ),
+                              Material(
+                                color: currentTheme.scaffoldBackgroundColor,
+                                child: InkWell(
+                                  onTap: () => {
+                                    authService.serviceChange = 3,
+                                  },
+                                  child: ListTile(
+                                      tileColor:
+                                          currentTheme.scaffoldBackgroundColor,
+                                      title: Text(
+                                        'Licoreria/Botilleria',
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      trailing: (authService.serviceSelect == 3)
+                                          ? Container(
+                                              child: Icon(Icons.check_circle,
+                                                  color:
+                                                      currentTheme.primaryColor,
+                                                  size: 30.0),
+                                            )
+                                          : Container(
+                                              child: Icon(Icons.circle_outlined,
+                                                  color: Colors.grey,
+                                                  size: 30.0),
+                                            )),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10.0,
+                                child: Center(
+                                  child: Container(
+                                      margin: EdgeInsetsDirectional.only(
+                                          start: 0.0, end: 0.0),
+                                      height: 1.0,
+                                      color: Colors.black54.withOpacity(0.20)),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // password
+
+                      // submit
+                    ],
+                  )),
+            )));
   }
 
   Widget _createCategory() {
@@ -153,16 +298,14 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
         return Container(
           padding: EdgeInsets.symmetric(horizontal: 20.0),
           child: TextField(
+            enabled: false,
             style: TextStyle(
               color: (currentTheme.customTheme) ? Colors.white : Colors.black,
             ),
             controller: categoryCtrl,
             showCursor: true,
             readOnly: true,
-            onTap: () {
-              showSelectServiceMaterialCupertinoBottomSheet(context);
-              FocusScope.of(context).requestFocus(new FocusNode());
-            },
+            onTap: () {},
             //  keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
                 enabledBorder: UnderlineInputBorder(
