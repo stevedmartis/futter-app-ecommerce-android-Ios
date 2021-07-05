@@ -120,7 +120,7 @@ class _LocationStorePageState extends State<LocationStorePage> {
                         : buildLoadingWidget(context),
                   ],
                 ),
-                backgroundColor: Colors.black,
+                backgroundColor: currentTheme.scaffoldBackgroundColor,
                 body: CustomScrollView(
                     controller: _scrollController,
                     physics: const BouncingScrollPhysics(

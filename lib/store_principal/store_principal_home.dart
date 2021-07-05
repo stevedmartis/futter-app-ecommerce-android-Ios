@@ -9,12 +9,14 @@ import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/pages/search_principal_page.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
+import 'package:australti_ecommerce_app/responses/stores_list_principal_response.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/store_principal/store_Service.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:australti_ecommerce_app/widgets/modal_bottom_sheet.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -23,6 +25,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 import '../global/extension.dart';
+import 'package:australti_ecommerce_app/services/stores_Services.dart'
+    as storeServices;
 
 class StorePrincipalHome extends StatefulWidget {
   @override
@@ -126,6 +130,59 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     }
   }
 
+  pullToRefreshData() async {
+    if (storeAuth.user.uid != '0') {
+      storesByLocationlistServices(storeAuth.city);
+    } else if (prefs.isLocationCurrent) {
+      storesByLocationlistServices(prefs.addressSave['locality']);
+    } else {
+      storeslistServices();
+    }
+  }
+
+  void storesByLocationlistServices(String location) async {
+    final storeService =
+        Provider.of<storeServices.StoreService>(context, listen: false);
+
+    final StoresListResponse resp =
+        await storeService.getStoresLocationListServices(location);
+
+    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
+
+    if (resp.ok) {
+      storeBloc.storesListInitial = [];
+      storeBloc.storesListInitial = resp.storeListServices;
+
+      print(_selected);
+
+      changeToCurrentService();
+    }
+  }
+
+  changeToCurrentService() {
+    if (_selected.id == 1) storeBloc.changeToMarket();
+
+    if (_selected.id == 2) storeBloc.changeToRestaurant();
+
+    if (_selected.id == 3) storeBloc.changeToLiqueur();
+  }
+
+  void storeslistServices() async {
+    final storeService =
+        Provider.of<storeServices.StoreService>(context, listen: false);
+
+    final StoresListResponse resp =
+        await storeService.getStoresListServices(storeAuth.user.uid);
+
+    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
+
+    if (resp.ok) {
+      storeBloc.storesListInitial = resp.storeListServices;
+
+      changeToCurrentService();
+    }
+  }
+
   Future<String> getListCart(String key) async {
     SharedPreferences myPrefs = await SharedPreferences.getInstance();
 
@@ -158,187 +215,191 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
             return false;
           },
           child: SafeArea(
-              child: CustomScrollView(
-            physics: const BouncingScrollPhysics(
-                parent: AlwaysScrollableScrollPhysics()),
-            controller: _scrollController,
-            slivers: [
-              SliverAppBar(
-                leadingWidth: 60,
-                backgroundColor: currentTheme.scaffoldBackgroundColor,
-                leading: Container(
-                    width: 100,
-                    height: 100,
-                    margin: EdgeInsets.only(left: 10, top: 10),
-                    child: GestureDetector(
-                      onTap: () {
-                        {
-                          if (storeAuth.user.uid == '0') {
-                            authService.redirect = 'profile';
-                            Navigator.push(context, loginRoute(100));
-                          } else {
-                            authService.redirect = 'home';
-                            Navigator.push(context, profileAuthRoute(true));
-                          }
-                        }
-                      },
-                      child: Container(
-                          width: 100,
-                          height: 100,
-                          child: Hero(
-                            tag: 'user_auth_avatar',
-                            child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(100.0)),
-                              child: (authService.storeAuth.imageAvatar != "")
-                                  ? Container(
-                                      width: 150,
-                                      height: 150,
-                                      child: cachedNetworkImage(
-                                        authService.storeAuth.imageAvatar,
-                                      ),
-                                    )
-                                  : Image.asset(currentProfile.imageAvatar),
-                            ),
-                          )),
-                    )),
-                actions: [
-                  Swing(
-                    animate: isItems,
-                    delay: Duration(seconds: 1),
-                    controller: (controller) =>
-                        Provider.of<NotificationModel>(context)
-                            .bounceControllerBell = controller,
-                    child: GestureDetector(
+              child: RefreshIndicator(
+            color: currentTheme.accentColor,
+            onRefresh: () => pullToRefreshData(),
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics()),
+              controller: _scrollController,
+              slivers: [
+                SliverAppBar(
+                  leadingWidth: 60,
+                  backgroundColor: currentTheme.scaffoldBackgroundColor,
+                  leading: Container(
+                      width: 100,
+                      height: 100,
+                      margin: EdgeInsets.only(left: 10, top: 10),
+                      child: GestureDetector(
                         onTap: () {
-                          showMaterialCupertinoBottomSheet(
-                              context, 'hello', 'hello2');
+                          {
+                            if (storeAuth.user.uid == '0') {
+                              authService.redirect = 'profile';
+                              Navigator.push(context, loginRoute(100));
+                            } else {
+                              authService.redirect = 'home';
+                              Navigator.push(context, profileAuthRoute(true));
+                            }
+                          }
                         },
-                        child: Stack(
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(
-                                  left: 10,
-                                  top: (isItems) ? 12 : 15,
-                                  right: 15),
-                              child: (isItems)
-                                  ? Icon(
-                                      Icons.shopping_bag,
-                                      color: currentTheme.primaryColor,
-                                      size: 40,
-                                    )
-                                  : Icon(
-                                      Icons.shopping_bag_outlined,
-                                      color: currentTheme.primaryColor,
-                                      size: 35,
-                                    ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(left: 22, top: 30),
-                              child: (groceryBloc.totalCartElements() > 0)
-                                  ? Container(
-                                      child: Text(
-                                        groceryBloc
-                                            .totalCartElements()
-                                            .toString(),
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold),
+                        child: Container(
+                            width: 100,
+                            height: 100,
+                            child: Hero(
+                              tag: 'user_auth_avatar',
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(100.0)),
+                                child: (authService.storeAuth.imageAvatar != "")
+                                    ? Container(
+                                        width: 150,
+                                        height: 150,
+                                        child: cachedNetworkImage(
+                                          authService.storeAuth.imageAvatar,
+                                        ),
+                                      )
+                                    : Image.asset(currentProfile.imageAvatar),
+                              ),
+                            )),
+                      )),
+                  actions: [
+                    Swing(
+                      animate: isItems,
+                      delay: Duration(seconds: 1),
+                      controller: (controller) =>
+                          Provider.of<NotificationModel>(context)
+                              .bounceControllerBell = controller,
+                      child: GestureDetector(
+                          onTap: () {
+                            showMaterialCupertinoBottomSheet(
+                                context, 'hello', 'hello2');
+                          },
+                          child: Stack(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(
+                                    left: 10,
+                                    top: (isItems) ? 12 : 15,
+                                    right: 15),
+                                child: (isItems)
+                                    ? Icon(
+                                        Icons.shopping_bag,
+                                        color: currentTheme.primaryColor,
+                                        size: 40,
+                                      )
+                                    : Icon(
+                                        Icons.shopping_bag_outlined,
+                                        color: currentTheme.primaryColor,
+                                        size: 35,
                                       ),
-                                      alignment: Alignment.center,
-                                      width: 15,
-                                      height: 15,
-                                      decoration: BoxDecoration(
-                                          color: Color(0xff32D73F),
-                                          shape: BoxShape.circle),
-                                    )
-                                  : Container(),
-                            ),
-                          ],
-                        )),
-                  ),
-                ],
-                stretch: true,
-                expandedHeight: 250.0,
-                collapsedHeight: 70,
-                floating: false,
-                pinned: true,
-                flexibleSpace: FlexibleSpaceBar(
-                  stretchModes: [
-                    StretchMode.zoomBackground,
-                    StretchMode.fadeTitle,
-                    // StretchMode.blurBackground
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(left: 22, top: 30),
+                                child: (groceryBloc.totalCartElements() > 0)
+                                    ? Container(
+                                        child: Text(
+                                          groceryBloc
+                                              .totalCartElements()
+                                              .toString(),
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        alignment: Alignment.center,
+                                        width: 15,
+                                        height: 15,
+                                        decoration: BoxDecoration(
+                                            color: Color(0xff32D73F),
+                                            shape: BoxShape.circle),
+                                      )
+                                    : Container(),
+                              ),
+                            ],
+                          )),
+                    ),
                   ],
-                  background: Material(
-                    type: MaterialType.transparency,
-                    child: Stack(
-                      children: <Widget>[
-                        Positioned.fill(
-                          child: AnimatedSwitcher(
-                            duration: Duration(milliseconds: 700),
-                            child: StoreServiceDetails(
-                              key: Key(_selected.name),
-                              storeService: _selected,
+                  stretch: true,
+                  expandedHeight: 250.0,
+                  collapsedHeight: 70,
+                  floating: false,
+                  pinned: true,
+                  flexibleSpace: FlexibleSpaceBar(
+                    stretchModes: [
+                      StretchMode.zoomBackground,
+                      StretchMode.fadeTitle,
+                      // StretchMode.blurBackground
+                    ],
+                    background: Material(
+                      type: MaterialType.transparency,
+                      child: Stack(
+                        children: <Widget>[
+                          Positioned.fill(
+                            child: AnimatedSwitcher(
+                              duration: Duration(milliseconds: 700),
+                              child: StoreServiceDetails(
+                                key: Key(_selected.name),
+                                storeService: _selected,
+                              ),
                             ),
                           ),
-                        )
-                      ],
+                        ],
+                      ),
                     ),
+                    centerTitle: true,
+                    title: OpenContainer(
+                        closedElevation: 5,
+                        openElevation: 5,
+                        closedColor: (_showTitle)
+                            ? currentTheme.cardColor
+                            : Colors.black.withOpacity(0.20),
+                        openColor: (_showTitle)
+                            ? currentTheme.cardColor
+                            : Colors.black.withOpacity(0.20),
+                        transitionType: ContainerTransitionType.fade,
+                        openShape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        closedShape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        openBuilder: (_, closeContainer) {
+                          return SearchPrincipalPage();
+                        },
+                        closedBuilder: (_, openContainer) {
+                          return Container(child: MyTextField(_showTitle));
+                        }),
                   ),
-                  centerTitle: true,
-                  title: OpenContainer(
-                      closedElevation: 5,
-                      openElevation: 5,
-                      closedColor: (_showTitle)
-                          ? currentTheme.cardColor
-                          : Colors.black.withOpacity(0.20),
-                      openColor: (_showTitle)
-                          ? currentTheme.cardColor
-                          : Colors.black.withOpacity(0.20),
-                      transitionType: ContainerTransitionType.fade,
-                      openShape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      closedShape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      openBuilder: (_, closeContainer) {
-                        return SearchPrincipalPage();
-                      },
-                      closedBuilder: (_, openContainer) {
-                        return Container(child: MyTextField(_showTitle));
-                      }),
                 ),
-              ),
-              SliverAppBar(
-                automaticallyImplyLeading: false,
-                expandedHeight: 150.0,
-                collapsedHeight: 150.0,
-                pinned: false,
-                actionsIconTheme: IconThemeData(opacity: 0.0),
-                flexibleSpace: Stack(
-                  children: <Widget>[
-                    Positioned.fill(
-                      child: Material(
-                          type: MaterialType.transparency,
-                          child: Container(
-                              color: currentTheme.scaffoldBackgroundColor,
-                              child: StoreServicesList(
-                                onPhotoSelected: (item) => {
-                                  _changeService(bloc, item.id),
-                                  setState(() {
-                                    _selected = item;
-                                  })
-                                },
-                              ))),
-                    )
-                  ],
+                SliverAppBar(
+                  automaticallyImplyLeading: false,
+                  expandedHeight: 150.0,
+                  collapsedHeight: 150.0,
+                  pinned: false,
+                  actionsIconTheme: IconThemeData(opacity: 0.0),
+                  flexibleSpace: Stack(
+                    children: <Widget>[
+                      Positioned.fill(
+                        child: Material(
+                            type: MaterialType.transparency,
+                            child: Container(
+                                color: currentTheme.scaffoldBackgroundColor,
+                                child: StoreServicesList(
+                                  onPhotoSelected: (item) => {
+                                    _changeService(bloc, item.id),
+                                    setState(() {
+                                      _selected = item;
+                                    })
+                                  },
+                                ))),
+                      )
+                    ],
+                  ),
                 ),
-              ),
 
-              // makeHeaderPrincipal(context),
-              makeHeaderTitle(context, _selected.name),
-              makeListRecomendations(),
-            ],
+                // makeHeaderPrincipal(context),
+                makeHeaderTitle(context, _selected.name),
+                makeListRecomendations(),
+              ],
+            ),
           )),
         ));
   }

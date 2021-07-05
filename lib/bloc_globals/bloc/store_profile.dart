@@ -14,6 +14,9 @@ class StoreProfileBloc with Validators {
 
   final _numberController = BehaviorSubject<String>();
 
+  final _timeController = BehaviorSubject<String>();
+  final _offController = BehaviorSubject<String>();
+
   // Recuperar los datos del Stream
   Stream<String> get emailStream =>
       _emailController.stream.transform(validarEmail);
@@ -31,7 +34,12 @@ class StoreProfileBloc with Validators {
   Stream<String> get numberStream =>
       _numberController.stream.transform(validationNumberPhoneRequired);
 
+  Stream<String> get timeStream =>
+      _timeController.stream.transform(validationOk);
+
   BehaviorSubject<bool> get imageUpdate => _imageUpdateCtrl;
+
+  Stream<String> get offStream => _offController.stream.transform(validationOk);
 
   Stream<bool> get formValidStream => CombineLatestStream.combine3(
       emailStream, nameStream, usernameSteam, (e, n, u) => true);
@@ -67,6 +75,8 @@ class StoreProfileBloc with Validators {
     _numberController?.close();
     _lastNameController?.close();
     _aboutController?.close();
+    _offController?.close();
+    _timeController?.close();
   }
 }
 

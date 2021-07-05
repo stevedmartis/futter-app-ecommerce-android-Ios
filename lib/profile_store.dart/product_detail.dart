@@ -178,28 +178,27 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                 padding: const EdgeInsets.all(15.0),
                 child: Row(
                   children: [
-                    Expanded(
-                        flex: 2,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.grey[200],
-                          radius: 25,
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.favorite_border,
-                              color: Colors.black,
-                            ),
-                            onPressed: () => null,
-                          ),
-                        )),
+                    CircleAvatar(
+                      backgroundColor: Colors.grey[200],
+                      radius: 25,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.favorite_border,
+                          color: Colors.black,
+                        ),
+                        onPressed: () => _addToCart(context),
+                      ),
+                    ),
                     Spacer(),
-                    Expanded(
-                        flex: 6,
-                        child: elevatedButtonCustom(
-                            context: context,
-                            title: 'Agregar a la bolsa',
-                            onPress: () {
-                              _addToCart(context);
-                            })),
+                    ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          primary: currentTheme.primaryColor,
+                          shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0),
+                          ),
+                        ),
+                        child: Text('  Agregar a la bolsa  '))
                   ],
                 ),
               ),
@@ -208,54 +207,50 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                 padding: const EdgeInsets.all(15.0),
                 child: Row(
                   children: [
-                    Expanded(
-                        flex: 6,
-                        child: elevatedButtonCustom(
-                          context: context,
-                          isDelete: true,
-                          title: 'Eliminar',
-                          onPress: () {
-                            final act = CupertinoActionSheet(
-                                title: Text('Eliminar este producto?',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 20)),
-                                message: Text(
-                                    'Se eliminara de tu lista de productos de forma permanente'),
-                                actions: <Widget>[
-                                  CupertinoActionSheetAction(
-                                    child: Text(
-                                      'Eliminar',
-                                      style: TextStyle(color: Colors.red),
-                                    ),
-                                    onPressed: () {
-                                      _deleteProduct();
-                                    },
-                                  )
-                                ],
-                                cancelButton: CupertinoActionSheetAction(
-                                  child: Text(
-                                    'Cancelar',
-                                    style: TextStyle(color: Colors.grey),
-                                  ),
-                                  onPressed: () {},
-                                ));
-                            showCupertinoModalPopup(
-                                context: context,
-                                builder: (BuildContext context) => act);
-                          },
-                        )),
-                    Spacer(),
-                    Expanded(
-                        flex: 6,
-                        child: elevatedButtonCustom(
-                            isEdit: true,
+                    elevatedButtonCustom(
+                      context: context,
+                      isDelete: true,
+                      title: 'Eliminar',
+                      onPress: () {
+                        final act = CupertinoActionSheet(
+                            title: Text('Eliminar este producto?',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20)),
+                            message: Text(
+                                'Se eliminara de tu lista de productos de forma permanente'),
+                            actions: <Widget>[
+                              CupertinoActionSheetAction(
+                                child: Text(
+                                  'Eliminar',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                                onPressed: () {
+                                  _deleteProduct();
+                                },
+                              )
+                            ],
+                            cancelButton: CupertinoActionSheetAction(
+                              child: Text(
+                                'Cancelar',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                              onPressed: () {},
+                            ));
+                        showCupertinoModalPopup(
                             context: context,
-                            title: 'Editar',
-                            onPress: () {
-                              Navigator.of(context).push(
-                                  createRouteAddEditProduct(
-                                      widget.product, true, widget.category));
-                            })),
+                            builder: (BuildContext context) => act);
+                      },
+                    ),
+                    Spacer(),
+                    elevatedButtonCustom(
+                        context: context,
+                        title: 'Editar',
+                        onPress: () {
+                          Navigator.of(context).push(createRouteAddEditProduct(
+                              widget.product, true, widget.category));
+                        },
+                        isEdit: true,
+                        isDelete: false),
                   ],
                 ),
               )

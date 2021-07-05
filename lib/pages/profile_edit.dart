@@ -24,7 +24,6 @@ import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -85,10 +84,6 @@ class EditProfilePageState extends State<EditProfilePage> {
 
     addressCtrl.text = store.address;
     cityCtrl.text = store.city;
-
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (store.user.first) openSheetBottom();
-    });
 
     usernameCtrl.addListener(() {
       setState(() {
@@ -377,7 +372,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                                                                   .imageFile,
                                                               width: 150,
                                                               height: 150,
-                                                            )
+                                                              fit: BoxFit.cover)
                                                           : (authService
                                                                       .storeAuth
                                                                       .imageAvatar !=
@@ -538,8 +533,31 @@ class EditProfilePageState extends State<EditProfilePage> {
                                           alignment: Alignment.centerRight,
                                           child: Text(categoryCtrl.text,
                                               style: TextStyle(
-                                                  color: Colors.grey)),
+                                                  color: Colors.grey,
+                                                  fontSize: 15)),
                                         ),
+                                        trailing: Icon(Icons.chevron_right,
+                                            color: Colors.grey),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        FocusScope.of(context)
+                                            .requestFocus(new FocusNode());
+                                        Navigator.push(context,
+                                            displayProfileStoreRoute());
+                                      },
+                                      child: ListTile(
+                                        leading: Text('Visualización de perfi',
+                                            style: TextStyle(fontSize: 18)),
+                                        /*  title: Container(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                              prefs.addressSearchSave.mainText,
+                                              style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 15)),
+                                        ), */
                                         trailing: Icon(Icons.chevron_right,
                                             color: Colors.grey),
                                       ),
@@ -562,14 +580,17 @@ class EditProfilePageState extends State<EditProfilePage> {
                                             children: [
                                               if (isEmail)
                                                 Icon(Icons.email,
-                                                    color: Colors.grey),
+                                                    color: Colors.grey,
+                                                    size: 20),
                                               SizedBox(width: 10),
                                               if (isPhone)
                                                 (UniversalPlatform.isAndroid)
                                                     ? Icon(Icons.phone_android,
-                                                        color: Colors.grey)
+                                                        color: Colors.grey,
+                                                        size: 20)
                                                     : Icon(Icons.phone_iphone,
-                                                        color: Colors.grey),
+                                                        color: Colors.grey,
+                                                        size: 20),
                                             ],
                                           ),
                                         ),
@@ -592,12 +613,13 @@ class EditProfilePageState extends State<EditProfilePage> {
                                           child: Text(
                                               prefs.addressSearchSave.mainText,
                                               style: TextStyle(
-                                                  color: Colors.grey)),
+                                                  color: Colors.grey,
+                                                  fontSize: 15)),
                                         ),
                                         trailing: Icon(Icons.chevron_right,
                                             color: Colors.grey),
                                       ),
-                                    )
+                                    ),
                                   ],
                                 ),
                               )
@@ -715,36 +737,6 @@ class EditProfilePageState extends State<EditProfilePage> {
 
     return filemMultiPart;
   }
-
-/*   Widget _createSwitch() {
-    final currentTheme = Provider.of<ThemeChanger>(context);
-
-    return Container(
-        child: ListTile(
-      //leading: FaIcon(FontAwesomeIcons.moon, color: accentColor),
-      title: Text(
-        'Mostrar al publico',
-        style: TextStyle(
-            color:
-                (currentTheme.customTheme) ? Colors.white54 : Colors.black54),
-      ),
-      trailing: Switch.adaptive(
-        activeColor: currentTheme.currentTheme.accentColor,
-        value: isSwitchChange,
-        onChanged: (value) {
-          setState(() {
-            isSwitched = value;
-
-            if (isSwitched != store.visibility) {
-              this.isSwitchChange = true;
-            } else {
-              this.isSwitchChange = false;
-            }
-          });
-        },
-      ),
-    ));
-  } */
 
   Widget _createButton(bool isUsernameChange, bool isAboutChange,
       bool isEmailChange, bool isNameChange, bool isPassChange) {

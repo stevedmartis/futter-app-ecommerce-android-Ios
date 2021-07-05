@@ -5,6 +5,7 @@ import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/multiple_card_flow/multiple_card_flow.dart';
 import 'package:australti_ecommerce_app/pages/account_store/category_store.dart';
 import 'package:australti_ecommerce_app/pages/account_store/contact_info_store.dart';
+import 'package:australti_ecommerce_app/pages/account_store/display_profile.dart';
 import 'package:australti_ecommerce_app/pages/account_store/edit_address_store.dart';
 import 'package:australti_ecommerce_app/pages/categories_store.dart';
 import 'package:australti_ecommerce_app/pages/confirm_location.dart';
@@ -315,6 +316,20 @@ Route contactoInfoStoreRoute() {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) {
       return ContactInfoStore();
+    },
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: animation,
+        child: child,
+      );
+    },
+  );
+}
+
+Route displayProfileStoreRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return DisplayProfileStore();
     },
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       return FadeTransition(

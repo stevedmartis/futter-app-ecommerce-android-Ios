@@ -271,7 +271,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
                               width: 100,
                               child: ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
-                                  child: cachedNetworkImage(
+                                  child: cachedContainNetworkImage(
                                       product.images[0].url))))),
                 ),
                 const SizedBox(width: 10),

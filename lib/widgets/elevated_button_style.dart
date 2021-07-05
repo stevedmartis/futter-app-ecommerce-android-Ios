@@ -17,46 +17,29 @@ elevatedButtonCustom(
   final currentTheme =
       Provider.of<ThemeChanger>(context, listen: false).currentTheme;
 
-  return Center(
-    child: Container(
-      width: 300,
-      height: 60,
-      decoration: ShapeDecoration(
-        shape: StadiumBorder(),
-        gradient: RadialGradient(
-          center: Alignment(0.7, -0.6), // near the top right
-          radius: 0.2,
-          colors: [
-            if (!isEdit) currentTheme.primaryColor.withOpacity(0.90),
-            if (!isEdit) Color(0xff3AFF4D),
-            if (!isEdit) currentTheme.primaryColor.withOpacity(0.90),
-            if (isEdit) Colors.white,
-            if (isEdit) Color(0xff3AFF4D),
-            if (isEdit) Colors.white.withOpacity(0.90),
-            if (isDelete)
-              currentTheme.scaffoldBackgroundColor.withOpacity(0.90),
-            if (isDelete) Color(0xff3AFF4D),
-            if (isDelete)
-              currentTheme.scaffoldBackgroundColor.withOpacity(0.90),
-          ],
-          stops: <double>[0.4, 1.0],
-        ),
-      ),
-      child: MaterialButton(
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          shape: StadiumBorder(),
-          child: Text(
-            title,
-            style: TextStyle(
-                color: (isEdit)
-                    ? Colors.black
-                    : (isDelete)
-                        ? Colors.red
-                        : Colors.white,
-                fontSize: 20),
-          ),
-          onPressed: () => onPress()),
+  return OutlinedButton(
+    style: ButtonStyle(
+      shape: MaterialStateProperty.all<OutlinedBorder>(StadiumBorder()),
+      side: MaterialStateProperty.resolveWith<BorderSide>(
+          (Set<MaterialState> states) {
+        final Color color = states.contains(MaterialState.pressed)
+            ? Colors.blue
+            : (isEdit)
+                ? Colors.grey
+                : isDelete
+                    ? currentTheme.scaffoldBackgroundColor
+                    : Colors.black;
+        return BorderSide(color: color, width: 2);
+      }),
     ),
+    onPressed: onPress,
+    child: Text(title,
+        style: TextStyle(
+            color: (isEdit)
+                ? Colors.white
+                : isDelete
+                    ? Colors.red
+                    : Colors.white)),
   );
 }
 

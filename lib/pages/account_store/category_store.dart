@@ -54,9 +54,9 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
 
     final authService = Provider.of<AuthenticationBLoC>(context);
 
-    if (authService.serviceSelect == 1) categoryCtrl.text = 'Restaurante';
+    if (authService.serviceSelect == 2) categoryCtrl.text = 'Restaurante';
 
-    if (authService.serviceSelect == 2)
+    if (authService.serviceSelect == 1)
       categoryCtrl.text = 'Frutería/Verdulería';
     if (authService.serviceSelect == 3)
       categoryCtrl.text = 'Licorería/Botillería';
@@ -157,7 +157,7 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
                                 color: currentTheme.scaffoldBackgroundColor,
                                 child: InkWell(
                                   onTap: () => {
-                                    authService.serviceChange = 1,
+                                    authService.serviceChange = 2,
                                   },
                                   child: ListTile(
                                       tileColor:
@@ -169,7 +169,7 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
                                             color: Colors.white,
                                             fontWeight: FontWeight.w500),
                                       ),
-                                      trailing: (authService.serviceSelect == 1)
+                                      trailing: (authService.serviceSelect == 2)
                                           ? Container(
                                               child: Icon(Icons.check_circle,
                                                   color:
@@ -200,7 +200,7 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
                                 color: currentTheme.scaffoldBackgroundColor,
                                 child: InkWell(
                                   onTap: () => {
-                                    authService.serviceChange = 2,
+                                    authService.serviceChange = 1,
                                   },
                                   child: ListTile(
                                       tileColor:
@@ -212,7 +212,7 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
                                             color: Colors.white,
                                             fontWeight: FontWeight.w500),
                                       ),
-                                      trailing: (authService.serviceSelect == 2)
+                                      trailing: (authService.serviceSelect == 1)
                                           ? Container(
                                               child: Icon(Icons.check_circle,
                                                   color:

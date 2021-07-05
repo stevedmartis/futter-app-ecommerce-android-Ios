@@ -140,7 +140,7 @@ class _SingleImageUploadState extends State<SingleImageUpload> {
       source: ImageSource.gallery,
       imageQuality: 50,
       maxHeight: 680,
-      maxWidth: 1800,
+      maxWidth: 1000,
     );
 
     final File file = File(pickedFile.path);

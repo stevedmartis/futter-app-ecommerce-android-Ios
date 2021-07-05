@@ -114,15 +114,6 @@ class _CatalogosListPagePageState extends State<CatalogosListPage> {
                                       category, false, tabsViewScrollBLoC)),
                         }))));
   }
-
-  void addBandToList(String name) {
-    if (name.length > 1) {
-      final socketService = Provider.of<SocketService>(context, listen: false);
-      socketService.emit('add-band', {'name': name});
-    }
-
-    Navigator.pop(context);
-  }
 }
 
 class CatalogsList extends StatefulWidget {
@@ -236,48 +227,8 @@ class _CatalogsListState extends State<CatalogsList>
                 ? 160 * (catalogos.length).toDouble()
                 : 160,
             child: _buildCatalogoWidget()));
-    /*  Container(
-      height: double.maxFinite,
-      child: StreamBuilder<StoreCategoriesResponse>(
-        stream: _bloc.myCatalogos.stream,
-        builder: (context, AsyncSnapshot<StoreCategoriesResponse> snapshot) {
-          if (snapshot.hasData) {
-            catalogos = snapshot.data.storeCategories;
-
-            return (catalogos.length > 0)
-                ? Container(child: _buildCatalogoWidget(catalogos))
-                : _buildEmptyWidget(); // image is ready
-
-          } else if (snapshot.hasError) {
-            return _buildErrorWidget(snapshot.error);
-          } else {
-            return _buildLoadingWidget();
-          }
-        },
-      ),
-    ); */
   }
 
-/*   Widget _buildLoadingWidget() {
-    return Container(
-        height: 400.0, child: Center(child: CircularProgressIndicator()));
-  }
-
-  Widget _buildEmptyWidget() {
-    return Container(
-        height: 400.0, child: Center(child: Text('Sin Catalogos, crea nuevo')));
-  }
-
-  Widget _buildErrorWidget(String error) {
-    return Center(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text("Error occured: $error"),
-      ],
-    ));
-  }
- */
   Future _deleteCategory(String id, int index) async {
     final res = await this.catalogoService.deleteCatalogo(id);
 

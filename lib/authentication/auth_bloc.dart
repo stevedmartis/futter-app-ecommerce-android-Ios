@@ -473,6 +473,58 @@ class AuthenticationBLoC with ChangeNotifier {
     }
   }
 
+  Future editDisplayStoreProfile(
+    String uid,
+    bool visibility,
+    String time,
+    int off,
+  ) async {
+    // this.authenticated = true;
+
+    final urlFinal = ('${Environment.apiUrl}/api/store/edit/display');
+
+    final data = {
+      'uid': uid,
+      'visibility': visibility,
+      'time': time,
+      'off': off
+    };
+
+    String token = '';
+    (UniversalPlatform.isWeb)
+        ? token = prefs.token
+        : token = await this._storage.read(key: 'token');
+
+    final resp = await http.post(Uri.parse(urlFinal),
+        body: jsonEncode(data),
+        headers: {'Content-Type': 'application/json', 'x-token': token});
+
+    if (resp.statusCode == 200) {
+      final loginResponse = loginResponseFromJson(resp.body);
+
+      storeAuth = loginResponse.store;
+
+      var placeStore = new PlaceSearch(
+          description: storeAuth.user.uid,
+          placeId: storeAuth.user.uid,
+          structuredFormatting: new StructuredFormatting(
+              mainText: storeAuth.address,
+              secondaryText: storeAuth.city,
+              number: storeAuth.number));
+
+      prefs.setLocationSearch = true;
+      prefs.setSearchAddreses = placeStore;
+
+      return true;
+    } else if (resp.statusCode == 400) {
+      final respBody = jsonDecode(resp.body);
+      return respBody['msg'];
+    } else {
+      final respBody = jsonDecode(resp.body);
+      return respBody['msg'];
+    }
+  }
+
   Future siginWithApple(
       String code,
       String email,

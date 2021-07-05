@@ -83,8 +83,6 @@ class TabsViewScrollBLoC with ChangeNotifier {
       });
     }
 
-    initialOK = true;
-
     //scrollController.addListener(_onScrollListener);
 
     scrollController2 = ScrollController()..addListener(() => {});
@@ -140,8 +138,6 @@ class TabsViewScrollBLoC with ChangeNotifier {
         return a.category.position.compareTo(b.category.position);
       });
     }
-
-    initialOK = true;
 
     scrollController.addListener(_onScrollListener);
 

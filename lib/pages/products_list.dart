@@ -219,29 +219,6 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
   }
 }
 
-/* class _ProfileStoreCategoryItem extends StatelessWidget {
-  const _ProfileStoreCategoryItem(this.category);
-  final ProfileStoreCategory category;
-
-  @override
-  Widget build(BuildContext context) {
-    final currentTheme = Provider.of<ThemeChanger>(context);
-
-    return Container(
-      height: categoryHeight,
-      alignment: Alignment.centerLeft,
-      child: Text(
-        category.name,
-        style: TextStyle(
-          color: (!currentTheme.customTheme) ? Colors.black54 : Colors.white54,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-} */
-
 class _ProfileAuthStoreProductItem extends StatelessWidget {
   const _ProfileAuthStoreProductItem(this.product, this.category);
   final ProfileStoreProduct product;
@@ -290,8 +267,8 @@ class _ProfileAuthStoreProductItem extends StatelessWidget {
                           child: ClipRRect(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(12.0)),
-                              child:
-                                  cachedNetworkImage(product.images[0].url)))),
+                              child: cachedContainNetworkImage(
+                                  product.images[0].url)))),
                 ),
                 const SizedBox(width: 10),
                 Expanded(

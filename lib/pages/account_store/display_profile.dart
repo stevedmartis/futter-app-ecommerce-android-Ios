@@ -12,22 +12,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:provider/provider.dart';
-import 'package:universal_platform/universal_platform.dart';
 
-class ContactInfoStore extends StatefulWidget {
+class DisplayProfileStore extends StatefulWidget {
   @override
-  _ContactInfoStoreState createState() => _ContactInfoStoreState();
+  _DisplayProfileStoreState createState() => _DisplayProfileStoreState();
 }
 
-class _ContactInfoStoreState extends State<ContactInfoStore> {
+class _DisplayProfileStoreState extends State<DisplayProfileStore> {
   final storeProfileBloc = StoreProfileBloc();
 
   final categoryCtrl = TextEditingController();
 
-  final emailCtl = TextEditingController();
-  final numberCtrl = TextEditingController();
+  final offCtl = TextEditingController();
+  final minTimeDeliveryCtrl = TextEditingController();
+  final maxTimeDeliveryCtrl = TextEditingController();
 
   final prefs = new AuthUserPreferences();
 
@@ -35,6 +36,11 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
   bool isNumberChange = false;
   bool loading = false;
   Store store;
+
+  bool isSwitched = false;
+
+  bool isSwitchChange = false;
+
   @override
   void initState() {
     _scrollController = ScrollController()..addListener(() => setState(() {}));
@@ -46,21 +52,40 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
       if (store.user.first) openSheetBottom();
     });
 
-    emailCtl.text = store.user.email;
-    numberCtrl.text = (store.user.phone == '0') ? '' : store.user.phone;
+    isSwitchChange = store.visibility;
 
-    emailCtl.addListener(() {
+    final getTimeMin = store.timeDelivery.toString().split("-").first;
+
+    final getTimeMax = store.timeDelivery.toString().split("-").last;
+
+    print(getTimeMax);
+    offCtl.text = (store.percentOff == 0) ? '' : store.percentOff.toString();
+
+    minTimeDeliveryCtrl.text = (getTimeMin == '0') ? '' : getTimeMin.trim();
+
+    maxTimeDeliveryCtrl.text = (getTimeMax == '0') ? '' : getTimeMax.trim();
+
+    offCtl.addListener(() {
       setState(() {
-        if (store.user.email != emailCtl.text)
+        if (store.user.email != offCtl.text)
           this.isEmailChange = true;
         else
           this.isEmailChange = false;
       });
     });
 
-    numberCtrl.addListener(() {
+    minTimeDeliveryCtrl.addListener(() {
       setState(() {
-        if (store.address != numberCtrl.text)
+        if (store.address != minTimeDeliveryCtrl.text)
+          this.isNumberChange = true;
+        else
+          this.isNumberChange = false;
+      });
+    });
+
+    maxTimeDeliveryCtrl.addListener(() {
+      setState(() {
+        if (store.address != maxTimeDeliveryCtrl.text)
           this.isNumberChange = true;
         else
           this.isNumberChange = false;
@@ -92,20 +117,13 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
 
     final authService = Provider.of<AuthenticationBLoC>(context);
 
-    if (authService.serviceSelect == 1) categoryCtrl.text = 'Restaurante';
-
-    if (authService.serviceSelect == 2)
-      categoryCtrl.text = 'Frutería/Verdulería';
-    if (authService.serviceSelect == 3)
-      categoryCtrl.text = 'Licorería/Botillería';
-
     return SafeArea(
         child: GestureDetector(
             onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
             child: Scaffold(
                 appBar: AppBar(
                   title:
-                      _showTitle ? Text('Información de contacto') : Text(''),
+                      _showTitle ? Text('Visualización de perfil') : Text(''),
                   backgroundColor: currentTheme.scaffoldBackgroundColor,
                   leading: IconButton(
                     color: currentTheme.accentColor,
@@ -144,7 +162,7 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
                                 Container(
                                   width: size.width,
                                   child: Text(
-                                    'Revisa tu información de contacto',
+                                    'Visualización de perfil',
                                     maxLines: 2,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -157,7 +175,7 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
                                 Container(
                                   width: size.width,
                                   child: Text(
-                                    'Estas opciones de contacto se mostrarán en tu perfil para que las personas puedan ponerse en contacto contigo. Puedes editarlas o eliminarlas cuando quieras.',
+                                    'Estas opciones de visualización se mostrarán en tu perfil. Puedes editarlas o eliminarlas cuando quieras.',
                                     style: TextStyle(
                                       color: Colors.grey,
                                       fontWeight: FontWeight.normal,
@@ -183,35 +201,88 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
                                   ),
                                 ),
 
-                                _createEmail(),
-                                _createNumber(),
+                                SizedBox(height: 10),
+
+                                _createSwitch(),
+                                SizedBox(height: 10),
+
+                                _createOff(),
+                                SizedBox(height: 20),
+
+                                Container(
+                                  width: size.width,
+                                  child: Text(
+                                    'Tiempo de entrega: ',
+                                    maxLines: 2,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                Row(
+                                  children: [
+                                    _createMinTimeDelivery(),
+                                    Container(
+                                      padding:
+                                          EdgeInsets.only(left: 10, right: 10),
+                                      child: Text(' - ',
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                    _createMaxTimeDelivery()
+                                  ],
+                                )
                               ]),
                             )
                           ]))
                     ]))));
   }
 
-  Widget _createNumber() {
+  Widget _createSwitch() {
+    final currentTheme = Provider.of<ThemeChanger>(context);
+
+    return Container(
+        child: ListTile(
+      //leading: FaIcon(FontAwesomeIcons.moon, color: accentColor),
+      title: Text(
+        'Mostrar al publico',
+        style: TextStyle(color: Colors.white54),
+      ),
+      trailing: Switch.adaptive(
+        activeColor: currentTheme.currentTheme.accentColor,
+        value: isSwitchChange,
+        onChanged: (value) {
+          FocusScope.of(context).requestFocus(new FocusNode());
+          setState(() {
+            isSwitchChange = value;
+            isSwitched = value;
+          });
+        },
+      ),
+    ));
+  }
+
+  Widget _createMinTimeDelivery() {
     return StreamBuilder(
-      stream: storeProfileBloc.numberStream,
+      stream: storeProfileBloc.timeStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+        final size = MediaQuery.of(context).size;
 
         return Container(
-          padding: EdgeInsets.symmetric(horizontal: 10.0),
+          width: size.width / 2.6,
           child: TextField(
             style: TextStyle(color: Colors.white),
-            controller: numberCtrl,
+            controller: minTimeDeliveryCtrl,
             inputFormatters: <TextInputFormatter>[
-              LengthLimitingTextInputFormatter(9),
+              LengthLimitingTextInputFormatter(2),
             ],
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
-                prefixIcon: Container(
-                  child: (UniversalPlatform.isAndroid)
-                      ? Icon(Icons.phone_android, color: Colors.white)
-                      : Icon(Icons.phone_iphone, color: Colors.white),
-                ),
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
                     color: Colors.white54,
@@ -230,9 +301,8 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
                       BorderSide(color: currentTheme.accentColor, width: 2.0),
                 ),
                 hintText: '',
-                prefix: Text('+56 ',
-                    style: TextStyle(color: currentTheme.accentColor)),
-                labelText: 'Número de teléfono de la tienda',
+                labelText: 'Minimo',
+                suffix: Text('Mins'),
                 //counterText: snapshot.data,
                 errorText: snapshot.error),
             onChanged: storeProfileBloc.changeNumber,
@@ -242,22 +312,77 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
     );
   }
 
-  Widget _createEmail() {
+  Widget _createMaxTimeDelivery() {
     return StreamBuilder(
-      stream: storeProfileBloc.emailStream,
+      stream: storeProfileBloc.timeStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+        final size = MediaQuery.of(context).size;
+
+        return Container(
+          width: size.width / 2.6,
+          child: TextField(
+            style: TextStyle(color: Colors.white),
+            controller: maxTimeDeliveryCtrl,
+            inputFormatters: <TextInputFormatter>[
+              LengthLimitingTextInputFormatter(2),
+            ],
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+                /*  prefixIcon: Container(
+                  child: Icon(Icons.timelapse, color: Colors.white),
+                ), */
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white54,
+                  ),
+                ),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                labelStyle: TextStyle(
+                  color: Colors.white54,
+                ),
+                // icon: Icon(Icons.perm_identity),
+                //  fillColor: currentTheme.accentColor,
+                focusedBorder: OutlineInputBorder(
+                  borderSide:
+                      BorderSide(color: currentTheme.accentColor, width: 2.0),
+                ),
+                hintText: '',
+                suffix: Text('Mins'),
+                labelText: 'Maximo',
+                //counterText: snapshot.data,
+                errorText: snapshot.error),
+            onChanged: storeProfileBloc.changeNumber,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _createOff() {
+    return StreamBuilder(
+      stream: storeProfileBloc.offStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         final currentTheme = Provider.of<ThemeChanger>(context);
 
         return Container(
-          padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
           child: TextField(
             style: TextStyle(
               color: (currentTheme.customTheme) ? Colors.white : Colors.black,
             ),
-            controller: emailCtl,
-            keyboardType: TextInputType.emailAddress,
+            controller: offCtl,
+            inputFormatters: <TextInputFormatter>[
+              LengthLimitingTextInputFormatter(2),
+            ],
+            keyboardType: TextInputType.number,
             decoration: InputDecoration(
-                prefixIcon: Icon(Icons.email_outlined, color: Colors.white),
+                prefixIcon: Container(
+                  margin: EdgeInsets.only(top: 15, left: 15),
+                  child: FaIcon(FontAwesomeIcons.percent,
+                      color: Colors.white, size: 16),
+                ),
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
                     color: (currentTheme.customTheme)
@@ -281,7 +406,7 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
                   ),
                 ),
                 hintText: '',
-                labelText: 'Correo electrónico de la tienda',
+                labelText: 'Descuento',
                 //counterText: snapshot.data,
                 errorText: snapshot.error),
             onChanged: storeProfileBloc.changeEmail,
@@ -299,11 +424,20 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
 
     final storeProfile = store;
 
-    final email = emailCtl.text.trim();
-    final phone = numberCtrl.text.trim();
+    final offText = offCtl.text.trim();
 
-    final editProfileOk = await authService.editInfoContactStoreProfile(
-        storeProfile.user.uid, email, phone);
+    final off = (offText == '') ? 0 : int.parse(offText);
+    final minTime = minTimeDeliveryCtrl.text.trim();
+    final maxTime = maxTimeDeliveryCtrl.text.trim();
+
+    final timeDelivery = '$minTime - $maxTime';
+
+    final editProfileOk = await authService.editDisplayStoreProfile(
+      storeProfile.user.uid,
+      isSwitchChange,
+      timeDelivery,
+      off,
+    );
 
     if (editProfileOk != null) {
       if (editProfileOk == true) {
