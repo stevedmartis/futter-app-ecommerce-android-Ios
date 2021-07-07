@@ -816,7 +816,7 @@ class SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 }
 
 Route createRouteAddEditProduct(
-    ProfileStoreProduct product, bool isEdit, ProfileStoreCategory category) {
+    ProfileStoreProduct product, bool isEdit, String category) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) =>
         AddUpdateProductPage(

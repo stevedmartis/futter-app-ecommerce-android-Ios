@@ -103,7 +103,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                     child: ListTile(
                                       leading: Container(
                                           width: 50,
-                                          height: 100,
+                                          height: 120,
                                           child: ClipRRect(
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(100.0)),

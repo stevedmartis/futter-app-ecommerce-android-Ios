@@ -78,6 +78,8 @@ class TabsViewScrollBLoC with ChangeNotifier {
         items.add(ProfileStoreItem(category: category, product: product));
       }
 
+      initialOK = true;
+
       tabs.sort((a, b) {
         return a.category.position.compareTo(b.category.position);
       });
@@ -241,6 +243,15 @@ class TabsViewScrollBLoC with ChangeNotifier {
     item.description = product.description;
     item.price = product.price;
     item.images = product.images;
+
+    notifyListeners();
+  }
+
+  void favoriteProduct(TickerProvider ticket, ProfileStoreProduct product) {
+    final item = items.firstWhere((item) => item.product.id == product.id,
+        orElse: () => null);
+
+    item.product.isLike = !item.product.isLike;
 
     notifyListeners();
   }

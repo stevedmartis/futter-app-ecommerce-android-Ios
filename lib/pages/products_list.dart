@@ -150,7 +150,7 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
                       action: Container(),
                       onPress: () => {
                         Navigator.of(context).push(createRouteAddEditProduct(
-                            product, false, widget.category)),
+                            product, false, widget.category.id)),
                       },
                       //   Container()
                       /*  IconButton(
@@ -209,7 +209,7 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
               itemBuilder: (context, index) {
                 final item = productsByCategoryList[index];
 
-                return _ProfileAuthStoreProductItem(item, widget.category);
+                return _ProfileAuthStoreProductItem(item, widget.category.id);
               },
             ),
           )
@@ -222,7 +222,7 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
 class _ProfileAuthStoreProductItem extends StatelessWidget {
   const _ProfileAuthStoreProductItem(this.product, this.category);
   final ProfileStoreProduct product;
-  final ProfileStoreCategory category;
+  final String category;
 
   @override
   Widget build(BuildContext context) {
@@ -543,7 +543,7 @@ class SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 }
 
 Route createRouteAddEditProduct(
-    ProfileStoreProduct product, bool isEdit, ProfileStoreCategory category) {
+    ProfileStoreProduct product, bool isEdit, String category) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) =>
         AddUpdateProductPage(

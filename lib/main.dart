@@ -1,5 +1,6 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/authentication/auth_firebase.dart';
+import 'package:australti_ecommerce_app/bloc_globals/bloc/favorites_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/pages/get_phone/providers/countries.dart';
 import 'package:australti_ecommerce_app/pages/get_phone/providers/phone_auth.dart';
@@ -50,6 +51,7 @@ void main() async {
     ChangeNotifierProvider(
       create: (context) => PhoneAuthDataProvider(),
     ),
+    ChangeNotifierProvider(create: (_) => FavoritesBLoC()),
   ], child: MyApp()));
 }
 

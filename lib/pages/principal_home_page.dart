@@ -4,14 +4,17 @@ import 'dart:ui';
 import 'package:animate_do/animate_do.dart';
 import 'package:animations/animations.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
+import 'package:australti_ecommerce_app/bloc_globals/bloc/favorites_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
+import 'package:australti_ecommerce_app/responses/my_favorites_products_response.dart';
 import 'package:australti_ecommerce_app/responses/stores_list_principal_response.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/services/catalogo.dart';
+import 'package:australti_ecommerce_app/services/product.dart';
 import 'package:australti_ecommerce_app/services/stores_Services.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
@@ -57,6 +60,7 @@ class _PrincipalPageState extends State<PrincipalPage>
 
     if (storeAuth.user.uid != '0') {
       storesByLocationlistServices(storeAuth.city);
+      myFovoritesProducts();
     } else if (prefs.isLocationCurrent) {
       storesByLocationlistServices(prefs.addressSave['locality']);
     } else {
@@ -146,6 +150,20 @@ class _PrincipalPageState extends State<PrincipalPage>
       storeBloc.storesListInitial = resp.storeListServices;
 
       storeBloc.changeToMarket();
+    }
+  }
+
+  void myFovoritesProducts() async {
+    final productService =
+        Provider.of<StoreProductService>(context, listen: false);
+
+    final StoreCategoriesResponse resp =
+        await productService.getMyFavoritesProducts(storeAuth.user.uid);
+
+    final storeBloc = Provider.of<FavoritesBLoC>(context, listen: false);
+
+    if (resp.ok) {
+      storeBloc.productsFavoritesList = resp.favoritesProducts;
     }
   }
 

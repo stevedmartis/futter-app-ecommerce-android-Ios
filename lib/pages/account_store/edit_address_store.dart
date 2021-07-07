@@ -1,6 +1,5 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
-import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/responses/place_search_response.dart';
 import 'package:australti_ecommerce_app/responses/stores_list_principal_response.dart';

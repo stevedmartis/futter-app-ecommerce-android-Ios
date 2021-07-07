@@ -10,6 +10,7 @@ import 'package:australti_ecommerce_app/pages/account_store/edit_address_store.d
 import 'package:australti_ecommerce_app/pages/categories_store.dart';
 import 'package:australti_ecommerce_app/pages/confirm_location.dart';
 import 'package:australti_ecommerce_app/pages/discovery_demo.dart';
+import 'package:australti_ecommerce_app/pages/favorite.dart';
 import 'package:australti_ecommerce_app/pages/get_phone/firebase/auth/phone_auth/get_phone.dart';
 import 'package:australti_ecommerce_app/pages/loading_page.dart';
 import 'package:australti_ecommerce_app/pages/login/login.dart';
@@ -36,11 +37,10 @@ final Map<String, Widget Function(BuildContext)> appRoutes = {
 
 final pageRouter = <_Route>[
   _Route(Icons.play_arrow, 'flow', MainStoreServicesApp()),
-  _Route(Icons.play_arrow, 'loading', LoadingPage()),
+  _Route(Icons.play_arrow, 'loading', MyFavorites()),
   _Route(Icons.play_arrow, 'store', CatalogosListPage()),
   _Route(Icons.play_arrow, 'message', MainAndroidMessagesAnimationApp()),
   _Route(Icons.play_arrow, 'notifications', MultipleCardFlow()),
-  _Route(Icons.play_arrow, 'loading', LoadingPage()),
 ];
 
 class _Route {
@@ -211,7 +211,7 @@ Route locationStoreRoute(PlacesSearch place) {
     pageBuilder: (context, animation, secondaryAnimation) =>
         LocationStorePage(place),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      var begin = Offset(0.2, 0.0);
+      var begin = Offset(0.5, 0.0);
       var end = Offset.zero;
       var curve = Curves.ease;
 
@@ -248,7 +248,7 @@ Route categoriesRoute() {
     pageBuilder: (context, animation, secondaryAnimation) =>
         CatalogosListPage(),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      var begin = Offset(0.2, 0.0);
+      var begin = Offset(0.1, 0.0);
       var end = Offset.zero;
       var curve = Curves.ease;
 
@@ -304,8 +304,14 @@ Route selectCategoryStoreRoute() {
       return CategorySelectStore();
     },
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      return FadeTransition(
-        opacity: animation,
+      var begin = Offset(0.5, 0.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
         child: child,
       );
     },
@@ -318,8 +324,14 @@ Route contactoInfoStoreRoute() {
       return ContactInfoStore();
     },
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      return FadeTransition(
-        opacity: animation,
+      var begin = Offset(0.5, 0.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
         child: child,
       );
     },
@@ -332,8 +344,14 @@ Route displayProfileStoreRoute() {
       return DisplayProfileStore();
     },
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      return FadeTransition(
-        opacity: animation,
+      var begin = Offset(0.5, 0.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
         child: child,
       );
     },

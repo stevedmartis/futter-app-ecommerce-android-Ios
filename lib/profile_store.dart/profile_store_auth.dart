@@ -7,6 +7,7 @@ import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -235,7 +236,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
               return FadeTransition(
                 opacity: animation,
                 child: ProductStoreDetails(
-                    category: category,
+                    category: category.id,
                     isAuthUser: true,
                     product: product,
                     onProductAdded: (int quantity) {
@@ -455,7 +456,7 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                     ),
                   ),
                   AnimatedContainer(
-                    width: size.width / 3,
+                    width: (percent <= 0.9) ? size.width : size.width / 3,
                     duration: Duration(milliseconds: 100),
                     child: Text(
                       '@$username',
@@ -678,18 +679,14 @@ class _ButtonEditProfileState extends State<ButtonEditProfile> {
                 child: Container(
                   width: 180,
                   height: 35,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.white),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 0.0),
-                        child: Text(
-                          'Editar perfil',
-                          style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      onPressed: () =>
-                          {Navigator.push(context, profileEditRoute())}),
+                  child: elevatedButtonCustom(
+                      context: context,
+                      title: 'Editar perfil',
+                      onPress: () {
+                        Navigator.push(context, profileEditRoute());
+                      },
+                      isEdit: true,
+                      isDelete: false),
                 ))
             : Positioned(
                 top: 90,
@@ -697,21 +694,14 @@ class _ButtonEditProfileState extends State<ButtonEditProfile> {
                 child: Container(
                   width: 100,
                   height: 35,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.white),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 0.0, horizontal: 10),
-                        child: Text(
-                          'Editar',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15),
-                        ),
-                      ),
-                      onPressed: () =>
-                          {Navigator.push(context, profileEditRoute())}),
+                  child: elevatedButtonCustom(
+                      context: context,
+                      title: 'Editar',
+                      onPress: () {
+                        Navigator.push(context, profileEditRoute());
+                      },
+                      isEdit: true,
+                      isDelete: false),
                 )),
       ],
     );

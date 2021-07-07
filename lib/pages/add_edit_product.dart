@@ -31,7 +31,7 @@ class AddUpdateProductPage extends StatefulWidget {
 
   final ProfileStoreProduct product;
   final bool isEdit;
-  final ProfileStoreCategory category;
+  final String category;
 
   @override
   _AddUpdateProductPageState createState() => _AddUpdateProductPageState();
@@ -656,12 +656,10 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
   }
 
   _createProduct() async {
-    // final catalogoService = Provider.of<StoreCategoiesService>(context, listen: false);
-
+    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+    final store = authService.storeAuth;
     final productService =
         Provider.of<StoreProductService>(context, listen: false);
-
-    // final uid = authService.profile.user.uid;
 
     final name = (productBloc.name == null)
         ? widget.product.name
@@ -682,8 +680,8 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
           price: int.parse(price),
           description: description,
           images: imagesProduct.images,
-          category: widget.category.id,
-          user: widget.category.store.user.uid,
+          category: widget.category,
+          user: store.user.uid,
           createdAt: DateTime.now(),
           updatedAt: DateTime.now());
 
@@ -711,8 +709,8 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
   }
 
   _editProduct() async {
-    // final catalogoService = Provider.of<StoreCategoiesService>(context, listen: false);
-
+    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+    final store = authService.storeAuth;
     final productService =
         Provider.of<StoreProductService>(context, listen: false);
 
@@ -746,7 +744,7 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
             description: description,
             images: imagesFinal,
             category: widget.product.category,
-            user: storeAuth.user.uid,
+            user: store.user.uid,
             createdAt: widget.product.createdAt,
             updatedAt: widget.product.updatedAt);
 
@@ -781,7 +779,7 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
           description: description,
           images: imagesFinal,
           category: widget.product.category,
-          user: storeAuth.user.uid,
+          user: store.user.uid,
           createdAt: widget.product.createdAt,
           updatedAt: widget.product.updatedAt);
 

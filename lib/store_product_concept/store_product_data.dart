@@ -3,16 +3,17 @@ import 'package:australti_ecommerce_app/models/user.dart';
 import 'package:meta/meta.dart' show required;
 
 class ProfileStoreCategory {
-  ProfileStoreCategory(
-      {@required this.id,
-      this.name = "",
-      this.products,
-      this.store,
-      this.createdAt,
-      this.position,
-      this.updatedAt,
-      this.description = "",
-      this.visibility = true});
+  ProfileStoreCategory({
+    @required this.id,
+    this.name = "",
+    this.products,
+    this.store,
+    this.createdAt,
+    this.position,
+    this.updatedAt,
+    this.description = "",
+    this.visibility = true,
+  });
   String id;
   String name;
   List<ProfileStoreProduct> products;
@@ -27,19 +28,19 @@ class ProfileStoreCategory {
 
   factory ProfileStoreCategory.fromJson(Map<String, dynamic> json) =>
       new ProfileStoreCategory(
-          id: json["id"],
-          name: json['name'],
-          store: Store.fromJson(json["store"]),
-          position: json["position"],
-          products: List<ProfileStoreProduct>.from(
-              json["products"].map((x) => ProfileStoreProduct.fromJson(x))),
-          createdAt: DateTime.parse(json["createdAt"]),
-          updatedAt: DateTime.parse(json["updatedAt"]),
-          description: json["description"],
-          visibility: json["visibility"]
+        id: json["id"],
+        name: json['name'],
+        store: Store.fromJson(json["store"]),
+        position: json["position"],
+        products: List<ProfileStoreProduct>.from(
+            json["products"].map((x) => ProfileStoreProduct.fromJson(x))),
+        createdAt: DateTime.parse(json["createdAt"]),
+        updatedAt: DateTime.parse(json["updatedAt"]),
+        description: json["description"],
+        visibility: json["visibility"],
 
-          //images: List<Image>.from(json["images"].map((x) => Image.fromJson(x))),
-          );
+        //images: List<Image>.from(json["images"].map((x) => Image.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -65,7 +66,8 @@ class ProfileStoreProduct {
       this.updatedAt,
       this.user,
       this.images,
-      this.category});
+      this.category,
+      this.isLike});
   String id;
   String name;
   String description;
@@ -76,6 +78,7 @@ class ProfileStoreProduct {
   DateTime createdAt;
   DateTime updatedAt;
   String user;
+  bool isLike;
 
   String category;
   factory ProfileStoreProduct.fromJson(Map<String, dynamic> json) =>
@@ -87,6 +90,7 @@ class ProfileStoreProduct {
         description: json['description'],
         price: json["price"],
         category: json["category"],
+        isLike: json["isLike"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
         images: List<ImageProduct>.from(
@@ -102,7 +106,8 @@ class ProfileStoreProduct {
         "name": name,
         "price": price,
         "user": user,
-        "category": category
+        "category": category,
+        "isLike": isLike,
       };
 }
 

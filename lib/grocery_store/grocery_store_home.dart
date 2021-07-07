@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/material.dart';
@@ -74,6 +75,8 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
 
     final bloc = Provider.of<GroceryStoreBLoC>(context);
 
+    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+
     return AnimatedBuilder(
         animation: bloc,
         builder: (context, _) {
@@ -102,7 +105,8 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                         color: Colors.black,
                       ),
                       child: ProfileStoreSelect(
-                        isAuthUser: false,
+                        isAuthUser: (widget.store.user.uid ==
+                            authService.storeAuth.user.uid),
                         store: widget.store,
                       ),
                     ),

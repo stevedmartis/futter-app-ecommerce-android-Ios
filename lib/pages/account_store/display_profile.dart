@@ -115,8 +115,6 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final size = MediaQuery.of(context).size;
 
-    final authService = Provider.of<AuthenticationBLoC>(context);
-
     return SafeArea(
         child: GestureDetector(
             onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),

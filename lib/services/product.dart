@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
+import 'package:australti_ecommerce_app/responses/favorite_response.dart';
 import 'package:australti_ecommerce_app/responses/images_product_response.dart';
+import 'package:australti_ecommerce_app/responses/my_favorites_products_response.dart';
 import 'package:australti_ecommerce_app/responses/product_response.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:australti_ecommerce_app/global/enviroments.dart';
@@ -39,12 +41,62 @@ class StoreProductService with ChangeNotifier {
 
   final _storage = new FlutterSecureStorage();
 
+  Future getMyFavoritesProducts(String uid) async {
+    (UniversalPlatform.isWeb)
+        ? token = prefs.token
+        : token = await this._storage.read(key: 'token');
+    final urlFinal =
+        ('${Environment.apiUrl}/api/product/products/favorites/user/$uid');
+
+    final resp = await http.get(Uri.parse(urlFinal),
+        headers: {'Content-Type': 'application/json', 'x-token': token});
+
+    if (resp.statusCode == 200) {
+      final storesListResponse =
+          myFavoritesStoreProductsResponseFromJson(resp.body);
+
+      return storesListResponse;
+    } else {
+      final respBody = errorMessageResponseFromJson(resp.body);
+
+      return respBody;
+    }
+  }
+
+  Future<FavoriteResponse> addUpdateFavorite(
+      String productId, String userId) async {
+    // this.authenticated = true;
+
+    final data = {'product': productId, 'user': userId};
+
+    (UniversalPlatform.isWeb)
+        ? token = prefs.token
+        : token = await this._storage.read(key: 'token');
+
+    final urlFinal = ('${Environment.apiUrl}/api/favorite/update/');
+
+    final resp = await http.post(Uri.parse(urlFinal),
+        body: jsonEncode(data),
+        headers: {'Content-Type': 'application/json', 'x-token': token});
+
+    if (resp.statusCode == 200) {
+      // final roomResponse = roomsResponseFromJson(resp.body);
+      final favoriteResponse = favoriteResponseFromJson(resp.body);
+      // this.rooms = roomResponse.rooms;
+
+      return favoriteResponse;
+    } else {
+      return FavoriteResponse.withError("");
+    }
+  }
+
   Future createProduct(ProfileStoreProduct product) async {
     // this.authenticated = true;
 
     final urlFinal = ('${Environment.apiUrl}/api/product/new');
-
-    final token = await this._storage.read(key: 'token');
+    (UniversalPlatform.isWeb)
+        ? token = prefs.token
+        : token = await this._storage.read(key: 'token');
 
     final resp = await http.post(Uri.parse(urlFinal),
         body: jsonEncode(product),
@@ -64,7 +116,9 @@ class StoreProductService with ChangeNotifier {
   Future editProduct(ProfileStoreProduct product) async {
     // this.authenticated = true;
 
-    final token = await this._storage.read(key: 'token');
+    (UniversalPlatform.isWeb)
+        ? token = prefs.token
+        : token = await this._storage.read(key: 'token');
     final urlFinal = ('${Environment.apiUrl}/api/product/update/product');
 
     final resp = await http.post(Uri.parse(urlFinal),
@@ -85,7 +139,9 @@ class StoreProductService with ChangeNotifier {
   }
 
   Future deleteProduct(String catalogoId) async {
-    final token = await this._storage.read(key: 'token');
+    (UniversalPlatform.isWeb)
+        ? token = prefs.token
+        : token = await this._storage.read(key: 'token');
 
     final urlFinal = ('${Environment.apiUrl}/api/product/delete/$catalogoId');
 
@@ -105,8 +161,9 @@ class StoreProductService with ChangeNotifier {
 
     final urlFinal =
         Uri.https('${Environment.apiUrl}', '/api/catalogo/update/position');
-
-    final token = await this._storage.read(key: 'token');
+    (UniversalPlatform.isWeb)
+        ? token = prefs.token
+        : token = await this._storage.read(key: 'token');
 
     //final data = {'name': name, 'email': description, 'uid': uid};
     final data = {'catalogos': catalogos, 'userId': userId};

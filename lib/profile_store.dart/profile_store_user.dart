@@ -1,11 +1,14 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
+import 'package:australti_ecommerce_app/profile_store.dart/profile_store_auth.dart';
 import 'package:australti_ecommerce_app/services/catalogo.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
+import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +21,6 @@ import 'dart:math' as math;
 import 'package:provider/provider.dart';
 import '../global/extension.dart';
 
-const _blueColor = Color(0xFF00649FE);
 const _textHighColor = Color(0xFF241E1E);
 const _textColor = Color(0xFF5C5657);
 
@@ -59,8 +61,10 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
     final storeService =
         Provider.of<StoreCategoiesService>(context, listen: false);
 
-    final resp =
-        await storeService.getAllCategoriesProducts(widget.store.user.uid);
+    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+
+    final resp = await storeService.getAllCategoriesProducts(
+        widget.store.user.uid, authService.storeAuth.user.uid);
 
     if (resp.ok) {
       _bloc.storeCategoriesProducts = resp.storeCategoriesProducts;
@@ -167,7 +171,7 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                         return (item.category.visibility)
                             ? FadeIn(
                                 child: _ProfileStoreProductItem(
-                                    item.product, item.category),
+                                    item.product, item.category, _bloc),
                               )
                             : Container();
                       },
@@ -228,11 +232,14 @@ void _listenNotification(context) {
 }
 
 class _ProfileStoreProductItem extends StatelessWidget {
-  const _ProfileStoreProductItem(this.product, this.category);
+  const _ProfileStoreProductItem(this.product, this.category, this.bloc);
 
   final ProfileStoreCategory category;
 
   final ProfileStoreProduct product;
+
+  final TabsViewScrollBLoC bloc;
+
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context);
@@ -249,9 +256,10 @@ class _ProfileStoreProductItem extends StatelessWidget {
               return FadeTransition(
                 opacity: animation,
                 child: ProductStoreDetails(
-                    category: category,
+                    category: category.id,
                     isAuthUser: false,
                     product: product,
+                    bloc: bloc,
                     onProductAdded: (int quantity) {
                       groceryBloc.addProduct(product, quantity);
 
@@ -593,127 +601,34 @@ class _ButtonFollowState extends State<ButtonFollow> {
                 top: 350,
                 left: widget.left,
                 child: Container(
-                  width: 180,
-                  height: 35,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: (!isFollow) ? Colors.white : _blueColor,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 0.0),
-                        child: Text(
-                          (isFollow) ? 'Follow' : 'Following',
-                          style: TextStyle(
-                              color: (isFollow) ? Colors.white : Colors.black,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      onPressed: () => {
-                            setState(() {
-                              this.changeFollow();
-                            })
-                          }),
-                ))
+                    width: 180,
+                    height: 35,
+                    child: elevatedButtonCustom(
+                        context: context,
+                        title: (isFollow) ? 'Follow' : 'Following',
+                        onPress: () {
+                          setState(() {
+                            this.changeFollow();
+                          });
+                        },
+                        isEdit: true,
+                        isDelete: false)))
             : Positioned(
                 top: 90,
                 right: 20,
                 child: Container(
-                  width: 100,
-                  height: 35,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          primary: (!isFollow) ? Colors.white : _blueColor),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 0.0),
-                        child: Text(
-                          (isFollow) ? 'Follow' : 'Following',
-                          style: TextStyle(
-                              color: (isFollow) ? Colors.white : Colors.black,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      onPressed: () => {
-                            setState(() {
-                              this.changeFollow();
-                            })
-                          }),
-                )),
-      ],
-    );
-  }
-}
-
-class ButtonEditProfile extends StatefulWidget {
-  const ButtonEditProfile(
-      {Key key, @required this.percent, @required this.bloc, this.left})
-      : super(key: key);
-
-  final num percent;
-  final TabsViewScrollBLoC bloc;
-  final double left;
-
-  @override
-  _ButtonEditProfileState createState() => _ButtonEditProfileState();
-}
-
-class _ButtonEditProfileState extends State<ButtonEditProfile> {
-  bool isFollow = false;
-  void changeFollow() {
-    isFollow = !isFollow;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        (widget.percent <= 0.9)
-            ? Positioned(
-                top: 350,
-                left: widget.left,
-                child: Container(
-                  width: 180,
-                  height: 35,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.white),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 0.0),
-                        child: Text(
-                          'Editar perfil',
-                          style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      onPressed: () => {
-                            setState(() {
-                              this.changeFollow();
-                            })
-                          }),
-                ))
-            : Positioned(
-                top: 90,
-                right: 20,
-                child: Container(
-                  width: 100,
-                  height: 35,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.white),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 0.0, horizontal: 10),
-                        child: Text(
-                          'Editar',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15),
-                        ),
-                      ),
-                      onPressed: () => {
-                            setState(() {
-                              this.changeFollow();
-                            })
-                          }),
-                )),
+                    width: 100,
+                    height: 35,
+                    child: elevatedButtonCustom(
+                        context: context,
+                        title: (isFollow) ? 'Follow' : 'Following',
+                        onPress: () {
+                          setState(() {
+                            this.changeFollow();
+                          });
+                        },
+                        isEdit: true,
+                        isDelete: false))),
       ],
     );
   }
