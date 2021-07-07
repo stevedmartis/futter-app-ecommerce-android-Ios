@@ -54,21 +54,6 @@ showSnackBar(BuildContext context, String text) {
       content: Text(text, style: TextStyle(color: Colors.white))));
 }
 
-void showFloating(BuildContext context) {
-  final currentTheme =
-      Provider.of<ThemeChanger>(context, listen: false).currentTheme;
-
-  SnackBar(
-    elevation: 6.0,
-    backgroundColor: currentTheme.accentColor,
-    behavior: SnackBarBehavior.floating,
-    content: Text(
-      "Snack bar test",
-      style: TextStyle(color: Colors.white),
-    ),
-  );
-}
-
 showModalLoading(BuildContext context) {
   bool isIos = UniversalPlatform.isIOS;
   bool isAndroid = UniversalPlatform.isAndroid;

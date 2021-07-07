@@ -13,7 +13,8 @@ elevatedButtonCustom(
     String title,
     VoidCallback onPress,
     bool isEdit = false,
-    bool isDelete = false}) {
+    bool isDelete = false,
+    bool isAccent = false}) {
   final currentTheme =
       Provider.of<ThemeChanger>(context, listen: false).currentTheme;
 
@@ -23,12 +24,14 @@ elevatedButtonCustom(
       side: MaterialStateProperty.resolveWith<BorderSide>(
           (Set<MaterialState> states) {
         final Color color = states.contains(MaterialState.pressed)
-            ? Colors.blue
-            : (isEdit)
-                ? Colors.grey
-                : isDelete
-                    ? currentTheme.scaffoldBackgroundColor
-                    : Colors.black;
+            ? currentTheme.accentColor
+            : (isAccent)
+                ? currentTheme.accentColor
+                : (isEdit)
+                    ? Colors.grey
+                    : isDelete
+                        ? currentTheme.scaffoldBackgroundColor
+                        : Colors.black;
         return BorderSide(color: color, width: 2);
       }),
     ),

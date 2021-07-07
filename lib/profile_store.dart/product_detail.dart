@@ -84,6 +84,8 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final size = MediaQuery.of(context).size;
 
+    final storeBloc = Provider.of<FavoritesBLoC>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(color: Colors.white),
@@ -100,7 +102,8 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                               AnimationStatus.completed) {
                             addToFavoriteButtonTapped();
                             animatedController.reverse();
-
+                            storeBloc.productsFavoritesList.removeWhere(
+                                (item) => item.id == widget.product.id);
                             showSnackBar(
                                 context, 'Se elimino de "Mis favoritos"');
                           }
@@ -110,6 +113,8 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                             addToFavoriteButtonTapped();
 
                             animatedController.forward();
+
+                            storeBloc.productsFavoritesList.add(widget.product);
 
                             showSnackBar(
                                 context, 'Agregado en "Mis favoritos"');
@@ -341,16 +346,10 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
     final success = await productService.addUpdateFavorite(
         widget.product.id, authBloc.storeAuth.user.uid);
 
-    final storeBloc = Provider.of<FavoritesBLoC>(context, listen: false);
-
     if (success.ok) {
-      if (!widget.fromFavorites) {
-        (!widget.isAuthUser)
-            ? widget.bloc.favoriteProduct(this, widget.product)
-            : productsBloc.favoriteProduct(this, widget.product);
-      } else {
-        storeBloc.favoriteProduct(widget.product);
-      }
+      (!widget.isAuthUser)
+          ? widget.bloc.favoriteProduct(this, widget.product)
+          : productsBloc.favoriteProduct(this, widget.product);
     }
     return true;
   }

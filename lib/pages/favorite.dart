@@ -192,10 +192,8 @@ class _CatalogsListState extends State<CatalogsList>
             itemBuilder: (context, index) {
               if (_bloc.productsFavoritesList.length > 0) {
                 final item = _bloc.productsFavoritesList[index];
-                return (item.isLike)
-                    ? FadeIn(
-                        child: _ProfileStoreProductItem(item, item.category))
-                    : Container();
+                return FadeIn(
+                    child: _ProfileStoreProductItem(item, item.category));
               } else {
                 return Center(
                     child: Container(

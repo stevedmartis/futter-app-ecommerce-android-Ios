@@ -369,7 +369,7 @@ class _ButtonFollowState extends State<ButtonFollow> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 0.0),
                         child: Text(
-                          (isFollow) ? 'Follow' : 'Following',
+                          (isFollow) ? 'Seguir' : 'Siguiendo',
                           style: TextStyle(
                               color: (isFollow) ? Colors.white : Colors.black,
                               fontWeight: FontWeight.bold),
@@ -393,7 +393,7 @@ class _ButtonFollowState extends State<ButtonFollow> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 0.0),
                         child: Text(
-                          (isFollow) ? 'Follow' : 'Following',
+                          (isFollow) ? 'Seguir' : 'Siguiendo',
                           style: TextStyle(
                               color: (isFollow) ? Colors.white : Colors.black,
                               fontWeight: FontWeight.bold),

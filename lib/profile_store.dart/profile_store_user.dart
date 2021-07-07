@@ -292,8 +292,12 @@ class _ProfileStoreProductItem extends StatelessWidget {
                           child: Container(
                               width: 100,
                               height: 100,
-                              child: cachedContainNetworkImage(
-                                  product.images[0].url)))),
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(12)),
+                                child: cachedContainNetworkImage(
+                                    product.images[0].url),
+                              )))),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -605,14 +609,15 @@ class _ButtonFollowState extends State<ButtonFollow> {
                     height: 35,
                     child: elevatedButtonCustom(
                         context: context,
-                        title: (isFollow) ? 'Follow' : 'Following',
+                        title: (isFollow) ? 'Seguir' : 'Siguiendo',
                         onPress: () {
                           setState(() {
                             this.changeFollow();
                           });
                         },
                         isEdit: true,
-                        isDelete: false)))
+                        isDelete: false,
+                        isAccent: (isFollow))))
             : Positioned(
                 top: 90,
                 right: 20,
@@ -621,14 +626,15 @@ class _ButtonFollowState extends State<ButtonFollow> {
                     height: 35,
                     child: elevatedButtonCustom(
                         context: context,
-                        title: (isFollow) ? 'Follow' : 'Following',
+                        title: (isFollow) ? 'Seguir' : 'Siguiendo',
                         onPress: () {
                           setState(() {
                             this.changeFollow();
                           });
                         },
                         isEdit: true,
-                        isDelete: false))),
+                        isDelete: false,
+                        isAccent: (isFollow)))),
       ],
     );
   }

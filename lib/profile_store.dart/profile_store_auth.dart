@@ -137,7 +137,7 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
                           child: _ProfileStoreCategoryItem(item.category));
                     } else {
                       return _ProfileStoreProductItem(
-                          item.product, item.category);
+                          item.product, item.product.category);
                     }
                   },
                 ),
@@ -217,7 +217,7 @@ void _listenNotification(context) {
 class _ProfileStoreProductItem extends StatelessWidget {
   const _ProfileStoreProductItem(this.product, this.category);
 
-  final ProfileStoreCategory category;
+  final String category;
 
   final ProfileStoreProduct product;
   @override
@@ -236,7 +236,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
               return FadeTransition(
                 opacity: animation,
                 child: ProductStoreDetails(
-                    category: category.id,
+                    category: category,
                     isAuthUser: true,
                     product: product,
                     onProductAdded: (int quantity) {
