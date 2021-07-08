@@ -1,4 +1,6 @@
 import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/services/stores_Services.dart';
+import 'package:australti_ecommerce_app/store_principal/store_Service.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +17,27 @@ class StoreBLoC with ChangeNotifier {
 
   List<Store> storesListInitial = [];
 
+  List<StoreServices> servicesStores = [
+    StoreServices(
+        id: 1,
+        backImage: 'assets/frutas_verduras3.jpeg',
+        frontImage: 'assets/frutas_verduras3.jpeg',
+        name: 'Mercados',
+        stores: 0),
+    StoreServices(
+        id: 2,
+        backImage: 'assets/rest6.jpg',
+        frontImage: 'assets/rest6.jpg',
+        name: 'Restaurantes',
+        stores: 0),
+    StoreServices(
+        id: 3,
+        backImage: 'assets/licores1.jpeg',
+        frontImage: 'assets/licores1.jpeg',
+        name: 'Licores',
+        stores: 0)
+  ];
+
   List<GroceryProductItem> cart = [];
   final notifierTotal = ValueNotifier(1);
   // final notifierBottom = ValueNotifier<bool>(true);
@@ -22,6 +45,19 @@ class StoreBLoC with ChangeNotifier {
   bool isVisible = showBottomInit;
 
   Store _storeCurrent;
+
+  void chargeServicesStores() {
+    final markets = storesListInitial.where((i) => i.service == 1).toList();
+
+    final restaurants = storesListInitial.where((i) => i.service == 2).toList();
+
+    final liquers = storesListInitial.where((i) => i.service == 3).toList();
+
+    servicesStores[0].stores = markets.length;
+
+    servicesStores[1].stores = restaurants.length;
+    servicesStores[2].stores = liquers.length;
+  }
 
   void changeToRestaurant() {
     storeState = StoreState.restaurant;
@@ -55,6 +91,7 @@ class StoreBLoC with ChangeNotifier {
     storesListState = newList;
 
     notifierTotal.value = 1;
+
     notifyListeners();
   }
 

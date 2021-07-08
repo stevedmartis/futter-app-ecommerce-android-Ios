@@ -59,6 +59,10 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
     if (bloc.isReload) this.getCartSave();
 
+    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
+
+    _selected = storeBloc.servicesStores.first;
+
     bloc.changeReaload();
 
     super.initState();
@@ -191,7 +195,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
   Store storeAuth;
 
-  StoreService _selected = storeService.first;
+  StoreServices _selected;
 
   @override
   Widget build(BuildContext context) {
@@ -537,9 +541,18 @@ class HeaderCustom extends StatefulWidget {
   _HeaderCustomState createState() => _HeaderCustomState();
 }
 
-StoreService selected = storeService.first;
+StoreServices selected;
 
 class _HeaderCustomState extends State<HeaderCustom> {
+  @override
+  void initState() {
+    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
+
+    selected = storeBloc.servicesStores.first;
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final topCardHeight = 50;
@@ -616,57 +629,6 @@ class SliverCustomHeaderDelegate extends SliverPersistentHeaderDelegate {
     return maxHeight != oldDelegate.maxHeight ||
         minHeight != oldDelegate.minHeight ||
         child != oldDelegate.child;
-  }
-}
-
-class FakeReview extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SizedBox(
-        height: 90,
-        child: Row(
-          children: <Widget>[
-            AspectRatio(
-              aspectRatio: 1,
-              child: Image.asset(
-                storeService.first.backImage,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  const SizedBox(height: 10),
-                  Expanded(
-                    child: Text(
-                      'MON 11 DIC 13 20',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Nice days in a good place',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Fly ticket',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 
@@ -793,7 +755,7 @@ class StoreCard extends StatelessWidget {
 }
 
 class StoreServiceDetails extends StatefulWidget {
-  final StoreService storeService;
+  final StoreServices storeService;
 
   const StoreServiceDetails({Key key, this.storeService}) : super(key: key);
 
@@ -1052,7 +1014,7 @@ class MyTextField extends StatelessWidget {
 
 class StoreServicesList extends StatefulWidget {
   const StoreServicesList({Key key, this.onPhotoSelected}) : super(key: key);
-  final ValueChanged<StoreService> onPhotoSelected;
+  final ValueChanged<StoreServices> onPhotoSelected;
 
   @override
   _StoreServicesListState createState() => _StoreServicesListState();
@@ -1086,21 +1048,25 @@ class _StoreServicesListState extends State<StoreServicesList> {
 
   @override
   Widget build(BuildContext context) {
+    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
+
     return AnimatedList(
       key: _animatedListKey,
       physics: PageScrollPhysics(),
       controller: _pageController,
       itemBuilder: (context, index, animation) {
-        final travelPhotoItem = storeService[index];
+        final travelPhotoItem = storeBloc.servicesStores[index];
         final percent = page - page.floor();
         final factor = percent > 0.5 ? (1 - percent) : percent;
         return InkWell(
           onTap: () {
-            storeService.insert(storeService.length, travelPhotoItem);
-            _animatedListKey.currentState.insertItem(storeService.length - 1);
+            storeBloc.servicesStores
+                .insert(storeBloc.servicesStores.length, travelPhotoItem);
+            _animatedListKey.currentState
+                .insertItem(storeBloc.servicesStores.length - 1);
             final itemToDelete = travelPhotoItem;
             widget.onPhotoSelected(travelPhotoItem);
-            storeService.removeAt(index);
+            storeBloc.servicesStores.removeAt(index);
             _animatedListKey.currentState.removeItem(
               index,
               (context, animation) => FadeTransition(
@@ -1130,13 +1096,13 @@ class _StoreServicesListState extends State<StoreServicesList> {
         );
       },
       scrollDirection: Axis.horizontal,
-      initialItemCount: storeService.length,
+      initialItemCount: storeBloc.servicesStores.length,
     );
   }
 }
 
 class TravelPhotoListItem extends StatelessWidget {
-  final StoreService travelPhoto;
+  final StoreServices travelPhoto;
 
   const TravelPhotoListItem({Key key, this.travelPhoto}) : super(key: key);
 
@@ -1158,6 +1124,23 @@ class TravelPhotoListItem extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
+              ),
+              Positioned.fill(
+                child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5.0),
+                        gradient: LinearGradient(
+                          colors: [
+                            Color.fromARGB(200, 0, 0, 0),
+                            Color.fromARGB(0, 0, 0, 0)
+                          ],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.center,
+                        ),
+                      ),
+                    )),
               ),
               Positioned.fill(
                 child: Padding(

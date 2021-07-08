@@ -15,8 +15,12 @@ import 'package:australti_ecommerce_app/responses/stores_list_principal_response
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/services/catalogo.dart';
 import 'package:australti_ecommerce_app/services/product.dart';
-import 'package:australti_ecommerce_app/services/stores_Services.dart';
+import 'package:australti_ecommerce_app/services/stores_Services.dart'
+    as storeServiceApi;
+
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
+import 'package:australti_ecommerce_app/store_principal/store_Service.dart';
+
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
@@ -60,7 +64,7 @@ class _PrincipalPageState extends State<PrincipalPage>
 
     if (storeAuth.user.uid != '0') {
       storesByLocationlistServices(storeAuth.city);
-      myFovoritesProducts();
+      myFavoritesProducts();
     } else if (prefs.isLocationCurrent) {
       storesByLocationlistServices(prefs.addressSave['locality']);
     } else {
@@ -124,7 +128,8 @@ class _PrincipalPageState extends State<PrincipalPage>
   }
 
   void myStoreslistServices() async {
-    final storeService = Provider.of<StoreService>(context, listen: false);
+    final storeService =
+        Provider.of<storeServiceApi.StoreService>(context, listen: false);
 
     final StoresListResponse resp =
         await storeService.getStoresListServices(storeAuth.user.uid);
@@ -133,13 +138,16 @@ class _PrincipalPageState extends State<PrincipalPage>
 
     if (resp.ok) {
       storeBloc.storesListInitial = resp.storeListServices;
+
+      storeBloc.chargeServicesStores();
 
       storeBloc.changeToMarket();
     }
   }
 
   void storeslistServices() async {
-    final storeService = Provider.of<StoreService>(context, listen: false);
+    final storeService =
+        Provider.of<storeServiceApi.StoreService>(context, listen: false);
 
     final StoresListResponse resp =
         await storeService.getStoresListServices(storeAuth.user.uid);
@@ -149,11 +157,13 @@ class _PrincipalPageState extends State<PrincipalPage>
     if (resp.ok) {
       storeBloc.storesListInitial = resp.storeListServices;
 
+      storeBloc.chargeServicesStores();
+
       storeBloc.changeToMarket();
     }
   }
 
-  void myFovoritesProducts() async {
+  void myFavoritesProducts() async {
     final productService =
         Provider.of<StoreProductService>(context, listen: false);
 
@@ -327,7 +337,8 @@ class _PrincipalPageState extends State<PrincipalPage>
   }
 
   void storesByLocationlistServices(String location) async {
-    final storeService = Provider.of<StoreService>(context, listen: false);
+    final storeService =
+        Provider.of<storeServiceApi.StoreService>(context, listen: false);
 
     final StoresListResponse resp =
         await storeService.getStoresLocationListServices(location);
@@ -338,6 +349,7 @@ class _PrincipalPageState extends State<PrincipalPage>
       storeBloc.storesListInitial = [];
       storeBloc.storesListInitial = resp.storeListServices;
 
+      storeBloc.chargeServicesStores();
       storeBloc.changeToMarket();
     }
   }
