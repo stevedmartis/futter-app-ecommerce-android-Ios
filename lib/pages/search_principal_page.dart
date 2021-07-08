@@ -1,4 +1,8 @@
+import 'package:animate_do/animate_do.dart';
+
+import 'package:australti_ecommerce_app/pages/favorite.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
+import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 
@@ -49,7 +53,7 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     // final roomsModel = Provider.of<Room>(context);
-
+    final storeBLoC = Provider.of<StoreBLoC>(context);
     return SafeArea(
       child: Scaffold(
         backgroundColor: currentTheme.scaffoldBackgroundColor,
@@ -64,6 +68,10 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
               slivers: <Widget>[
                 makeHeaderCustom('Mis Catalogos'),
 
+                if (storeBLoC.storesSearch.length > 0) makeListStores(context),
+                if (storeBLoC.productsSearch.length > 0)
+                  makeListProducts(context)
+
                 //makeListProducts(context)
               ]),
         ),
@@ -71,10 +79,30 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
     );
   }
 
+  SliverList makeListStores(
+    context,
+  ) {
+    return SliverList(
+        delegate: SliverChildListDelegate([
+      SearchStoresResultList(),
+    ]));
+  }
+
+  SliverList makeListProducts(
+    context,
+  ) {
+    return SliverList(
+        delegate: SliverChildListDelegate([
+      SearchProductsResultList(),
+    ]));
+  }
+
   SliverPersistentHeader makeHeaderCustom(String title) {
     //final catalogo = new ProfileStoreCategory();
     final currentTheme = Provider.of<ThemeChanger>(context);
     final size = MediaQuery.of(context).size;
+
+    final storeBLoC = Provider.of<StoreBLoC>(context);
 
     return SliverPersistentHeader(
         pinned: true,
@@ -172,7 +200,9 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
                                           //counterText: snapshot.data,
                                           //  errorText: snapshot.error
                                         ),
-                                        //onChanged: productBloc.changeDescription,
+                                        onChanged: (value) => storeBLoC
+                                            .searchStoresOrProductsByQuery(
+                                                value),
                                       ),
                                     ),
                                   ),
@@ -214,5 +244,175 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
                     SizedBox(width: 10),
                   ],
                 ))));
+  }
+}
+
+class SearchStoresResultList extends StatefulWidget {
+  @override
+  _SearchResultListState createState() => _SearchResultListState();
+}
+
+class _SearchResultListState extends State<SearchStoresResultList>
+    with TickerProviderStateMixin {
+  @override
+  void initState() {
+    _scrollController = ScrollController()..addListener(() => setState(() {}));
+
+    super.initState();
+  }
+
+  ScrollController _scrollController;
+
+  bool expanded = false;
+/*   _PatternVibrate() {
+    HapticFeedback.mediumImpact();
+
+    sleep(
+      const Duration(milliseconds: 200),
+    );
+
+    HapticFeedback.mediumImpact();
+
+    sleep(
+      const Duration(milliseconds: 500),
+    );
+
+    HapticFeedback.mediumImpact();
+
+    sleep(
+      const Duration(milliseconds: 200),
+    );
+    HapticFeedback.mediumImpact();
+  } */
+
+  final scrollController = ScrollController();
+
+  @override
+  Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
+    final storeBLoC = Provider.of<StoreBLoC>(context);
+    return Stack(
+      children: [
+        if (storeBLoC.storesSearch.length > 0)
+          Container(
+            padding: EdgeInsets.only(top: 20, left: 20),
+            child: Text(
+              'Tiendas',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                  color: currentTheme.accentColor),
+            ),
+          ),
+        Container(
+          padding: EdgeInsets.only(top: 70),
+          child: ListView.builder(
+            shrinkWrap: true,
+            controller: _scrollController,
+            itemCount: storeBLoC.storesSearch.length,
+            itemBuilder: (context, index) {
+              if (storeBLoC.storesSearch.length > 0) {
+                final store = storeBLoC.storesSearch[index];
+                return FadeIn(
+                  child: StoreCard(
+                    store: store,
+                  ),
+                );
+              } else {
+                return Center(
+                    child: Container(
+                  child: Text('No'),
+                ));
+              }
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class SearchProductsResultList extends StatefulWidget {
+  @override
+  _SearchProductsResultListState createState() =>
+      _SearchProductsResultListState();
+}
+
+class _SearchProductsResultListState extends State<SearchProductsResultList>
+    with TickerProviderStateMixin {
+  @override
+  void initState() {
+    _scrollController = ScrollController()..addListener(() => setState(() {}));
+
+    super.initState();
+  }
+
+  ScrollController _scrollController;
+
+  bool expanded = false;
+/*   _PatternVibrate() {
+    HapticFeedback.mediumImpact();
+
+    sleep(
+      const Duration(milliseconds: 200),
+    );
+
+    HapticFeedback.mediumImpact();
+
+    sleep(
+      const Duration(milliseconds: 500),
+    );
+
+    HapticFeedback.mediumImpact();
+
+    sleep(
+      const Duration(milliseconds: 200),
+    );
+    HapticFeedback.mediumImpact();
+  } */
+
+  final scrollController = ScrollController();
+
+  @override
+  Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
+    final storeBLoC = Provider.of<StoreBLoC>(context);
+    return Stack(
+      children: [
+        if (storeBLoC.productsSearch.length > 0)
+          Container(
+            padding: EdgeInsets.only(top: 20, left: 20),
+            child: Text(
+              'Productos',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                  color: currentTheme.accentColor),
+            ),
+          ),
+        Container(
+          padding: EdgeInsets.only(top: 70),
+          child: ListView.builder(
+            shrinkWrap: true,
+            controller: _scrollController,
+            itemCount: storeBLoC.productsSearch.length,
+            itemBuilder: (context, index) {
+              if (storeBLoC.productsSearch.length > 0) {
+                final product = storeBLoC.productsSearch[index];
+                return FadeIn(
+                    child: ProfileStoreProductItem(product, product.category));
+              } else {
+                return Center(
+                    child: Container(
+                  child: Text('No'),
+                ));
+              }
+            },
+          ),
+        ),
+      ],
+    );
   }
 }

@@ -248,12 +248,14 @@ class TabsViewScrollBLoC with ChangeNotifier {
   }
 
   void favoriteProduct(TickerProvider ticket, ProfileStoreProduct product) {
-    final item = items.firstWhere((item) => item.product.id == product.id,
-        orElse: () => null);
+    if (items.length > 0) {
+      final item = items.firstWhere((item) => item.product.id == product.id,
+          orElse: () => null);
 
-    item.product.isLike = !item.product.isLike;
+      item.product.isLike = !item.product.isLike;
 
-    notifyListeners();
+      notifyListeners();
+    }
   }
 
   bool _bottomVisible = true;

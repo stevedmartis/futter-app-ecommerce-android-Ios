@@ -193,7 +193,7 @@ class _CatalogsListState extends State<CatalogsList>
               if (_bloc.productsFavoritesList.length > 0) {
                 final item = _bloc.productsFavoritesList[index];
                 return FadeIn(
-                    child: _ProfileStoreProductItem(item, item.category));
+                    child: ProfileStoreProductItem(item, item.category));
               } else {
                 return Center(
                     child: Container(
@@ -208,8 +208,8 @@ class _CatalogsListState extends State<CatalogsList>
   }
 }
 
-class _ProfileStoreProductItem extends StatelessWidget {
-  const _ProfileStoreProductItem(this.product, this.categoryId);
+class ProfileStoreProductItem extends StatelessWidget {
+  const ProfileStoreProductItem(this.product, this.categoryId);
 
   final String categoryId;
 

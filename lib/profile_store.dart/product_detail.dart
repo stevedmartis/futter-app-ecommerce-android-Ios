@@ -343,10 +343,13 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
     final productsBloc =
         Provider.of<TabsViewScrollBLoC>(context, listen: false);
 
+    final favoriteBloc = Provider.of<FavoritesBLoC>(context, listen: false);
+
     final success = await productService.addUpdateFavorite(
         widget.product.id, authBloc.storeAuth.user.uid);
 
     if (success.ok) {
+      favoriteBloc.favoriteProduct(widget.product);
       (!widget.isAuthUser)
           ? widget.bloc.favoriteProduct(this, widget.product)
           : productsBloc.favoriteProduct(this, widget.product);

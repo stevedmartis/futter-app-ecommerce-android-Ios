@@ -1,5 +1,7 @@
 import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/responses/search_stores_products_response.dart';
 import 'package:australti_ecommerce_app/services/stores_Services.dart';
+
 import 'package:australti_ecommerce_app/store_principal/store_Service.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +18,12 @@ class StoreBLoC with ChangeNotifier {
   List<Store> storesListState = [];
 
   List<Store> storesListInitial = [];
+
+  List<Store> storesSearch = [];
+
+  List<ProfileStoreProduct> productsSearch = [];
+
+  final storeService = StoreService();
 
   List<StoreServices> servicesStores = [
     StoreServices(
@@ -45,6 +53,20 @@ class StoreBLoC with ChangeNotifier {
   bool isVisible = showBottomInit;
 
   Store _storeCurrent;
+
+  void searchStoresOrProductsByQuery(String value) async {
+    if (value.length >= 3) {
+      final SearchStoresProductsListResponse resp =
+          await storeService.getStoreAndProductsByValue(value);
+
+      if (resp.ok) {
+        storesSearch = resp.storesSearch;
+        productsSearch = resp.productsSearch;
+
+        notifyListeners();
+      }
+    }
+  }
 
   void chargeServicesStores() {
     final markets = storesListInitial.where((i) => i.service == 1).toList();

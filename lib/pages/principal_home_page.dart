@@ -19,7 +19,6 @@ import 'package:australti_ecommerce_app/services/stores_Services.dart'
     as storeServiceApi;
 
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
-import 'package:australti_ecommerce_app/store_principal/store_Service.dart';
 
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
