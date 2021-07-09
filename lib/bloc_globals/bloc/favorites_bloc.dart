@@ -4,11 +4,11 @@ import 'package:australti_ecommerce_app/store_product_concept/store_product_data
 class FavoritesBLoC with ChangeNotifier {
   List<ProfileStoreProduct> productsFavoritesList = [];
 
-  void favoriteProduct(ProfileStoreProduct product) {
+  void favoriteProduct(ProfileStoreProduct product, bool like) {
     final item = productsFavoritesList
         .firstWhere((item) => item.id == product.id, orElse: () => null);
 
-    item.isLike = !item.isLike;
+    if (item != null) item.isLike = like;
 
     notifyListeners();
   }

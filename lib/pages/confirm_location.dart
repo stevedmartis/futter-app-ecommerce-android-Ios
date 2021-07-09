@@ -1,3 +1,4 @@
+import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/responses/stores_list_principal_response.dart';
@@ -62,6 +63,8 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final size = MediaQuery.of(context).size;
 
+    final authBloc = Provider.of<AuthenticationBLoC>(context);
+
     return SafeArea(
         child: GestureDetector(
             onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
@@ -112,7 +115,8 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                               myLocationBloc
                                   .savePlaceSearchConfirm(placeSearch);
 
-                              storesByLocationlistServices(citySelectCtrl.text);
+                              storesByLocationlistServices(citySelectCtrl.text,
+                                  authBloc.storeAuth.user.uid);
 
                               FocusScope.of(context)
                                   .requestFocus(new FocusNode());
@@ -296,11 +300,11 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                     ]))));
   }
 
-  void storesByLocationlistServices(String location) async {
+  void storesByLocationlistServices(String location, String uid) async {
     final storeService = Provider.of<StoreService>(context, listen: false);
 
     final StoresListResponse resp =
-        await storeService.getStoresLocationListServices(location);
+        await storeService.getStoresLocationListServices(location, uid);
 
     final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 

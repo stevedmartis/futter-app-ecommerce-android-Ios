@@ -12,13 +12,11 @@ import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
+
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
-
-const _blueColor = Color(0xFF00649FE);
 
 class OrdenDetailPage extends StatefulWidget {
   @override
@@ -604,160 +602,6 @@ Widget _buildProductsList(context) {
     );
   }
 } */
-
-class ButtonFollow extends StatefulWidget {
-  const ButtonFollow(
-      {Key key, @required this.percent, @required this.bloc, this.left})
-      : super(key: key);
-
-  final num percent;
-  final TabsViewScrollBLoC bloc;
-  final double left;
-
-  @override
-  _ButtonFollowState createState() => _ButtonFollowState();
-}
-
-class _ButtonFollowState extends State<ButtonFollow> {
-  bool isFollow = false;
-  void changeFollow() {
-    isFollow = !isFollow;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        (widget.percent <= 0.9)
-            ? Positioned(
-                top: 350,
-                left: widget.left,
-                child: Container(
-                  width: 180,
-                  height: 35,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: (!isFollow) ? Colors.white : _blueColor,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 0.0),
-                        child: Text(
-                          (isFollow) ? 'Follow' : 'Following',
-                          style: TextStyle(
-                              color: (isFollow) ? Colors.white : Colors.black,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      onPressed: () => {
-                            setState(() {
-                              this.changeFollow();
-                            })
-                          }),
-                ))
-            : Positioned(
-                top: 90,
-                right: 20,
-                child: Container(
-                  width: 100,
-                  height: 35,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          primary: (!isFollow) ? Colors.white : _blueColor),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 0.0),
-                        child: Text(
-                          (isFollow) ? 'Follow' : 'Following',
-                          style: TextStyle(
-                              color: (isFollow) ? Colors.white : Colors.black,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      onPressed: () => {
-                            setState(() {
-                              this.changeFollow();
-                            })
-                          }),
-                )),
-      ],
-    );
-  }
-}
-
-class ButtonEditProfile extends StatefulWidget {
-  const ButtonEditProfile(
-      {Key key, @required this.percent, @required this.bloc, this.left})
-      : super(key: key);
-
-  final num percent;
-  final TabsViewScrollBLoC bloc;
-  final double left;
-
-  @override
-  _ButtonEditProfileState createState() => _ButtonEditProfileState();
-}
-
-class _ButtonEditProfileState extends State<ButtonEditProfile> {
-  bool isFollow = false;
-  void changeFollow() {
-    isFollow = !isFollow;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        (widget.percent <= 0.9)
-            ? Positioned(
-                top: 350,
-                left: widget.left,
-                child: Container(
-                  width: 180,
-                  height: 35,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.white),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 0.0),
-                        child: Text(
-                          'Editar perfil',
-                          style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      onPressed: () => {
-                            setState(() {
-                              this.changeFollow();
-                            })
-                          }),
-                ))
-            : Positioned(
-                top: 90,
-                right: 20,
-                child: Container(
-                  width: 100,
-                  height: 35,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: Colors.white),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 0.0, horizontal: 10),
-                        child: Text(
-                          'Editar',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15),
-                        ),
-                      ),
-                      onPressed: () => {
-                            setState(() {
-                              this.changeFollow();
-                            })
-                          }),
-                )),
-      ],
-    );
-  }
-}
 
 class SearchContent extends StatelessWidget {
   @override

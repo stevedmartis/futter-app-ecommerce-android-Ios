@@ -2,10 +2,8 @@ import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/responses/place_search_response.dart';
-import 'package:australti_ecommerce_app/responses/stores_list_principal_response.dart';
+
 import 'package:australti_ecommerce_app/routes/routes.dart';
-import 'package:australti_ecommerce_app/services/stores_Services.dart';
-import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
@@ -287,22 +285,6 @@ class _LocationStorePageState extends State<LocationStorePage> {
                             )
                           ]))
                     ]))));
-  }
-
-  void storesByLocationlistServices(String location) async {
-    final storeService = Provider.of<StoreService>(context, listen: false);
-
-    final StoresListResponse resp =
-        await storeService.getStoresLocationListServices(location);
-
-    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
-
-    if (resp.ok) {
-      storeBloc.storesListInitial = [];
-      storeBloc.storesListInitial = resp.storeListServices;
-
-      storeBloc.changeToMarket();
-    }
   }
 
   _editAddress() async {

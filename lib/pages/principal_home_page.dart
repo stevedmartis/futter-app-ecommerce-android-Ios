@@ -62,10 +62,11 @@ class _PrincipalPageState extends State<PrincipalPage>
     categoriesStoreProducts();
 
     if (storeAuth.user.uid != '0') {
-      storesByLocationlistServices(storeAuth.city);
+      storesByLocationlistServices(storeAuth.city, storeAuth.user.uid);
       myFavoritesProducts();
     } else if (prefs.isLocationCurrent) {
-      storesByLocationlistServices(prefs.addressSave['locality']);
+      storesByLocationlistServices(
+          prefs.addressSave['locality'], storeAuth.user.uid);
     } else {
       storeslistServices();
     }
@@ -297,7 +298,8 @@ class _PrincipalPageState extends State<PrincipalPage>
               () {
             myLocationBloc.initPositionLocation();
 
-            storesByLocationlistServices(prefs.addressSave['locality']);
+            storesByLocationlistServices(
+                prefs.addressSave['locality'], storeAuth.user.uid);
 
             Navigator.pop(context);
           }, () {
@@ -335,12 +337,12 @@ class _PrincipalPageState extends State<PrincipalPage>
     }
   }
 
-  void storesByLocationlistServices(String location) async {
+  void storesByLocationlistServices(String location, String uid) async {
     final storeService =
         Provider.of<storeServiceApi.StoreService>(context, listen: false);
 
     final StoresListResponse resp =
-        await storeService.getStoresLocationListServices(location);
+        await storeService.getStoresLocationListServices(location, uid);
 
     final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 

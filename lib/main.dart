@@ -8,6 +8,7 @@ import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/services/catalogo.dart';
+import 'package:australti_ecommerce_app/services/follow_service.dart';
 import 'package:australti_ecommerce_app/services/product.dart';
 import 'package:australti_ecommerce_app/services/stores_Services.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
@@ -45,6 +46,7 @@ void main() async {
     ChangeNotifierProvider(create: (_) => TabsViewScrollBLoC()),
     ChangeNotifierProvider(create: (_) => StoreService()),
     ChangeNotifierProvider(create: (_) => FireBaseAuthBLoC()),
+    ChangeNotifierProvider(create: (_) => FollowService()),
     ChangeNotifierProvider(
       create: (context) => CountryProvider(),
     ),

@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 
 import 'package:australti_ecommerce_app/pages/favorite.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
@@ -104,6 +105,8 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
 
     final storeBLoC = Provider.of<StoreBLoC>(context);
 
+    final authBLoC = Provider.of<AuthenticationBLoC>(context);
+
     return SliverPersistentHeader(
         pinned: true,
         floating: true,
@@ -160,7 +163,8 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
                                 children: [
                                   Expanded(
                                     child: Container(
-                                      padding: EdgeInsets.only(top: 20),
+                                      padding:
+                                          EdgeInsets.only(top: 20, left: 10),
                                       child: TextField(
                                         style: TextStyle(color: Colors.white),
                                         inputFormatters: [
@@ -202,7 +206,8 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
                                         ),
                                         onChanged: (value) => storeBLoC
                                             .searchStoresOrProductsByQuery(
-                                                value),
+                                                value,
+                                                authBLoC.storeAuth.user.uid),
                                       ),
                                     ),
                                   ),

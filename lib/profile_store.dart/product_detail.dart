@@ -2,6 +2,7 @@ import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc/favorites_bloc.dart';
 import 'package:australti_ecommerce_app/pages/products_list.dart';
 import 'package:australti_ecommerce_app/services/product.dart';
+import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/utils.dart';
@@ -86,6 +87,9 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
 
     final storeBloc = Provider.of<FavoritesBLoC>(context, listen: false);
 
+    final tag = 'list_${widget.product.images[0].url}' +
+        '${widget.product.name}' +
+        heroTag;
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(color: Colors.white),
@@ -114,7 +118,8 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
 
                             animatedController.forward();
 
-                            storeBloc.productsFavoritesList.add(widget.product);
+                            storeBloc.productsFavoritesList
+                                .insert(0, widget.product);
 
                             showSnackBar(
                                 context, 'Agregado en "Mis favoritos"');
@@ -152,11 +157,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                       Padding(
                         padding: const EdgeInsets.only(bottom: 20.0),
                         child: CarouselImagesProductIndicator(
-                          images: widget.product.images,
-                          tag: 'list_${widget.product.images[0].url}' +
-                              '${widget.product.name}' +
-                              heroTag,
-                        ),
+                            images: widget.product.images, tag: tag),
                       ),
                       Text(
                         widget.product.name.capitalize(),
@@ -340,19 +341,15 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
   Future<bool> addToFavoriteButtonTapped() async {
     final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
 
-    final productsBloc =
-        Provider.of<TabsViewScrollBLoC>(context, listen: false);
-
+    final storeBLoC = Provider.of<StoreBLoC>(context, listen: false);
     final favoriteBloc = Provider.of<FavoritesBLoC>(context, listen: false);
 
     final success = await productService.addUpdateFavorite(
         widget.product.id, authBloc.storeAuth.user.uid);
 
     if (success.ok) {
-      favoriteBloc.favoriteProduct(widget.product);
-      (!widget.isAuthUser)
-          ? widget.bloc.favoriteProduct(this, widget.product)
-          : productsBloc.favoriteProduct(this, widget.product);
+      favoriteBloc.favoriteProduct(widget.product, success.favorite.isLike);
+      storeBLoC.favoriteProduct(widget.product, success.favorite.isLike);
     }
     return true;
   }

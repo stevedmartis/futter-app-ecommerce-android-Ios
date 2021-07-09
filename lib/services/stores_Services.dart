@@ -53,8 +53,8 @@ class StoreService with ChangeNotifier {
     }
   }
 
-  Future getStoreAndProductsByValue(String value) async {
-    final urlFinal = ('${Environment.apiUrl}/api/search/principal/$value');
+  Future getStoreAndProductsByValue(String value, String uid) async {
+    final urlFinal = ('${Environment.apiUrl}/api/search/principal/$value/$uid');
 
     (UniversalPlatform.isWeb)
         ? token = prefs.token
@@ -75,9 +75,9 @@ class StoreService with ChangeNotifier {
     }
   }
 
-  Future getStoresLocationListServices(String location) async {
+  Future getStoresLocationListServices(String location, String uid) async {
     final urlFinal =
-        ('${Environment.apiUrl}/api/store/stores/location/list/principal/$location');
+        ('${Environment.apiUrl}/api/store/stores/location/list/principal/$location/$uid');
 
     final resp = await http.get(Uri.parse(urlFinal), headers: {
       'Content-Type': 'application/json',

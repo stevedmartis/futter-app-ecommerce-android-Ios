@@ -63,7 +63,8 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                           return FadeInUp(
                             delay: Duration(milliseconds: 100 * index),
                             child: Padding(
-                                padding: const EdgeInsets.only(top: 50.0),
+                                padding:
+                                    const EdgeInsets.only(top: 50.0, left: 20),
                                 child: Slidable.builder(
                                   key: UniqueKey(),
                                   controller: slidableController,

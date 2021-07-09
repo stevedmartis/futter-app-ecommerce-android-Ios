@@ -17,19 +17,19 @@
 	<key>BUNDLE_ID</key>
 	<string>com.kiozer</string>
 	<key>PROJECT_ID</key>
-	<string>Freeily</string>
+	<string>kiozer</string>
 	<key>STORAGE_BUCKET</key>
 	<string>kiozer.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_GCM_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:639303241258:ios:4b5e790104f248beabfd53</string>
 </dict>

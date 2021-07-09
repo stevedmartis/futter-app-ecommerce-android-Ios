@@ -27,6 +27,12 @@ class StoreBLoC with ChangeNotifier {
 
   List<StoreServices> servicesStores = [
     StoreServices(
+        id: 0,
+        backImage: 'assets/store3d.jpg',
+        frontImage: 'assets/store3d.jpg',
+        name: 'Seguidos',
+        stores: 0),
+    StoreServices(
         id: 1,
         backImage: 'assets/frutas_verduras3.jpeg',
         frontImage: 'assets/frutas_verduras3.jpeg',
@@ -54,10 +60,10 @@ class StoreBLoC with ChangeNotifier {
 
   Store _storeCurrent;
 
-  void searchStoresOrProductsByQuery(String value) async {
+  void searchStoresOrProductsByQuery(String value, String uid) async {
     if (value.length >= 3) {
       final SearchStoresProductsListResponse resp =
-          await storeService.getStoreAndProductsByValue(value);
+          await storeService.getStoreAndProductsByValue(value, uid);
 
       if (resp.ok) {
         storesSearch = resp.storesSearch;
@@ -75,10 +81,17 @@ class StoreBLoC with ChangeNotifier {
 
     final liquers = storesListInitial.where((i) => i.service == 3).toList();
 
-    servicesStores[0].stores = markets.length;
+    final followed =
+        storesListInitial.where((i) => i.isFollowing == true).toList();
 
-    servicesStores[1].stores = restaurants.length;
-    servicesStores[2].stores = liquers.length;
+    print(followed);
+
+    print(servicesStores);
+    servicesStores[0].stores = followed.length;
+    servicesStores[1].stores = markets.length;
+
+    servicesStores[2].stores = restaurants.length;
+    servicesStores[3].stores = liquers.length;
   }
 
   void changeToRestaurant() {
@@ -143,6 +156,15 @@ class StoreBLoC with ChangeNotifier {
 
   void deleteProduct(GroceryProductItem productItem) {
     cart.remove(productItem);
+    notifyListeners();
+  }
+
+  void favoriteProduct(ProfileStoreProduct product, bool like) {
+    final item = productsSearch.firstWhere((item) => item.id == product.id,
+        orElse: () => null);
+
+    if (item != null) item.isLike = like;
+
     notifyListeners();
   }
 }

@@ -32,7 +32,9 @@ class Store {
       this.longitude = 0,
       this.createdAt,
       this.updatedAt,
-      this.visibility = true});
+      this.visibility = true,
+      this.isFollowing,
+      this.followers = 0});
 
   final String id;
   final User user;
@@ -48,6 +50,9 @@ class Store {
   double latitude;
   double longitude;
   bool visibility;
+  bool isFollowing;
+
+  int followers;
 
   final int service;
   String timeDelivery;
@@ -71,6 +76,8 @@ class Store {
         isEco: json["isEco"],
         address: json["address"],
         city: json["city"],
+        isFollowing: json["isFollowing"],
+        followers: json["followers"],
         visibility: json["visibility"],
         number: json["numberAddress"],
         latitude: json["latitude"],
@@ -93,6 +100,8 @@ class Store {
         "isEco": isEco,
         "address": address,
         "city": city,
+        "isFollowing": isFollowing,
+        "followers": followers,
         "visibility": visibility,
         "number": number,
         "latitude": latitude,

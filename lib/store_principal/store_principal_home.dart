@@ -132,20 +132,21 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
   pullToRefreshData() async {
     if (storeAuth.user.uid != '0') {
-      storesByLocationlistServices(storeAuth.city);
+      storesByLocationlistServices(storeAuth.city, storeAuth.user.uid);
     } else if (prefs.isLocationCurrent) {
-      storesByLocationlistServices(prefs.addressSave['locality']);
+      storesByLocationlistServices(
+          prefs.addressSave['locality'], storeAuth.user.uid);
     } else {
       storeslistServices();
     }
   }
 
-  void storesByLocationlistServices(String location) async {
+  void storesByLocationlistServices(String location, String uid) async {
     final storeService =
         Provider.of<storeServices.StoreService>(context, listen: false);
 
     final StoresListResponse resp =
-        await storeService.getStoresLocationListServices(location);
+        await storeService.getStoresLocationListServices(location, uid);
 
     final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 
@@ -1045,7 +1046,7 @@ class _StoreServicesListState extends State<StoreServicesList> {
 
   @override
   Widget build(BuildContext context) {
-    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
+    final storeBloc = Provider.of<StoreBLoC>(context);
 
     return AnimatedList(
       key: _animatedListKey,
@@ -1078,18 +1079,20 @@ class _StoreServicesListState extends State<StoreServicesList> {
               ),
             );
           },
-          child: Transform(
-            transform: Matrix4.identity()
-              ..setEntry(3, 2, 0.001)
-              ..rotateY(
-                vector.radians(
-                  90 * factor,
-                ),
-              ),
-            child: TravelPhotoListItem(
-              travelPhoto: travelPhotoItem,
-            ),
-          ),
+          child: (travelPhotoItem.stores > 0)
+              ? Transform(
+                  transform: Matrix4.identity()
+                    ..setEntry(3, 2, 0.001)
+                    ..rotateY(
+                      vector.radians(
+                        90 * factor,
+                      ),
+                    ),
+                  child: TravelPhotoListItem(
+                    travelPhoto: travelPhotoItem,
+                  ),
+                )
+              : Container(),
         );
       },
       scrollDirection: Axis.horizontal,

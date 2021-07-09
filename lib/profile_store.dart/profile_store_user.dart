@@ -6,12 +6,14 @@ import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile_store_auth.dart';
 import 'package:australti_ecommerce_app/services/catalogo.dart';
+import 'package:australti_ecommerce_app/services/follow_service.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
 import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/product_detail.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
@@ -48,6 +50,11 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
 
   @override
   void initState() {
+    final followService = Provider.of<FollowService>(context, listen: false);
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      followService.followers = widget.store.followers;
+    });
     categoriesStoreProducts();
 
     super.initState();
@@ -383,6 +390,8 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     final currentTheme = Provider.of<ThemeChanger>(context);
 
+    final followService = Provider.of<FollowService>(context);
+
     final percent = 1 -
         ((maxExtent - shrinkOffset - minExtent) / (maxExtent - minExtent))
             .clamp(0.0, 1.0);
@@ -480,23 +489,26 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                       ),
                     ),
                   ),
-                  AnimatedContainer(
-                    duration: Duration(milliseconds: 100),
-                    child: Text(
-                      '300 followers',
-                      style: TextStyle(
-                        fontSize: subTitleSize,
-                        letterSpacing: -0.5,
-                        color: Colors.grey,
+                  if (followService.followers > 0)
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 100),
+                      child: Text(
+                        (followService.followers > 1)
+                            ? '${followService.followers} Seguidores'
+                            : '${followService.followers} Seguidor',
+                        style: TextStyle(
+                          fontSize: subTitleSize,
+                          letterSpacing: -0.5,
+                          color: Colors.grey,
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
             (!isAuthUser)
                 ? ButtonFollow(
-                    percent: percent, bloc: bloc, left: leftTextMargin)
+                    percent: percent, store: store, left: leftTextMargin)
                 : ButtonEditProfile(
                     percent: percent, bloc: bloc, left: leftTextMargin),
 
@@ -578,12 +590,13 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
 }
 
 class ButtonFollow extends StatefulWidget {
-  const ButtonFollow(
-      {Key key, @required this.percent, @required this.bloc, this.left})
+  const ButtonFollow({Key key, @required this.percent, this.left, this.store})
       : super(key: key);
 
   final num percent;
-  final TabsViewScrollBLoC bloc;
+
+  final Store store;
+
   final double left;
 
   @override
@@ -591,9 +604,25 @@ class ButtonFollow extends StatefulWidget {
 }
 
 class _ButtonFollowState extends State<ButtonFollow> {
-  bool isFollow = false;
-  void changeFollow() {
-    isFollow = !isFollow;
+  void changeFollow() async {
+    final followService = Provider.of<FollowService>(context, listen: false);
+
+    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+
+    final resp = await followService.followStore(
+        widget.store.user.uid, authService.storeAuth.user.uid);
+
+    if (resp.ok) {
+      setState(() {
+        widget.store.isFollowing = resp.follow.isFollowing;
+      });
+
+      (resp.follow.isFollowing)
+          ? followService.followers++
+          : followService.followers--;
+
+      print(followService.followers);
+    }
   }
 
   @override
@@ -609,15 +638,15 @@ class _ButtonFollowState extends State<ButtonFollow> {
                     height: 35,
                     child: elevatedButtonCustom(
                         context: context,
-                        title: (isFollow) ? 'Seguir' : 'Siguiendo',
+                        title: (!widget.store.isFollowing)
+                            ? 'Seguir'
+                            : 'Siguiendo',
                         onPress: () {
-                          setState(() {
-                            this.changeFollow();
-                          });
+                          this.changeFollow();
                         },
                         isEdit: true,
                         isDelete: false,
-                        isAccent: (isFollow))))
+                        isAccent: (!widget.store.isFollowing))))
             : Positioned(
                 top: 90,
                 right: 20,
@@ -626,15 +655,15 @@ class _ButtonFollowState extends State<ButtonFollow> {
                     height: 35,
                     child: elevatedButtonCustom(
                         context: context,
-                        title: (isFollow) ? 'Seguir' : 'Siguiendo',
+                        title: (!widget.store.isFollowing)
+                            ? 'Seguir'
+                            : 'Siguiendo',
                         onPress: () {
-                          setState(() {
-                            this.changeFollow();
-                          });
+                          this.changeFollow();
                         },
                         isEdit: true,
                         isDelete: false,
-                        isAccent: (isFollow)))),
+                        isAccent: (!widget.store.isFollowing)))),
       ],
     );
   }

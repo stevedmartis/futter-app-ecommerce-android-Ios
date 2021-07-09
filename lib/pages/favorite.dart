@@ -222,6 +222,8 @@ class ProfileStoreProductItem extends StatelessWidget {
     final groceryBloc = Provider.of<GroceryStoreBLoC>(context);
 
     final _bloc = Provider.of<TabsViewScrollBLoC>(context);
+
+    final tag = 'list_${product.images[0].url + product.name + '0'}';
     return GestureDetector(
       onTap: () async {
         groceryBloc.changeToDetails();
@@ -265,7 +267,7 @@ class ProfileStoreProductItem extends StatelessWidget {
               children: [
                 Container(
                   child: Hero(
-                      tag: 'list_${product.images[0].url + product.name + '0'}',
+                      tag: tag,
                       child: Material(
                           type: MaterialType.transparency,
                           child: Container(
