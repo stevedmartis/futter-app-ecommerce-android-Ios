@@ -249,8 +249,6 @@ class EditProfilePageState extends State<EditProfilePage> {
     if (authService.storeAuth.service == 3)
       categoryCtrl.text = 'Licorería/Botillería';
 
-    print(address);
-
     return SafeArea(
       child: Scaffold(
         backgroundColor: currentTheme.currentTheme.scaffoldBackgroundColor,

@@ -3,10 +3,14 @@ import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile_store_auth.dart';
+import 'package:australti_ecommerce_app/responses/stores_list_principal_response.dart';
 import 'package:australti_ecommerce_app/services/catalogo.dart';
 import 'package:australti_ecommerce_app/services/follow_service.dart';
+import 'package:australti_ecommerce_app/services/stores_Services.dart';
+import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
 import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
@@ -603,11 +607,14 @@ class ButtonFollow extends StatefulWidget {
   _ButtonFollowState createState() => _ButtonFollowState();
 }
 
+final prefs = new AuthUserPreferences();
+
 class _ButtonFollowState extends State<ButtonFollow> {
   void changeFollow() async {
     final followService = Provider.of<FollowService>(context, listen: false);
 
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+    final storeService = Provider.of<StoreBLoC>(context, listen: false);
 
     final resp = await followService.followStore(
         widget.store.user.uid, authService.storeAuth.user.uid);
@@ -617,11 +624,24 @@ class _ButtonFollowState extends State<ButtonFollow> {
         widget.store.isFollowing = resp.follow.isFollowing;
       });
 
-      (resp.follow.isFollowing)
-          ? followService.followers++
-          : followService.followers--;
+      int followed = prefs.followed;
 
-      print(followService.followers);
+      if (resp.follow.isFollowing) {
+        followService.followers++;
+        storeService.addFallowed();
+
+        int newfollowed = followed + 1;
+
+        prefs.followed = newfollowed;
+      } else {
+        followService.followers--;
+
+        storeService.removeFallowed();
+
+        int newfollowed = followed - 1;
+
+        prefs.followed = newfollowed;
+      }
     }
   }
 

@@ -1,4 +1,5 @@
 import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/responses/search_stores_products_response.dart';
 import 'package:australti_ecommerce_app/services/stores_Services.dart';
 
@@ -6,11 +7,7 @@ import 'package:australti_ecommerce_app/store_principal/store_Service.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:flutter/material.dart';
 
-enum StoreState {
-  restaurant,
-  market,
-  liqueur,
-}
+enum StoreState { restaurant, market, liqueur, followed }
 const showBottomInit = true;
 
 class StoreBLoC with ChangeNotifier {
@@ -21,7 +18,11 @@ class StoreBLoC with ChangeNotifier {
 
   List<Store> storesSearch = [];
 
+  StoreServices selected;
+
   List<ProfileStoreProduct> productsSearch = [];
+  final prefs = new AuthUserPreferences();
+  bool loadingStores = false;
 
   final storeService = StoreService();
 
@@ -74,6 +75,21 @@ class StoreBLoC with ChangeNotifier {
     }
   }
 
+  void addFallowed() {
+    final item = servicesStores.where((i) => i.id == 0);
+    item.single.stores++;
+
+    notifyListeners();
+  }
+
+  void removeFallowed() {
+    final item = servicesStores.where((i) => i.id == 0);
+    item.single.stores--;
+
+    if (item.single.stores == 0) selected = servicesStores[1];
+    notifyListeners();
+  }
+
   void chargeServicesStores() {
     final markets = storesListInitial.where((i) => i.service == 1).toList();
 
@@ -84,14 +100,17 @@ class StoreBLoC with ChangeNotifier {
     final followed =
         storesListInitial.where((i) => i.isFollowing == true).toList();
 
-    print(followed);
-
-    print(servicesStores);
     servicesStores[0].stores = followed.length;
+
+    prefs.followed = followed.length;
     servicesStores[1].stores = markets.length;
 
     servicesStores[2].stores = restaurants.length;
     servicesStores[3].stores = liquers.length;
+
+    loadingStores = true;
+
+    notifyListeners();
   }
 
   void changeToRestaurant() {
@@ -151,6 +170,17 @@ class StoreBLoC with ChangeNotifier {
 
     storesListState = newList;
     notifierTotal.value = 3;
+    notifyListeners();
+  }
+
+  void changeToFollowed() {
+    storeState = StoreState.followed;
+
+    final followed =
+        storesListInitial.where((i) => i.isFollowing == true).toList();
+
+    storesListState = followed;
+    notifierTotal.value = 0;
     notifyListeners();
   }
 

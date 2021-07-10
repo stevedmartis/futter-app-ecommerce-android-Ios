@@ -75,8 +75,6 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
       final AddressesCurrent resp = await placeService.getAddressByLocation(
           newPosition.latitude.toString(), newPosition.longitude.toString());
 
-      print(resp);
-
       if (resp.results.length > 0) {
         final addressComponent = resp.results[0].addressComponents;
 

@@ -59,9 +59,12 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
     final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 
-    _selected = storeBloc.servicesStores.first;
-
     bloc.changeReaload();
+    final int followed = prefs.followed;
+
+    storeBloc.selected = (followed > 0)
+        ? storeBloc.servicesStores.first
+        : storeBloc.servicesStores[1];
 
     super.initState();
   }
@@ -154,18 +157,17 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
       storeBloc.storesListInitial = [];
       storeBloc.storesListInitial = resp.storeListServices;
 
-      print(_selected);
-
       changeToCurrentService();
     }
   }
 
   changeToCurrentService() {
-    if (_selected.id == 1) storeBloc.changeToMarket();
+    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
+    if (storeBloc.selected.id == 1) storeBloc.changeToMarket();
 
-    if (_selected.id == 2) storeBloc.changeToRestaurant();
+    if (storeBloc.selected.id == 2) storeBloc.changeToRestaurant();
 
-    if (_selected.id == 3) storeBloc.changeToLiqueur();
+    if (storeBloc.selected.id == 3) storeBloc.changeToLiqueur();
   }
 
   void storeslistServices() async {
@@ -191,8 +193,6 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
   }
 
   Store storeAuth;
-
-  StoreServices _selected;
 
   @override
   Widget build(BuildContext context) {
@@ -339,8 +339,8 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                               child: AnimatedSwitcher(
                                 duration: Duration(milliseconds: 700),
                                 child: StoreServiceDetails(
-                                  key: Key(_selected.name),
-                                  storeService: _selected,
+                                  key: Key(bloc.selected.name),
+                                  storeService: bloc.selected,
                                 ),
                               ),
                             ),
@@ -387,7 +387,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                                     onPhotoSelected: (item) => {
                                       _changeService(bloc, item.id),
                                       setState(() {
-                                        _selected = item;
+                                        bloc.selected = item;
                                       })
                                     },
                                   ))),
@@ -397,7 +397,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                   ),
 
                   // makeHeaderPrincipal(context),
-                  makeHeaderTitle(context, _selected.name),
+                  makeHeaderTitle(context, bloc.selected.name),
                   makeListRecomendations(),
                 ],
               ),
@@ -597,6 +597,8 @@ void _changeService(StoreBLoC bloc, int id) {
     bloc.changeToMarket();
   } else if (id == 3) {
     bloc.changeToLiqueur();
+  } else if (id == 0) {
+    bloc.changeToFollowed();
   }
 }
 

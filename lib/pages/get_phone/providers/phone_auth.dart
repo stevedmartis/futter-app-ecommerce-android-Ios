@@ -76,7 +76,7 @@ class PhoneAuthDataProvider with ChangeNotifier {
       return false;
     }
     phone = '+56' + phoneNumberController.text;
-    print(phone);
+
     _startAuth();
     return true;
   }
@@ -118,10 +118,6 @@ class PhoneAuthDataProvider with ChangeNotifier {
 
       FireBase.auth.signInWithCredential(auth).then((value) {
         if (value.user != null) {
-          print(auth);
-
-          print(value);
-
           _addStatusMessage('Authentication successful');
           _addStatus(PhoneAuthState.Verified);
           if (onVerified != null) onVerified();
@@ -162,9 +158,6 @@ class PhoneAuthDataProvider with ChangeNotifier {
         verificationId: actualCode, smsCode: smsCode);
 
     FireBase.auth.signInWithCredential(_authCredential).then((result) async {
-      print(result);
-
-      print(smsCode);
       print(actualCode);
 
       _addStatusMessage('Authentication successful');

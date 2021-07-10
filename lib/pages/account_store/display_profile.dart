@@ -58,7 +58,6 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
 
     final getTimeMax = store.timeDelivery.toString().split("-").last;
 
-    print(getTimeMax);
     offCtl.text = (store.percentOff == 0) ? '' : store.percentOff.toString();
 
     minTimeDeliveryCtrl.text = (getTimeMin == '0') ? '' : getTimeMin.trim();

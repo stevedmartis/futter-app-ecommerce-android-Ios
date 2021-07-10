@@ -24,6 +24,14 @@ class AuthUserPreferences {
   List<Address> addresses = [];
   bool isLocationCurrent = false;
 
+  get followed {
+    return _prefs.getInt('followed') ?? 0;
+  }
+
+  set followed(int value) {
+    _prefs.setInt('followed', value);
+  }
+
   initPrefs() async {
     this._prefs = await SharedPreferences.getInstance();
   }
