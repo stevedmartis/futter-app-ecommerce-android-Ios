@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/product_detail.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:flutter/services.dart';
 import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
@@ -148,6 +149,7 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
                       leading: true,
                       action: Container(),
                       onPress: () => {
+                        HapticFeedback.lightImpact(),
                         Navigator.of(context).push(createRouteAddEditProduct(
                             product, false, widget.category.id)),
                       },

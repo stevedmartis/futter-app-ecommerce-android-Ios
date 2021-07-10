@@ -107,6 +107,7 @@ class _CatalogosListPagePageState extends State<CatalogosListPage> {
                     action: Container(),
                     //   Container()
                     onPress: () => {
+                          HapticFeedback.lightImpact(),
                           (loading)
                               ? null
                               : Navigator.of(context).push(
@@ -198,27 +199,6 @@ class _CatalogsListState extends State<CatalogsList>
     );
   }
 
-/*   _PatternVibrate() {
-    HapticFeedback.mediumImpact();
-
-    sleep(
-      const Duration(milliseconds: 200),
-    );
-
-    HapticFeedback.mediumImpact();
-
-    sleep(
-      const Duration(milliseconds: 500),
-    );
-
-    HapticFeedback.mediumImpact();
-
-    sleep(
-      const Duration(milliseconds: 200),
-    );
-    HapticFeedback.mediumImpact();
-  } */
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -287,6 +267,7 @@ class _CatalogsListState extends State<CatalogsList>
                                   context: context,
                                   builder: (context) {
                                     if (UniversalPlatform.isAndroid) {
+                                      HapticFeedback.heavyImpact();
                                       return AlertDialog(
                                         backgroundColor:
                                             currentTheme.currentTheme.cardColor,
@@ -319,6 +300,8 @@ class _CatalogsListState extends State<CatalogsList>
                                                     fontSize: 18),
                                               ),
                                               onPressed: () => {
+                                                    HapticFeedback
+                                                        .heavyImpact(),
                                                     Navigator.of(context)
                                                         .pop(false),
                                                   }),
@@ -355,6 +338,7 @@ class _CatalogsListState extends State<CatalogsList>
                                                   TextStyle(color: Colors.grey),
                                             ),
                                             onPressed: () => {
+                                              HapticFeedback.heavyImpact(),
                                               Navigator.of(context).pop(false),
                                             },
                                           ),
@@ -426,7 +410,7 @@ class _CatalogsListState extends State<CatalogsList>
                                 onTap: () => {
                                   Navigator.push(context,
                                       groceryListRoute(item, widget.bloc)),
-                                  HapticFeedback.selectionClick()
+                                  HapticFeedback.lightImpact()
                                 },
                                 child: Container(
                                   key: Key(item.id),

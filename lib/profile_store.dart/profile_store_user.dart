@@ -5,11 +5,10 @@ import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
-import 'package:australti_ecommerce_app/profile_store.dart/profile_store_auth.dart';
-import 'package:australti_ecommerce_app/responses/stores_list_principal_response.dart';
+
 import 'package:australti_ecommerce_app/services/catalogo.dart';
 import 'package:australti_ecommerce_app/services/follow_service.dart';
-import 'package:australti_ecommerce_app/services/stores_Services.dart';
+
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
@@ -18,6 +17,7 @@ import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/product_detail.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
@@ -26,6 +26,8 @@ import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
 import '../global/extension.dart';
+
+import 'package:url_launcher/url_launcher.dart';
 
 const _textHighColor = Color(0xFF241E1E);
 const _textColor = Color(0xFF5C5657);
@@ -141,8 +143,8 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                 SliverPersistentHeader(
                   pinned: true,
                   delegate: SliverAppBarDelegate(
-                      minHeight: 70,
-                      maxHeight: 70,
+                      minHeight: 100,
+                      maxHeight: 100,
                       child: Container(
                         color: currentTheme.scaffoldBackgroundColor,
                         alignment: Alignment.centerLeft,
@@ -359,7 +361,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
 }
 
 const _maxHeaderExtent = 410.0;
-const _minHeaderExtent = 150.0;
+const _minHeaderExtent = 200.0;
 
 const _maxImageSize = 160.0;
 const _minImageSize = 60.0;
@@ -461,7 +463,7 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
             Positioned(
               top: (_bottomMarginName * (1 - percent))
                   .clamp(75.0, _bottomMarginName),
-              left: leftTextMargin,
+              left: (percent >= 0.9) ? leftTextMargin : leftTextMargin + 30,
               height: _maxImageSize,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -493,44 +495,46 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                       ),
                     ),
                   ),
-                  if (followService.followers > 0)
-                    AnimatedContainer(
-                      duration: Duration(milliseconds: 100),
-                      child: Text(
-                        (followService.followers > 1)
-                            ? '${followService.followers} Seguidores'
-                            : '${followService.followers} Seguidor',
-                        style: TextStyle(
-                          fontSize: subTitleSize,
-                          letterSpacing: -0.5,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
                 ],
               ),
             ),
-            (!isAuthUser)
-                ? ButtonFollow(
-                    percent: percent, store: store, left: leftTextMargin)
-                : ButtonEditProfile(
-                    percent: percent, bloc: bloc, left: leftTextMargin),
-
-            /*  Positioned(
-              bottom: 20.0,
-              left: (_leftMarginDisc * (1 - percent))
-                  .clamp(33.0, _leftMarginDisc),
-              height: currentImageSize,
-              child: Transform.rotate(
-                angle: vector.radians(360 * -percent),
-                child: Image.asset(
-                  currentAlbum.imageDisc,
-                ),
-              ),
-            ), */
+            if (followService.followers > 0)
+              Positioned(
+                  top: 70.0,
+                  right: 50,
+                  height: currentImageSize,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      FadeIn(
+                        duration: Duration(milliseconds: 100),
+                        child: Text(
+                          '${followService.followers}',
+                          style: TextStyle(
+                            fontSize: 20,
+                            letterSpacing: -0.5,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 2.0,
+                      ),
+                      Text(
+                        'Seguidores',
+                        style: TextStyle(
+                          fontSize: 15,
+                          letterSpacing: -0.5,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  )),
             Positioned(
                 bottom: (_bottomMarginDisc * (1 - percent))
-                    .clamp(20.0, _bottomMarginDisc),
+                    .clamp(70.0, _bottomMarginDisc),
                 left: (_leftMarginDisc * (1 - percent))
                     .clamp(20.0, _leftMarginDisc),
                 height: currentImageSize,
@@ -576,6 +580,14 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                     Navigator.pop(context),
                 color: Colors.blueAccent,
               ),
+            ),
+            Positioned(
+              top: (_bottomMarginName * (1 - percent))
+                  .clamp(120.0, _bottomMarginName),
+              left: 20,
+              height: currentImageSize,
+              child: ButtonFollow(
+                  percent: percent, store: store, left: leftTextMargin),
             ),
           ],
         ),
@@ -645,45 +657,84 @@ class _ButtonFollowState extends State<ButtonFollow> {
     }
   }
 
+  void messageToWhatsapp(String number) async {
+    await launch("https://wa.me/56$number?text=Hola!");
+  }
+
+  _launchMessageEmail(String email) async {
+    final url = Uri.encodeFull('mailto:$email?subject=Hola&body=Mensage');
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    final phoneStore = widget.store.user.phone.toString();
+
+    final emailStore = widget.store.user.phone.toString();
+    return Row(
       children: [
-        (widget.percent <= 0.9)
-            ? Positioned(
-                top: 350,
-                left: widget.left,
-                child: Container(
-                    width: 180,
-                    height: 35,
-                    child: elevatedButtonCustom(
-                        context: context,
-                        title: (!widget.store.isFollowing)
-                            ? 'Seguir'
-                            : 'Siguiendo',
-                        onPress: () {
-                          this.changeFollow();
-                        },
-                        isEdit: true,
-                        isDelete: false,
-                        isAccent: (!widget.store.isFollowing))))
-            : Positioned(
-                top: 90,
-                right: 20,
-                child: Container(
-                    width: 100,
-                    height: 35,
-                    child: elevatedButtonCustom(
-                        context: context,
-                        title: (!widget.store.isFollowing)
-                            ? 'Seguir'
-                            : 'Siguiendo',
-                        onPress: () {
-                          this.changeFollow();
-                        },
-                        isEdit: true,
-                        isDelete: false,
-                        isAccent: (!widget.store.isFollowing)))),
+        FadeIn(
+          child: Container(
+              width: 100,
+              height: 35,
+              child: elevatedButtonCustom(
+                  context: context,
+                  title: (!widget.store.isFollowing) ? 'Seguir' : 'Siguiendo',
+                  onPress: () {
+                    HapticFeedback.lightImpact();
+                    this.changeFollow();
+                  },
+                  isEdit: true,
+                  isDelete: false,
+                  isAccent: (!widget.store.isFollowing))),
+        ),
+        if (phoneStore != "")
+          Container(
+              padding: EdgeInsets.only(left: 10),
+              width: 120,
+              height: 35,
+              child: elevatedButtonCustom(
+                  context: context,
+                  title: 'Whatsapp',
+                  onPress: () {
+                    HapticFeedback.lightImpact();
+                    messageToWhatsapp(widget.store.user.phone.toString());
+                  },
+                  isEdit: true,
+                  isDelete: false,
+                  isAccent: false)),
+        if (emailStore != "")
+          Container(
+              padding: EdgeInsets.only(left: 10),
+              width: 120,
+              height: 35,
+              child: elevatedButtonCustom(
+                  context: context,
+                  title: 'Email',
+                  onPress: () {
+                    HapticFeedback.lightImpact();
+                    _launchMessageEmail(widget.store.user.email);
+                  },
+                  isEdit: true,
+                  isDelete: false,
+                  isAccent: false)),
+/*         Container(
+            padding: EdgeInsets.only(left: 10),
+            width: 100,
+            height: 35,
+            child: elevatedButtonCustom(
+                context: context,
+                title: (!widget.store.isFollowing) ? 'Seguir' : 'Siguiendo',
+                onPress: () {
+                  this.changeFollow();
+                },
+                isEdit: true,
+                isDelete: false,
+                isAccent: (!widget.store.isFollowing))), */
       ],
     );
   }

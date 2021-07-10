@@ -269,26 +269,6 @@ class _SearchResultListState extends State<SearchStoresResultList>
   ScrollController _scrollController;
 
   bool expanded = false;
-/*   _PatternVibrate() {
-    HapticFeedback.mediumImpact();
-
-    sleep(
-      const Duration(milliseconds: 200),
-    );
-
-    HapticFeedback.mediumImpact();
-
-    sleep(
-      const Duration(milliseconds: 500),
-    );
-
-    HapticFeedback.mediumImpact();
-
-    sleep(
-      const Duration(milliseconds: 200),
-    );
-    HapticFeedback.mediumImpact();
-  } */
 
   final scrollController = ScrollController();
 
@@ -356,26 +336,6 @@ class _SearchProductsResultListState extends State<SearchProductsResultList>
   ScrollController _scrollController;
 
   bool expanded = false;
-/*   _PatternVibrate() {
-    HapticFeedback.mediumImpact();
-
-    sleep(
-      const Duration(milliseconds: 200),
-    );
-
-    HapticFeedback.mediumImpact();
-
-    sleep(
-      const Duration(milliseconds: 500),
-    );
-
-    HapticFeedback.mediumImpact();
-
-    sleep(
-      const Duration(milliseconds: 200),
-    );
-    HapticFeedback.mediumImpact();
-  } */
 
   final scrollController = ScrollController();
 

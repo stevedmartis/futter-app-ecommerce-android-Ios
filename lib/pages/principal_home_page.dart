@@ -29,6 +29,7 @@ import 'package:australti_ecommerce_app/widgets/modal_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
@@ -296,6 +297,7 @@ class _PrincipalPageState extends State<PrincipalPage>
         Timer(new Duration(milliseconds: 300), () {
           showMaterialCupertinoBottomSheetLocation(context, 'hello', 'hello2',
               () {
+            HapticFeedback.lightImpact();
             myLocationBloc.initPositionLocation();
 
             storesByLocationlistServices(
@@ -312,6 +314,7 @@ class _PrincipalPageState extends State<PrincipalPage>
       case PermissionStatus.denied:
         showMaterialCupertinoBottomSheetLocation(context, 'hello', 'hello2',
             () {
+          HapticFeedback.lightImpact();
           showModalGpsLocation();
         }, () {
           Navigator.pop(context);
@@ -326,6 +329,7 @@ class _PrincipalPageState extends State<PrincipalPage>
       case PermissionStatus.permanentlyDenied:
         showMaterialCupertinoBottomSheetLocation(context, 'hello', 'hello2',
             () {
+          HapticFeedback.lightImpact();
           showModalGpsLocation();
         }, () {
           Navigator.pop(context);
@@ -440,20 +444,21 @@ class __PositionedMenuState extends State<_PositionedMenu> {
                                 ? Icons.home
                                 : Icons.home_outlined,
                             onPressed: () {
-                              if (bloc.isVisible) _onItemTapped(0);
+                              HapticFeedback.lightImpact();
                             }),
                         GLMenuButton(
                             icon: (currentPage == 1)
                                 ? Icons.favorite
                                 : Icons.favorite_outline,
                             onPressed: () {
-                              if (bloc.isVisible) _onItemTapped(1);
+                              HapticFeedback.lightImpact();
                             }),
                         GLMenuButton(
                             icon: (currentPage == 2)
                                 ? Icons.storefront
                                 : Icons.storefront_outlined,
                             onPressed: () {
+                              HapticFeedback.lightImpact();
                               authService.redirect = 'vender';
                               if (authService.storeAuth.user.uid == '0') {
                                 Navigator.push(context, loginRoute(100));
@@ -468,6 +473,7 @@ class __PositionedMenuState extends State<_PositionedMenu> {
                                 ? Icons.notifications
                                 : Icons.notifications_outlined,
                             onPressed: () {
+                              HapticFeedback.lightImpact();
                               if (bloc.isVisible) _onItemTapped(3);
                             }),
                       ]),

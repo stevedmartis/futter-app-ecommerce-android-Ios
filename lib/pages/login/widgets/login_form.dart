@@ -5,6 +5,7 @@ import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
@@ -38,6 +39,7 @@ class LoginForm extends StatelessWidget {
               textColor: kWhite,
               text: 'Continuar con  Apple',
               onPressed: () async {
+                HapticFeedback.mediumImpact();
                 await _signIApple(context);
               },
               image: const Image(
@@ -56,6 +58,7 @@ class LoginForm extends StatelessWidget {
               textColor: kWhite,
               text: 'Continuar con Google',
               onPressed: () {
+                HapticFeedback.mediumImpact();
                 _signInGoogle(context);
               },
               image: const Image(
@@ -75,6 +78,7 @@ class LoginForm extends StatelessWidget {
               textColor: kWhite,
               text: 'Con tu número celular',
               onPressed: () {
+                HapticFeedback.mediumImpact();
                 Navigator.push(context, createRoutePhone());
               },
               image: const Icon(
@@ -107,6 +111,7 @@ class LoginForm extends StatelessWidget {
                 textColor: Colors.white.withOpacity(0.5),
                 text: 'Volver al Inicio',
                 onPressed: () {
+                  HapticFeedback.lightImpact();
                   final menuBloc =
                       Provider.of<MenuModel>(context, listen: false);
                   menuBloc.currentPage = 0;

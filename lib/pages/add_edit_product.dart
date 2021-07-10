@@ -646,6 +646,7 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
         onTap: isControllerChange && !errorRequired && !loading ||
                 productService.isImagesChange
             ? () => {
+                  HapticFeedback.lightImpact(),
                   setState(() {
                     loading = true;
                   }),

@@ -5,6 +5,7 @@ import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
@@ -255,6 +256,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
             const SizedBox(height: 15),
             GestureDetector(
               onTap: () => {
+                HapticFeedback.heavyImpact(),
                 (bloc.cart.length > 0)
                     ? Navigator.push(context, ordenDetailImageRoute())
                     : null

@@ -774,6 +774,7 @@ class EditProfilePageState extends State<EditProfilePage> {
             onTap: (isControllerChange && !errorRequired ||
                     authService.isImageProfileChange)
                 ? () => {
+                      HapticFeedback.heavyImpact(),
                       setState(() {
                         loading = true;
                       }),

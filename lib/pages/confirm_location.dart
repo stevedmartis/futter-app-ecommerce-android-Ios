@@ -102,6 +102,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                             size: 35,
                           ),
                           onPressed: () {
+                            HapticFeedback.mediumImpact();
                             if (isDisabled) {
                               var placeSearch = new PlaceSearch(
                                   description: addressSelectCtrl.text,

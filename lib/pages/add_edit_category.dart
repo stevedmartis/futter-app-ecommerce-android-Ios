@@ -414,6 +414,7 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
         ),
         onTap: isControllerChange && !errorRequired && !loading
             ? () => {
+                  HapticFeedback.lightImpact(),
                   setState(() {
                     loading = true;
                   }),

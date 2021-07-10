@@ -20,7 +20,10 @@ elevatedButtonCustom(
 
   return OutlinedButton(
     style: ButtonStyle(
-      shape: MaterialStateProperty.all<OutlinedBorder>(StadiumBorder()),
+      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              side: BorderSide(color: Colors.red))),
       side: MaterialStateProperty.resolveWith<BorderSide>(
           (Set<MaterialState> states) {
         final Color color = states.contains(MaterialState.pressed)

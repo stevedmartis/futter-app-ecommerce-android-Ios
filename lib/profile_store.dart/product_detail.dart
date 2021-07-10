@@ -12,6 +12,7 @@ import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../global/extension.dart';
 
@@ -290,6 +291,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                       isDelete: true,
                       title: 'Eliminar',
                       onPress: () {
+                        HapticFeedback.heavyImpact();
                         final act = CupertinoActionSheet(
                             title: Text('Eliminar este producto?',
                                 style: TextStyle(

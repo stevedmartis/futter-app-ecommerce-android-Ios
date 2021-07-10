@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants.dart';
@@ -222,6 +223,7 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
   }
 
   Future<void> _goToLogin() async {
+    HapticFeedback.lightImpact();
     await _rippleAnimationController.forward();
 
     Navigator.of(context).push(selectCategoryStoreRoute());

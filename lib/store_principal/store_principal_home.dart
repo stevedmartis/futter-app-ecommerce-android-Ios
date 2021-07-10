@@ -19,6 +19,7 @@ import 'package:australti_ecommerce_app/widgets/modal_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:provider/provider.dart';
@@ -134,6 +135,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
   }
 
   pullToRefreshData() async {
+    HapticFeedback.heavyImpact();
     if (storeAuth.user.uid != '0') {
       storesByLocationlistServices(storeAuth.city, storeAuth.user.uid);
     } else if (prefs.isLocationCurrent) {
@@ -232,14 +234,13 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                         margin: EdgeInsets.only(left: 10, top: 10),
                         child: GestureDetector(
                           onTap: () {
-                            {
-                              if (storeAuth.user.uid == '0') {
-                                authService.redirect = 'profile';
-                                Navigator.push(context, loginRoute(100));
-                              } else {
-                                authService.redirect = 'home';
-                                Navigator.push(context, profileAuthRoute(true));
-                              }
+                            HapticFeedback.heavyImpact();
+                            if (storeAuth.user.uid == '0') {
+                              authService.redirect = 'profile';
+                              Navigator.push(context, loginRoute(100));
+                            } else {
+                              authService.redirect = 'home';
+                              Navigator.push(context, profileAuthRoute(true));
                             }
                           },
                           child: Container(
@@ -272,6 +273,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                                 .bounceControllerBell = controller,
                         child: GestureDetector(
                             onTap: () {
+                              HapticFeedback.lightImpact();
                               showMaterialCupertinoBottomSheet(
                                   context, 'hello', 'hello2');
                             },
@@ -363,6 +365,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                           closedShape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20)),
                           openBuilder: (_, closeContainer) {
+                            HapticFeedback.lightImpact();
                             return SearchPrincipalPage();
                           },
                           closedBuilder: (_, openContainer) {
@@ -387,6 +390,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                                     onPhotoSelected: (item) => {
                                       _changeService(bloc, item.id),
                                       setState(() {
+                                        HapticFeedback.lightImpact();
                                         bloc.selected = item;
                                       })
                                     },
@@ -580,6 +584,7 @@ class _HeaderCustomState extends State<HeaderCustom> {
             onPhotoSelected: (item) => {
               _changeService(bloc, item.id),
               setState(() {
+                HapticFeedback.lightImpact();
                 selected = item;
               })
             },
@@ -644,6 +649,7 @@ class StoreCard extends StatelessWidget {
     final id = store.id;
     return GestureDetector(
       onTap: () {
+        HapticFeedback.lightImpact();
         Navigator.push(context, profileCartRoute(store));
       },
       child: Padding(
@@ -1060,6 +1066,7 @@ class _StoreServicesListState extends State<StoreServicesList> {
         final factor = percent > 0.5 ? (1 - percent) : percent;
         return InkWell(
           onTap: () {
+            HapticFeedback.lightImpact();
             storeBloc.servicesStores
                 .insert(storeBloc.servicesStores.length, travelPhotoItem);
             _animatedListKey.currentState
