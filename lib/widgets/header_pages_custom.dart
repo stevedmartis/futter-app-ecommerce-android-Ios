@@ -10,6 +10,7 @@ import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class CustomAppBarHeaderPages extends StatefulWidget {
@@ -86,6 +87,7 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                           borderRadius: BorderRadius.circular(20),
                           radius: 30,
                           onTap: () {
+                            HapticFeedback.lightImpact();
                             Navigator.pop(context);
                           },
                           highlightColor: Colors.grey,
@@ -105,6 +107,7 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                 )
               : GestureDetector(
                   onTap: () {
+                    HapticFeedback.mediumImpact();
                     {
                       authService.redirect = 'profile';
                       if (storeAuth.user.uid == '0') {

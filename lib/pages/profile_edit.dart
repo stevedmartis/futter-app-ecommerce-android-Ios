@@ -519,6 +519,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                                   children: [
                                     InkWell(
                                       onTap: () {
+                                        HapticFeedback.lightImpact();
                                         FocusScope.of(context)
                                             .requestFocus(new FocusNode());
                                         Navigator.push(context,
@@ -540,6 +541,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                                     ),
                                     InkWell(
                                       onTap: () {
+                                        HapticFeedback.lightImpact();
                                         FocusScope.of(context)
                                             .requestFocus(new FocusNode());
                                         Navigator.push(context,
@@ -562,6 +564,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                                     ),
                                     InkWell(
                                       onTap: () {
+                                        HapticFeedback.lightImpact();
                                         FocusScope.of(context)
                                             .requestFocus(new FocusNode());
                                         Navigator.push(
@@ -598,6 +601,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                                     ),
                                     InkWell(
                                       onTap: () {
+                                        HapticFeedback.lightImpact();
                                         FocusScope.of(context)
                                             .requestFocus(new FocusNode());
                                         Navigator.push(context,

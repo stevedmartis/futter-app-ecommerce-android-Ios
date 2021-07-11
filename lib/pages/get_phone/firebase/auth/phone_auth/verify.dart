@@ -181,6 +181,7 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
                           flex: 0,
                           child: GestureDetector(
                             onTap: () {
+                              HapticFeedback.lightImpact();
                               if (!isDisabled) {
                                 showModalLoading(context);
                                 signIn(codeOtp);

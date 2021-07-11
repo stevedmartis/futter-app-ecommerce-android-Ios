@@ -231,6 +231,7 @@ class _ProfileAuthStoreProductItem extends StatelessWidget {
 
     return GestureDetector(
       onTap: () async {
+        HapticFeedback.lightImpact();
         await Navigator.of(context).push(
           PageRouteBuilder(
             transitionDuration: const Duration(milliseconds: 800),

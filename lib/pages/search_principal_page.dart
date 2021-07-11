@@ -132,6 +132,7 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
                               borderRadius: BorderRadius.circular(20),
                               radius: 30,
                               onTap: () {
+                                HapticFeedback.lightImpact();
                                 Navigator.pop(context);
                               },
                               highlightColor: Colors.grey,
@@ -169,7 +170,7 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
                                         style: TextStyle(color: Colors.white),
                                         inputFormatters: [
                                           new LengthLimitingTextInputFormatter(
-                                              100),
+                                              20),
                                         ],
                                         focusNode: _focusNode,
                                         autofocus: true,
@@ -212,6 +213,7 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
                                     ),
                                   ),
                                   Expanded(
+                                    flex: -2,
                                     child: AnimatedContainer(
                                         duration: Duration(milliseconds: 200),
                                         alignment: Alignment.topRight,

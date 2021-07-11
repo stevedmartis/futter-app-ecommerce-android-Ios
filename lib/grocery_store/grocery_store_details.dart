@@ -2,6 +2,7 @@ import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_product.dart';
 import 'package:provider/provider.dart';
+import '../global/extension.dart';
 
 const _textHighColor = Color(0xFF241E1E);
 const _textColor = Color(0xFF5C5657);
@@ -65,7 +66,7 @@ class _GroceryStoreDetailsState extends State<GroceryStoreDetails> {
                         ),
                       ),
                       Text(
-                        widget.product.name,
+                        widget.product.name.capitalize(),
                         style: Theme.of(context).textTheme.headline5.copyWith(
                               color: _textHighColor,
                               fontWeight: FontWeight.bold,

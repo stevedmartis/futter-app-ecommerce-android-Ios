@@ -108,6 +108,15 @@ class StoreBLoC with ChangeNotifier {
     servicesStores[2].stores = restaurants.length;
     servicesStores[3].stores = liquers.length;
 
+    if (followed.length > 0) {
+      changeToFollowed();
+
+      selected = servicesStores[0];
+    } else {
+      changeToMarket();
+      selected = servicesStores[1];
+    }
+
     loadingStores = true;
 
     notifyListeners();

@@ -25,7 +25,9 @@ class TabsViewScrollBLoC with ChangeNotifier {
   ScrollController hideBottomNavController;
 
   ScrollController scrollController2 =
-      ScrollController(initialScrollOffset: 260);
+      ScrollController(initialScrollOffset: 200.0);
+
+  double initialOffset = 0.0;
 
   List<http.MultipartFile> imagesProducts = [];
 
@@ -44,6 +46,9 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
   void initStoreSelect(
       TickerProvider ticker, BuildContext context, Store store) {
+    initialOffset = 200.0;
+    scrollController2 = ScrollController(initialScrollOffset: initialOffset);
+
     final categoriesByStoreUserId = storeCategoriesProducts
         .where((i) => i.store.user.uid == store.user.uid)
         .toList();
@@ -85,12 +90,14 @@ class TabsViewScrollBLoC with ChangeNotifier {
       });
     }
 
-    //scrollController.addListener(_onScrollListener);
+    scrollController.addListener(_onScrollListener);
 
     scrollController2 = ScrollController()..addListener(() => {});
   }
 
   void init(TickerProvider ticker, BuildContext context) {
+    initialOffset = 260.0;
+    scrollController2 = ScrollController(initialScrollOffset: initialOffset);
     final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
 
     final categoriesByStoreUserId = storeCategoriesProducts
@@ -145,6 +152,51 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
     if (authBloc.storeAuth.user.first && categoriesByStoreUserId.length == 0)
       scrollController2 = ScrollController()..addListener(() => {});
+  }
+
+  sharedProductOnStoreCurrent(String value) {
+    if (value.length > 3) {
+      print(items);
+      final item = items.where((product) =>
+          product.category.name.toLowerCase().contains(value.toLowerCase()));
+
+      print(item.first.product);
+
+      final indexCategory = items.indexOf(item.first);
+
+      print(indexCategory);
+
+      onCategorySelected(indexCategory, animationRequired: true);
+    } else if (value.length == 0) {
+      onCategorySelected(0, animationRequired: true);
+    }
+    //value not exists
+  }
+
+  sharedProductOnMyStore(String value) {
+    if (value.length > 3) {
+      final find = items.where((item) => (item.product != null)
+          ? item.product.name.toLowerCase().contains(value.toLowerCase())
+          : item.category.name.toLowerCase().contains(value.toLowerCase()));
+
+      print(find.first);
+
+      final item = tabs.where(
+        (item) => item.category.id == find.first.product.category,
+      );
+
+      print(item);
+
+      final indexCategory = tabs.indexOf(item.first);
+      // final indexCategory = items.indexOf(categoryById);
+
+      print(indexCategory);
+
+      onCategorySelected(indexCategory, animationRequired: true);
+    } else if (value.length == 0) {
+      onCategorySelected(0, animationRequired: true);
+    }
+    //value not exists
   }
 
   orderPosition(TickerProvider ticket,
@@ -300,7 +352,7 @@ class TabsViewScrollBLoC with ChangeNotifier {
   }
 
   void snapAppbar() async {
-    if (scrollController2.offset >= 250 || initial) {
+    if (scrollController2.offset >= initialOffset || initial) {
       await scrollController2.animateTo(
         0.0,
         duration: const Duration(milliseconds: 200),
@@ -320,7 +372,7 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
     if (animationRequired && scrollController2.offset >= 0.0) {
       await scrollController2.animateTo(
-        260,
+        initialOffset,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeIn,
       );
@@ -344,7 +396,7 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
     if (scrollController2.offset >= 0.0 && scrollController.offset > 400)
       await scrollController2.animateTo(
-        260,
+        initialOffset,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeIn,
       );

@@ -2,10 +2,12 @@ import 'dart:ui';
 
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/profile_store.dart/profile_store_auth.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile_store_user.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'grocery_store_cart.dart';
@@ -77,6 +79,7 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
 
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
 
+    final isAuth = (widget.store.user.uid == authService.storeAuth.user.uid);
     return AnimatedBuilder(
         animation: bloc,
         builder: (context, _) {
@@ -104,11 +107,13 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                       decoration: BoxDecoration(
                         color: Colors.black,
                       ),
-                      child: ProfileStoreSelect(
-                        isAuthUser: (widget.store.user.uid ==
-                            authService.storeAuth.user.uid),
-                        store: widget.store,
-                      ),
+                      child: (!isAuth)
+                          ? ProfileStoreSelect(
+                              isAuthUser: (widget.store.user.uid ==
+                                  authService.storeAuth.user.uid),
+                              store: widget.store,
+                            )
+                          : ProfileStoreAuth(isAuthUser: isAuth),
                     ),
                   ),
                 ),
@@ -121,7 +126,10 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                   height: size.height - toolBarHeight,
                   child: GestureDetector(
                     onVerticalDragUpdate: _onVerticalGesture,
-                    onTap: () => bloc.changeToCart(),
+                    onTap: () {
+                      HapticFeedback.mediumImpact();
+                      bloc.changeToCart();
+                    },
                     behavior: HitTestBehavior.opaque,
                     child: Container(
                       color: Colors.black,

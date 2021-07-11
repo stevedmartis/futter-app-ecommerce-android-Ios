@@ -267,7 +267,6 @@ class _CatalogsListState extends State<CatalogsList>
                                   context: context,
                                   builder: (context) {
                                     if (UniversalPlatform.isAndroid) {
-                                      HapticFeedback.heavyImpact();
                                       return AlertDialog(
                                         backgroundColor:
                                             currentTheme.currentTheme.cardColor,
@@ -289,6 +288,8 @@ class _CatalogsListState extends State<CatalogsList>
                                                     fontSize: 18),
                                               ),
                                               onPressed: () => {
+                                                    HapticFeedback
+                                                        .heavyImpact(),
                                                     Navigator.of(context)
                                                         .pop(true),
                                                   }),
@@ -301,7 +302,7 @@ class _CatalogsListState extends State<CatalogsList>
                                               ),
                                               onPressed: () => {
                                                     HapticFeedback
-                                                        .heavyImpact(),
+                                                        .lightImpact(),
                                                     Navigator.of(context)
                                                         .pop(false),
                                                   }),
@@ -327,6 +328,7 @@ class _CatalogsListState extends State<CatalogsList>
                                                   TextStyle(color: Colors.red),
                                             ),
                                             onPressed: () => {
+                                              HapticFeedback.heavyImpact(),
                                               Navigator.of(context).pop(true),
                                             },
                                           ),
@@ -338,7 +340,7 @@ class _CatalogsListState extends State<CatalogsList>
                                                   TextStyle(color: Colors.grey),
                                             ),
                                             onPressed: () => {
-                                              HapticFeedback.heavyImpact(),
+                                              HapticFeedback.lightImpact(),
                                               Navigator.of(context).pop(false),
                                             },
                                           ),
@@ -348,6 +350,7 @@ class _CatalogsListState extends State<CatalogsList>
                                   }) as FutureOr<bool>;
                             } as FutureOr<bool> Function(SlideActionType),
                             onDismissed: (actionType) {
+                              HapticFeedback.lightImpact();
                               showSnackBar(context, 'Catalogo Eliminado');
                               setState(() {
                                 catalogos.removeAt(index);
@@ -376,6 +379,7 @@ class _CatalogsListState extends State<CatalogsList>
                                                 .currentTheme.accentColor),
                                     icon: Icons.edit,
                                     onTap: () async {
+                                      HapticFeedback.mediumImpact();
                                       Navigator.of(context).push(
                                           createRouteAddEditCategory(
                                               item, true, widget.bloc));
@@ -392,6 +396,7 @@ class _CatalogsListState extends State<CatalogsList>
                                         : Colors.red,
                                     icon: Icons.delete,
                                     onTap: () async {
+                                      HapticFeedback.lightImpact();
                                       var state = Slidable.of(context);
 
                                       state.dismiss();
@@ -408,9 +413,9 @@ class _CatalogsListState extends State<CatalogsList>
                                 splashColor: Colors.white,
                                 radius: 30,
                                 onTap: () => {
+                                  HapticFeedback.lightImpact(),
                                   Navigator.push(context,
                                       groceryListRoute(item, widget.bloc)),
-                                  HapticFeedback.lightImpact()
                                 },
                                 child: Container(
                                   key: Key(item.id),
@@ -581,6 +586,7 @@ class _CatalogsListState extends State<CatalogsList>
                       },
                     ).toList(),
                     onReorder: (int oldIndex, int newIndex) => {
+                          HapticFeedback.mediumImpact(),
                           setState(() {
                             if (newIndex > oldIndex) {
                               newIndex -= 1;

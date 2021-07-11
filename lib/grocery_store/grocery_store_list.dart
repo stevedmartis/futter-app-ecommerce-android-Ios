@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import 'grocery_store_details.dart';
 import 'grocery_store_home.dart';
+import '../global/extension.dart';
 
 class GroceryStoreList extends StatelessWidget {
   @override
@@ -55,7 +56,7 @@ class GroceryStoreList extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Hero(
-                        tag: '${product.name}',
+                        tag: '${product.name.capitalize()}',
                         child: Image.asset(
                           product.image,
                           fit: BoxFit.contain,
@@ -72,7 +73,7 @@ class GroceryStoreList extends StatelessWidget {
                     ),
                     const SizedBox(height: 15),
                     Text(
-                      product.name,
+                      product.name.capitalize(),
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
                         color: Colors.black,

@@ -8,6 +8,7 @@ import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
+import '../global/extension.dart';
 
 class GroceryStoreCart extends StatefulWidget {
   GroceryStoreCart({this.cartHome = false});
@@ -115,7 +116,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                                   .images[0]
                                                   .url))),
                                       title: Text(
-                                        '${item.product.name}',
+                                        '${item.product.name.capitalize()}',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 15),
@@ -162,7 +163,9 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                                                     right: 20),
                                                             child:
                                                                 GestureDetector(
-                                                              onDoubleTap: () {
+                                                              onTap: () {
+                                                                HapticFeedback
+                                                                    .lightImpact();
                                                                 bloc.deleteProduct(
                                                                     item);
 
@@ -187,6 +190,8 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                                             child:
                                                                 GestureDetector(
                                                               onTap: () {
+                                                                HapticFeedback
+                                                                    .lightImpact();
                                                                 if (item.quantity >
                                                                     0) {
                                                                   setState(() {
@@ -217,6 +222,8 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                                     GestureDetector(
                                                       onTap: () {
                                                         setState(() {
+                                                          HapticFeedback
+                                                              .lightImpact();
                                                           item.quantity++;
                                                         });
                                                       },
@@ -256,7 +263,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
             const SizedBox(height: 15),
             GestureDetector(
               onTap: () => {
-                HapticFeedback.heavyImpact(),
+                HapticFeedback.mediumImpact(),
                 (bloc.cart.length > 0)
                     ? Navigator.push(context, ordenDetailImageRoute())
                     : null

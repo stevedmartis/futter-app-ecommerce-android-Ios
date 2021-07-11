@@ -291,7 +291,6 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                       isDelete: true,
                       title: 'Eliminar',
                       onPress: () {
-                        HapticFeedback.heavyImpact();
                         final act = CupertinoActionSheet(
                             title: Text('Eliminar este producto?',
                                 style: TextStyle(

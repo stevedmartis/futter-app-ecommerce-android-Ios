@@ -124,6 +124,7 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
                               size: 35,
                             ),
                             onPressed: () {
+                              HapticFeedback.lightImpact();
                               _editProfile();
                             })
                         : buildLoadingWidget(context),

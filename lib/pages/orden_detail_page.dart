@@ -17,6 +17,7 @@ import 'package:australti_ecommerce_app/store_product_concept/store_product_data
 import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
+import '../global/extension.dart';
 
 class OrdenDetailPage extends StatefulWidget {
   @override
@@ -474,7 +475,7 @@ Widget _buildProductsList(context) {
                       child: Container(
                         margin: EdgeInsets.only(top: 5.0),
                         child: Text(
-                          '${store.name}',
+                          '${store.name.capitalize()}',
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,

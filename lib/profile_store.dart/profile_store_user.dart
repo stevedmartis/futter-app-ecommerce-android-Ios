@@ -103,6 +103,8 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
 
   @override
   void dispose() {
+    textCtrl.text = "";
+    textCtrl.clear();
     _animationController.dispose();
 
     super.dispose();
@@ -123,79 +125,84 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
-    return Scaffold(
-        backgroundColor: currentTheme.scaffoldBackgroundColor,
-        body: SafeArea(
-            child: AnimatedBuilder(
-          animation: _bloc,
-          builder: (_, __) => NestedScrollView(
-            controller: _bloc.scrollController2,
-            headerSliverBuilder: (context, value) {
-              return [
-                SliverPersistentHeader(
-                  delegate: _ProfileStoreHeader(
-                      bloc: _bloc,
-                      animationController: _animationController,
-                      isAuthUser: widget.isAuthUser,
-                      store: widget.store),
-                  pinned: true,
-                ),
-                SliverPersistentHeader(
-                  pinned: true,
-                  delegate: SliverAppBarDelegate(
-                      minHeight: 100,
-                      maxHeight: 100,
-                      child: Container(
-                        color: currentTheme.scaffoldBackgroundColor,
-                        alignment: Alignment.centerLeft,
-                        child: (!loading)
-                            ? TabBar(
-                                onTap: _bloc.onCategorySelected,
-                                controller: _bloc.tabController,
-                                indicatorWeight: 0.1,
-                                isScrollable: true,
-                                tabs: _bloc.tabs
-                                    .map((e) =>
-                                        (e.category.products.length > 0 &&
-                                                e.category.visibility)
-                                            ? FadeInLeft(
-                                                child: _TabWidget(
-                                                  tabCategory: e,
-                                                ),
-                                              )
-                                            : Container())
-                                    .toList(),
-                              )
-                            : Container(),
-                      )),
-                ),
-              ];
-            },
-
-            // tab bar view
-            body: (!loading)
-                ? Container(
-                    child: ListView.builder(
-                      controller: _bloc.scrollController,
-                      itemCount: _bloc.items.length,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      itemBuilder: (context, index) {
-                        final item = _bloc.items[index];
-                        return (item.category.visibility)
-                            ? FadeIn(
-                                child: _ProfileStoreProductItem(
-                                    item.product, item.category, _bloc),
-                              )
-                            : Container();
-                      },
-                    ),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.only(bottom: 200.0),
-                    child: buildLoadingWidget(context),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(new FocusNode());
+      },
+      child: Scaffold(
+          backgroundColor: currentTheme.scaffoldBackgroundColor,
+          body: SafeArea(
+              child: AnimatedBuilder(
+            animation: _bloc,
+            builder: (_, __) => NestedScrollView(
+              controller: _bloc.scrollController2,
+              headerSliverBuilder: (context, value) {
+                return [
+                  SliverPersistentHeader(
+                    delegate: _ProfileStoreHeader(
+                        bloc: _bloc,
+                        animationController: _animationController,
+                        isAuthUser: widget.isAuthUser,
+                        store: widget.store),
+                    pinned: true,
                   ),
-          ),
-        )));
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: SliverAppBarDelegate(
+                        minHeight: 70,
+                        maxHeight: 70,
+                        child: Container(
+                          color: currentTheme.scaffoldBackgroundColor,
+                          alignment: Alignment.centerLeft,
+                          child: (!loading)
+                              ? TabBar(
+                                  onTap: _bloc.onCategorySelected,
+                                  controller: _bloc.tabController,
+                                  indicatorWeight: 0.1,
+                                  isScrollable: true,
+                                  tabs: _bloc.tabs
+                                      .map((e) =>
+                                          (e.category.products.length > 0 &&
+                                                  e.category.visibility)
+                                              ? FadeInLeft(
+                                                  child: _TabWidget(
+                                                    tabCategory: e,
+                                                  ),
+                                                )
+                                              : Container())
+                                      .toList(),
+                                )
+                              : Container(),
+                        )),
+                  ),
+                ];
+              },
+
+              // tab bar view
+              body: (!loading)
+                  ? Container(
+                      child: ListView.builder(
+                        controller: _bloc.scrollController,
+                        itemCount: _bloc.items.length,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        itemBuilder: (context, index) {
+                          final item = _bloc.items[index];
+                          return (item.category.visibility)
+                              ? FadeIn(
+                                  child: _ProfileStoreProductItem(
+                                      item.product, item.category, _bloc),
+                                )
+                              : Container();
+                        },
+                      ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.only(bottom: 200.0),
+                      child: buildLoadingWidget(context),
+                    ),
+            ),
+          ))),
+    );
   }
 }
 
@@ -261,7 +268,10 @@ class _ProfileStoreProductItem extends StatelessWidget {
 
     return GestureDetector(
       onTap: () async {
+        FocusScope.of(context).requestFocus(new FocusNode());
+        HapticFeedback.lightImpact();
         groceryBloc.changeToDetails();
+
         await Navigator.of(context).push(
           PageRouteBuilder(
             transitionDuration: const Duration(milliseconds: 800),
@@ -275,7 +285,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
                     bloc: bloc,
                     onProductAdded: (int quantity) {
                       groceryBloc.addProduct(product, quantity);
-
+                      HapticFeedback.lightImpact();
                       _listenNotification(context);
                     }),
               );
@@ -360,6 +370,16 @@ class _ProfileStoreProductItem extends StatelessWidget {
   }
 }
 
+final textCtrl = TextEditingController();
+
+FocusNode _focusNode;
+
+const List<Color> gradients = [
+  Color(0xffEC4E56),
+  Color(0xffF78C39),
+  Color(0xffFEB42C),
+];
+
 const _maxHeaderExtent = 410.0;
 const _minHeaderExtent = 200.0;
 
@@ -436,29 +456,105 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                         ? Colors.white
                         : Colors.black),
                 iconSize: 25,
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                  Navigator.pop(context);
+                },
                 color: Colors.blueAccent,
               ),
             ),
             Positioned(
               top: 20,
               left: 50,
+              width: size.width / 1.6,
+              height: 40,
               child: GestureDetector(
-                  onTap: () => {},
-                  child: Container(
-                      width: size.width / 1.6,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              currentTheme.currentTheme.cardColor,
-                              currentTheme.currentTheme.cardColor
-                            ]),
-                        borderRadius: BorderRadius.all(Radius.circular(30)),
-                      ),
-                      child: SearchContent())),
+                onTap: () => {
+                  FocusScope.of(context).requestFocus(_focusNode),
+                },
+                child: Container(
+                    width: size.width,
+                    decoration: BoxDecoration(
+                        color: currentTheme.currentTheme.cardColor,
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            width: size.width,
+                            padding: EdgeInsets.only(top: 20, left: 10),
+                            child: TextField(
+                              style: TextStyle(color: Colors.white),
+                              inputFormatters: [
+                                new LengthLimitingTextInputFormatter(20),
+                              ],
+                              focusNode: _focusNode,
+
+                              controller: textCtrl,
+                              //  keyboardType: TextInputType.emailAddress,
+
+                              maxLines: 1,
+
+                              decoration: InputDecoration(
+                                fillColor: Colors.white,
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color:
+                                          currentTheme.currentTheme.cardColor),
+                                ),
+                                border: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+                                labelStyle: TextStyle(color: Colors.white54),
+                                // icon: Icon(Icons.perm_identity),
+                                //  fillColor: currentTheme.accentColor,
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color:
+                                          currentTheme.currentTheme.cardColor,
+                                      width: 0.0),
+                                ),
+                                hintText: 'Buscar productos ...',
+                              ),
+                              onChanged: (value) =>
+                                  bloc.sharedProductOnStoreCurrent(value),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: -2,
+                          child: AnimatedContainer(
+                              duration: Duration(milliseconds: 200),
+                              alignment: Alignment.topRight,
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: ShapeDecoration(
+                                  shadows: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.50),
+                                      offset: Offset(3.0, 3.0),
+                                      blurRadius: 2.0,
+                                      spreadRadius: 1.0,
+                                    )
+                                  ],
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(30.0)),
+                                  gradient: LinearGradient(
+                                      colors: gradients,
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight),
+                                ),
+                                child: Icon(
+                                  Icons.search,
+                                  color: Colors.white,
+                                ),
+                              )),
+                        )
+                      ],
+                    )),
+              ),
             ),
             Positioned(
               top: (_bottomMarginName * (1 - percent))
@@ -469,7 +565,7 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    store.name,
+                    store.name.capitalize(),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: titleSize,
@@ -495,43 +591,33 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                       ),
                     ),
                   ),
+                  if (followService.followers > 0)
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 100),
+                      child: Text(
+                        '${followService.followers}  Seguidores',
+                        style: TextStyle(
+                          fontSize: subTitleSize,
+                          letterSpacing: -0.5,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
-            if (followService.followers > 0)
-              Positioned(
-                  top: 70.0,
-                  right: 50,
-                  height: currentImageSize,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      FadeIn(
-                        duration: Duration(milliseconds: 100),
-                        child: Text(
-                          '${followService.followers}',
-                          style: TextStyle(
-                            fontSize: 20,
-                            letterSpacing: -0.5,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 2.0,
-                      ),
-                      Text(
-                        'Seguidores',
-                        style: TextStyle(
-                          fontSize: 15,
-                          letterSpacing: -0.5,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  )),
+            Positioned(
+              bottom: 0.0,
+              left: 20,
+              height: 50,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  ButtonFollow(
+                      percent: percent, store: store, left: leftTextMargin),
+                ],
+              ),
+            ),
             Positioned(
                 bottom: (_bottomMarginDisc * (1 - percent))
                     .clamp(70.0, _bottomMarginDisc),
@@ -580,14 +666,6 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                     Navigator.pop(context),
                 color: Colors.blueAccent,
               ),
-            ),
-            Positioned(
-              top: (_bottomMarginName * (1 - percent))
-                  .clamp(120.0, _bottomMarginName),
-              left: 20,
-              height: currentImageSize,
-              child: ButtonFollow(
-                  percent: percent, store: store, left: leftTextMargin),
             ),
           ],
         ),

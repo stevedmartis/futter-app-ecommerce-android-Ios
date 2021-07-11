@@ -78,7 +78,10 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                       Icons.chevron_left,
                       size: 40,
                     ),
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      Navigator.pop(context);
+                    },
                   ),
                   actions: [
                     StreamBuilder<String>(

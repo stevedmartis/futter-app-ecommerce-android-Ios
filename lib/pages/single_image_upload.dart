@@ -5,6 +5,7 @@ import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -66,6 +67,7 @@ class _SingleImageUploadState extends State<SingleImageUpload> {
                         color: Colors.red,
                       ),
                       onTap: () {
+                        HapticFeedback.lightImpact();
                         setState(() {
                           widget.images
                               .replaceRange(index, index + 1, ['Add Image']);
@@ -100,6 +102,7 @@ class _SingleImageUploadState extends State<SingleImageUpload> {
                         color: Colors.red,
                       ),
                       onTap: () {
+                        HapticFeedback.lightImpact();
                         setState(() {
                           widget.images
                               .replaceRange(index, index + 1, ['Add Image']);

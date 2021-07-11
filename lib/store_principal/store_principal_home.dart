@@ -234,7 +234,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                         margin: EdgeInsets.only(left: 10, top: 10),
                         child: GestureDetector(
                           onTap: () {
-                            HapticFeedback.heavyImpact();
+                            HapticFeedback.mediumImpact();
                             if (storeAuth.user.uid == '0') {
                               authService.redirect = 'profile';
                               Navigator.push(context, loginRoute(100));
@@ -649,7 +649,7 @@ class StoreCard extends StatelessWidget {
     final id = store.id;
     return GestureDetector(
       onTap: () {
-        HapticFeedback.lightImpact();
+        HapticFeedback.mediumImpact();
         Navigator.push(context, profileCartRoute(store));
       },
       child: Padding(

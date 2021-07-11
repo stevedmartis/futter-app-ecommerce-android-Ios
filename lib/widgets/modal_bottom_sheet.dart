@@ -8,6 +8,7 @@ import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_platform/universal_platform.dart';
@@ -370,6 +371,7 @@ showMaterialCupertinoBottomSheetLocation(BuildContext context, String titulo,
                                           final place = places[index];
                                           return ListTile(
                                             onTap: () => {
+                                              HapticFeedback.lightImpact(),
                                               Navigator.push(context,
                                                   confirmLocationRoute(place)),
                                               FocusScope.of(context)
@@ -419,7 +421,10 @@ showMaterialCupertinoBottomSheetLocation(BuildContext context, String titulo,
                               title: 'Continuar',
                               onPress: () {})), */
                       GestureDetector(
-                        onTap: () => onPress(),
+                        onTap: () {
+                          HapticFeedback.mediumImpact();
+                          onPress();
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,

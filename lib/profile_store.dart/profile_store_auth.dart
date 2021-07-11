@@ -11,6 +11,7 @@ import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/product_detail.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
@@ -83,66 +84,71 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
     final productsBloc = Provider.of<TabsViewScrollBLoC>(context);
     final authBloc = Provider.of<AuthenticationBLoC>(context);
 
-    return Scaffold(
-        endDrawer: PrincipalMenu(),
-        backgroundColor: currentTheme.scaffoldBackgroundColor,
-        body: SafeArea(
-            child: AnimatedBuilder(
-          animation: productsBloc,
-          builder: (_, __) => NestedScrollView(
-              controller: productsBloc.scrollController2,
-              headerSliverBuilder: (context, value) {
-                return [
-                  SliverPersistentHeader(
-                    delegate: _ProfileStoreHeader(
-                        animationController: _animationController,
-                        isAuthUser: widget.isAuthUser,
-                        store: authBloc.storeAuth),
-                    pinned: true,
-                  ),
-                  SliverPersistentHeader(
-                    pinned: true,
-                    delegate: SliverAppBarDelegate(
-                        minHeight: 70,
-                        maxHeight: 70,
-                        child: Container(
-                          color: currentTheme.scaffoldBackgroundColor,
-                          alignment: Alignment.centerLeft,
-                          child: TabBar(
-                            onTap: productsBloc.onCategorySelected,
-                            controller: productsBloc.tabController,
-                            indicatorWeight: 0.1,
-                            isScrollable: true,
-                            tabs: productsBloc.tabs
-                                .map((e) => _TabWidget(
-                                      tabCategory: e,
-                                    ))
-                                .toList(),
-                          ),
-                        )),
-                  ),
-                ];
-              },
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(new FocusNode());
+      },
+      child: Scaffold(
+          endDrawer: PrincipalMenu(),
+          backgroundColor: currentTheme.scaffoldBackgroundColor,
+          body: SafeArea(
+              child: AnimatedBuilder(
+            animation: productsBloc,
+            builder: (_, __) => NestedScrollView(
+                controller: productsBloc.scrollController2,
+                headerSliverBuilder: (context, value) {
+                  return [
+                    SliverPersistentHeader(
+                      delegate: _ProfileStoreHeader(
+                          animationController: _animationController,
+                          isAuthUser: widget.isAuthUser,
+                          store: authBloc.storeAuth),
+                      pinned: true,
+                    ),
+                    SliverPersistentHeader(
+                      pinned: true,
+                      delegate: SliverAppBarDelegate(
+                          minHeight: 70,
+                          maxHeight: 70,
+                          child: Container(
+                            color: currentTheme.scaffoldBackgroundColor,
+                            alignment: Alignment.centerLeft,
+                            child: TabBar(
+                              onTap: productsBloc.onCategorySelected,
+                              controller: productsBloc.tabController,
+                              indicatorWeight: 0.1,
+                              isScrollable: true,
+                              tabs: productsBloc.tabs
+                                  .map((e) => _TabWidget(
+                                        tabCategory: e,
+                                      ))
+                                  .toList(),
+                            ),
+                          )),
+                    ),
+                  ];
+                },
 
-              // tab bar view
-              body: Container(
-                child: ListView.builder(
-                  controller: productsBloc.scrollController,
-                  itemCount: productsBloc.items.length,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemBuilder: (context, index) {
-                    final item = productsBloc.items[index];
-                    if (item.isCategory) {
-                      return Container(
-                          child: _ProfileStoreCategoryItem(item.category));
-                    } else {
-                      return _ProfileStoreProductItem(
-                          item.product, item.product.category);
-                    }
-                  },
-                ),
-              )),
-        )));
+                // tab bar view
+                body: Container(
+                  child: ListView.builder(
+                    controller: productsBloc.scrollController,
+                    itemCount: productsBloc.items.length,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    itemBuilder: (context, index) {
+                      final item = productsBloc.items[index];
+                      if (item.isCategory) {
+                        return Container(
+                            child: _ProfileStoreCategoryItem(item.category));
+                      } else {
+                        return _ProfileStoreProductItem(
+                            item.product, item.product.category);
+                      }
+                    },
+                  ),
+                )),
+          ))),
+    );
   }
 }
 
@@ -228,6 +234,8 @@ class _ProfileStoreProductItem extends StatelessWidget {
 
     return GestureDetector(
       onTap: () async {
+        FocusScope.of(context).requestFocus(new FocusNode());
+        HapticFeedback.lightImpact();
         bloc.changeToDetails();
         await Navigator.of(context).push(
           PageRouteBuilder(
@@ -282,7 +290,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        product.name,
+                        product.name.capitalize(),
                         style: TextStyle(
                           color: (currentTheme.customTheme)
                               ? Colors.white
@@ -323,6 +331,16 @@ class _ProfileStoreProductItem extends StatelessWidget {
   }
 }
 
+final textCtrl = TextEditingController();
+
+FocusNode _focusNode;
+
+const List<Color> gradients = [
+  Color(0xffEC4E56),
+  Color(0xffF78C39),
+  Color(0xffFEB42C),
+];
+
 const _maxHeaderExtent = 410.0;
 const _minHeaderExtent = 150.0;
 
@@ -356,10 +374,9 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     final currentTheme = Provider.of<ThemeChanger>(context);
 
-    final productsBloc =
-        Provider.of<TabsViewScrollBLoC>(context, listen: false);
+    final productsBloc = Provider.of<TabsViewScrollBLoC>(context);
 
-    final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
+    final authBloc = Provider.of<AuthenticationBLoC>(context);
 
     final percent = 1 -
         ((maxExtent - shrinkOffset - minExtent) / (maxExtent - minExtent))
@@ -402,6 +419,7 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                         : Colors.black),
                 iconSize: 25,
                 onPressed: () => {
+                  HapticFeedback.lightImpact(),
                   if (authBloc.storeAuth.user.first)
                     {
                       Navigator.push(context, principalHomeRoute()),
@@ -419,22 +437,95 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
             Positioned(
               top: 20,
               left: 50,
+              width: size.width / 1.6,
+              height: 40,
               child: GestureDetector(
-                  onTap: () => {},
-                  child: Container(
-                      width: size.width / 1.6,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              currentTheme.currentTheme.cardColor,
-                              currentTheme.currentTheme.cardColor
-                            ]),
-                        borderRadius: BorderRadius.all(Radius.circular(30)),
-                      ),
-                      child: SearchContent())),
+                onTap: () => {
+                  FocusScope.of(context).requestFocus(_focusNode),
+                },
+                child: Container(
+                    width: size.width,
+                    decoration: BoxDecoration(
+                        color: currentTheme.currentTheme.cardColor,
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            width: size.width,
+                            padding: EdgeInsets.only(top: 20, left: 10),
+                            child: TextField(
+                              style: TextStyle(color: Colors.white),
+                              inputFormatters: [
+                                new LengthLimitingTextInputFormatter(20),
+                              ],
+                              focusNode: _focusNode,
+
+                              controller: textCtrl,
+                              //  keyboardType: TextInputType.emailAddress,
+
+                              maxLines: 1,
+
+                              decoration: InputDecoration(
+                                fillColor: Colors.white,
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color:
+                                          currentTheme.currentTheme.cardColor),
+                                ),
+                                border: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+                                labelStyle: TextStyle(color: Colors.white54),
+                                // icon: Icon(Icons.perm_identity),
+                                //  fillColor: currentTheme.accentColor,
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color:
+                                          currentTheme.currentTheme.cardColor,
+                                      width: 0.0),
+                                ),
+                                hintText: 'Buscar productos ...',
+                              ),
+                              onChanged: (value) =>
+                                  productsBloc.sharedProductOnMyStore(value),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: -2,
+                          child: AnimatedContainer(
+                              duration: Duration(milliseconds: 200),
+                              alignment: Alignment.topRight,
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: ShapeDecoration(
+                                  shadows: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.50),
+                                      offset: Offset(3.0, 3.0),
+                                      blurRadius: 2.0,
+                                      spreadRadius: 1.0,
+                                    )
+                                  ],
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(30.0)),
+                                  gradient: LinearGradient(
+                                      colors: gradients,
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight),
+                                ),
+                                child: Icon(
+                                  Icons.search,
+                                  color: Colors.white,
+                                ),
+                              )),
+                        )
+                      ],
+                    )),
+              ),
             ),
             Positioned(
               top: (_bottomMarginName * (1 - percent))
@@ -471,25 +562,22 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                       ),
                     ),
                   ),
-                  AnimatedContainer(
-                    duration: Duration(milliseconds: 100),
-                    child: Text(
-                      '300 followers',
-                      style: TextStyle(
-                        fontSize: subTitleSize,
-                        letterSpacing: -0.5,
-                        color: Colors.grey,
+                  if (authBloc.storeAuth.followers > 0)
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 100),
+                      child: Text(
+                        '${authBloc.storeAuth.followers}  Seguidores',
+                        style: TextStyle(
+                          fontSize: subTitleSize,
+                          letterSpacing: -0.5,
+                          color: Colors.grey,
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
-            (!isAuthUser)
-                ? ButtonFollow(
-                    percent: percent, bloc: productsBloc, left: leftTextMargin)
-                : ButtonEditProfile(
-                    percent: percent, bloc: productsBloc, left: leftTextMargin),
+            ButtonEditProfile(percent: percent, left: leftTextMargin),
 
             /*  Positioned(
               bottom: 20.0,
@@ -650,12 +738,11 @@ class _ButtonFollowState extends State<ButtonFollow> {
 }
 
 class ButtonEditProfile extends StatefulWidget {
-  const ButtonEditProfile(
-      {Key key, @required this.percent, @required this.bloc, this.left})
+  const ButtonEditProfile({Key key, @required this.percent, this.left})
       : super(key: key);
 
   final num percent;
-  final TabsViewScrollBLoC bloc;
+
   final double left;
 
   @override
@@ -683,6 +770,7 @@ class _ButtonEditProfileState extends State<ButtonEditProfile> {
                       context: context,
                       title: 'Editar perfil',
                       onPress: () {
+                        HapticFeedback.lightImpact();
                         Navigator.push(context, profileEditRoute());
                       },
                       isEdit: true,
@@ -698,6 +786,7 @@ class _ButtonEditProfileState extends State<ButtonEditProfile> {
                       context: context,
                       title: 'Editar',
                       onPress: () {
+                        HapticFeedback.lightImpact();
                         Navigator.push(context, profileEditRoute());
                       },
                       isEdit: true,

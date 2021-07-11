@@ -5,6 +5,7 @@ import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../global/extension.dart';
 
 class DataSearch extends SearchDelegate {
   String selection = '';
@@ -109,7 +110,7 @@ class DataSearch extends SearchDelegate {
                         : Colors.white,
                     leading: Container(),
                     title: Text(
-                      profile.name,
+                      profile.name.capitalize(),
                       style: TextStyle(
                           color: (currentTheme.customTheme)
                               ? Colors.white

@@ -114,6 +114,12 @@ class _PrincipalPageState extends State<PrincipalPage>
     super.dispose();
   }
 
+  changeToServicePrincipal() async {
+    final int followed = prefs.followed;
+
+    (followed > 0) ? storeBloc.changeToFollowed() : storeBloc.changeToMarket();
+  }
+
   void categoriesStoreProducts() async {
     final storeService =
         Provider.of<StoreCategoiesService>(context, listen: false);
@@ -141,8 +147,6 @@ class _PrincipalPageState extends State<PrincipalPage>
       storeBloc.storesListInitial = resp.storeListServices;
 
       storeBloc.chargeServicesStores();
-
-      storeBloc.changeToMarket();
     }
   }
 
@@ -159,8 +163,6 @@ class _PrincipalPageState extends State<PrincipalPage>
       storeBloc.storesListInitial = resp.storeListServices;
 
       storeBloc.chargeServicesStores();
-
-      storeBloc.changeToMarket();
     }
   }
 
@@ -355,7 +357,6 @@ class _PrincipalPageState extends State<PrincipalPage>
       storeBloc.storesListInitial = resp.storeListServices;
 
       storeBloc.chargeServicesStores();
-      storeBloc.changeToMarket();
     }
   }
 

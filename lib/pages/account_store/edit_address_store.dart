@@ -74,13 +74,15 @@ class _LocationStorePageState extends State<LocationStorePage> {
                   title: _showTitle ? Text('Editar dirección') : Text(''),
                   backgroundColor: Colors.black,
                   leading: IconButton(
-                    color: currentTheme.accentColor,
-                    icon: Icon(
-                      Icons.chevron_left,
-                      size: 40,
-                    ),
-                    onPressed: () => Navigator.pop(context),
-                  ),
+                      color: currentTheme.accentColor,
+                      icon: Icon(
+                        Icons.chevron_left,
+                        size: 40,
+                      ),
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.pop(context);
+                      }),
                   actions: [
                     (!loading)
                         ? StreamBuilder<String>(

@@ -10,6 +10,7 @@ import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
 
@@ -66,13 +67,15 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
             appBar: AppBar(
               backgroundColor: currentTheme.scaffoldBackgroundColor,
               leading: IconButton(
-                color: currentTheme.accentColor,
-                icon: Icon(
-                  Icons.chevron_left,
-                  size: 40,
-                ),
-                onPressed: () => Navigator.pop(context),
-              ),
+                  color: currentTheme.accentColor,
+                  icon: Icon(
+                    Icons.chevron_left,
+                    size: 40,
+                  ),
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.pop(context);
+                  }),
               actions: [
                 (!loading)
                     ? IconButton(

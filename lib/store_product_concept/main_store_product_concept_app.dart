@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import '../global/extension.dart';
 
 const _backgroundColor = Color(0xFFF6F9FA);
 const _blueColor = Color(0xFF0D1863);
@@ -190,7 +191,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      product.name,
+                      product.name.capitalize(),
                       style: TextStyle(
                         color: _blueColor,
                         fontSize: 14,
