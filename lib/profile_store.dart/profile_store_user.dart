@@ -5,6 +5,7 @@ import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
+import 'package:australti_ecommerce_app/routes/routes.dart';
 
 import 'package:australti_ecommerce_app/services/catalogo.dart';
 import 'package:australti_ecommerce_app/services/follow_service.dart';
@@ -105,7 +106,7 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
   void dispose() {
     textCtrl.text = "";
     textCtrl.clear();
-    _animationController.dispose();
+    // _animationController.dispose();
 
     super.dispose();
   }
@@ -723,12 +724,15 @@ class _ButtonFollowState extends State<ButtonFollow> {
         int newfollowed = followed + 1;
 
         prefs.followed = newfollowed;
+
+        storeService.changeToFollowed();
       } else {
         followService.followers--;
 
         storeService.removeFallowed();
 
         int newfollowed = followed - 1;
+        storeService.changeToFollowed();
 
         prefs.followed = newfollowed;
       }
@@ -753,6 +757,9 @@ class _ButtonFollowState extends State<ButtonFollow> {
     final phoneStore = widget.store.user.phone.toString();
 
     final emailStore = widget.store.user.phone.toString();
+
+    final authService = Provider.of<AuthenticationBLoC>(context);
+
     return Row(
       children: [
         FadeIn(
@@ -764,7 +771,11 @@ class _ButtonFollowState extends State<ButtonFollow> {
                   title: (!widget.store.isFollowing) ? 'Seguir' : 'Siguiendo',
                   onPress: () {
                     HapticFeedback.lightImpact();
-                    this.changeFollow();
+                    if (authService.storeAuth.user.uid == '0') {
+                      authService.redirect = 'follow';
+                      Navigator.push(context, loginRoute(100));
+                    } else
+                      this.changeFollow();
                   },
                   isEdit: true,
                   isDelete: false,

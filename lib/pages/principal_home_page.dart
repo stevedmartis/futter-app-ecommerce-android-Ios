@@ -453,6 +453,13 @@ class __PositionedMenuState extends State<_PositionedMenu> {
                                 : Icons.favorite_outline,
                             onPressed: () {
                               HapticFeedback.lightImpact();
+                              authService.redirect = 'favorite';
+                              if (authService.storeAuth.user.uid == '0') {
+                                Navigator.push(context, loginRoute(100));
+                              } else if (bloc.isVisible) {
+                                if (authService.storeAuth.user.first)
+                                  Navigator.push(context, principalHomeRoute());
+                              }
                             }),
                         GLMenuButton(
                             icon: (currentPage == 2)

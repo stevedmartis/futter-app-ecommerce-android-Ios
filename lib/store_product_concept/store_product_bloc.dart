@@ -272,14 +272,20 @@ class TabsViewScrollBLoC with ChangeNotifier {
     notifyListeners();
   }
 
-  void removeProductById(TickerProvider ticket, ProfileStoreProduct product,
-      String user, BuildContext context) {
-    final item = tabs.firstWhere((item) => item.category.id == product.category,
+  void removeProductById(TickerProvider ticket,
+      ProfileStoreProduct productRemove, String user, BuildContext context) {
+    final item = tabs.firstWhere(
+        (item) => item.category.id == productRemove.category,
         orElse: () => null);
 
-    item.category.products.removeWhere((product) => product.id == product.id);
-    productsByCategoryList.removeWhere((product) => product.id == product.id);
+    item.category.products
+        .removeWhere((product) => product.id == productRemove.id);
+    productsByCategoryList
+        .removeWhere((product) => product.id == productRemove.id);
 
+    print(productsByCategoryList);
+
+    print(item.category.products);
     tabs = [];
     items = [];
 

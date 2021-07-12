@@ -1,6 +1,7 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc/favorites_bloc.dart';
 import 'package:australti_ecommerce_app/pages/products_list.dart';
+import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/services/product.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
@@ -87,7 +88,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
     final size = MediaQuery.of(context).size;
 
     final storeBloc = Provider.of<FavoritesBLoC>(context, listen: false);
-
+    final authService = Provider.of<AuthenticationBLoC>(context);
     final tag = 'list_${widget.product.images[0].url}' +
         '${widget.product.name}' +
         heroTag;
@@ -103,6 +104,11 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                     radius: 25,
                     child: InkResponse(
                         onTap: () {
+                          if (authService.storeAuth.user.uid == '0') {
+                            authService.redirect = 'favoriteBtn';
+                            Navigator.push(context, loginRoute(100));
+                          } else
+                            HapticFeedback.lightImpact();
                           if (animatedController.status ==
                               AnimationStatus.completed) {
                             addToFavoriteButtonTapped();
@@ -189,6 +195,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                                   const SizedBox(width: 10),
                                   IconButton(
                                     onPressed: () {
+                                      HapticFeedback.lightImpact();
                                       if (quantity > 2) {
                                         setState(() {
                                           quantity--;
@@ -212,6 +219,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                                   ),
                                   IconButton(
                                     onPressed: () {
+                                      HapticFeedback.lightImpact();
                                       setState(() {
                                         quantity++;
                                       });
@@ -267,6 +275,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                   height: 50,
                   child: ElevatedButton(
                       onPressed: () {
+                        HapticFeedback.lightImpact();
                         _addToCart(context);
                       },
                       style: ElevatedButton.styleFrom(
@@ -291,6 +300,8 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                       isDelete: true,
                       title: 'Eliminar',
                       onPress: () {
+                        HapticFeedback.heavyImpact();
+
                         final act = CupertinoActionSheet(
                             title: Text('Eliminar este producto?',
                                 style: TextStyle(
@@ -304,6 +315,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                                   style: TextStyle(color: Colors.red),
                                 ),
                                 onPressed: () {
+                                  HapticFeedback.heavyImpact();
                                   _deleteProduct();
                                 },
                               )
@@ -325,6 +337,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                         context: context,
                         title: 'Editar',
                         onPress: () {
+                          HapticFeedback.lightImpact();
                           Navigator.of(context).push(createRouteAddEditProduct(
                               widget.product, true, widget.category));
                         },

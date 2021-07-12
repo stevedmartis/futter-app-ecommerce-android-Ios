@@ -1,6 +1,6 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/pages/get_phone/providers/phone_auth.dart';
-import 'package:australti_ecommerce_app/pages/get_phone/utils/constants.dart';
+
 import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
@@ -13,13 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class PhoneAuthVerify extends StatefulWidget {
-  /*
-   *  cardBackgroundColor & logo values will be passed to the constructor
-   *  here we access these params in the _PhoneAuthState using "widget"
-   */
   final Color cardBackgroundColor = Color(0xFFFCA967);
-  final String logo = Assets.firebase;
-  final String appName = "Awesome app";
 
   @override
   _PhoneAuthVerifyState createState() => _PhoneAuthVerifyState();
@@ -207,10 +201,6 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
                         );
                       },
                     ),
-
-                    // password
-
-                    // submit
                   ],
                 )),
           )),
@@ -224,17 +214,12 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
 
   onStarted() {
     showSnackBar(context, "Verificado con exito");
-//    _showSnackBar(phoneAuthDataProvider.message);
   }
 
-  onCodeSent() {
-    //  showSnackBar(context, "Codigo enviado");
-//    _showSnackBar(phoneAuthDataProvider.message);
-  }
+  onCodeSent() {}
 
   onCodeResent() {
     showSnackBar(context, "Codigo reenviado");
-//    _showSnackBar(phoneAuthDataProvider.message);
   }
 
   onVerified() async {
@@ -244,19 +229,16 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
   }
 
   onFailed() {
-//    _showSnackBar(phoneAuthDataProvider.message);
     showSnackBar(context, "Error, Intente mas tarde");
   }
 
   onError() {
-//    _showSnackBar(phoneAuthDataProvider.message);
     showSnackBar(context,
         "PhoneAuth error ${Provider.of<PhoneAuthDataProvider>(context, listen: false).message}");
   }
 
   onAutoRetrievalTimeOut() {
     showSnackBar(context, "Error, Intente mas tarde");
-//    _showSnackBar(phoneAuthDataProvider.message);
   }
 
   _signinWithPhone(BuildContext context) async {
@@ -274,25 +256,34 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
     if (signInAppleOk) {
       socketService.connect();
 
-      if (authService.redirect == 'profile' &&
-          authService.storeAuth.user.first) {
-        Navigator.push(context, profileEditRoute());
-      } else if (authService.redirect == 'vender' &&
-          authService.storeAuth.user.first) {
-        Navigator.push(context, profileEditRoute());
-      }
-
-      if (!authService.storeAuth.user.first) {
-        Provider.of<MenuModel>(context, listen: false).currentPage = 0;
-        Navigator.push(context, principalHomeRoute());
-      }
-
-      //Navigator.push(context, profileAuthRoute(true));
+      redirectByAction(context);
     } else {
-      // Mostara alerta
       showAlertError(context, 'Error', 'Intente más tarde');
     }
+  }
+}
 
-    //Navigator.pushReplacementNamed(context, '');
+void redirectByAction(context) {
+  final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+
+  if (authService.redirect == 'profile' && authService.storeAuth.user.first) {
+    Navigator.push(context, profileEditRoute());
+  } else if (authService.redirect == 'vender' &&
+      authService.storeAuth.user.first) {
+    Navigator.push(context, profileEditRoute());
+  } else if (authService.redirect == 'favorite' &&
+      authService.storeAuth.user.first) {
+    Provider.of<MenuModel>(context, listen: false).currentPage = 1;
+    Navigator.push(context, principalHomeRoute());
+  } else if (authService.redirect == 'follow' ||
+      authService.redirect == 'favoriteBtn') {
+    Navigator.pop(context);
+    Navigator.pop(context);
+    Navigator.pop(context);
+  }
+
+  if (!authService.storeAuth.user.first) {
+    Provider.of<MenuModel>(context, listen: false).currentPage = 0;
+    Navigator.push(context, principalHomeRoute());
   }
 }

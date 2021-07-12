@@ -44,12 +44,11 @@ class StoreCategoiesService with ChangeNotifier {
   }
 
   Future getAllCategoriesProducts(String uid, String authId) async {
-    final token = await this._storage.read(key: 'token');
     final urlFinal =
         ('${Environment.apiUrl}/api/catalogo/all/catalogos/products/user/$uid/$authId');
 
     final resp = await http.get(Uri.parse(urlFinal),
-        headers: {'Content-Type': 'application/json', 'x-token': token});
+        headers: {'Content-Type': 'application/json'});
 
     if (resp.statusCode == 200) {
       // final roomResponse = roomsResponseFromJson(resp.body);

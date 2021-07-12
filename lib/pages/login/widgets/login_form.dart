@@ -136,21 +136,7 @@ class LoginForm extends StatelessWidget {
 
       //  Provider.of<MenuModel>(context, listen: false).currentPage = 2;
 
-      if (authService.redirect == 'profile' &&
-          authService.storeAuth.user.first) {
-        Navigator.push(context, profileEditRoute());
-      } else if (authService.redirect == 'vender' &&
-          authService.storeAuth.user.first) {
-        Navigator.push(context, profileEditRoute());
-        /*   Provider.of<MenuModel>(context, listen: false).currentPage = 2;
-        Navigator.push(context, principalHomeRoute()); */
-      }
-
-      if (!authService.storeAuth.user.first) {
-        Provider.of<MenuModel>(context, listen: false).currentPage = 0;
-        Navigator.push(context, principalHomeRoute());
-      }
-
+      redirectByAction(context);
       //Navigator.push(context, profileAuthRoute(true));
     } else {
       // Mostara alerta
@@ -158,6 +144,31 @@ class LoginForm extends StatelessWidget {
     }
 
     //Navigator.pushReplacementNamed(context, '');
+  }
+
+  void redirectByAction(context) {
+    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+
+    if (authService.redirect == 'profile' && authService.storeAuth.user.first) {
+      Navigator.push(context, profileEditRoute());
+    } else if (authService.redirect == 'vender' &&
+        authService.storeAuth.user.first) {
+      Navigator.push(context, profileEditRoute());
+      /*   Provider.of<MenuModel>(context, listen: false).currentPage = 2;
+        Navigator.push(context, principalHomeRoute()); */
+    } else if (authService.redirect == 'favorite' &&
+        authService.storeAuth.user.first) {
+      Provider.of<MenuModel>(context, listen: false).currentPage = 1;
+      Navigator.push(context, principalHomeRoute());
+    } else if (authService.redirect == 'follow' ||
+        authService.redirect == 'favoriteBtn') {
+      Navigator.pop(context);
+    }
+
+    if (!authService.storeAuth.user.first) {
+      Provider.of<MenuModel>(context, listen: false).currentPage = 0;
+      Navigator.push(context, principalHomeRoute());
+    }
   }
 
   _signInGoogle(BuildContext context) async {
@@ -169,18 +180,7 @@ class LoginForm extends StatelessWidget {
 
     if (signInGoogleOk) {
       slocketService.connect();
-      if (authService.redirect == 'profile' &&
-          authService.storeAuth.user.first) {
-        Navigator.push(context, profileEditRoute());
-      } else if (authService.redirect == 'vender' &&
-          authService.storeAuth.user.first) {
-        Navigator.push(context, profileEditRoute());
-      }
-
-      if (!authService.storeAuth.user.first) {
-        Provider.of<MenuModel>(context, listen: false).currentPage = 0;
-        Navigator.push(context, principalHomeRoute());
-      }
+      redirectByAction(context);
     } else {
       // Mostara alerta
       showAlertError(context, 'Login incorrecto', 'El correo ya existe');
