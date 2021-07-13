@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:intl/intl.dart';
 import '../global/extension.dart';
 
 const _backgroundColor = Color(0xFFF6F9FA);
@@ -165,8 +166,12 @@ class _RappiCategoryItem extends StatelessWidget {
 class _ProfileStoreProductItem extends StatelessWidget {
   const _ProfileStoreProductItem(this.product);
   final ProfileStoreProduct product;
+
   @override
   Widget build(BuildContext context) {
+    final priceformat =
+        NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
+            .format(product.price);
     return Container(
       height: productHeight,
       child: Padding(
@@ -209,7 +214,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      '\$${product.price.toStringAsFixed(2)}',
+                      '\$$priceformat',
                       style: TextStyle(
                         color: _greenColor,
                         fontSize: 14,

@@ -11,6 +11,7 @@ import 'package:australti_ecommerce_app/profile_store.dart/product_detail.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
@@ -228,7 +229,9 @@ class _ProfileAuthStoreProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context);
-
+    final priceformat =
+        NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
+            .format(product.price);
     return GestureDetector(
       onTap: () async {
         HapticFeedback.lightImpact();
@@ -300,7 +303,7 @@ class _ProfileAuthStoreProductItem extends StatelessWidget {
                         ),
                       const SizedBox(height: 5),
                       Text(
-                        '\$${product.price}',
+                        '\$$priceformat',
                         style: TextStyle(
                           color: (currentTheme.customTheme)
                               ? Colors.white

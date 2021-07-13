@@ -109,13 +109,10 @@ class LoginForm extends StatelessWidget {
               child: CustomButton(
                 color: currentTheme.scaffoldBackgroundColor,
                 textColor: Colors.white.withOpacity(0.5),
-                text: 'Volver al Inicio',
+                text: 'Volver atras',
                 onPressed: () {
                   HapticFeedback.lightImpact();
-                  final menuBloc =
-                      Provider.of<MenuModel>(context, listen: false);
-                  menuBloc.currentPage = 0;
-                  Navigator.push(context, principalHomeRoute());
+                  Navigator.pop(context);
                 },
               ),
             ),

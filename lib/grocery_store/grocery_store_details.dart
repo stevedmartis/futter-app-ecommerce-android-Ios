@@ -1,6 +1,7 @@
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_product.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../global/extension.dart';
 
@@ -36,6 +37,10 @@ class _GroceryStoreDetailsState extends State<GroceryStoreDetails> {
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context);
+
+    final priceformat =
+        NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
+            .format(widget.product.price);
 
     return Scaffold(
       appBar: AppBar(
@@ -132,7 +137,7 @@ class _GroceryStoreDetailsState extends State<GroceryStoreDetails> {
                           ),
                           Spacer(),
                           Text(
-                            '\$${widget.product.price}',
+                            '\$$priceformat',
                             style:
                                 Theme.of(context).textTheme.headline4.copyWith(
                                       color: _textHighColor,

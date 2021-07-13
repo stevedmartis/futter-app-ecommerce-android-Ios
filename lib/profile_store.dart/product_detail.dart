@@ -14,6 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../global/extension.dart';
 
@@ -92,6 +93,10 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
     final tag = 'list_${widget.product.images[0].url}' +
         '${widget.product.name}' +
         heroTag;
+
+    final priceformat =
+        NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
+            .format(widget.product.price);
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(color: Colors.white),
@@ -235,7 +240,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                             ),
                             Spacer(),
                             Text(
-                              '\$${widget.product.price}',
+                              '\$$priceformat',
                               style: Theme.of(context)
                                   .textTheme
                                   .headline4

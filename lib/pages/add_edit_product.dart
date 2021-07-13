@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 //final Color darkBlue = Color.fromARGB(255, 18, 32, 47);
 
@@ -157,165 +158,170 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
     final isControllerChangeEdit =
         isNameChange || isAboutChange || isVisibilityChange;
 
-    return Scaffold(
-      backgroundColor: currentTheme.currentTheme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor:
-            (currentTheme.customTheme) ? Colors.black : Colors.white,
-        actions: [
-          (!loading)
-              ? (widget.isEdit)
-                  ? _createButton(isControllerChangeEdit)
-                  : _createButton(isControllerChange)
-              : buildLoadingWidget(context),
-        ],
-        leading: IconButton(
-          icon: Icon(
-            Icons.chevron_left,
-            color: currentTheme.currentTheme.accentColor,
-          ),
-          iconSize: 30,
-          onPressed: () =>
-              //  Navigator.pushReplacement(context, createRouteProfile()),
-              Navigator.pop(context),
-          color: Colors.white,
-        ),
-        centerTitle: true,
-        title: (widget.isEdit)
-            ? Text(
-                'Editar producto',
-                style: TextStyle(
-                    color: (currentTheme.customTheme)
-                        ? Colors.white
-                        : Colors.black),
-              )
-            : Text(
-                'Crear producto',
-                style: TextStyle(
-                    color: (currentTheme.customTheme)
-                        ? Colors.white
-                        : Colors.black),
-              ),
-      ),
-      body: CustomScrollView(
-          physics: const BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics()),
-          // controller: _scrollController,
-          slivers: <Widget>[
-            SliverFixedExtentList(
-              itemExtent: 150,
-              delegate: SliverChildListDelegate(
-                [
-                  FadeIn(
-                    child: Container(
-                        child: (UniversalPlatform.isWeb)
-                            ? Center(
-                                child: Container(
-                                    child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: (uploadedImages.length > 0)
-                                            ? ListView.builder(
-                                                padding: EdgeInsets.only(
-                                                    left: 20, right: 20),
-                                                shrinkWrap: true,
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                itemCount:
-                                                    uploadedImages.length,
-                                                itemBuilder:
-                                                    (BuildContext context,
-                                                        int index) {
-                                                  final stripped = uploadedImages[
-                                                          index]
-                                                      .replaceFirst(
-                                                          RegExp(
-                                                              r'data:image/[^;]+;base64,'),
-                                                          '');
-
-                                                  final itemData =
-                                                      base64.decode(stripped);
-
-                                                  return Container(
-                                                    width: 150,
-                                                    height: 150,
-                                                    child: Card(
-                                                      clipBehavior:
-                                                          Clip.antiAlias,
-                                                      child: Image.memory(
-                                                          itemData),
-                                                    ),
-                                                  );
-                                                },
-                                              )
-                                            : Container(
-                                                width: 150,
-                                                height: 150,
-                                                child: Card(
-                                                  child: IconButton(
-                                                    icon: Icon(Icons.add),
-                                                    onPressed: () {
-                                                      _getImagesWeb();
-                                                    },
-                                                  ),
-                                                ),
-                                              ))),
-                              )
-                            : SingleImageUpload(
-                                images: images,
-                                isEdit: widget.isEdit,
-                              )),
-                  )
-                ],
-              ),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        backgroundColor: currentTheme.currentTheme.scaffoldBackgroundColor,
+        appBar: AppBar(
+          backgroundColor:
+              (currentTheme.customTheme) ? Colors.black : Colors.white,
+          actions: [
+            (!loading)
+                ? (widget.isEdit)
+                    ? _createButton(isControllerChangeEdit)
+                    : _createButton(isControllerChange)
+                : buildLoadingWidget(context),
+          ],
+          leading: IconButton(
+            icon: Icon(
+              Icons.chevron_left,
+              color: currentTheme.currentTheme.accentColor,
             ),
-            SliverFillRemaining(
-                hasScrollBody: false,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                        height: 20,
-                      ),
-                      _createName(),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      _createDescription(),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      _createPrice(),
+            iconSize: 30,
+            onPressed: () =>
+                //  Navigator.pushReplacement(context, createRouteProfile()),
+                Navigator.pop(context),
+            color: Colors.white,
+          ),
+          centerTitle: true,
+          title: (widget.isEdit)
+              ? Text(
+                  'Editar producto',
+                  style: TextStyle(
+                      color: (currentTheme.customTheme)
+                          ? Colors.white
+                          : Colors.black),
+                )
+              : Text(
+                  'Crear producto',
+                  style: TextStyle(
+                      color: (currentTheme.customTheme)
+                          ? Colors.white
+                          : Colors.black),
+                ),
+        ),
+        body: CustomScrollView(
+            physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics()),
+            // controller: _scrollController,
+            slivers: <Widget>[
+              SliverFixedExtentList(
+                itemExtent: 150,
+                delegate: SliverChildListDelegate(
+                  [
+                    FadeIn(
+                      child: Container(
+                          child: (UniversalPlatform.isWeb)
+                              ? Center(
+                                  child: Container(
+                                      child: SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          child: (uploadedImages.length > 0)
+                                              ? ListView.builder(
+                                                  padding: EdgeInsets.only(
+                                                      left: 20, right: 20),
+                                                  shrinkWrap: true,
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  itemCount:
+                                                      uploadedImages.length,
+                                                  itemBuilder:
+                                                      (BuildContext context,
+                                                          int index) {
+                                                    final stripped =
+                                                        uploadedImages[index]
+                                                            .replaceFirst(
+                                                                RegExp(
+                                                                    r'data:image/[^;]+;base64,'),
+                                                                '');
 
-                      //  _createVisibility()
-                      //_createPrivacity(),
-                      /*  Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const SizedBox(height: 24),
-                            ButtonWidget(
-                              onClicked: () => Utils.showSheet(
-                                context,
-                                child: buildCustomPicker(),
-                                onClicked: () {
-                                  final value = values[index];
-                                  Utils.showSnackBar(
-                                      context, 'Selected "$value"');
+                                                    final itemData =
+                                                        base64.decode(stripped);
 
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ),
-                          ],
+                                                    return Container(
+                                                      width: 150,
+                                                      height: 150,
+                                                      child: Card(
+                                                        clipBehavior:
+                                                            Clip.antiAlias,
+                                                        child: Image.memory(
+                                                            itemData),
+                                                      ),
+                                                    );
+                                                  },
+                                                )
+                                              : Container(
+                                                  width: 150,
+                                                  height: 150,
+                                                  child: Card(
+                                                    child: IconButton(
+                                                      icon: Icon(Icons.add),
+                                                      onPressed: () {
+                                                        _getImagesWeb();
+                                                      },
+                                                    ),
+                                                  ),
+                                                ))),
+                                )
+                              : SingleImageUpload(
+                                  images: images,
+                                  isEdit: widget.isEdit,
+                                )),
+                    )
+                  ],
+                ),
+              ),
+              SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        SizedBox(
+                          height: 20,
                         ),
-                      ), */
-                    ],
-                  ),
-                )),
-          ]),
+                        _createName(),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        _createDescription(),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        _createPrice(),
+
+                        //  _createVisibility()
+                        //_createPrivacity(),
+                        /*  Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const SizedBox(height: 24),
+                              ButtonWidget(
+                                onClicked: () => Utils.showSheet(
+                                  context,
+                                  child: buildCustomPicker(),
+                                  onClicked: () {
+                                    final value = values[index];
+                                    Utils.showSnackBar(
+                                        context, 'Selected "$value"');
+
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ), */
+                      ],
+                    ),
+                  )),
+            ]),
+      ),
     );
   }
 
@@ -494,14 +500,19 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
             style: TextStyle(
               color: (currentTheme.customTheme) ? Colors.white : Colors.black,
             ),
+            onTap: () {
+              if (priceCtrl.text == '0') priceCtrl.text = "";
+            },
             controller: priceCtrl,
-            inputFormatters: <TextInputFormatter>[
-              LengthLimitingTextInputFormatter(3),
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(7),
+              CurrencyInputFormatter()
             ],
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
-                suffixIcon: Container(
-                    padding: EdgeInsets.only(top: 15),
+                prefixIcon: Container(
+                    padding: EdgeInsets.only(top: 15, left: 10),
                     child: Text(
                       new String.fromCharCodes(new Runes('\u0024')),
                       style: TextStyle(
@@ -671,6 +682,8 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
 
     final price = priceCtrl.text;
 
+    final priceFormat = price.replaceAll(RegExp(r'\.'), '');
+
     final imagesProduct = await productService.uploadImagesProducts(
         tabsViewScrollBLoC.imagesProducts, storeAuth.user.uid);
 
@@ -678,7 +691,7 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
       final newProduct = ProfileStoreProduct(
           id: '2-c',
           name: name,
-          price: int.parse(price),
+          price: int.parse(priceFormat),
           description: description,
           images: imagesProduct.images,
           category: widget.category,
@@ -720,6 +733,8 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
 
     final price = priceCtrl.text;
 
+    final priceFormat = price.replaceAll(RegExp(r'\.'), '');
+
     List<ImageProduct> imagesFinal = [];
 
     final item =
@@ -741,7 +756,7 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
         final productEdit = ProfileStoreProduct(
             id: widget.product.id,
             name: name,
-            price: int.parse(price),
+            price: int.parse(priceFormat),
             description: description,
             images: imagesFinal,
             category: widget.product.category,
@@ -825,5 +840,29 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
     } */
 
     //Navigator.pushReplacementNamed(context, '');
+  }
+}
+
+class CurrencyInputFormatter extends TextInputFormatter {
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.selection.baseOffset == 0) {
+      print(true);
+      return newValue;
+    }
+
+    double value = double.parse(newValue.text);
+
+    final newform =
+        NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
+            .format(value);
+
+    if (newValue.selection.baseOffset > 3) {
+      return newValue.copyWith(
+          text: newform,
+          selection: new TextSelection.collapsed(offset: newform.length));
+    }
+
+    return newValue;
   }
 }

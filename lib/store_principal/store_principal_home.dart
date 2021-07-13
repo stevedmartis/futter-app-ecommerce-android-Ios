@@ -11,6 +11,7 @@ import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
 import 'package:australti_ecommerce_app/responses/stores_list_principal_response.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:australti_ecommerce_app/services/stores_Services.dart';
 import 'package:australti_ecommerce_app/store_principal/store_Service.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
@@ -510,30 +511,37 @@ class StoresListByService extends StatelessWidget {
     final bloc = Provider.of<StoreBLoC>(context);
 
     return SizedBox(
-      child: ListView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: bloc.storesListState.length,
-          itemBuilder: (BuildContext ctxt, int index) {
-            final store = bloc.storesListState[index];
+      child: (bloc.storesListState.length > 0)
+          ? ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: bloc.storesListState.length,
+              itemBuilder: (BuildContext ctxt, int index) {
+                final store = bloc.storesListState[index];
 
-            return (bloc.storesListState.length) > 0
-                ? Stack(
-                    children: [
-                      FadeIn(
-                        child: StoreCard(
-                          store: store,
+                return (bloc.storesListState.length) > 0
+                    ? Stack(
+                        children: [
+                          FadeIn(
+                            child: StoreCard(
+                              store: store,
+                            ),
+                          ),
+                        ],
+                      )
+                    : Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Center(
+                          child: Text('No hay tiendas cercanas a tu ubicación'),
                         ),
-                      ),
-                    ],
-                  )
-                : Container(
-                    margin: EdgeInsets.only(top: 20),
-                    child: Center(
-                      child: Text('No hay tiendas cercanas a tu ubicación'),
-                    ),
-                  );
-          }),
+                      );
+              })
+          : Container(
+              margin: EdgeInsets.only(top: 20),
+              child: Center(
+                child: Text('No hay tiendas cercanas a tu ubicación'),
+              ),
+            ),
     );
   }
 }
@@ -575,6 +583,7 @@ class _HeaderCustomState extends State<HeaderCustom> {
             ),
           ),
         ), */
+
         Positioned(
           left: 0,
           right: 0,
@@ -771,6 +780,7 @@ class StoreServiceDetails extends StatefulWidget {
 
 List<Address> addresses = [];
 Address nameAddress = Address(addressLine: '');
+final prefs = new AuthUserPreferences();
 
 class _StoreServiceDetailsState extends State<StoreServiceDetails>
     with SingleTickerProviderStateMixin {
@@ -803,7 +813,7 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
 // From coordinates
 
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-    final prefsAuthBloc = Provider.of<AuthenticationBLoC>(context).prefs;
+    final authBloc = Provider.of<AuthenticationBLoC>(context);
 
     final _size = MediaQuery.of(context).size;
 
@@ -831,6 +841,23 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                   ),
                 ),
               ),
+              Positioned.fill(
+                child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(0.0)),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(0.0),
+                        gradient: LinearGradient(
+                          colors: [
+                            Color.fromARGB(200, 0, 0, 0),
+                            Color.fromARGB(0, 0, 0, 0)
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.center,
+                        ),
+                      ),
+                    )),
+              ),
               Positioned(
                 top: 70,
                 left: 10,
@@ -845,14 +872,14 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                   ),
                 ),
               ),
-              (prefsAuthBloc.locationCurrent)
+              (prefs.locationCurrent)
                   ? Positioned(
                       top: 20,
                       left: 10,
                       right: 10,
                       height: 40,
                       child: AnimatedOpacity(
-                          opacity: (prefsAuthBloc.locationCurrent) ? 1.0 : 0.0,
+                          opacity: (prefs.locationCurrent) ? 1.0 : 0.0,
                           duration: Duration(milliseconds: 200),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -869,8 +896,8 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                                   width: _size.width / 3,
                                   alignment: Alignment.center,
                                   child: Text(
-                                    prefsAuthBloc.locationCurrent
-                                        ? '${prefsAuthBloc.addressSave['featureName']}'
+                                    prefs.locationCurrent
+                                        ? '${prefs.addressSave['featureName']}'
                                         : '...',
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
@@ -880,6 +907,27 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                                         fontSize: 13,
                                         color: Colors.white70),
                                   )),
+                              GestureDetector(
+                                onTap: () {
+                                  showMaterialCupertinoBottomSheetLocation(
+                                      context, 'hello', 'hello2', () {
+                                    HapticFeedback.lightImpact();
+                                    myLocationBloc.initPositionLocation();
+
+                                    storesByLocationlistServices(
+                                        prefs.addressSave['locality'],
+                                        authBloc.storeAuth.user.uid);
+
+                                    Navigator.pop(context);
+                                  }, () {
+                                    Navigator.pop(context);
+                                  });
+                                },
+                                child: Container(
+                                  child: Icon(Icons.edit,
+                                      color: currentTheme.accentColor),
+                                ),
+                              )
                             ],
                           )))
                   : Positioned(
@@ -888,7 +936,7 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                       right: 10,
                       height: 40,
                       child: AnimatedOpacity(
-                          opacity: (prefsAuthBloc.locationSearch) ? 1.0 : 0.0,
+                          opacity: (prefs.locationSearch) ? 1.0 : 0.0,
                           duration: Duration(milliseconds: 200),
                           child: Container(
                             alignment: Alignment.center,
@@ -912,8 +960,8 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                                   child: Container(
                                       alignment: Alignment.center,
                                       child: Text(
-                                        prefsAuthBloc.locationSearch
-                                            ? '${prefsAuthBloc.addressSearchSave.mainText}'
+                                        prefs.locationSearch
+                                            ? '${prefs.addressSearchSave.mainText}'
                                             : '...',
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
@@ -925,12 +973,49 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                                             color: Colors.white70),
                                       )),
                                 ),
+                                GestureDetector(
+                                  onTap: () {
+                                    showMaterialCupertinoBottomSheetLocation(
+                                        context, 'hello', 'hello2', () {
+                                      HapticFeedback.lightImpact();
+                                      myLocationBloc.initPositionLocation();
+
+                                      storesByLocationlistServices(
+                                          prefs.addressSave['locality'],
+                                          authBloc.storeAuth.user.uid);
+
+                                      Navigator.pop(context);
+                                    }, () {
+                                      Navigator.pop(context);
+                                    });
+                                  },
+                                  child: Container(
+                                    child: Icon(Icons.edit,
+                                        color: currentTheme.accentColor),
+                                  ),
+                                )
                               ],
                             ),
                           ))),
             ],
           );
         });
+  }
+
+  void storesByLocationlistServices(String location, String uid) async {
+    final storeService = Provider.of<StoreService>(context, listen: false);
+
+    final StoresListResponse resp =
+        await storeService.getStoresLocationListServices(location, uid);
+
+    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
+
+    if (resp.ok) {
+      storeBloc.storesListInitial = [];
+      storeBloc.storesListInitial = resp.storeListServices;
+
+      storeBloc.chargeServicesStores();
+    }
   }
 }
 
@@ -1065,44 +1150,41 @@ class _StoreServicesListState extends State<StoreServicesList> {
         final percent = page - page.floor();
         final factor = percent > 0.5 ? (1 - percent) : percent;
         return InkWell(
-          onTap: () {
-            HapticFeedback.lightImpact();
-            storeBloc.servicesStores
-                .insert(storeBloc.servicesStores.length, travelPhotoItem);
-            _animatedListKey.currentState
-                .insertItem(storeBloc.servicesStores.length - 1);
-            final itemToDelete = travelPhotoItem;
-            widget.onPhotoSelected(travelPhotoItem);
-            storeBloc.servicesStores.removeAt(index);
-            _animatedListKey.currentState.removeItem(
-              index,
-              (context, animation) => FadeTransition(
-                opacity: animation,
-                child: SizeTransition(
-                  sizeFactor: animation,
-                  axis: Axis.horizontal,
-                  child: TravelPhotoListItem(
-                    travelPhoto: itemToDelete,
+            onTap: () {
+              HapticFeedback.lightImpact();
+              storeBloc.servicesStores
+                  .insert(storeBloc.servicesStores.length, travelPhotoItem);
+              _animatedListKey.currentState
+                  .insertItem(storeBloc.servicesStores.length - 1);
+              final itemToDelete = travelPhotoItem;
+              widget.onPhotoSelected(travelPhotoItem);
+              storeBloc.servicesStores.removeAt(index);
+              _animatedListKey.currentState.removeItem(
+                index,
+                (context, animation) => FadeTransition(
+                  opacity: animation,
+                  child: SizeTransition(
+                    sizeFactor: animation,
+                    axis: Axis.horizontal,
+                    child: TravelPhotoListItem(
+                      travelPhoto: itemToDelete,
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
-          child: (travelPhotoItem.stores > 0)
-              ? Transform(
-                  transform: Matrix4.identity()
-                    ..setEntry(3, 2, 0.001)
-                    ..rotateY(
-                      vector.radians(
-                        90 * factor,
-                      ),
-                    ),
-                  child: TravelPhotoListItem(
-                    travelPhoto: travelPhotoItem,
+              );
+            },
+            child: Transform(
+              transform: Matrix4.identity()
+                ..setEntry(3, 2, 0.001)
+                ..rotateY(
+                  vector.radians(
+                    90 * factor,
                   ),
-                )
-              : Container(),
-        );
+                ),
+              child: TravelPhotoListItem(
+                travelPhoto: travelPhotoItem,
+              ),
+            ));
       },
       scrollDirection: Axis.horizontal,
       initialItemCount: storeBloc.servicesStores.length,

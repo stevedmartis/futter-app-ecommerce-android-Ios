@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../global/extension.dart';
 
@@ -27,6 +28,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
     final bloc = Provider.of<GroceryStoreBLoC>(context);
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final size = MediaQuery.of(context).size;
+
     return SafeArea(
       child: TweenAnimationBuilder<double>(
         duration: const Duration(milliseconds: 500),
@@ -48,7 +50,9 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20,
+                      ),
                       child: Text(
                         'Mi Bolsa',
                         style: Theme.of(context).textTheme.headline4.copyWith(
@@ -62,6 +66,10 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                         itemCount: bloc.cart.length,
                         itemBuilder: (context, index) {
                           final item = bloc.cart[index];
+
+                          final priceformat = NumberFormat.currency(
+                                  locale: 'id', symbol: '', decimalDigits: 0)
+                              .format(item.product.price);
                           return FadeInUp(
                             delay: Duration(milliseconds: 100 * index),
                             child: Padding(
@@ -136,7 +144,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                             ),
                                           ),
                                           Text(
-                                            '\$${(item.product.price * item.quantity).toStringAsFixed(2)}',
+                                            '\$$priceformat',
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold,

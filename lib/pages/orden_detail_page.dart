@@ -112,6 +112,7 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
 
                 makeListProducts(context),
 
+                orderDetailInfo(context)
                 //makeListProducts(context)
               ]),
         ),
@@ -161,6 +162,48 @@ SliverToBoxAdapter addressDeliveryInfo(context) {
 
   final size = MediaQuery.of(context).size;
   final prefs = new AuthUserPreferences();
+  var map = Map();
+
+  final bloc = Provider.of<GroceryStoreBLoC>(context);
+
+  final storeBloc = Provider.of<StoreBLoC>(context);
+
+  bloc.cart
+      .forEach((e) => map.update(e.product.user, (x) => e, ifAbsent: () => e));
+
+  final mapList = map.values.toList();
+
+  print(mapList);
+
+  final List<Store> storesByProduct = [];
+
+  mapList.forEach((item) {
+    final store = storeBloc.getStoreByProducts(item.product.user);
+
+    storesByProduct.add(store);
+  });
+
+  print(storesByProduct);
+
+  final minTimes = storesByProduct.fold<int>(0, (previousValue, store) {
+    final getTimeMin = store.timeDelivery.toString().split("-").first.trim();
+
+    final minInt = int.parse(getTimeMin);
+
+    return previousValue + minInt;
+  });
+
+  print(minTimes);
+
+  final maxTimes = storesByProduct.fold<int>(0, (previousValue, store) {
+    final getTimeMax = store.timeDelivery.toString().split("-").last.trim();
+
+    final maxInt = int.parse(getTimeMax);
+
+    return previousValue + maxInt;
+  });
+
+  print(maxTimes);
 
   return SliverToBoxAdapter(
     child: Container(
@@ -360,7 +403,7 @@ SliverToBoxAdapter addressDeliveryInfo(context) {
                 padding: EdgeInsets.only(right: 20),
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  '24 - 45 mins',
+                  '$minTimes - $maxTimes mins',
                   style: TextStyle(
                       fontWeight: FontWeight.normal,
                       fontSize: 18,
@@ -437,6 +480,13 @@ Widget _buildProductsList(context) {
             .where((element) => element.product.user == store.user.uid)
             .toList();
 
+        final totalQuantity = products.fold<int>(
+          0,
+          (previousValue, element) => previousValue + element.quantity,
+        );
+
+        print(totalQuantity);
+
         return FadeInLeft(
           delay: Duration(milliseconds: 100 * index),
           child: Padding(
@@ -493,7 +543,7 @@ Widget _buildProductsList(context) {
                         Container(
                           margin: EdgeInsets.only(top: 0.0),
                           child: Text(
-                            '${products.length}',
+                            '$totalQuantity',
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.normal,
@@ -529,23 +579,41 @@ Widget _buildProductsList(context) {
                         scrollDirection: Axis.horizontal,
                         itemCount: (products.length == 3) ? 2 : products.length,
                         itemBuilder: (BuildContext context, int index) {
-                          final product = products[index].product;
+                          final item = products[index];
 
-                          return Container(
-                              margin: EdgeInsets.only(left: 5.0),
-                              alignment: Alignment.topRight,
-                              child: FadeInLeft(
-                                delay: Duration(milliseconds: 200 * index),
-                                child: Container(
-                                  width: 50,
-                                  height: 50,
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.white,
-                                    backgroundImage:
-                                        NetworkImage(product.images[0].url),
-                                  ),
+                          return Stack(
+                            children: [
+                              Container(
+                                  margin: EdgeInsets.only(left: 5.0),
+                                  alignment: Alignment.topRight,
+                                  child: FadeInLeft(
+                                    delay: Duration(milliseconds: 200 * index),
+                                    child: Container(
+                                        width: 50,
+                                        height: 50,
+                                        child: ClipRRect(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(100.0)),
+                                            child: cachedNetworkImage(
+                                                item.product.images[0].url))),
+                                  )),
+                              Container(
+                                decoration: new BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
                                 ),
-                              ));
+                                alignment: Alignment.bottomCenter,
+                                width: 20.0,
+                                height: 20.0,
+                                child: Center(
+                                    child: Text('x${item.quantity}',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w500))),
+                              ),
+                            ],
+                          );
                         },
                       ),
                     ),
@@ -577,6 +645,129 @@ Widget _buildProductsList(context) {
           ),
         );
       },
+    ),
+  );
+}
+
+SliverToBoxAdapter orderDetailInfo(context) {
+  final currentTheme = Provider.of<ThemeChanger>(context);
+
+  final size = MediaQuery.of(context).size;
+  final bloc = Provider.of<GroceryStoreBLoC>(context);
+
+  return SliverToBoxAdapter(
+    child: Container(
+      child: Column(
+        children: [
+          Divider(),
+          FadeIn(
+            child: Container(
+                padding: EdgeInsets.only(top: 10.0),
+                color: currentTheme.currentTheme.scaffoldBackgroundColor,
+                child: Container(
+                  padding: EdgeInsets.only(left: size.width / 20, top: 0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            child: Text(
+                              'Detalle de la orden',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                  color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 15.0, right: 15),
+            child: Divider(),
+          ),
+          Container(
+            padding: EdgeInsets.only(left: 25, bottom: 10, top: 10),
+            child: Row(
+              children: [
+                Container(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Productos',
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 15,
+                        color: Colors.grey),
+                  ),
+                ),
+                Spacer(),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '\$${bloc.totalPriceElements().toStringAsFixed(2)}',
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 18,
+                        color: Colors.grey),
+                  ),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 15.0, right: 15),
+            child: Divider(),
+          ),
+          Container(
+            padding: EdgeInsets.only(left: 20, bottom: 10, top: 0),
+            child: Row(
+              children: [
+                Container(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Entrega',
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 15,
+                        color: Colors.grey),
+                  ),
+                ),
+                Spacer(),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '\$${bloc.totalPriceElements().toStringAsFixed(2)}',
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 18,
+                        color: Colors.grey),
+                  ),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Divider(),
+        ],
+      ),
     ),
   );
 }

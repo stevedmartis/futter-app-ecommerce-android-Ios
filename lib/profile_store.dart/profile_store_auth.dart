@@ -16,6 +16,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/product_detail.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:intl/intl.dart';
 import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
@@ -139,7 +140,7 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
                       final item = productsBloc.items[index];
                       if (item.isCategory) {
                         return Container(
-                            child: _ProfileStoreCategoryItem(item.category));
+                            child: ProfileStoreCategoryItem(item.category));
                       } else {
                         return _ProfileStoreProductItem(
                             item.product, item.product.category);
@@ -185,8 +186,8 @@ class _TabWidget extends StatelessWidget {
   }
 }
 
-class _ProfileStoreCategoryItem extends StatelessWidget {
-  const _ProfileStoreCategoryItem(this.category);
+class ProfileStoreCategoryItem extends StatelessWidget {
+  const ProfileStoreCategoryItem(this.category);
   final ProfileStoreCategory category;
 
   @override
@@ -231,6 +232,10 @@ class _ProfileStoreProductItem extends StatelessWidget {
     final currentTheme = Provider.of<ThemeChanger>(context);
 
     final bloc = Provider.of<GroceryStoreBLoC>(context);
+
+    final priceformat =
+        NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
+            .format(product.price);
 
     return GestureDetector(
       onTap: () async {
@@ -310,7 +315,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        '\$${product.price.toStringAsFixed(2)}',
+                        '\$$priceformat',
                         style: TextStyle(
                           color: (currentTheme.customTheme)
                               ? Colors.white
@@ -414,9 +419,7 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
               top: 18.0,
               child: IconButton(
                 icon: FaIcon(FontAwesomeIcons.chevronLeft,
-                    color: (currentTheme.customTheme)
-                        ? Colors.white
-                        : Colors.black),
+                    color: currentTheme.currentTheme.primaryColor),
                 iconSize: 25,
                 onPressed: () => {
                   HapticFeedback.lightImpact(),
@@ -437,7 +440,7 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
             Positioned(
               top: 20,
               left: 50,
-              width: size.width / 1.6,
+              width: size.width / 1.4,
               height: 40,
               child: GestureDetector(
                 onTap: () => {
@@ -487,8 +490,8 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                                 ),
                                 hintText: 'Buscar productos ...',
                               ),
-                              onChanged: (value) =>
-                                  productsBloc.sharedProductOnMyStore(value),
+                              onChanged: (value) => productsBloc
+                                  .sharedProductOnStoreCurrent(value),
                             ),
                           ),
                         ),
@@ -617,27 +620,23 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                         : Image.asset(currentProfile.imageAvatar),
                   ),
                 )),
-            Positioned(
+            /* Positioned(
               right: 40,
               top: 18.0,
               child: IconButton(
                 icon: Icon(Icons.share,
-                    color: (currentTheme.customTheme)
-                        ? Colors.white
-                        : Colors.black),
+                    color: currentTheme.currentTheme.primaryColor),
                 iconSize: 25,
                 onPressed: () => Navigator.pop(context),
                 color: Colors.blueAccent,
               ),
-            ),
+            ), */
             Positioned(
               right: 0,
               top: 18.0,
               child: IconButton(
                 icon: Icon(Icons.menu,
-                    color: (currentTheme.customTheme)
-                        ? Colors.white
-                        : Colors.black),
+                    color: currentTheme.currentTheme.primaryColor),
                 iconSize: 30,
                 onPressed: () => {Scaffold.of(context).openEndDrawer()},
                 color: Colors.blueAccent,

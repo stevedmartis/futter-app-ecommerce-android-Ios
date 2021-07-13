@@ -46,15 +46,12 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
   void initStoreSelect(
       TickerProvider ticker, BuildContext context, Store store) {
-    initialOffset = 200.0;
+    initialOffset = 220.0;
     scrollController2 = ScrollController(initialScrollOffset: initialOffset);
 
     final categoriesByStoreUserId = storeCategoriesProducts
         .where((i) => i.store.user.uid == store.user.uid)
         .toList();
-
-    tabController =
-        TabController(vsync: ticker, length: categoriesByStoreUserId.length);
 
     double offsetFrom = 0.0;
     double offsetTo = 0.0;
@@ -69,19 +66,26 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
       category.position = i;
 
-      tabs.add(TabCategory(
-        category: category,
-        selected:
-            (category.position == 0 || categoriesByStoreUserId.length == 1),
-        offsetFrom: offsetFrom,
-        offsetTo: offsetTo,
-      ));
+      if (category.visibility)
+        tabs.add(TabCategory(
+          category: category,
+          selected:
+              (category.position == 0 || categoriesByStoreUserId.length == 1),
+          offsetFrom: offsetFrom,
+          offsetTo: offsetTo,
+        ));
 
-      for (int j = 0; j < category.products.length; j++) {
-        final product = category.products[j];
+      if (category.visibility) {
+        items.add(ProfileStoreItem(category: category));
 
-        items.add(ProfileStoreItem(category: category, product: product));
+        for (int j = 0; j < category.products.length; j++) {
+          final product = category.products[j];
+
+          items.add(ProfileStoreItem(product: product));
+        }
       }
+
+      tabController = TabController(vsync: ticker, length: tabs.length);
 
       initialOK = true;
 
@@ -155,47 +159,31 @@ class TabsViewScrollBLoC with ChangeNotifier {
   }
 
   sharedProductOnStoreCurrent(String value) {
-    if (value.length > 3) {
-      print(items);
-      final item = items.where((product) =>
-          product.category.name.toLowerCase().contains(value.toLowerCase()));
-
-      print(item.first.product);
-
-      final indexCategory = items.indexOf(item.first);
-
-      print(indexCategory);
-
-      onCategorySelected(indexCategory, animationRequired: true);
-    } else if (value.length == 0) {
-      onCategorySelected(0, animationRequired: true);
-    }
-    //value not exists
-  }
-
-  sharedProductOnMyStore(String value) {
-    if (value.length > 3) {
+    if (value.length >= 3) {
       final find = items.where((item) => (item.product != null)
           ? item.product.name.toLowerCase().contains(value.toLowerCase())
           : item.category.name.toLowerCase().contains(value.toLowerCase()));
 
-      print(find.first);
+      if (find.length > 0) {
+        print(find.first);
 
-      final item = tabs.where(
-        (item) => item.category.id == find.first.product.category,
-      );
+        final item = tabs.where(
+          (item) => item.category.id == find.first.product.category,
+        );
 
-      print(item);
+        print(item);
 
-      final indexCategory = tabs.indexOf(item.first);
-      // final indexCategory = items.indexOf(categoryById);
+        final indexCategory = tabs.indexOf(item.first);
+        // final indexCategory = items.indexOf(categoryById);
 
-      print(indexCategory);
+        print(indexCategory);
 
-      onCategorySelected(indexCategory, animationRequired: true);
+        onCategorySelected(indexCategory, animationRequired: true);
+      }
     } else if (value.length == 0) {
       onCategorySelected(0, animationRequired: true);
     }
+
     //value not exists
   }
 
@@ -272,16 +260,13 @@ class TabsViewScrollBLoC with ChangeNotifier {
     notifyListeners();
   }
 
-  void removeProductById(TickerProvider ticket,
-      ProfileStoreProduct productRemove, String user, BuildContext context) {
-    final item = tabs.firstWhere(
-        (item) => item.category.id == productRemove.category,
+  void removeProductById(TickerProvider ticket, ProfileStoreProduct product,
+      String user, BuildContext context) {
+    final item = tabs.firstWhere((item) => item.category.id == product.category,
         orElse: () => null);
 
-    item.category.products
-        .removeWhere((product) => product.id == productRemove.id);
-    productsByCategoryList
-        .removeWhere((product) => product.id == productRemove.id);
+    item.category.products.removeWhere((product) => product.id == product.id);
+    productsByCategoryList.removeWhere((product) => product.id == product.id);
 
     print(productsByCategoryList);
 

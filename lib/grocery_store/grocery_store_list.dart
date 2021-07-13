@@ -1,6 +1,7 @@
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/layouts/staggered_dual_view.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'grocery_store_details.dart';
@@ -11,6 +12,7 @@ class GroceryStoreList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of<GroceryStoreBLoC>(context);
+
     return Container(
       color: backgroundColor,
       padding: const EdgeInsets.only(top: cartBarHeight, left: 10, right: 10),
@@ -20,6 +22,10 @@ class GroceryStoreList extends StatelessWidget {
         spacing: 20,
         itemBuilder: (context, index) {
           final product = bloc.catalog[index];
+
+          final priceformat =
+              NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
+                  .format(product.price);
           return GestureDetector(
             onTap: () async {
               bloc.changeToDetails();
@@ -64,7 +70,7 @@ class GroceryStoreList extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '\$${product.price}',
+                      '\$$priceformat',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.black,

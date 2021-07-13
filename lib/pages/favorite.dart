@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 
 import 'package:provider/provider.dart';
 
@@ -224,6 +225,11 @@ class ProfileStoreProductItem extends StatelessWidget {
     final _bloc = Provider.of<TabsViewScrollBLoC>(context);
 
     final tag = 'list_${product.images[0].url + product.name + '0'}';
+
+    final priceformat =
+        NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
+            .format(product.price);
+
     return GestureDetector(
       onTap: () async {
         groceryBloc.changeToDetails();
@@ -306,7 +312,7 @@ class ProfileStoreProductItem extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        '\$${product.price.toStringAsFixed(2)}',
+                        '\$$priceformat',
                         style: TextStyle(
                           color: (currentTheme.customTheme)
                               ? Colors.white

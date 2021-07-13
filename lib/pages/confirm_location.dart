@@ -119,8 +119,13 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                               myLocationBloc
                                   .savePlaceSearchConfirm(placeSearch);
 
-                              storesByLocationlistServices(citySelectCtrl.text,
-                                  authBloc.storeAuth.user.uid);
+                              final location = citySelectCtrl.text
+                                  .toString()
+                                  .split(",")
+                                  .first;
+
+                              storesByLocationlistServices(
+                                  location, authBloc.storeAuth.user.uid);
 
                               FocusScope.of(context)
                                   .requestFocus(new FocusNode());
@@ -192,7 +197,10 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                               labelStyle: TextStyle(
                                                 color: Colors.white54,
                                               ),
-                                              // icon: Icon(Icons.perm_identity),
+                                              icon: Icon(
+                                                Icons.location_city,
+                                                color: currentTheme.accentColor,
+                                              ),
                                               //  fillColor: currentTheme.accentColor,
                                               focusedBorder: OutlineInputBorder(
                                                 borderSide: BorderSide(
@@ -238,7 +246,10 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                         labelStyle: TextStyle(
                                           color: Colors.white54,
                                         ),
-                                        // icon: Icon(Icons.perm_identity),
+                                        icon: Icon(
+                                          Icons.location_on,
+                                          color: currentTheme.accentColor,
+                                        ),
                                         //  fillColor: currentTheme.accentColor,
                                         focusedBorder: OutlineInputBorder(
                                           borderSide: BorderSide(
@@ -282,7 +293,10 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                           labelStyle: TextStyle(
                                             color: Colors.white54,
                                           ),
-                                          // icon: Icon(Icons.perm_identity),
+                                          icon: Icon(
+                                            Icons.home,
+                                            color: currentTheme.accentColor,
+                                          ),
                                           //  fillColor: currentTheme.accentColor,
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
@@ -306,15 +320,15 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
 
   void storesByLocationlistServices(String location, String uid) async {
     final storeService = Provider.of<StoreService>(context, listen: false);
+    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 
     final StoresListResponse resp =
         await storeService.getStoresLocationListServices(location, uid);
 
-    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
-
     if (resp.ok) {
-      storeBloc.storesListInitial = [];
       storeBloc.storesListInitial = resp.storeListServices;
+
+      storeBloc.chargeServicesStores();
 
       storeBloc.changeToMarket();
     }

@@ -5,6 +5,7 @@ import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
+import 'package:australti_ecommerce_app/profile_store.dart/profile_store_auth.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 
 import 'package:australti_ecommerce_app/services/catalogo.dart';
@@ -23,6 +24,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/product_detail.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:intl/intl.dart';
 import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
@@ -62,6 +64,7 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
     SchedulerBinding.instance.addPostFrameCallback((_) {
       followService.followers = widget.store.followers;
     });
+
     categoriesStoreProducts();
 
     super.initState();
@@ -163,8 +166,7 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                                   isScrollable: true,
                                   tabs: _bloc.tabs
                                       .map((e) =>
-                                          (e.category.products.length > 0 &&
-                                                  e.category.visibility)
+                                          (e.category.products.length > 0)
                                               ? FadeInLeft(
                                                   child: _TabWidget(
                                                     tabCategory: e,
@@ -188,12 +190,13 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         itemBuilder: (context, index) {
                           final item = _bloc.items[index];
-                          return (item.category.visibility)
-                              ? FadeIn(
-                                  child: _ProfileStoreProductItem(
-                                      item.product, item.category, _bloc),
-                                )
-                              : Container();
+                          if (item.isCategory) {
+                            return Container(
+                                child: ProfileStoreCategoryItem(item.category));
+                          } else {
+                            return _ProfileStoreProductItem(
+                                item.product, item.product.category, _bloc);
+                          }
                         },
                       ),
                     )
@@ -255,7 +258,7 @@ void _listenNotification(context) {
 class _ProfileStoreProductItem extends StatelessWidget {
   const _ProfileStoreProductItem(this.product, this.category, this.bloc);
 
-  final ProfileStoreCategory category;
+  final String category;
 
   final ProfileStoreProduct product;
 
@@ -266,6 +269,10 @@ class _ProfileStoreProductItem extends StatelessWidget {
     final currentTheme = Provider.of<ThemeChanger>(context);
 
     final groceryBloc = Provider.of<GroceryStoreBLoC>(context);
+
+    final priceformat =
+        NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
+            .format(product.price);
 
     return GestureDetector(
       onTap: () async {
@@ -280,7 +287,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
               return FadeTransition(
                 opacity: animation,
                 child: ProductStoreDetails(
-                    category: category.id,
+                    category: category,
                     isAuthUser: false,
                     product: product,
                     bloc: bloc,
@@ -350,7 +357,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        '\$${product.price.toStringAsFixed(2)}',
+                        '\$$priceformat',
                         style: TextStyle(
                           color: (currentTheme.customTheme)
                               ? Colors.white
@@ -453,9 +460,7 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
               top: 18.0,
               child: IconButton(
                 icon: FaIcon(FontAwesomeIcons.chevronLeft,
-                    color: (currentTheme.customTheme)
-                        ? Colors.white
-                        : Colors.black),
+                    color: currentTheme.currentTheme.primaryColor),
                 iconSize: 25,
                 onPressed: () {
                   HapticFeedback.lightImpact();
@@ -467,7 +472,7 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
             Positioned(
               top: 20,
               left: 50,
-              width: size.width / 1.6,
+              width: size.width / 1.4,
               height: 40,
               child: GestureDetector(
                 onTap: () => {
@@ -640,27 +645,23 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                         : Image.asset(currentProfile.imageAvatar),
                   ),
                 )),
-            Positioned(
+            /*  Positioned(
               right: 40,
               top: 18.0,
               child: IconButton(
                 icon: Icon(Icons.share,
-                    color: (currentTheme.customTheme)
-                        ? Colors.white
-                        : Colors.black),
+                    color: currentTheme.currentTheme.primaryColor),
                 iconSize: 25,
                 onPressed: () => Navigator.pop(context),
                 color: Colors.blueAccent,
               ),
-            ),
+            ), */
             Positioned(
               right: 0,
               top: 18.0,
               child: IconButton(
                 icon: Icon(Icons.menu,
-                    color: (currentTheme.customTheme)
-                        ? Colors.white
-                        : Colors.black),
+                    color: currentTheme.currentTheme.primaryColor),
                 iconSize: 30,
                 onPressed: () =>
                     //  Navigator.pushReplacement(context, createRouteProfile()),
