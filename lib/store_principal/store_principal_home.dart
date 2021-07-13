@@ -788,6 +788,8 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
 
   final _movement = -100.0;
 
+  int _selectedGender = 0;
+
   @override
   void initState() {
     _controller = AnimationController(
@@ -887,7 +889,7 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                             children: [
                               Container(
                                 child: Icon(Icons.location_on,
-                                    color: currentTheme.accentColor, size: 22),
+                                    color: currentTheme.accentColor, size: 20),
                               ),
                               SizedBox(
                                 width: 10,
@@ -907,26 +909,9 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                                         fontSize: 13,
                                         color: Colors.white70),
                                   )),
-                              GestureDetector(
-                                onTap: () {
-                                  showMaterialCupertinoBottomSheetLocation(
-                                      context, 'hello', 'hello2', () {
-                                    HapticFeedback.lightImpact();
-                                    myLocationBloc.initPositionLocation();
-
-                                    storesByLocationlistServices(
-                                        prefs.addressSave['locality'],
-                                        authBloc.storeAuth.user.uid);
-
-                                    Navigator.pop(context);
-                                  }, () {
-                                    Navigator.pop(context);
-                                  });
-                                },
-                                child: Container(
-                                  child: Icon(Icons.edit,
-                                      color: currentTheme.accentColor),
-                                ),
+                              Container(
+                                child: Icon(Icons.expand_more,
+                                    color: currentTheme.accentColor),
                               )
                             ],
                           )))
@@ -938,63 +923,77 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                       child: AnimatedOpacity(
                           opacity: (prefs.locationSearch) ? 1.0 : 0.0,
                           duration: Duration(milliseconds: 200),
-                          child: Container(
-                            alignment: Alignment.center,
-                            width: 100,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  alignment: Alignment.centerRight,
-                                  child: Icon(
-                                    Icons.location_on,
-                                    color: currentTheme.accentColor,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                SizedBox(
-                                  width: _size.width / 3,
-                                  child: Container(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        prefs.locationSearch
-                                            ? '${prefs.addressSearchSave.mainText}'
-                                            : '...',
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                        softWrap: false,
-                                        //'${state.location.latitude}',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 13,
-                                            color: Colors.white70),
-                                      )),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    showMaterialCupertinoBottomSheetLocation(
-                                        context, 'hello', 'hello2', () {
-                                      HapticFeedback.lightImpact();
-                                      myLocationBloc.initPositionLocation();
-
-                                      storesByLocationlistServices(
-                                          prefs.addressSave['locality'],
-                                          authBloc.storeAuth.user.uid);
-
-                                      Navigator.pop(context);
-                                    }, () {
-                                      Navigator.pop(context);
+                          child: GestureDetector(
+                            onTap: () {
+                              showLocationMaterialCupertinoBottomSheet(
+                                context,
+                                () {
+                                  HapticFeedback.lightImpact();
+                                  myLocationBloc.initPositionLocation();
+                                  storesByLocationlistServices(
+                                      prefs.addressSave['locality'],
+                                      authBloc.storeAuth.user.uid);
+                                  Navigator.pop(context);
+                                },
+                                () {
+                                  Navigator.pop(context);
+                                },
+                                Radio(
+                                  activeColor: currentTheme.primaryColor,
+                                  value: 0,
+                                  groupValue: _selectedGender,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedGender = value;
                                     });
                                   },
-                                  child: Container(
-                                    child: Icon(Icons.edit,
-                                        color: currentTheme.accentColor),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              width: 100,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerRight,
+                                    child: Icon(
+                                      Icons.location_on,
+                                      color: currentTheme.accentColor,
+                                      size: 20,
+                                    ),
                                   ),
-                                )
-                              ],
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  SizedBox(
+                                    width: _size.width / 3,
+                                    child: Container(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          prefs.locationSearch
+                                              ? '${prefs.addressSearchSave.mainText}'
+                                              : '...',
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                          softWrap: false,
+                                          //'${state.location.latitude}',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13,
+                                              color: Colors.white70),
+                                        )),
+                                  ),
+                                  GestureDetector(
+                                    child: Container(
+                                      child: Icon(Icons.expand_more,
+                                          color: currentTheme.accentColor),
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ))),
             ],

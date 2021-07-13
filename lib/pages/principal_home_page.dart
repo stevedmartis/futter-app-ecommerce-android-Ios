@@ -297,8 +297,7 @@ class _PrincipalPageState extends State<PrincipalPage>
     switch (status) {
       case PermissionStatus.granted:
         Timer(new Duration(milliseconds: 300), () {
-          showMaterialCupertinoBottomSheetLocation(context, 'hello', 'hello2',
-              () {
+          showMaterialCupertinoBottomSheetLocation(context, () {
             HapticFeedback.lightImpact();
             myLocationBloc.initPositionLocation();
 
@@ -308,34 +307,34 @@ class _PrincipalPageState extends State<PrincipalPage>
             Navigator.pop(context);
           }, () {
             Navigator.pop(context);
-          });
+          }, false);
         });
 
         break;
 
       case PermissionStatus.denied:
-        showMaterialCupertinoBottomSheetLocation(context, 'hello', 'hello2',
-            () {
+        showMaterialCupertinoBottomSheetLocation(context, () {
           HapticFeedback.lightImpact();
           showModalGpsLocation();
         }, () {
           Navigator.pop(context);
-        });
+        }, false);
 
-        setState(() {
-          _isDialogShowing = true;
-        });
+        setState(
+          () {
+            _isDialogShowing = true;
+          },
+        );
 
         break;
       case PermissionStatus.restricted:
       case PermissionStatus.permanentlyDenied:
-        showMaterialCupertinoBottomSheetLocation(context, 'hello', 'hello2',
-            () {
+        showMaterialCupertinoBottomSheetLocation(context, () {
           HapticFeedback.lightImpact();
           showModalGpsLocation();
         }, () {
           Navigator.pop(context);
-        });
+        }, false);
         // openAppSettings();
 
         break;
