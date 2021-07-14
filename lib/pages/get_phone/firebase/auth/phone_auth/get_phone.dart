@@ -46,7 +46,7 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
           appBar: AppBar(
               backgroundColor: Colors.black,
               leading: IconButton(
-                color: currentTheme.accentColor,
+                color: currentTheme.primaryColor,
                 icon: Icon(
                   Icons.chevron_left,
                   size: 40,

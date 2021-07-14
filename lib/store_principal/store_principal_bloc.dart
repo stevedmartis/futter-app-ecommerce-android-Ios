@@ -100,21 +100,30 @@ class StoreBLoC with ChangeNotifier {
     final followed =
         storesListInitial.where((i) => i.isFollowing == true).toList();
 
-    servicesStores[0].stores = followed.length;
+    final followedService = servicesStores.firstWhere((i) => i.id == 0);
 
+    followedService.stores = followed.length;
     prefs.followed = followed.length;
-    servicesStores[1].stores = markets.length;
 
-    servicesStores[2].stores = restaurants.length;
-    servicesStores[3].stores = liquers.length;
+    final marketService = servicesStores.firstWhere((i) => i.id == 1);
+
+    marketService.stores = markets.length;
+
+    final restService = servicesStores.firstWhere((i) => i.id == 2);
+
+    restService.stores = restaurants.length;
+
+    final liquerService = servicesStores.firstWhere((i) => i.id == 3);
+
+    liquerService.stores = liquers.length;
 
     if (followed.length > 0) {
       changeToFollowed();
 
-      selected = servicesStores[0];
+      selected = followedService;
     } else {
       changeToMarket();
-      selected = servicesStores[1];
+      selected = marketService;
     }
 
     loadingStores = true;

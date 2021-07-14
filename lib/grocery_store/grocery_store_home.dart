@@ -3,11 +3,11 @@ import 'dart:ui';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile_store_auth.dart';
+import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile_store_user.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'grocery_store_cart.dart';
@@ -77,8 +77,8 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
 
     final bloc = Provider.of<GroceryStoreBLoC>(context);
 
-    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
-
+    final authService = Provider.of<AuthenticationBLoC>(context);
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final isAuth = (widget.store.user.uid == authService.storeAuth.user.uid);
     return AnimatedBuilder(
         animation: bloc,
@@ -127,7 +127,6 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                   child: GestureDetector(
                     onVerticalDragUpdate: _onVerticalGesture,
                     onTap: () {
-                      HapticFeedback.mediumImpact();
                       bloc.changeToCart();
                     },
                     behavior: HitTestBehavior.opaque,
@@ -195,18 +194,22 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                                                                   CircleAvatar(
                                                                 radius: 10,
                                                                 backgroundColor:
-                                                                    Colors.red,
+                                                                    currentTheme
+                                                                        .accentColor,
                                                                 child: Text(
                                                                   bloc
                                                                       .cart[
                                                                           index]
                                                                       .quantity
                                                                       .toString(),
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                  ),
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                      fontSize:
+                                                                          12),
                                                                 ),
                                                               ),
                                                             ),

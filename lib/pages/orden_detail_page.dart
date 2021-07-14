@@ -8,12 +8,15 @@ import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
 import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+
+import 'package:intl/intl.dart';
 import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
@@ -88,7 +91,7 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-
+    final size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
         backgroundColor: currentTheme.scaffoldBackgroundColor,
@@ -112,9 +115,25 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
 
                 makeListProducts(context),
 
-                orderDetailInfo(context)
+                orderDetailInfo(context),
+
                 //makeListProducts(context)
               ]),
+        ),
+
+        bottomNavigationBar: SizedBox(
+          height: size.height / 7,
+          child: Center(
+            child: goPayCartBtnSubtotal(
+              'Enviar orden',
+              [
+                currentTheme.primaryColor,
+                currentTheme.primaryColor,
+              ],
+              false,
+              true,
+            ),
+          ),
         ),
       ),
     );
@@ -568,7 +587,6 @@ Widget _buildProductsList(context) {
                 ),
                 Spacer(),
                 Stack(
-                  textDirection: TextDirection.rtl,
                   fit: StackFit.loose,
                   clipBehavior: Clip.hardEdge,
                   children: [
@@ -599,14 +617,14 @@ Widget _buildProductsList(context) {
                                   )),
                               Container(
                                 decoration: new BoxDecoration(
-                                  color: Colors.white,
+                                  color: currentTheme.accentColor,
                                   shape: BoxShape.circle,
                                 ),
                                 alignment: Alignment.bottomCenter,
                                 width: 20.0,
                                 height: 20.0,
                                 child: Center(
-                                    child: Text('x${item.quantity}',
+                                    child: Text('${item.quantity}',
                                         style: TextStyle(
                                             fontSize: 13,
                                             color: Colors.black,
@@ -655,6 +673,10 @@ SliverToBoxAdapter orderDetailInfo(context) {
   final size = MediaQuery.of(context).size;
   final bloc = Provider.of<GroceryStoreBLoC>(context);
 
+  final totalFormat =
+      NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
+          .format(bloc.totalPriceElements());
+
   return SliverToBoxAdapter(
     child: Container(
       child: Column(
@@ -697,7 +719,7 @@ SliverToBoxAdapter orderDetailInfo(context) {
             child: Divider(),
           ),
           Container(
-            padding: EdgeInsets.only(left: 25, bottom: 10, top: 10),
+            padding: EdgeInsets.only(left: 20, bottom: 10, top: 10),
             child: Row(
               children: [
                 Container(
@@ -714,7 +736,7 @@ SliverToBoxAdapter orderDetailInfo(context) {
                 Container(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    '\$${bloc.totalPriceElements().toStringAsFixed(2)}',
+                    '\$$totalFormat',
                     style: TextStyle(
                         fontWeight: FontWeight.normal,
                         fontSize: 18,

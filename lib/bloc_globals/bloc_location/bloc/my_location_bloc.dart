@@ -114,6 +114,7 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
         prefs.setLongSearch = newPosition.longitude;
 
         prefs.setLocationCurrent = true;
+        prefs.setLocationSearch = false;
       }
     }
   }
@@ -137,6 +138,7 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
     isLocationSearch = true;
     prefs.setLocationSearch = true;
     prefs.setSearchAddreses = value;
+    prefs.setLocationCurrent = false;
 
     final resp = await placeService.getAutocompleteDetails(value.placeId);
 

@@ -45,9 +45,9 @@ class GridLayoutMenu extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(100)),
               child: BackdropFilter(
                 filter: ImageFilter.blur(
-                  sigmaX: (show) ? 10.0 : 0,
-                  sigmaY: (show) ? 10.0 : 0,
-                ),
+                    sigmaX: (show) ? 10.0 : 0,
+                    sigmaY: (show) ? 10.0 : 0,
+                    tileMode: TileMode.repeated),
                 child: AnimatedOpacity(
                     duration: Duration(milliseconds: 500),
                     opacity: (show) ? 0.7 : 0,
@@ -73,14 +73,13 @@ class GLMenuBackGround extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentTheme = Provider.of<ThemeChanger>(context);
-
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     return Container(
       child: child,
       width: 350,
       height: 70,
       decoration: BoxDecoration(
-          color: currentTheme.currentTheme.cardColor,
+          color: currentTheme.cardColor,
           borderRadius: BorderRadius.all(Radius.circular(100)),
           boxShadow: <BoxShadow>[
             BoxShadow(color: Colors.black38, blurRadius: 10, spreadRadius: -5)

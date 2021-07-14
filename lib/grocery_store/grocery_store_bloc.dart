@@ -82,6 +82,12 @@ class GroceryStoreBLoC with ChangeNotifier {
         (previousValue, element) =>
             previousValue + (element.quantity * element.product.price),
       );
+
+  int totalPriceCart() => cart.fold<int>(
+        0,
+        (previousValue, element) =>
+            previousValue + (element.quantity * element.product.price),
+      );
 }
 
 final groceryStoreBloc = GroceryStoreBLoC();

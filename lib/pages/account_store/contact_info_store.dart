@@ -108,7 +108,7 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
                       _showTitle ? Text('Información de contacto') : Text(''),
                   backgroundColor: currentTheme.scaffoldBackgroundColor,
                   leading: IconButton(
-                    color: currentTheme.accentColor,
+                    color: currentTheme.primaryColor,
                     icon: Icon(
                       Icons.chevron_left,
                       size: 40,
@@ -118,7 +118,7 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
                   actions: [
                     (!loading)
                         ? IconButton(
-                            color: currentTheme.accentColor,
+                            color: currentTheme.primaryColor,
                             icon: Icon(
                               Icons.check,
                               size: 35,

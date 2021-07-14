@@ -301,6 +301,8 @@ class _PrincipalPageState extends State<PrincipalPage>
             HapticFeedback.lightImpact();
             myLocationBloc.initPositionLocation();
 
+            storeBloc.chargeServicesStores();
+
             storesByLocationlistServices(
                 prefs.addressSave['locality'], storeAuth.user.uid);
 
@@ -435,7 +437,7 @@ class __PositionedMenuState extends State<_PositionedMenu> {
                   animate: bloc.isVisible,
                   child: GridLayoutMenu(
                       show: bloc.isVisible,
-                      backgroundColor: appTheme.scaffoldBackgroundColor,
+                      backgroundColor: Colors.black,
                       activeColor: appTheme.accentColor,
                       inactiveColor: Colors.white,
                       items: [

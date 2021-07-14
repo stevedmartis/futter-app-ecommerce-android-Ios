@@ -123,7 +123,7 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
                       _showTitle ? Text('Visualización de perfil') : Text(''),
                   backgroundColor: currentTheme.scaffoldBackgroundColor,
                   leading: IconButton(
-                    color: currentTheme.accentColor,
+                    color: currentTheme.primaryColor,
                     icon: Icon(
                       Icons.chevron_left,
                       size: 40,
@@ -133,7 +133,7 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
                   actions: [
                     (!loading)
                         ? IconButton(
-                            color: currentTheme.accentColor,
+                            color: currentTheme.primaryColor,
                             icon: Icon(
                               Icons.check,
                               size: 35,

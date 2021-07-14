@@ -141,7 +141,7 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
                                 height: 34,
                                 child: Icon(
                                   Icons.chevron_left,
-                                  color: currentTheme.currentTheme.accentColor,
+                                  color: currentTheme.currentTheme.primaryColor,
                                   size: 30,
                                 ),
                               ),
@@ -276,24 +276,11 @@ class _SearchResultListState extends State<SearchStoresResultList>
 
   @override
   Widget build(BuildContext context) {
-    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-
     final storeBLoC = Provider.of<StoreBLoC>(context);
     return Stack(
       children: [
-        if (storeBLoC.storesSearch.length > 0)
-          Container(
-            padding: EdgeInsets.only(top: 20, left: 20),
-            child: Text(
-              'Tiendas',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                  color: currentTheme.accentColor),
-            ),
-          ),
         Container(
-          padding: EdgeInsets.only(top: 70),
+          padding: EdgeInsets.only(top: 20),
           child: ListView.builder(
             shrinkWrap: true,
             controller: _scrollController,
@@ -343,24 +330,15 @@ class _SearchProductsResultListState extends State<SearchProductsResultList>
 
   @override
   Widget build(BuildContext context) {
-    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-
     final storeBLoC = Provider.of<StoreBLoC>(context);
     return Stack(
       children: [
         if (storeBLoC.productsSearch.length > 0)
           Container(
-            padding: EdgeInsets.only(top: 20, left: 20),
-            child: Text(
-              'Productos',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                  color: currentTheme.accentColor),
-            ),
-          ),
+              padding: EdgeInsets.only(top: 20, left: 20, right: 20),
+              child: Divider()),
         Container(
-          padding: EdgeInsets.only(top: 70),
+          padding: EdgeInsets.only(top: 40),
           child: ListView.builder(
             shrinkWrap: true,
             controller: _scrollController,

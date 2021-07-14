@@ -42,7 +42,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
           );
         },
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: Container(
@@ -51,7 +51,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                   children: [
                     Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 20,
+                        horizontal: (!widget.cartHome) ? 40 : 20,
                       ),
                       child: Text(
                         'Mi Bolsa',
@@ -62,19 +62,22 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                       ),
                     ),
                     Expanded(
-                      child: ListView.builder(
-                        itemCount: bloc.cart.length,
-                        itemBuilder: (context, index) {
-                          final item = bloc.cart[index];
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 40,
+                            horizontal: (!widget.cartHome) ? 20 : 0),
+                        child: ListView.builder(
+                          itemCount: bloc.cart.length,
+                          itemBuilder: (context, index) {
+                            final item = bloc.cart[index];
 
-                          final priceformat = NumberFormat.currency(
-                                  locale: 'id', symbol: '', decimalDigits: 0)
-                              .format(item.product.price);
-                          return FadeInUp(
-                            delay: Duration(milliseconds: 100 * index),
-                            child: Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 50.0, left: 20),
+                            final priceformat = NumberFormat.currency(
+                                    locale: 'id', symbol: '', decimalDigits: 0)
+                                .format(item.product.price);
+                            return Container(
+                              padding: EdgeInsets.only(top: 20),
+                              child: FadeInUp(
+                                delay: Duration(milliseconds: 100 * index),
                                 child: Slidable.builder(
                                   key: UniqueKey(),
                                   controller: slidableController,
@@ -110,7 +113,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                             );
                                           }),
                                   child: SizedBox(
-                                    height: size.height / 10,
+                                    height: size.height / 7.2,
                                     child: ListTile(
                                       leading: Container(
                                           width: 50,
@@ -123,152 +126,197 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                                   .product
                                                   .images[0]
                                                   .url))),
-                                      title: Text(
-                                        '${item.product.name.capitalize()}',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15),
-                                      ),
-                                      subtitle: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            child: Text(
-                                              '${item.product.description}',
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style: TextStyle(),
+                                      title: Container(
+                                        width: size.width / 2,
+                                        child: Row(
+                                          children: [
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  width: size.width / 2.2,
+                                                  child: Text(
+                                                    '${item.product.name.capitalize()}',
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 15),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Container(
+                                                  width: size.width / 2.5,
+                                                  child: Text(
+                                                    '${item.product.description.capitalize()}',
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 2,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        color: Colors.grey,
+                                                        fontSize: 12),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Text(
+                                                  '\$$priceformat',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14),
+                                                ),
+                                              ],
                                             ),
-                                          ),
-                                          Text(
-                                            '\$$priceformat',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14),
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            25),
-                                                    color: Colors.black),
-                                                child: Row(
-                                                  children: [
-                                                    (item.quantity == 1)
-                                                        ? Container(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    right: 20),
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () {
-                                                                HapticFeedback
-                                                                    .lightImpact();
-                                                                bloc.deleteProduct(
-                                                                    item);
+                                            Container(
+                                              margin: EdgeInsets.only(left: 15),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    alignment: Alignment.center,
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(25),
+                                                        color: Colors.black),
+                                                    child: Column(
+                                                      children: [
+                                                        (item.quantity == 1)
+                                                            ? Container(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        right:
+                                                                            20),
+                                                                child:
+                                                                    GestureDetector(
+                                                                  onTap: () {
+                                                                    HapticFeedback
+                                                                        .lightImpact();
+                                                                    bloc.deleteProduct(
+                                                                        item);
 
-                                                                /*     Slidable.of(context).open(
-                                                                    actionType:
-                                                                        SlideActionType
-                                                                            .secondary) */
-                                                              },
-                                                              child: Icon(
-                                                                Icons
-                                                                    .delete_outline,
-                                                                color: Colors
-                                                                    .white,
-                                                                size: 30,
+                                                                    /*     Slidable.of(context).open(
+                                                                        actionType:
+                                                                            SlideActionType
+                                                                                .secondary) */
+                                                                  },
+                                                                  child: Icon(
+                                                                    Icons
+                                                                        .delete_outline,
+                                                                    color: Colors
+                                                                        .white,
+                                                                    size: 30,
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            : Container(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        right:
+                                                                            20),
+                                                                child:
+                                                                    GestureDetector(
+                                                                  onTap: () {
+                                                                    HapticFeedback
+                                                                        .lightImpact();
+                                                                    if (item.quantity >
+                                                                        0) {
+                                                                      setState(
+                                                                          () {
+                                                                        item.quantity--;
+                                                                      });
+                                                                    }
+                                                                  },
+                                                                  child: Icon(
+                                                                    Icons
+                                                                        .remove,
+                                                                    color: Colors
+                                                                        .white,
+                                                                    size: 30,
+                                                                  ),
+                                                                ),
                                                               ),
-                                                            ),
-                                                          )
-                                                        : Container(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    right: 20),
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () {
-                                                                HapticFeedback
-                                                                    .lightImpact();
-                                                                if (item.quantity >
-                                                                    0) {
-                                                                  setState(() {
-                                                                    item.quantity--;
-                                                                  });
-                                                                }
-                                                              },
-                                                              child: Icon(
-                                                                Icons.remove,
-                                                                color: Colors
-                                                                    .white,
-                                                                size: 30,
-                                                              ),
+                                                        SizedBox(
+                                                          height: 5,
+                                                        ),
+                                                        Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  right: 20),
+                                                          child: Text(
+                                                            item.quantity
+                                                                .toString(),
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 18,
+                                                              color:
+                                                                  Colors.white,
                                                             ),
                                                           ),
-                                                    Container(
-                                                      child: Text(
-                                                        item.quantity
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 18,
-                                                          color: Colors.white,
                                                         ),
-                                                      ),
-                                                    ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          HapticFeedback
-                                                              .lightImpact();
-                                                          item.quantity++;
-                                                        });
-                                                      },
-                                                      child: Container(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                left: 10,
-                                                                right: 20),
-                                                        child: Icon(
-                                                          Icons.add,
-                                                          color: Colors.white,
-                                                          size: 30,
+                                                        SizedBox(
+                                                          height: 5,
                                                         ),
-                                                      ),
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            setState(() {
+                                                              HapticFeedback
+                                                                  .lightImpact();
+                                                              item.quantity++;
+                                                            });
+                                                          },
+                                                          child: Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    right: 20),
+                                                            child: Icon(
+                                                              Icons.add,
+                                                              color:
+                                                                  Colors.white,
+                                                              size: 30,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ],
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      contentPadding: EdgeInsets.symmetric(
-                                          vertical: 0.0, horizontal: 0.0),
                                       dense: true,
                                     ),
                                   ),
-                                )),
-                          );
-                        },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 15),
             GestureDetector(
               onTap: () => {
                 HapticFeedback.mediumImpact(),

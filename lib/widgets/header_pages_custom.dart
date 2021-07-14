@@ -96,7 +96,7 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                             height: 34,
                             child: Icon(
                               Icons.chevron_left,
-                              color: currentTheme.currentTheme.accentColor,
+                              color: currentTheme.currentTheme.primaryColor,
                               size: 30,
                             ),
                           ),
@@ -173,7 +173,7 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                       featureId: 'feature1',
                       tapTarget: Icon(
                         Icons.add,
-                        color: currentTheme.currentTheme.accentColor,
+                        color: currentTheme.currentTheme.primaryColor,
                         size: 35,
                       ),
                       backgroundColor: currentTheme.currentTheme.accentColor,
@@ -208,7 +208,7 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                                   child: Icon(
                                     Icons.add,
                                     color:
-                                        currentTheme.currentTheme.accentColor,
+                                        currentTheme.currentTheme.primaryColor,
                                     size: 30,
                                   ),
                                 ),
@@ -240,7 +240,7 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                               height: 34,
                               child: Icon(
                                 Icons.add,
-                                color: currentTheme.currentTheme.accentColor,
+                                color: currentTheme.currentTheme.primaryColor,
                                 size: 30,
                               ),
                             ),

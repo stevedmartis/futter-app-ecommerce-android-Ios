@@ -67,7 +67,7 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
             appBar: AppBar(
               backgroundColor: currentTheme.scaffoldBackgroundColor,
               leading: IconButton(
-                  color: currentTheme.accentColor,
+                  color: currentTheme.primaryColor,
                   icon: Icon(
                     Icons.chevron_left,
                     size: 40,
@@ -80,7 +80,7 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
                 (!loading)
                     ? IconButton(
                         color: (authService.serviceSelect != store.service)
-                            ? currentTheme.accentColor
+                            ? currentTheme.primaryColor
                             : Colors.grey,
                         icon: Icon(
                           Icons.check,

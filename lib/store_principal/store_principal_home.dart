@@ -159,7 +159,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     if (resp.ok) {
       storeBloc.storesListInitial = [];
       storeBloc.storesListInitial = resp.storeListServices;
-
+      storeBloc.chargeServicesStores();
       changeToCurrentService();
     }
   }
@@ -183,7 +183,10 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 
     if (resp.ok) {
+      storeBloc.storesListInitial = [];
       storeBloc.storesListInitial = resp.storeListServices;
+
+      storeBloc.chargeServicesStores();
 
       changeToCurrentService();
     }
@@ -473,13 +476,13 @@ SliverPersistentHeader makeHeaderTitle(context, String titleService) {
   return SliverPersistentHeader(
       pinned: true,
       delegate: SliverCustomHeaderDelegate(
-          minHeight: 45,
-          maxHeight: 45,
+          minHeight: 40,
+          maxHeight: 40,
           child: FadeIn(
             child: Container(
               color: currentTheme.scaffoldBackgroundColor,
               child: Padding(
-                padding: const EdgeInsets.only(top: 10.0, left: 10),
+                padding: const EdgeInsets.only(top: 0.0, left: 10),
                 child: Text(
                   titleService,
                   style: TextStyle(
@@ -519,27 +522,22 @@ class StoresListByService extends StatelessWidget {
               itemBuilder: (BuildContext ctxt, int index) {
                 final store = bloc.storesListState[index];
 
-                return (bloc.storesListState.length) > 0
-                    ? Stack(
-                        children: [
-                          FadeIn(
-                            child: StoreCard(
-                              store: store,
-                            ),
-                          ),
-                        ],
-                      )
-                    : Container(
-                        margin: EdgeInsets.only(top: 20),
-                        child: Center(
-                          child: Text('No hay tiendas cercanas a tu ubicación'),
-                        ),
-                      );
+                return Stack(
+                  children: [
+                    FadeIn(
+                      child: StoreCard(
+                        store: store,
+                      ),
+                    ),
+                  ],
+                );
               })
           : Container(
-              margin: EdgeInsets.only(top: 20),
               child: Center(
-                child: Text('No hay tiendas cercanas a tu ubicación'),
+                child: Text(
+                  'No hay tiendas cercanas a tu ubicación',
+                  style: TextStyle(color: Colors.grey),
+                ),
               ),
             ),
     );
@@ -883,37 +881,67 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                       child: AnimatedOpacity(
                           opacity: (prefs.locationCurrent) ? 1.0 : 0.0,
                           duration: Duration(milliseconds: 200),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                child: Icon(Icons.location_on,
-                                    color: currentTheme.accentColor, size: 20),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                  width: _size.width / 3,
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    prefs.locationCurrent
-                                        ? '${prefs.addressSave['featureName']}'
-                                        : '...',
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                    //'${state.location.latitude}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 13,
-                                        color: Colors.white70),
-                                  )),
-                              Container(
-                                child: Icon(Icons.expand_more,
-                                    color: currentTheme.accentColor),
-                              )
-                            ],
+                          child: GestureDetector(
+                            onTap: () {
+                              HapticFeedback.lightImpact();
+                              showLocationMaterialCupertinoBottomSheet(
+                                context,
+                                () {
+                                  HapticFeedback.lightImpact();
+                                  myLocationBloc.initPositionLocation();
+                                  storesByLocationlistServices(
+                                      prefs.addressSave['locality'],
+                                      authBloc.storeAuth.user.uid);
+                                  Navigator.pop(context);
+                                },
+                                () {
+                                  Navigator.pop(context);
+                                },
+                                Radio(
+                                  activeColor: currentTheme.primaryColor,
+                                  value: 0,
+                                  groupValue: _selectedGender,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedGender = value;
+                                    });
+                                  },
+                                ),
+                              );
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  child: Icon(Icons.location_on,
+                                      color: currentTheme.accentColor,
+                                      size: 20),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Container(
+                                    width: _size.width / 3,
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      prefs.locationCurrent
+                                          ? '${prefs.addressSave['featureName']}'
+                                          : '...',
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      //'${state.location.latitude}',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 13,
+                                          color: Colors.white70),
+                                    )),
+                                Container(
+                                  child: Icon(Icons.expand_more,
+                                      color: currentTheme.accentColor),
+                                )
+                              ],
+                            ),
                           )))
                   : Positioned(
                       top: 20,
@@ -925,6 +953,7 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                           duration: Duration(milliseconds: 200),
                           child: GestureDetector(
                             onTap: () {
+                              HapticFeedback.lightImpact();
                               showLocationMaterialCupertinoBottomSheet(
                                 context,
                                 () {
@@ -1065,15 +1094,20 @@ class MyTextField extends StatelessWidget {
                 width: 10,
               ),
               Expanded(
-                  child: Text('Buscar ...',
-                      style: TextStyle(color: Colors.white, fontSize: 14))),
+                  flex: 2,
+                  child: Text('Tiendas o productos',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w300))),
               Expanded(
                 child: AnimatedContainer(
+                    margin: EdgeInsets.all(3),
                     duration: Duration(milliseconds: 200),
                     alignment: Alignment.topRight,
                     child: Container(
-                      width: 40,
-                      height: 40,
+                      width: 35,
+                      height: 36,
                       decoration: ShapeDecoration(
                         shadows: [
                           BoxShadow(
@@ -1202,7 +1236,8 @@ class TravelPhotoListItem extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Center(
         child: Container(
-          width: 130,
+          width: 120,
+          height: 120,
           child: Stack(
             fit: StackFit.expand,
             children: <Widget>[

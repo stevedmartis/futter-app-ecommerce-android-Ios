@@ -73,7 +73,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                   title: _showTitle ? Text('Confirmar dirección') : Text(''),
                   backgroundColor: Colors.black,
                   leading: IconButton(
-                    color: currentTheme.accentColor,
+                    color: currentTheme.primaryColor,
                     icon: Icon(
                       Icons.chevron_left,
                       size: 40,
@@ -99,7 +99,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                         return IconButton(
                           color: (!isDisabled)
                               ? Colors.grey
-                              : currentTheme.accentColor,
+                              : currentTheme.primaryColor,
                           icon: Icon(
                             Icons.check,
                             size: 35,

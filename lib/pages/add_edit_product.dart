@@ -59,6 +59,8 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
 
   bool isVisibilityChange = false;
 
+  bool isPriceChange = false;
+
   bool errorRequired = false;
   bool isControllerChangeEdit = false;
   bool loading = false;
@@ -130,6 +132,21 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
       });
     });
 
+    priceCtrl.addListener(() {
+      setState(() {
+        if (widget.product.price.toString() != priceCtrl.text &&
+            priceCtrl.text != "")
+          this.isPriceChange = true;
+        else
+          this.isPriceChange = false;
+
+        if (priceCtrl.text == "")
+          errorRequired = true;
+        else
+          errorRequired = false;
+      });
+    });
+
     super.initState();
   }
 
@@ -156,7 +173,7 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
     final isControllerChange = isNameChange;
 
     final isControllerChangeEdit =
-        isNameChange || isAboutChange || isVisibilityChange;
+        isNameChange || isAboutChange || isVisibilityChange || isPriceChange;
 
     return GestureDetector(
       onTap: () {
@@ -177,7 +194,7 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
           leading: IconButton(
             icon: Icon(
               Icons.chevron_left,
-              color: currentTheme.currentTheme.accentColor,
+              color: currentTheme.currentTheme.primaryColor,
             ),
             iconSize: 30,
             onPressed: () =>
@@ -648,7 +665,7 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
               style: TextStyle(
                   color: (isControllerChange && !errorRequired ||
                           productService.isImagesChange)
-                      ? currentTheme.accentColor
+                      ? currentTheme.primaryColor
                       : Colors.grey,
                   fontSize: 18),
             ),
@@ -791,7 +808,7 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
       final productEdit = ProfileStoreProduct(
           id: widget.product.id,
           name: name,
-          price: int.parse(price),
+          price: int.parse(priceFormat),
           description: description,
           images: imagesFinal,
           category: widget.product.category,
