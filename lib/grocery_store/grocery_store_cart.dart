@@ -155,7 +155,10 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                                 Container(
                                                   width: size.width / 2.5,
                                                   child: Text(
-                                                    '${item.product.description.capitalize()}',
+                                                    (item.product.description !=
+                                                            "")
+                                                        ? '${item.product.description.capitalize()}'
+                                                        : '',
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     maxLines: 2,

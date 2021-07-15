@@ -29,13 +29,13 @@ class DataBackupCloudPage extends StatelessWidget {
   final Animation<double> progressAnimation;
   final Animation<double> cloudOutAnimation;
   final Animation<double> bubblesAnimation;
-  final bubbles = List<_Bubble>.generate(500, (index) {
+  final bubbles = List<_Bubble>.generate(300, (index) {
     final size = math.Random().nextInt(20) + 5.0;
     final speed = math.Random().nextInt(50) + 1.0;
     final directionRandom = math.Random().nextBool();
     final colorRandom = math.Random().nextBool();
     final direction =
-        math.Random().nextInt(250) * (directionRandom ? 1.0 : -1.0);
+        math.Random().nextInt(500) * (directionRandom ? 1.0 : -1.0);
     final color = colorRandom ? mainDataBackupColor : secondaryDataBackupColor;
     return _Bubble(
       color: color,
@@ -61,12 +61,12 @@ class DataBackupCloudPage extends StatelessWidget {
           final circleSize = size *
               math.pow(
                   (progressAnimation.value + cloudOutAnimation.value + 1), 2);
-          final topPosition = queryData.height * 0.45;
+          final topPosition = queryData.height * 0.0;
           final centerMargin = queryData.width - circleSize;
           final leftSize =
-              size * 0.6 * math.pow((1 - progressAnimation.value), 3);
+              size * 0.0 * math.pow((1 - progressAnimation.value), 3);
           final rightSize =
-              size * 0.7 * math.pow((1 - progressAnimation.value), 3);
+              size * 0.0 * math.pow((1 - progressAnimation.value), 3);
           final leftMargin = queryData.width / 2 - leftSize * 1.2;
           final rightMargin = queryData.width / 2 - rightSize * 1.2;
           final middleMargin = queryData.width / 2 -
@@ -89,7 +89,7 @@ class DataBackupCloudPage extends StatelessWidget {
                   bottom: 0,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                   ),
                 ),
@@ -101,7 +101,7 @@ class DataBackupCloudPage extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                   ),
                 ),
@@ -113,7 +113,7 @@ class DataBackupCloudPage extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                   ),
                 ),
@@ -131,7 +131,7 @@ class DataBackupCloudPage extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                       ),
                     ),

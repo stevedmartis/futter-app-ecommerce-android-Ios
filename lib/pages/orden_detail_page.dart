@@ -5,16 +5,22 @@ import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/pages/add_edit_product.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
+import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
+import 'package:australti_ecommerce_app/responses/stores_products_order.dart';
+import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:australti_ecommerce_app/services/order_ervice.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
 import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
+import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:flutter/services.dart';
 
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
@@ -37,6 +43,8 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
   double get maxHeight => 400 + MediaQuery.of(context).padding.top;
   double get minHeight => MediaQuery.of(context).padding.bottom;
 
+  int minTimes = 0;
+  int maxTimes = 0;
   @override
   void initState() {
     final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
@@ -46,6 +54,47 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
     _scrollController = ScrollController()..addListener(() => setState(() {}));
 
     super.initState();
+
+    var map = Map();
+
+    final bloc = Provider.of<GroceryStoreBLoC>(context, listen: false);
+
+    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
+
+    bloc.cart.forEach(
+        (e) => map.update(e.product.user, (x) => e, ifAbsent: () => e));
+
+    final mapList = map.values.toList();
+
+    print(mapList);
+
+    mapList.forEach((item) {
+      final store = storeBloc.getStoreByProducts(item.product.user);
+
+      storesByProduct.add(store);
+    });
+
+    print(storesByProduct);
+
+    minTimes = storesByProduct.fold<int>(0, (previousValue, store) {
+      final getTimeMin = store.timeDelivery.toString().split("-").first.trim();
+
+      final minInt = int.parse(getTimeMin);
+
+      return previousValue + minInt;
+    });
+
+    print(minTimes);
+
+    maxTimes = storesByProduct.fold<int>(0, (previousValue, store) {
+      final getTimeMax = store.timeDelivery.toString().split("-").last.trim();
+
+      final maxInt = int.parse(getTimeMax);
+
+      return previousValue + maxInt;
+    });
+
+    print(maxTimes);
   }
 
   @override
@@ -92,6 +141,7 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final size = MediaQuery.of(context).size;
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: currentTheme.scaffoldBackgroundColor,
@@ -109,29 +159,31 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
               controller: _scrollController,
               slivers: <Widget>[
                 makeHeaderCustom('Tu Orden'),
-
                 titleBox(context),
-                addressDeliveryInfo(context),
-
+                addressDeliveryInfo(context, minTimes, maxTimes),
                 makeListProducts(context),
-
                 orderDetailInfo(context),
-
-                //makeListProducts(context)
               ]),
         ),
 
-        bottomNavigationBar: SizedBox(
-          height: size.height / 7,
-          child: Center(
-            child: goPayCartBtnSubtotal(
-              'Enviar orden',
-              [
-                currentTheme.primaryColor,
-                currentTheme.primaryColor,
-              ],
-              false,
-              true,
+        bottomNavigationBar: GestureDetector(
+          onTap: () {
+            HapticFeedback.mediumImpact();
+            Navigator.push(context, dataRoute());
+            // _createOrder(context);
+          },
+          child: SizedBox(
+            height: size.height / 7,
+            child: Center(
+              child: goPayCartBtnSubtotal(
+                'Enviar orden',
+                [
+                  currentTheme.primaryColor,
+                  currentTheme.primaryColor,
+                ],
+                false,
+                true,
+              ),
             ),
           ),
         ),
@@ -176,53 +228,13 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
   }
 }
 
-SliverToBoxAdapter addressDeliveryInfo(context) {
+final List<Store> storesByProduct = [];
+
+SliverToBoxAdapter addressDeliveryInfo(context, minTimes, maxTimes) {
   final currentTheme = Provider.of<ThemeChanger>(context);
 
   final size = MediaQuery.of(context).size;
   final prefs = new AuthUserPreferences();
-  var map = Map();
-
-  final bloc = Provider.of<GroceryStoreBLoC>(context);
-
-  final storeBloc = Provider.of<StoreBLoC>(context);
-
-  bloc.cart
-      .forEach((e) => map.update(e.product.user, (x) => e, ifAbsent: () => e));
-
-  final mapList = map.values.toList();
-
-  print(mapList);
-
-  final List<Store> storesByProduct = [];
-
-  mapList.forEach((item) {
-    final store = storeBloc.getStoreByProducts(item.product.user);
-
-    storesByProduct.add(store);
-  });
-
-  print(storesByProduct);
-
-  final minTimes = storesByProduct.fold<int>(0, (previousValue, store) {
-    final getTimeMin = store.timeDelivery.toString().split("-").first.trim();
-
-    final minInt = int.parse(getTimeMin);
-
-    return previousValue + minInt;
-  });
-
-  print(minTimes);
-
-  final maxTimes = storesByProduct.fold<int>(0, (previousValue, store) {
-    final getTimeMax = store.timeDelivery.toString().split("-").last.trim();
-
-    final maxInt = int.parse(getTimeMax);
-
-    return previousValue + maxInt;
-  });
-
-  print(maxTimes);
 
   return SliverToBoxAdapter(
     child: Container(
@@ -470,11 +482,14 @@ SliverList makeListProducts(
   ]));
 }
 
+List<dynamic> mapList = [];
+
+List<Object> storesproducts = [];
+
 Widget _buildProductsList(context) {
   final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
   var map = Map();
-
   final bloc = Provider.of<GroceryStoreBLoC>(context);
 
   final storeBloc = Provider.of<StoreBLoC>(context);
@@ -482,7 +497,15 @@ Widget _buildProductsList(context) {
   bloc.cart
       .forEach((e) => map.update(e.product.user, (x) => e, ifAbsent: () => e));
 
-  final mapList = map.values.toList();
+  mapList = map.values.toList();
+
+/*   mapList.forEach((item) {
+    final product = item.singleWhere((i) => i.user.uid == item.id);
+
+    storesByProduct.add(product);
+  }); */
+
+  print(mapList);
 
   return Container(
     padding: EdgeInsets.only(left: 20, right: 20),
@@ -792,6 +815,53 @@ SliverToBoxAdapter orderDetailInfo(context) {
       ),
     ),
   );
+}
+
+_createOrder(context) async {
+  final List<StoresProduct> storesProducts = [];
+  final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+  final orderService = Provider.of<OrderService>(context, listen: false);
+  final storeBloc = Provider.of<GroceryStoreBLoC>(context, listen: false);
+
+  final clientId = authService.storeAuth.user.uid;
+
+  final idsStores = storesByProduct.map((e) => e.user.uid).toList();
+
+  idsStores.forEach((storeId) {
+    final products = storeBloc.cart
+        .where((element) => element.product.user == storeId)
+        .toList();
+
+    List<Product> arrayProducts = [];
+    products.forEach((item) {
+      final product = Product(id: item.product.id, quantity: item.quantity);
+      arrayProducts.add(product);
+    });
+    print(arrayProducts);
+    final storeProducts =
+        StoresProduct(storeUid: storeId, products: arrayProducts);
+    storesProducts.add(storeProducts);
+  });
+
+  print(storesProducts);
+
+  final OrderStoresProducts createOrderResp =
+      await orderService.createOrder(clientId, storesProducts);
+
+  if (createOrderResp != null) {
+    if (createOrderResp.ok) {
+      loading = false;
+      orderService.order = createOrderResp.order;
+
+      Navigator.pop(context);
+    } else {
+      showAlertError(context, 'Error', 'Error');
+    }
+  } else {
+    showAlertError(
+        context, 'Error del servidor', 'lo sentimos, Intentelo mas tarde');
+  }
+  //Navigator.pushReplacementNamed(context, '');
 }
 
 /* class _ProfileStoreCategoryItem extends StatelessWidget {

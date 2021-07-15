@@ -301,8 +301,6 @@ class _PrincipalPageState extends State<PrincipalPage>
             HapticFeedback.lightImpact();
             myLocationBloc.initPositionLocation();
 
-            storeBloc.chargeServicesStores();
-
             storesByLocationlistServices(
                 prefs.addressSave['locality'], storeAuth.user.uid);
 

@@ -1,12 +1,13 @@
+import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'data_backup_cloud_page.dart';
 import 'data_backup_completed_page.dart';
 import 'data_backup_initial_page.dart';
 
-const mainDataBackupColor = Color(0xFF5113AA);
-const secondaryDataBackupColor = Color(0xFFBC53FA);
-const backgroundColor = Color(0xFFfce7fe);
+const mainDataBackupColor = Color(0xff32D73F);
+const secondaryDataBackupColor = Color(0xff00FF00);
 
 class DataBackupHome extends StatefulWidget {
   @override
@@ -26,21 +27,21 @@ class _DataBackupHomeState extends State<DataBackupHome>
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(
-        seconds: 7,
+        seconds: 3,
       ),
     );
     _progressAnimation = CurvedAnimation(
       parent: _animationController,
       curve: Interval(
         0.0,
-        0.65,
+        0.1,
       ),
     );
     _cloudOutAnimation = CurvedAnimation(
       parent: _animationController,
       curve: Interval(
-        0.7,
-        0.85,
+        0.0,
+        0.1,
         curve: Curves.easeOut,
       ),
     );
@@ -55,11 +56,12 @@ class _DataBackupHomeState extends State<DataBackupHome>
     _endingAnimation = CurvedAnimation(
       parent: _animationController,
       curve: Interval(
-        0.8,
+        0.6,
         1.0,
         curve: Curves.decelerate,
       ),
     );
+    _animationController.forward();
     super.initState();
   }
 
@@ -71,8 +73,9 @@ class _DataBackupHomeState extends State<DataBackupHome>
 
   @override
   Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: currentTheme.scaffoldBackgroundColor,
       body: Stack(
         children: [
           DataBackupInitialPage(

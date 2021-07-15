@@ -113,8 +113,6 @@ showLocationMaterialCupertinoBottomSheet(BuildContext context,
     VoidCallback onPress, VoidCallback onCancel, Widget radio) {
   final currentTheme = Provider.of<ThemeChanger>(context, listen: false);
 
-  final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
-
   final prefs = AuthUserPreferences();
   final size = MediaQuery.of(context).size;
   if (UniversalPlatform.isIOS) {

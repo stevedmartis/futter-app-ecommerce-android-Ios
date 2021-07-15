@@ -1,4 +1,6 @@
+import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 import 'data_backup_home.dart';
 
@@ -10,73 +12,77 @@ class DataBackupCompletedPage extends AnimatedWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     return animation.value > 0
         ? Positioned.fill(
             child: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: CustomPaint(
-                        foregroundPainter:
-                            _DataBackupCompletedPainter(animation),
-                        child: Container(
-                          height: 100,
-                          width: 100,
+              child: Container(
+                color: currentTheme.scaffoldBackgroundColor,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: CustomPaint(
+                          foregroundPainter:
+                              _DataBackupCompletedPainter(animation),
+                          child: Container(
+                            height: 100,
+                            width: 100,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 60),
-                  Expanded(
-                    child: TweenAnimationBuilder(
-                      tween: Tween(begin: 0.0, end: 1.0),
-                      duration: const Duration(milliseconds: 400),
-                      builder: (_, value, child) {
-                        return Opacity(
-                          opacity: value,
-                          child: Transform.translate(
-                            offset: Offset(
-                              0.0,
-                              50 * (1 - value),
+                    const SizedBox(height: 60),
+                    Expanded(
+                      child: TweenAnimationBuilder(
+                        tween: Tween(begin: 0.0, end: 1.0),
+                        duration: const Duration(milliseconds: 200),
+                        builder: (_, value, child) {
+                          return Opacity(
+                            opacity: value,
+                            child: Transform.translate(
+                              offset: Offset(
+                                0.0,
+                                50 * (1 - value),
+                              ),
+                              child: child,
                             ),
-                            child: child,
-                          ),
-                        );
-                      },
-                      child: Column(
-                        children: [
-                          Text(
-                            'data has succesfully\nuploaded',
-                            style: TextStyle(
-                              fontSize: 17,
+                          );
+                        },
+                        child: Column(
+                          children: [
+                            Text(
+                              'Pedido enviada\ncon exito!',
+                              style: TextStyle(
+                                fontSize: 17,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                          Spacer(),
-                          OutlinedButton(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 20.0, horizontal: 40),
-                              child: Text(
-                                'OK',
-                                style: TextStyle(
-                                  color: mainDataBackupColor,
+                            Spacer(),
+                            OutlinedButton(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 20.0, horizontal: 40),
+                                child: Text(
+                                  'Ver pedido',
+                                  style: TextStyle(
+                                    color: mainDataBackupColor,
+                                  ),
                                 ),
                               ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
                             ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          const SizedBox(height: 40),
-                        ],
+                            const SizedBox(height: 40),
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
             ),
           )

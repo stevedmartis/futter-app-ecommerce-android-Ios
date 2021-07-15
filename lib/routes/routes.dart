@@ -1,5 +1,8 @@
 import 'package:australti_ecommerce_app/android_messages_animation/main_android_messages_animation_app.dart';
+
+import 'package:australti_ecommerce_app/data_backup_animation/data_backup_home.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_home.dart';
+
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/multiple_card_flow/multiple_card_flow.dart';
@@ -15,6 +18,7 @@ import 'package:australti_ecommerce_app/pages/get_phone/firebase/auth/phone_auth
 import 'package:australti_ecommerce_app/pages/loading_page.dart';
 import 'package:australti_ecommerce_app/pages/login/login.dart';
 import 'package:australti_ecommerce_app/pages/onboarding/onboarding.dart';
+
 import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/pages/profile_edit.dart';
 import 'package:australti_ecommerce_app/pages/orden_detail_page.dart';
@@ -96,6 +100,26 @@ Route profileAuthRoute(isAuthUser) {
     ),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = Offset(-0.5, 0.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
+
+Route dataRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return DataBackupHome();
+    },
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(0.0, 0.5);
       var end = Offset.zero;
       var curve = Curves.ease;
 

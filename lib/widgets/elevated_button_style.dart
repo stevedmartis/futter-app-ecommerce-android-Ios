@@ -231,8 +231,8 @@ Widget goPayCartBtnSubtotal(
                       Text('\$$totalFormat',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
                           ))
                     ],
                   ),
@@ -285,7 +285,7 @@ Widget goPayCartBtnSubtotal(
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 15,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w700,
                           ))
                     ],
                   ),

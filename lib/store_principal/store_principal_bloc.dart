@@ -168,7 +168,8 @@ class StoreBLoC with ChangeNotifier {
   }
 
   Store getStoreByProducts(String storeId) {
-    final store = storesListInitial.singleWhere((i) => i.user.uid == storeId);
+    final Store store =
+        storesListInitial.singleWhere((i) => i.user.uid == storeId);
 
     return store;
   }
