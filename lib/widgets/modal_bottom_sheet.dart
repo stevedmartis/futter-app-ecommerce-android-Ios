@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_cart.dart';
+
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
@@ -32,7 +33,7 @@ showMaterialCupertinoBottomSheet(
               topRight: Radius.circular(30.0),
             ),
           ),
-          padding: EdgeInsets.symmetric(horizontal: 18),
+          padding: EdgeInsets.symmetric(horizontal: 0),
           child: GroceryStoreCart(
             cartHome: true,
           )),
@@ -112,7 +113,7 @@ showStoreSelectMaterialCupertinoBottomSheet(
 showLocationMaterialCupertinoBottomSheet(BuildContext context,
     VoidCallback onPress, VoidCallback onCancel, Widget radio) {
   final currentTheme = Provider.of<ThemeChanger>(context, listen: false);
-
+  final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
   final prefs = AuthUserPreferences();
   final size = MediaQuery.of(context).size;
   if (UniversalPlatform.isIOS) {
@@ -191,15 +192,29 @@ showLocationMaterialCupertinoBottomSheet(BuildContext context,
                     ),
                   ),
                   ListTile(
+                      onTap: () {
+                        final place = prefs.addressSearchSave;
+
+                        print(place);
+
+                        var placeSave = new PlaceSearch(
+                            description: authBloc.storeAuth.user.uid,
+                            placeId: authBloc.storeAuth.user.uid,
+                            structuredFormatting: new StructuredFormatting(
+                                mainText: place.mainText,
+                                secondaryText: place.secondaryText,
+                                number: place.number));
+
+                        Navigator.push(
+                            context, confirmLocationRoute(placeSave));
+                      },
                       leading: Icon(Icons.home,
                           size: 25,
                           color: currentTheme.currentTheme.accentColor),
                       title: Text(
-                        prefs.locationCurrent
-                            ? '${prefs.addressSave['featureName']}'
-                            : prefs.locationSearch
-                                ? '${prefs.addressSearchSave.mainText}'
-                                : '...',
+                        prefs.addressSearchSave != ''
+                            ? '${prefs.addressSearchSave.mainText}'
+                            : '...',
                         style: TextStyle(
                             fontSize: 15,
                             color: (currentTheme.customTheme)
@@ -625,14 +640,6 @@ showMaterialCupertinoBottomSheetLocation(BuildContext context,
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Icon(
-                                Icons.room_outlined,
-                                size: 25,
-                                color: currentTheme.currentTheme.accentColor,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
                               Container(
                                 child: Container(
                                   child: Text(

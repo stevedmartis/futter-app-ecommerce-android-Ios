@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
+import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/pages/add_edit_product.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
@@ -66,12 +67,17 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
 
     final mapList = map.values.toList();
 
-    print(mapList);
-
     mapList.forEach((item) {
       final store = storeBloc.getStoreByProducts(item.product.user);
 
-      storesByProduct.add(store);
+      if (store != null) {
+        store.notLocation = true;
+        storesByProduct.add(store);
+      } else {
+        final store = storeBloc.getStoreAllDbByProducts(item.product.user);
+        store.notLocation = false;
+        storesByProduct.add(store);
+      }
     });
 
     print(storesByProduct);
@@ -84,8 +90,6 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
       return previousValue + minInt;
     });
 
-    print(minTimes);
-
     maxTimes = storesByProduct.fold<int>(0, (previousValue, store) {
       final getTimeMax = store.timeDelivery.toString().split("-").last.trim();
 
@@ -93,8 +97,6 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
 
       return previousValue + maxInt;
     });
-
-    print(maxTimes);
   }
 
   @override
@@ -104,6 +106,13 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
+    storesByProduct = [];
+
+    mapList = [];
+    minTimes = 0;
+    maxTimes = 0;
+
     super.dispose();
   }
 
@@ -228,11 +237,11 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
   }
 }
 
-final List<Store> storesByProduct = [];
+List<Store> storesByProduct = [];
 
 SliverToBoxAdapter addressDeliveryInfo(context, minTimes, maxTimes) {
   final currentTheme = Provider.of<ThemeChanger>(context);
-
+  final authBloc = Provider.of<AuthenticationBLoC>(context);
   final size = MediaQuery.of(context).size;
   final prefs = new AuthUserPreferences();
 
@@ -283,32 +292,75 @@ SliverToBoxAdapter addressDeliveryInfo(context, minTimes, maxTimes) {
                                   color: Colors.grey),
                             ),
                           ),
-                          (prefs.locationCurrent)
-                              ? Container(
-                                  width: size.width / 1.7,
-                                  child: Text(
-                                    prefs.locationCurrent
-                                        ? '${prefs.addressSave['featureName']}'
-                                        : '...',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: 20,
-                                        color: Colors.white),
-                                  ),
-                                )
-                              : Container(
-                                  width: size.width / 1.7,
-                                  child: Text(
-                                    prefs.locationSearch
-                                        ? '${prefs.addressSearchSave.mainText}'
-                                        : '...',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: 20,
-                                        color: Colors.white),
+                          Container(
+                            width: size.width / 1.7,
+                            child: Text(
+                              prefs.addressSearchSave != ''
+                                  ? '${prefs.addressSearchSave.mainText}'
+                                  : '...',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 20,
+                                  color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color:
+                              currentTheme.currentTheme.scaffoldBackgroundColor,
+                        ),
+                        child: Row(
+                          children: [
+                            Material(
+                              color: currentTheme
+                                  .currentTheme.scaffoldBackgroundColor,
+                              borderRadius: BorderRadius.circular(20),
+                              child: InkWell(
+                                splashColor: Colors.grey,
+                                borderRadius: BorderRadius.circular(20),
+                                radius: 40,
+                                onTap: () {
+                                  HapticFeedback.lightImpact();
+
+                                  final place = prefs.addressSearchSave;
+                                  print(place);
+                                  var placeSave = new PlaceSearch(
+                                      description: authBloc.storeAuth.user.uid,
+                                      placeId: authBloc.storeAuth.user.uid,
+                                      structuredFormatting:
+                                          new StructuredFormatting(
+                                              mainText: place.mainText,
+                                              secondaryText:
+                                                  place.secondaryText,
+                                              number: place.number));
+                                  Navigator.push(
+                                      context, confirmLocationRoute(placeSave));
+                                },
+                                highlightColor: Colors.grey,
+                                child: Container(
+                                  margin: EdgeInsets.only(left: 5.0),
+                                  alignment: Alignment.center,
+                                  width: 34,
+                                  height: 34,
+                                  child: Icon(
+                                    Icons.edit_outlined,
+                                    color:
+                                        currentTheme.currentTheme.primaryColor,
+                                    size: 25,
                                   ),
                                 ),
-                        ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10,
                       ),
                     ],
                   ),
@@ -321,89 +373,59 @@ SliverToBoxAdapter addressDeliveryInfo(context, minTimes, maxTimes) {
             padding: const EdgeInsets.only(left: 25.0, right: 25),
             child: Divider(),
           ),
-          (prefs.locationCurrent)
-              ? Container(
-                  padding: EdgeInsets.only(left: 20, bottom: 10, top: 10),
-                  child: Row(
-                    children: [
-                      Container(
-                        child: Icon(
-                          Icons.home,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          prefs.locationCurrent
-                              ? '${prefs.addressSave['adminArea']}'
-                              : '...',
-                          style: TextStyle(
-                              fontWeight: FontWeight.normal,
-                              fontSize: 20,
-                              color: Colors.grey),
-                        ),
-                      ),
-                      Spacer(),
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          prefs.locationSearch
-                              ? '${prefs.addressSave['locality']}'
-                              : '...',
-                          style: TextStyle(
-                              fontWeight: FontWeight.normal,
-                              fontSize: 18,
-                              color: Colors.grey),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                    ],
-                  ),
-                )
-              : Container(
-                  padding: EdgeInsets.only(left: 20, bottom: 10, top: 10),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          prefs.locationSearch
-                              ? '${prefs.addressSearchSave.number}'
-                              : '...',
-                          style: TextStyle(
-                              fontWeight: FontWeight.normal,
-                              fontSize: 20,
-                              color: Colors.grey),
-                        ),
-                      ),
-                      Spacer(),
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          prefs.locationSearch
-                              ? '${prefs.addressSearchSave.secondaryText}'
-                              : '...',
-                          style: TextStyle(
-                              fontWeight: FontWeight.normal,
-                              fontSize: 18,
-                              color: Colors.grey),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                    ],
+          Container(
+            padding: EdgeInsets.only(left: 20, bottom: 10, top: 10),
+            child: Row(
+              children: [
+                Container(
+                  child: Icon(
+                    Icons.location_city,
+                    color: Colors.grey,
                   ),
                 ),
+                SizedBox(
+                  width: 10,
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    prefs.addressSearchSave != ''
+                        ? '${prefs.addressSearchSave.secondaryText}'
+                        : '...',
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 20,
+                        color: Colors.grey),
+                  ),
+                ),
+                Spacer(),
+                Container(
+                  child: Icon(
+                    Icons.home_outlined,
+                    color: Colors.grey,
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    prefs.addressSearchSave != ''
+                        ? '${prefs.addressSearchSave.number}'
+                        : '...',
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 18,
+                        color: Colors.grey),
+                  ),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+              ],
+            ),
+          ),
           Divider(),
           SizedBox(
             height: 10,
@@ -498,6 +520,7 @@ Widget _buildProductsList(context) {
       .forEach((e) => map.update(e.product.user, (x) => e, ifAbsent: () => e));
 
   mapList = map.values.toList();
+  final size = MediaQuery.of(context).size;
 
 /*   mapList.forEach((item) {
     final product = item.singleWhere((i) => i.user.uid == item.id);
@@ -516,174 +539,267 @@ Widget _buildProductsList(context) {
       itemBuilder: (context, index) {
         final item = mapList[index];
 
-        final store = storeBloc.getStoreByProducts(item.product.user);
+        Store store;
 
-        final products = bloc.cart
-            .where((element) => element.product.user == store.user.uid)
-            .toList();
+        store = storeBloc.getStoreByProducts(item.product.user);
 
-        final totalQuantity = products.fold<int>(
-          0,
-          (previousValue, element) => previousValue + element.quantity,
-        );
+        List<dynamic> products = [];
 
-        print(totalQuantity);
+        int totalQuantity = 0;
+        if (store != null) {
+          products = bloc.cart
+              .where((element) => element.product.user == store.user.uid)
+              .toList();
+          totalQuantity = products.fold<int>(
+            0,
+            (previousValue, element) => previousValue + element.quantity,
+          );
+        } else {
+          store = storeBloc.getStoreAllDbByProducts(item.product.user);
 
+          products = bloc.cart
+              .where((element) => element.product.user == store.user.uid)
+              .toList();
+          totalQuantity = products.fold<int>(
+            0,
+            (previousValue, element) => previousValue + element.quantity,
+          );
+        }
+
+        print(store);
         return FadeInLeft(
           delay: Duration(milliseconds: 100 * index),
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 10.0,
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  width: 70,
-                  height: 70,
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      child: (store.imageAvatar != "")
-                          ? Container(
-                              child: cachedNetworkImage(
-                                store.imageAvatar,
-                              ),
-                            )
-                          : Image.asset(currentProfile.imageAvatar),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Container(
-                        margin: EdgeInsets.only(top: 5.0),
-                        child: Text(
-                          '${store.name.capitalize()}',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
+              padding: const EdgeInsets.symmetric(
+                vertical: 10.0,
+              ),
+              child: Column(
+                children: [
+                  if (!store.notLocation)
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(top: 0.0),
-                          child: Text(
-                            '$totalQuantity',
-                            style: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.normal,
-                                fontSize: 15),
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              //Navigator.of(context).pop();
+                            },
+                            child: new Align(
+                                alignment: Alignment.topCenter,
+                                child: Container(
+                                  margin: EdgeInsets.only(right: 20),
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(100),
+                                      border: Border.all(
+                                          width: 2, color: Colors.grey)),
+                                  child: Icon(
+                                    Icons.fmd_bad,
+                                    size: 30,
+                                    color: Colors.grey,
+                                  ),
+                                )),
                           ),
-                        ),
-                        SizedBox(
-                          width: 5.0,
-                        ),
-                        Container(
-                          child: Text(
-                            bloc.cart.length == 1 ? 'Producto' : 'Productos',
-                            style: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.normal,
-                                fontSize: 15),
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-                Spacer(),
-                Stack(
-                  fit: StackFit.loose,
-                  clipBehavior: Clip.hardEdge,
-                  children: [
-                    Container(
-                      height: 50,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: (products.length == 3) ? 2 : products.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final item = products[index];
-
-                          return Stack(
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                  margin: EdgeInsets.only(left: 5.0),
-                                  alignment: Alignment.topRight,
-                                  child: FadeInLeft(
-                                    delay: Duration(milliseconds: 200 * index),
-                                    child: Container(
-                                        width: 50,
-                                        height: 50,
-                                        child: ClipRRect(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(100.0)),
-                                            child: cachedNetworkImage(
-                                                item.product.images[0].url))),
-                                  )),
-                              Container(
-                                decoration: new BoxDecoration(
-                                  color: currentTheme.accentColor,
-                                  shape: BoxShape.circle,
+                                child: Text(
+                                  'Tienda no disponible',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 15,
+                                      color: Colors.white),
                                 ),
-                                alignment: Alignment.bottomCenter,
-                                width: 20.0,
-                                height: 20.0,
-                                child: Center(
-                                    child: Text('${item.quantity}',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w500))),
+                              ),
+                              Container(
+                                width: size.width / 1.7,
+                                child: Text(
+                                  'No se encuentra en esta ubicación',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 15,
+                                      color: Colors.grey),
+                                ),
                               ),
                             ],
-                          );
-                        },
-                      ),
-                    ),
-                    if (products.length == 3)
+                          ),
+                        ]),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
                       Container(
-                        child: FadeInRight(
-                          duration: Duration(milliseconds: 400),
-                          delay: Duration(milliseconds: 500),
-                          child: Container(
-                            decoration: new BoxDecoration(
-                              color: currentTheme.primaryColor,
-                              shape: BoxShape.circle,
-                            ),
-                            alignment: Alignment.centerRight,
-                            width: 30.0,
-                            height: 30.0,
-                            child: Center(
-                                child: Text('+${products.length - 2}',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold))),
+                        width: 70,
+                        height: 70,
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: ClipRRect(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                            child: (store.imageAvatar != "")
+                                ? Container(
+                                    child: (!store.notLocation)
+                                        ? cachedProductNetworkImage(
+                                            store.imageAvatar,
+                                          )
+                                        : cachedNetworkImage(
+                                            store.imageAvatar,
+                                          ),
+                                  )
+                                : Image.asset(currentProfile.imageAvatar),
                           ),
                         ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(
+                            child: Container(
+                              margin: EdgeInsets.only(top: 5.0),
+                              child: Text(
+                                '${store.name.capitalize()}',
+                                style: TextStyle(
+                                    color: (!store.notLocation)
+                                        ? Colors.grey
+                                        : Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(top: 0.0),
+                                child: Text(
+                                  '$totalQuantity',
+                                  style: TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 15),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 5.0,
+                              ),
+                              Container(
+                                child: Text(
+                                  bloc.cart.length == 1
+                                      ? 'Producto'
+                                      : 'Productos',
+                                  style: TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 15),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      Spacer(),
+                      Stack(
+                        fit: StackFit.loose,
+                        clipBehavior: Clip.hardEdge,
+                        children: [
+                          Container(
+                            height: 50,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount:
+                                  (products.length >= 3) ? 2 : products.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                final item = products[index];
+                                return Stack(
+                                  children: [
+                                    Container(
+                                        margin: EdgeInsets.only(left: 5.0),
+                                        alignment: Alignment.topRight,
+                                        child: FadeInLeft(
+                                          delay: Duration(
+                                              milliseconds: 200 * index),
+                                          child: Container(
+                                              width: 50,
+                                              height: 50,
+                                              child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(
+                                                              100.0)),
+                                                  child: (!store.notLocation)
+                                                      ? cachedProductNetworkImage(
+                                                          item.product.images[0]
+                                                              .url)
+                                                      : cachedNetworkImage(item
+                                                          .product
+                                                          .images[0]
+                                                          .url))),
+                                        )),
+                                    Container(
+                                      decoration: new BoxDecoration(
+                                        color: (!store.notLocation)
+                                            ? Colors.grey
+                                            : currentTheme.accentColor,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      alignment: Alignment.bottomCenter,
+                                      width: 20.0,
+                                      height: 20.0,
+                                      child: Center(
+                                          child: Text('${item.quantity}',
+                                              style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: Colors.black,
+                                                  fontWeight:
+                                                      FontWeight.w500))),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+                          if (products.length >= 3)
+                            Container(
+                              margin: EdgeInsets.only(left: size.width / 4),
+                              child: FadeInRight(
+                                duration: Duration(milliseconds: 400),
+                                delay: Duration(milliseconds: 500),
+                                child: Container(
+                                  decoration: new BoxDecoration(
+                                    color: currentTheme.primaryColor,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  width: 30.0,
+                                  height: 30.0,
+                                  child: Center(
+                                      child: Text('+${products.length - 2}',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold))),
+                                ),
+                              ),
+                            )
+                        ],
                       )
-                  ],
-                )
-              ],
-            ),
-          ),
+                    ],
+                  ),
+                ],
+              )),
         );
       },
     ),

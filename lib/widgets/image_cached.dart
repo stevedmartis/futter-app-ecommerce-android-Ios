@@ -10,8 +10,24 @@ Widget cachedNetworkImage(String image) {
         image: DecorationImage(
             image: imageProvider,
             fit: BoxFit.cover,
-            colorFilter:
-                ColorFilter.mode(Colors.transparent, BlendMode.colorBurn)),
+            colorFilter: ColorFilter.mode(Colors.white, BlendMode.colorBurn)),
+      ),
+    ),
+    placeholder: (context, url) =>
+        Container(child: buildLoadingWidget(context)),
+    errorWidget: (context, url, error) => Icon(Icons.error),
+  );
+}
+
+Widget cachedProductNetworkImage(String image) {
+  return CachedNetworkImage(
+    imageUrl: image,
+    imageBuilder: (context, imageProvider) => Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+            image: imageProvider,
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(Colors.grey, BlendMode.lighten)),
       ),
     ),
     placeholder: (context, url) =>

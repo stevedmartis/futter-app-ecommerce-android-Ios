@@ -1,13 +1,12 @@
-import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
-import 'package:australti_ecommerce_app/models/store.dart';
-import 'package:australti_ecommerce_app/responses/place_search_response.dart';
+import 'package:australti_ecommerce_app/models/Address.dart';
 
-import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
+import 'package:australti_ecommerce_app/responses/stores_list_principal_response.dart';
+import 'package:australti_ecommerce_app/services/stores_Services.dart';
+import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 
 import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
-import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,17 +14,16 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-class LocationStorePage extends StatefulWidget {
-  LocationStorePage(this.place);
-  final PlacesSearch place;
+class FormCurrentLocationPage extends StatefulWidget {
+  FormCurrentLocationPage(this.place);
+  final Address place;
   @override
-  _LocationStorePageState createState() => _LocationStorePageState();
+  _ConfirmLocationPagetate createState() => _ConfirmLocationPagetate();
 }
 
-class _LocationStorePageState extends State<LocationStorePage> {
+class _ConfirmLocationPagetate extends State<FormCurrentLocationPage> {
   final _blocLocation = MyLocationBloc();
-  bool loading = false;
-  Store store;
+  final prefs = new AuthUserPreferences();
   final locationBloc = LocationBloc();
 
   final addressSelectCtrl = TextEditingController();
@@ -36,9 +34,10 @@ class _LocationStorePageState extends State<LocationStorePage> {
   void initState() {
     _scrollController = ScrollController()..addListener(() => setState(() {}));
 
-    addressSelectCtrl.text = widget.place.mainText;
-    citySelectCtrl.text = widget.place.secondaryText;
-    numberCtrl.text = (widget.place.number == '0') ? '' : widget.place.number;
+    addressSelectCtrl.text = widget.place.featureName;
+    citySelectCtrl.text = widget.place.adminArea;
+    numberCtrl.text = widget.place.locality;
+
     super.initState();
   }
 
@@ -71,55 +70,58 @@ class _LocationStorePageState extends State<LocationStorePage> {
             onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
             child: Scaffold(
                 appBar: AppBar(
-                  title: _showTitle ? Text('Editar dirección') : Text(''),
+                  title: _showTitle ? Text('Confirmar dirección') : Text(''),
                   backgroundColor: Colors.black,
                   leading: IconButton(
-                      color: currentTheme.primaryColor,
-                      icon: Icon(
-                        Icons.chevron_left,
-                        size: 40,
-                      ),
-                      onPressed: () {
-                        HapticFeedback.lightImpact();
-                        Navigator.pop(context);
-                      }),
+                    color: currentTheme.primaryColor,
+                    icon: Icon(
+                      Icons.chevron_left,
+                      size: 40,
+                    ),
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      Navigator.pop(context);
+                    },
+                  ),
                   actions: [
-                    (!loading)
-                        ? StreamBuilder<String>(
-                            stream: _blocLocation.numberAddress.stream,
-                            builder: (context, AsyncSnapshot<String> snapshot) {
-                              final places = snapshot.data;
+                    StreamBuilder<String>(
+                      stream: _blocLocation.numberAddress.stream,
+                      builder: (context, AsyncSnapshot<String> snapshot) {
+                        final places = snapshot.data;
 
-                              bool isDisabled = false;
-                              (places != null)
-                                  ? (places != "")
-                                      ? isDisabled = true
-                                      : isDisabled = false
-                                  : isDisabled = false;
+                        bool isDisabled = false;
+                        (places != null)
+                            ? (places != "")
+                                ? isDisabled = true
+                                : isDisabled = false
+                            : isDisabled = false;
 
-                              return IconButton(
-                                color: (!isDisabled)
-                                    ? Colors.grey
-                                    : currentTheme.primaryColor,
-                                icon: Icon(
-                                  Icons.check,
-                                  size: 35,
-                                ),
-                                onPressed: () {
-                                  FocusScope.of(context)
-                                      .requestFocus(new FocusNode());
+                        return IconButton(
+                          color: (!isDisabled)
+                              ? Colors.grey
+                              : currentTheme.primaryColor,
+                          icon: Icon(
+                            Icons.check,
+                            size: 35,
+                          ),
+                          onPressed: () {
+                            HapticFeedback.mediumImpact();
+                            if (isDisabled) {
+                              widget.place.locality = numberCtrl.text;
 
-                                  if (isDisabled) {
-                                    _editAddress();
-                                  }
-                                },
-                              );
-                            },
-                          )
-                        : buildLoadingWidget(context),
+                              FocusScope.of(context)
+                                  .requestFocus(new FocusNode());
+
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            }
+                          },
+                        );
+                      },
+                    ),
                   ],
                 ),
-                backgroundColor: currentTheme.scaffoldBackgroundColor,
+                backgroundColor: Colors.black,
                 body: CustomScrollView(
                     controller: _scrollController,
                     physics: const BouncingScrollPhysics(
@@ -134,7 +136,7 @@ class _LocationStorePageState extends State<LocationStorePage> {
                                 Container(
                                   width: size.width,
                                   child: Text(
-                                    'Editar dirección',
+                                    'Confirmar dirección',
                                     maxLines: 2,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -177,7 +179,10 @@ class _LocationStorePageState extends State<LocationStorePage> {
                                               labelStyle: TextStyle(
                                                 color: Colors.white54,
                                               ),
-                                              // icon: Icon(Icons.perm_identity),
+                                              icon: Icon(
+                                                Icons.location_city,
+                                                color: currentTheme.accentColor,
+                                              ),
                                               //  fillColor: currentTheme.accentColor,
                                               focusedBorder: OutlineInputBorder(
                                                 borderSide: BorderSide(
@@ -223,7 +228,10 @@ class _LocationStorePageState extends State<LocationStorePage> {
                                         labelStyle: TextStyle(
                                           color: Colors.white54,
                                         ),
-                                        // icon: Icon(Icons.perm_identity),
+                                        icon: Icon(
+                                          Icons.location_on,
+                                          color: currentTheme.accentColor,
+                                        ),
                                         //  fillColor: currentTheme.accentColor,
                                         focusedBorder: OutlineInputBorder(
                                           borderSide: BorderSide(
@@ -267,7 +275,10 @@ class _LocationStorePageState extends State<LocationStorePage> {
                                           labelStyle: TextStyle(
                                             color: Colors.white54,
                                           ),
-                                          // icon: Icon(Icons.perm_identity),
+                                          icon: Icon(
+                                            Icons.home,
+                                            color: currentTheme.accentColor,
+                                          ),
                                           //  fillColor: currentTheme.accentColor,
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
@@ -289,39 +300,19 @@ class _LocationStorePageState extends State<LocationStorePage> {
                     ]))));
   }
 
-  _editAddress() async {
-    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+  void storesByLocationlistServices(String location, String uid) async {
+    final storeService = Provider.of<StoreService>(context, listen: false);
+    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 
-    final storeProfile = authService.storeAuth;
+    final StoresListResponse resp =
+        await storeService.getStoresLocationListServices(location, uid);
 
-    final address = addressSelectCtrl.text.trim();
-    final number = numberCtrl.text.trim();
-    final city = citySelectCtrl.text.trim();
+    if (resp.ok) {
+      storeBloc.storesListInitial = resp.storeListServices;
 
-    setState(() {
-      loading = true;
-    });
+      storeBloc.chargeServicesStores();
 
-    final editProfileOk = await authService.editAddressStoreProfile(
-        storeProfile.user.uid, city, address, number);
-
-    if (editProfileOk != null) {
-      if (editProfileOk == true) {
-        setState(() {
-          loading = false;
-        });
-
-        showSnackBar(context, 'Categoria guardada');
-
-        (storeProfile.user.first || storeProfile.service == 0)
-            ? Navigator.push(context, profileEditRoute())
-            : Navigator.pop(context);
-      } else {
-        showAlertError(context, 'Error', 'Intente más tarde.');
-      }
-    } else {
-      showAlertError(
-          context, 'Error del servidor', 'lo sentimos, Intentelo mas tarde');
+      storeBloc.changeToMarket();
     }
   }
 }

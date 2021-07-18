@@ -61,16 +61,16 @@ class _PrincipalPageState extends State<PrincipalPage>
     storeAuth = authService.storeAuth;
 
     categoriesStoreProducts();
-
+    storeslistServices();
+    prefs.addressSearchSave;
     if (storeAuth.user.uid != '0') {
       storesByLocationlistServices(storeAuth.city, storeAuth.user.uid);
+
       myFavoritesProducts();
-    } else if (prefs.isLocationCurrent) {
+    } else if (prefs.addressSearchSave != '') {
       storesByLocationlistServices(
-          prefs.addressSave['locality'], storeAuth.user.uid);
-    } else {
-      storeslistServices();
-    }
+          prefs.addressSearchSave.secondaryText, storeAuth.user.uid);
+    } else {}
 
     if (!isWeb) locationStatus();
     if (!isWeb) WidgetsBinding.instance.addObserver(this);
@@ -160,9 +160,9 @@ class _PrincipalPageState extends State<PrincipalPage>
     final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 
     if (resp.ok) {
-      storeBloc.storesListInitial = resp.storeListServices;
+      storeBloc.storesAllDb = resp.storeListServices;
 
-      storeBloc.chargeServicesStores();
+      //storeBloc.chargeServicesStores();
     }
   }
 
@@ -267,13 +267,13 @@ class _PrincipalPageState extends State<PrincipalPage>
     if (isDenied) {
       final status = await Permission.location.request();
 
-      if (prefs.locationCurrent || prefs.locationSearch) {
+      if (prefs.addressSearchSave != '') {
         return;
       } else {
         accessGps(status);
       }
     } else if (isGranted && serviceEnabled) {
-      if (prefs.locationCurrent || prefs.locationSearch) {
+      if (prefs.addressSearchSave != '') {
         return;
       } else {
         accessGps(PermissionStatus.granted);
@@ -284,9 +284,7 @@ class _PrincipalPageState extends State<PrincipalPage>
         _isDialogShowing = true;
       });
       showModalGpsLocation();
-    } else if (isPermanentlyDenied &&
-        !prefs.locationCurrent &&
-        !prefs.locationSearch) {
+    } else if (isPermanentlyDenied && prefs.addressSearchSave != '') {
       final status = await Permission.location.request();
 
       accessGps(status);
@@ -302,7 +300,7 @@ class _PrincipalPageState extends State<PrincipalPage>
             myLocationBloc.initPositionLocation();
 
             storesByLocationlistServices(
-                prefs.addressSave['locality'], storeAuth.user.uid);
+                prefs.addressSearchSave.secondaryText, storeAuth.user.uid);
 
             Navigator.pop(context);
           }, () {

@@ -42,7 +42,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
           );
         },
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
               child: Container(
@@ -51,7 +51,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                   children: [
                     Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: (!widget.cartHome) ? 40 : 20,
+                        horizontal: 20,
                       ),
                       child: Text(
                         'Mi Bolsa',
@@ -63,9 +63,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                     ),
                     Expanded(
                       child: Container(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 40,
-                            horizontal: (!widget.cartHome) ? 20 : 0),
+                        padding: EdgeInsets.only(left: 0, top: 10),
                         child: ListView.builder(
                           itemCount: bloc.cart.length,
                           itemBuilder: (context, index) {
@@ -79,7 +77,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                               child: FadeInUp(
                                 delay: Duration(milliseconds: 100 * index),
                                 child: Slidable.builder(
-                                  key: UniqueKey(),
+                                  key: Key(item.product.id),
                                   controller: slidableController,
                                   direction: Axis.horizontal,
                                   actionPane: _getActionPane(index),
@@ -116,7 +114,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                     height: size.height / 7.2,
                                     child: ListTile(
                                       leading: Container(
-                                          width: 50,
+                                          width: 60,
                                           height: 120,
                                           child: ClipRRect(
                                               borderRadius: BorderRadius.all(
@@ -183,20 +181,18 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                               ],
                                             ),
                                             Container(
-                                              margin: EdgeInsets.only(left: 15),
+                                              alignment: Alignment.centerRight,
+                                              margin: EdgeInsets.only(
+                                                  left: size.width / 8.5),
                                               child: Row(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.start,
+                                                    MainAxisAlignment.end,
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Container(
+                                                    color: Colors.black,
                                                     alignment: Alignment.center,
-                                                    decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(25),
-                                                        color: Colors.black),
                                                     child: Column(
                                                       children: [
                                                         (item.quantity == 1)
@@ -306,7 +302,6 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                           ],
                                         ),
                                       ),
-                                      dense: true,
                                     ),
                                   ),
                                 ),
@@ -328,9 +323,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                     : null
               },
               child: Padding(
-                padding: (widget.cartHome)
-                    ? EdgeInsets.only(bottom: 50.0)
-                    : EdgeInsets.all(20),
+                padding: EdgeInsets.only(bottom: 50.0),
                 child: Container(
                   child: Center(
                     child: goPayCartBtnSubtotal(

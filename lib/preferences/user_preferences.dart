@@ -1,9 +1,10 @@
 import 'dart:convert';
 
+import 'package:australti_ecommerce_app/models/Address.dart';
 import 'package:australti_ecommerce_app/models/grocery_Store.dart';
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/responses/place_search_response.dart';
-import 'package:geocoder/model.dart';
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -44,23 +45,6 @@ class AuthUserPreferences {
     return _prefs.getString('token') ?? "";
   }
 
-  set setAddreses(Address address) {
-    Map<String, dynamic> map = {
-      'locality': address.locality,
-      'featureName': address.featureName,
-      'countryName': address.countryName,
-      'adminArea': address.adminArea
-    };
-    String rawJson = jsonEncode(map);
-
-    _prefs.setString('address', jsonEncode(rawJson));
-  }
-
-  get addressSave {
-    final address = json.decode(_prefs.getString('address') ?? '');
-    return jsonDecode(address);
-  }
-
   set setLocationCurrent(bool isCurrent) {
     _prefs.setBool('locationCurrent', isCurrent);
   }
@@ -94,11 +78,13 @@ class AuthUserPreferences {
   }
 
   set setSearchAddreses(PlaceSearch place) {
+    final location =
+        place.structuredFormatting.secondaryText.toString().split(",").first;
     Map<String, dynamic> map = {
       'description': place.description,
       'placeId': place.placeId,
       'mainText': place.structuredFormatting.mainText,
-      'secondaryText': place.structuredFormatting.secondaryText,
+      'secondaryText': location,
       'number': place.structuredFormatting.number
     };
 
@@ -110,7 +96,7 @@ class AuthUserPreferences {
   get addressSearchSave {
     final place = json.decode(_prefs.getString('placeSearch') ?? '');
 
-    final fromjson = placeSearchFromJson(place);
+    final PlacesSearch fromjson = placeSearchFromJson(place);
 
     return fromjson;
   }

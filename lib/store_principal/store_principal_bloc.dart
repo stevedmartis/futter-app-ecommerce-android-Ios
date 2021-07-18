@@ -14,6 +14,7 @@ class StoreBLoC with ChangeNotifier {
   StoreState storeState = StoreState.restaurant;
   List<Store> storesListState = [];
 
+  List<Store> storesAllDb = [];
   List<Store> storesListInitial = [];
 
   List<Store> storesSearch = [];
@@ -168,9 +169,17 @@ class StoreBLoC with ChangeNotifier {
   }
 
   Store getStoreByProducts(String storeId) {
-    final Store store =
-        storesListInitial.singleWhere((i) => i.user.uid == storeId);
+    final Store store = storesListInitial
+        .singleWhere((i) => i.user.uid == storeId, orElse: () => null);
 
+    print(store);
+    return store;
+  }
+
+  Store getStoreAllDbByProducts(String storeId) {
+    final Store store = storesAllDb.singleWhere((i) => i.user.uid == storeId,
+        orElse: () => null);
+    print(store);
     return store;
   }
 

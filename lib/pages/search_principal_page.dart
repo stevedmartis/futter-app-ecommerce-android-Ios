@@ -114,7 +114,7 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
             minHeight: 60,
             maxHeight: 60,
             child: Container(
-                color: Colors.black,
+                color: currentTheme.currentTheme.scaffoldBackgroundColor,
                 child: Row(
                   children: [
                     SizedBox(width: 10),

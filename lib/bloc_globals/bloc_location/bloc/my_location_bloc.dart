@@ -1,13 +1,16 @@
 import 'dart:async';
 
+import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc/validators.dart';
+import 'package:australti_ecommerce_app/models/Address.dart';
 import 'package:australti_ecommerce_app/models/place_Current.dart';
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/services/places_service.dart';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoder/geocoder.dart';
+
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
@@ -29,6 +32,7 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
   PlaceSearch place;
 
   final placeService = PlaceService();
+  final authBloc = AuthenticationBLoC();
   //List<PlaceSearch> _searchResults = [];
 
   final BehaviorSubject<List<PlaceSearch>> _searchResults =
@@ -87,34 +91,20 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
         final city = addressComponent[2].longName;
         final country = addressComponent[6].longName;
 
-        final countryCode = addressComponent[6].shortName;
-
-        final adminArea = addressComponent[5].longName;
-
-        final newAddress = Address(
-            addressLine: '$addressFinal, $city, $country',
-            adminArea: adminArea,
-            coordinates:
-                Coordinates(newPosition.latitude, newPosition.longitude),
-            countryCode: countryCode,
-            countryName: country,
-            featureName: addressFinal,
-            locality: city,
-            postalCode: null,
-            subAdminArea: null,
-            subLocality: city,
-            subThoroughfare: null,
-            thoroughfare: address);
+        var placeCurrent = new PlaceSearch(
+            description: '$addressFinal, $city, $country',
+            placeId: addressFinal,
+            structuredFormatting: new StructuredFormatting(
+                mainText: addressFinal, secondaryText: city, number: ''));
 
         addresName = addressFinal;
 
-        prefs.setAddreses = newAddress;
+        prefs.setSearchAddreses = placeCurrent;
 
         prefs.setLatSearch = newPosition.latitude;
         prefs.setLongSearch = newPosition.longitude;
 
-        prefs.setLocationCurrent = true;
-        prefs.setLocationSearch = false;
+        prefs.setLocationSearch = true;
       }
     }
   }
@@ -133,17 +123,28 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
     _numberAddress.sink.add(value);
   }
 
-  savePlaceSearchConfirm(PlaceSearch value) async {
+  savePlaceSearchConfirm(PlaceSearch value, String uid) async {
     place = value;
-    isLocationSearch = true;
+
     prefs.setLocationSearch = true;
+
     prefs.setSearchAddreses = value;
-    prefs.setLocationCurrent = false;
 
-    final resp = await placeService.getAutocompleteDetails(value.placeId);
-
-    prefs.setLatSearch = resp.first;
-    prefs.setLongSearch = resp.last;
+    print(prefs.addressSearchSave);
+    if (place.placeId != '0') {
+      final editProfileOk = await authBloc.editAddressStoreProfile(
+          uid,
+          value.structuredFormatting.secondaryText.split(",").last,
+          value.structuredFormatting.mainText,
+          value.structuredFormatting.number);
+      if (editProfileOk != null) {
+        if (editProfileOk == true) {
+          final resp = await placeService.getAutocompleteDetails(value.placeId);
+          prefs.setLatSearch = resp.first;
+          prefs.setLongSearch = resp.last;
+        }
+      }
+    }
 
     notifyListeners();
   }

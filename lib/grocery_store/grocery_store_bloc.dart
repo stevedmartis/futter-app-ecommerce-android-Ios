@@ -15,6 +15,7 @@ class GroceryStoreBLoC with ChangeNotifier {
   List<GroceryProduct> catalog = List.unmodifiable(groceryProducts);
   List<GroceryProductItem> cart = [];
   bool isReload = true;
+
   final prefs = new AuthUserPreferences();
 
   void changeToCart() {
@@ -45,6 +46,7 @@ class GroceryStoreBLoC with ChangeNotifier {
   void deleteProduct(GroceryProductItem productItem) {
     cart.remove(productItem);
     totalPriceElements();
+    isReload = false;
     prefs.setCart = cart;
     notifyListeners();
   }

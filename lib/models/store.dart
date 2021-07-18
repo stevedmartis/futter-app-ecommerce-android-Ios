@@ -34,6 +34,7 @@ class Store {
       this.updatedAt,
       this.visibility = true,
       this.isFollowing,
+      this.notLocation = false,
       this.followers = 0});
 
   final String id;
@@ -50,6 +51,7 @@ class Store {
   double latitude;
   double longitude;
   bool visibility;
+  bool notLocation;
   bool isFollowing;
 
   int followers;
@@ -82,6 +84,7 @@ class Store {
         number: json["numberAddress"],
         latitude: json["latitude"],
         longitude: json["longitude"],
+        notLocation: json["notLocation"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
       );
@@ -104,6 +107,7 @@ class Store {
         "followers": followers,
         "visibility": visibility,
         "number": number,
+        "notLocation": notLocation,
         "latitude": latitude,
         "longitude": longitude,
         "createdAt": updatedAt,

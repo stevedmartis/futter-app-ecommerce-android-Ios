@@ -66,21 +66,26 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
     storeAuth = authService.storeAuth;
 
     return Container(
-      color: Colors.black,
+      color: (widget.showTitle)
+          ? Colors.black
+          : currentTheme.currentTheme.scaffoldBackgroundColor,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(width: 10),
+          SizedBox(width: 20),
           (widget.leading)
               ? Container(
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: currentTheme.currentTheme.cardColor),
+                      color: currentTheme.currentTheme.scaffoldBackgroundColor),
                   child: Row(
                     children: [
                       Material(
-                        color: currentTheme.currentTheme.cardColor,
+                        color:
+                            currentTheme.currentTheme.scaffoldBackgroundColor,
                         borderRadius: BorderRadius.circular(20),
                         child: InkWell(
                           splashColor: Colors.grey,
@@ -144,6 +149,7 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                 duration: Duration(milliseconds: 100),
                 opacity: (widget.showTitle) ? 1.0 : 0.0,
                 child: Container(
+                  alignment: Alignment.center,
                   child: Text(
                     widget.title,
                     style: TextStyle(

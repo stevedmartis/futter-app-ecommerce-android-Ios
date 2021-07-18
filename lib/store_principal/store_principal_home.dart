@@ -15,6 +15,7 @@ import 'package:australti_ecommerce_app/services/stores_Services.dart';
 import 'package:australti_ecommerce_app/store_principal/store_Service.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:australti_ecommerce_app/widgets/modal_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
@@ -45,7 +46,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
   }
 
   bool isItems = false;
-
+  bool loading = true;
   ValueNotifier<bool> notifierBottomBarVisible = ValueNotifier(true);
 
   double get maxHeight => 200 + MediaQuery.of(context).padding.top;
@@ -53,15 +54,10 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
   @override
   void initState() {
-    final bloc = Provider.of<GroceryStoreBLoC>(context, listen: false);
-
     this.bottomControll();
-
-    if (bloc.isReload) this.getCartSave();
 
     final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 
-    bloc.changeReaload();
     final int followed = prefs.followed;
 
     storeBloc.selected = (followed > 0)
@@ -139,9 +135,9 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     HapticFeedback.heavyImpact();
     if (storeAuth.user.uid != '0') {
       storesByLocationlistServices(storeAuth.city, storeAuth.user.uid);
-    } else if (prefs.isLocationCurrent) {
+    } else if (prefs.addressSearchSave != '') {
       storesByLocationlistServices(
-          prefs.addressSave['locality'], storeAuth.user.uid);
+          prefs.addressSearchSave.secondaryText, storeAuth.user.uid);
     } else {
       storeslistServices();
     }
@@ -189,6 +185,10 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
       storeBloc.chargeServicesStores();
 
       changeToCurrentService();
+
+      setState(() {
+        loading = false;
+      });
     }
   }
 
@@ -212,6 +212,8 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     isItems = groceryBloc.totalCartElements() > 0 ? true : false;
     storeAuth = authService.storeAuth;
 
+    if (groceryBloc.isReload) this.getCartSave();
+    groceryBloc.changeReaload();
     return SafeArea(
       child: Scaffold(
           backgroundColor: currentTheme.scaffoldBackgroundColor,
@@ -230,12 +232,12 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                 controller: _scrollController,
                 slivers: [
                   SliverAppBar(
-                    leadingWidth: 60,
+                    leadingWidth: 70,
                     backgroundColor: currentTheme.scaffoldBackgroundColor,
                     leading: Container(
                         width: 100,
                         height: 100,
-                        margin: EdgeInsets.only(left: 10, top: 10),
+                        margin: EdgeInsets.only(left: 20, top: 10),
                         child: GestureDetector(
                           onTap: () {
                             HapticFeedback.mediumImpact();
@@ -406,7 +408,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
                   // makeHeaderPrincipal(context),
                   makeHeaderTitle(context, bloc.selected.name),
-                  makeListRecomendations(),
+                  makeListRecomendations(loading),
                 ],
               ),
             ),
@@ -496,50 +498,55 @@ SliverPersistentHeader makeHeaderTitle(context, String titleService) {
           )));
 }
 
-SliverList makeListRecomendations() {
+SliverList makeListRecomendations(bool loading) {
   return SliverList(
     delegate: SliverChildListDelegate([
-      Container(child: StoresListByService()),
+      Container(
+          child: StoresListByService(
+        loading: loading,
+      )),
     ]),
   );
 }
 
 class StoresListByService extends StatelessWidget {
-  const StoresListByService({
-    Key key,
-  }) : super(key: key);
+  const StoresListByService({Key key, this.loading}) : super(key: key);
 
+  final bool loading;
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of<StoreBLoC>(context);
 
     return SizedBox(
-      child: (bloc.storesListState.length > 0)
-          ? ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: bloc.storesListState.length,
-              itemBuilder: (BuildContext ctxt, int index) {
-                final store = bloc.storesListState[index];
+      child: (bloc.loadingStores)
+          ? (bloc.storesListState.length > 0)
+              ? ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: bloc.storesListState.length,
+                  itemBuilder: (BuildContext ctxt, int index) {
+                    final store = bloc.storesListState[index];
 
-                return Stack(
-                  children: [
-                    FadeIn(
-                      child: StoreCard(
-                        store: store,
-                      ),
+                    return Stack(
+                      children: [
+                        FadeIn(
+                          child: StoreCard(
+                            store: store,
+                          ),
+                        ),
+                      ],
+                    );
+                  })
+              : Container(
+                  padding: EdgeInsets.only(top: 30),
+                  child: Center(
+                    child: Text(
+                      'No hay ${bloc.selected.name} en esta ubicación',
+                      style: TextStyle(color: Colors.grey),
                     ),
-                  ],
-                );
-              })
-          : Container(
-              child: Center(
-                child: Text(
-                  'No hay tiendas cercanas a tu ubicación',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ),
-            ),
+                  ),
+                )
+          : buildLoadingWidget(context),
     );
   }
 }
@@ -872,178 +879,85 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                   ),
                 ),
               ),
-              (prefs.locationCurrent)
-                  ? Positioned(
-                      top: 20,
-                      left: 10,
-                      right: 10,
-                      height: 40,
-                      child: AnimatedOpacity(
-                          opacity: (prefs.locationCurrent) ? 1.0 : 0.0,
-                          duration: Duration(milliseconds: 200),
-                          child: GestureDetector(
-                            onTap: () {
-                              HapticFeedback.lightImpact();
-                              showLocationMaterialCupertinoBottomSheet(
-                                context,
-                                () {
-                                  HapticFeedback.lightImpact();
-                                  myLocationBloc.initPositionLocation();
-                                  storesByLocationlistServices(
-                                      prefs.addressSave['locality'],
-                                      authBloc.storeAuth.user.uid);
-                                  Navigator.pop(context);
-                                },
-                                () {
-                                  Navigator.pop(context);
-                                },
-                                Radio(
-                                  activeColor: currentTheme.primaryColor,
-                                  value: 0,
-                                  groupValue: _selectedGender,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedGender = value;
-                                    });
-                                  },
+              Positioned(
+                  top: 20,
+                  left: 10,
+                  right: 10,
+                  height: 40,
+                  child: AnimatedOpacity(
+                      opacity: (prefs.addressSearchSave != '') ? 1.0 : 0.0,
+                      duration: Duration(milliseconds: 200),
+                      child: GestureDetector(
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+
+                          showModalLocation(
+                              context,
+                              _selectedGender,
+                              prefs.addressSearchSave.secondaryText,
+                              authBloc.storeAuth.user.uid);
+                        },
+                        child: Container(
+                          alignment: Alignment.center,
+                          width: 100,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                alignment: Alignment.centerRight,
+                                child: Icon(
+                                  Icons.location_on,
+                                  color: currentTheme.accentColor,
+                                  size: 20,
                                 ),
-                              );
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  child: Icon(Icons.location_on,
-                                      color: currentTheme.accentColor,
-                                      size: 20),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Container(
-                                    width: _size.width / 3,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              SizedBox(
+                                width: _size.width / 3,
+                                child: Container(
                                     alignment: Alignment.center,
                                     child: Text(
-                                      prefs.locationCurrent
-                                          ? '${prefs.addressSave['featureName']}'
+                                      prefs.addressSearchSave != ''
+                                          ? '${prefs.addressSearchSave.mainText}'
                                           : '...',
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
+                                      softWrap: false,
                                       //'${state.location.latitude}',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 13,
                                           color: Colors.white70),
                                     )),
-                                Container(
+                              ),
+                              GestureDetector(
+                                child: Container(
                                   child: Icon(Icons.expand_more,
                                       color: currentTheme.accentColor),
-                                )
-                              ],
-                            ),
-                          )))
-                  : Positioned(
-                      top: 20,
-                      left: 10,
-                      right: 10,
-                      height: 40,
-                      child: AnimatedOpacity(
-                          opacity: (prefs.locationSearch) ? 1.0 : 0.0,
-                          duration: Duration(milliseconds: 200),
-                          child: GestureDetector(
-                            onTap: () {
-                              HapticFeedback.lightImpact();
-                              showLocationMaterialCupertinoBottomSheet(
-                                context,
-                                () {
-                                  HapticFeedback.lightImpact();
-                                  myLocationBloc.initPositionLocation();
-                                  storesByLocationlistServices(
-                                      prefs.addressSave['locality'],
-                                      authBloc.storeAuth.user.uid);
-                                  Navigator.pop(context);
-                                },
-                                () {
-                                  Navigator.pop(context);
-                                },
-                                Radio(
-                                  activeColor: currentTheme.primaryColor,
-                                  value: 0,
-                                  groupValue: _selectedGender,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedGender = value;
-                                    });
-                                  },
                                 ),
-                              );
-                            },
-                            child: Container(
-                              alignment: Alignment.center,
-                              width: 100,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    alignment: Alignment.centerRight,
-                                    child: Icon(
-                                      Icons.location_on,
-                                      color: currentTheme.accentColor,
-                                      size: 20,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  SizedBox(
-                                    width: _size.width / 3,
-                                    child: Container(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          prefs.locationSearch
-                                              ? '${prefs.addressSearchSave.mainText}'
-                                              : '...',
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                          softWrap: false,
-                                          //'${state.location.latitude}',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 13,
-                                              color: Colors.white70),
-                                        )),
-                                  ),
-                                  GestureDetector(
-                                    child: Container(
-                                      child: Icon(Icons.expand_more,
-                                          color: currentTheme.accentColor),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ))),
+                              )
+                            ],
+                          ),
+                        ),
+                      ))),
             ],
           );
         });
   }
+}
 
-  void storesByLocationlistServices(String location, String uid) async {
-    final storeService = Provider.of<StoreService>(context, listen: false);
-
-    final StoresListResponse resp =
-        await storeService.getStoresLocationListServices(location, uid);
-
-    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
-
-    if (resp.ok) {
-      storeBloc.storesListInitial = [];
-      storeBloc.storesListInitial = resp.storeListServices;
-
-      storeBloc.chargeServicesStores();
-    }
+void storesByLocationlistServices(context, String location, String uid) async {
+  final storeService = Provider.of<StoreService>(context, listen: false);
+  final StoresListResponse resp =
+      await storeService.getStoresLocationListServices(location, uid);
+  final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
+  if (resp.ok) {
+    storeBloc.storesListInitial = [];
+    storeBloc.storesListInitial = resp.storeListServices;
+    storeBloc.chargeServicesStores();
   }
 }
 
@@ -1134,6 +1048,33 @@ class MyTextField extends StatelessWidget {
           ),
         ));
   }
+}
+
+void showModalLocation(context, selectedGender, String uid, String location) {
+  final currentTheme =
+      Provider.of<ThemeChanger>(context, listen: false).currentTheme;
+
+  showLocationMaterialCupertinoBottomSheet(
+    context,
+    () {
+      HapticFeedback.lightImpact();
+      myLocationBloc.initPositionLocation();
+      storesByLocationlistServices(
+          prefs.addressSearchSave.secondaryText, location, uid);
+      Navigator.pop(context);
+    },
+    () {
+      Navigator.pop(context);
+    },
+    Radio(
+      activeColor: currentTheme.primaryColor,
+      value: 0,
+      groupValue: 0,
+      onChanged: (value) {
+        selectedGender = value;
+      },
+    ),
+  );
 }
 
 class StoreServicesList extends StatefulWidget {

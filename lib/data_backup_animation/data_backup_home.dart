@@ -1,5 +1,6 @@
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 
 import 'data_backup_cloud_page.dart';
@@ -7,7 +8,7 @@ import 'data_backup_completed_page.dart';
 import 'data_backup_initial_page.dart';
 
 const mainDataBackupColor = Color(0xff32D73F);
-const secondaryDataBackupColor = Color(0xff00FF00);
+const secondaryDataBackupColor = Color(0xff3CFF50);
 
 class DataBackupHome extends StatefulWidget {
   @override

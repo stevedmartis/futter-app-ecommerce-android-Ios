@@ -35,7 +35,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
 
     addressSelectCtrl.text = widget.place.structuredFormatting.mainText;
     citySelectCtrl.text = widget.place.structuredFormatting.secondaryText;
-
+    numberCtrl.text = widget.place.structuredFormatting.number;
     super.initState();
   }
 
@@ -116,8 +116,8 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                           secondaryText: citySelectCtrl.text,
                                           number: places));
 
-                              myLocationBloc
-                                  .savePlaceSearchConfirm(placeSearch);
+                              myLocationBloc.savePlaceSearchConfirm(
+                                  placeSearch, authBloc.storeAuth.user.uid);
 
                               final location = citySelectCtrl.text
                                   .toString()
@@ -130,7 +130,6 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                               FocusScope.of(context)
                                   .requestFocus(new FocusNode());
 
-                              Navigator.pop(context);
                               Navigator.pop(context);
                             }
                           },

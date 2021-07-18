@@ -1,7 +1,10 @@
+import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 import 'package:australti_ecommerce_app/data_backup_animation/data_backup_home.dart';
+
+import 'package:provider/provider.dart';
 
 class _Bubble {
   _Bubble({
@@ -36,7 +39,10 @@ class DataBackupCloudPage extends StatelessWidget {
     final colorRandom = math.Random().nextBool();
     final direction =
         math.Random().nextInt(500) * (directionRandom ? 1.0 : -1.0);
-    final color = colorRandom ? mainDataBackupColor : secondaryDataBackupColor;
+    final color = colorRandom
+        ? mainDataBackupColor
+        : secondaryDataBackupColor.withOpacity(0.50);
+
     return _Bubble(
       color: color,
       direction: direction,
@@ -48,6 +54,8 @@ class DataBackupCloudPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
     final queryData = MediaQuery.of(context).size;
     return AnimatedBuilder(
         animation: Listenable.merge(
@@ -89,8 +97,7 @@ class DataBackupCloudPage extends StatelessWidget {
                   bottom: 0,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.black,
-                    ),
+                        color: currentTheme.scaffoldBackgroundColor),
                   ),
                 ),
                 Positioned(
@@ -101,7 +108,7 @@ class DataBackupCloudPage extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.black,
+                      color: currentTheme.scaffoldBackgroundColor,
                     ),
                   ),
                 ),
@@ -113,7 +120,7 @@ class DataBackupCloudPage extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.black,
+                      color: currentTheme.scaffoldBackgroundColor,
                     ),
                   ),
                 ),
@@ -131,7 +138,7 @@ class DataBackupCloudPage extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.black,
+                          color: currentTheme.scaffoldBackgroundColor,
                         ),
                       ),
                     ),
@@ -162,6 +169,7 @@ class _CloudBubblePainter extends CustomPainter {
             _bubble.speed * animation.value +
             _bubble.initialPosition * (1 - animation.value),
       );
+
       canvas.drawCircle(offset, _bubble.size, Paint()..color = _bubble.color);
     }
   }

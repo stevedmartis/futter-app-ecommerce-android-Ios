@@ -516,9 +516,8 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                                 //  fillColor: currentTheme.accentColor,
                                 focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
-                                      color:
-                                          currentTheme.currentTheme.cardColor,
-                                      width: 0.0),
+                                    color: currentTheme.currentTheme.cardColor,
+                                  ),
                                 ),
                                 hintText: 'Buscar productos ...',
                               ),

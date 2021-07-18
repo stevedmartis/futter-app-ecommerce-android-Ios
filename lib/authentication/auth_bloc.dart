@@ -83,16 +83,11 @@ class AuthenticationBLoC with ChangeNotifier {
       double long = 0;
       double lat = 0;
 
-      if (prefs.locationCurrent) {
-        address = prefs.addressSave['featureName'];
-        city = prefs.addressSave['locality'];
-      } else if (prefs.locationSearch) {
-        address = prefs.addressSearchSave.mainText;
-        city = prefs.addressSearchSave.secondaryText;
-        number = int.parse(prefs.addressSearchSave.number);
-        long = prefs.longSearch;
-        lat = prefs.latSearch;
-      }
+      address = prefs.addressSearchSave.mainText;
+      city = prefs.addressSearchSave.secondaryText;
+      number = int.parse(prefs.addressSearchSave.number);
+      long = prefs.longSearch;
+      lat = prefs.latSearch;
 
       final res = await this.siginWithApple(
           credential.authorizationCode,
@@ -128,18 +123,11 @@ class AuthenticationBLoC with ChangeNotifier {
 
       showModalLoading(context);
 
-      if (prefs.locationCurrent) {
-        address = prefs.addressSave['featureName'];
-        city = prefs.addressSave['locality'];
-        long = prefs.longSearch;
-        lat = prefs.latSearch;
-      } else if (prefs.locationSearch) {
-        address = prefs.addressSearchSave.mainText;
-        city = prefs.addressSearchSave.secondaryText;
-        number = int.parse(prefs.addressSearchSave.number);
-        long = prefs.longSearch;
-        lat = prefs.latSearch;
-      }
+      address = prefs.addressSearchSave.mainText;
+      city = prefs.addressSearchSave.secondaryText;
+      number = int.parse(prefs.addressSearchSave.number);
+      long = prefs.longSearch;
+      lat = prefs.latSearch;
 
       final authBack = await siginWithGoogleBack(
           googleKey.idToken, address, city, number, long, lat);
@@ -159,18 +147,11 @@ class AuthenticationBLoC with ChangeNotifier {
       double long = 0;
       double lat = 0;
 
-      if (prefs.locationCurrent) {
-        address = prefs.addressSave['featureName'];
-        city = prefs.addressSave['locality'];
-        long = prefs.longSearch;
-        lat = prefs.latSearch;
-      } else if (prefs.locationSearch) {
-        address = prefs.addressSearchSave.mainText;
-        city = prefs.addressSearchSave.secondaryText;
-        number = int.parse(prefs.addressSearchSave.number);
-        long = prefs.longSearch;
-        lat = prefs.latSearch;
-      }
+      address = prefs.addressSearchSave.mainText;
+      city = prefs.addressSearchSave.secondaryText;
+      number = int.parse(prefs.addressSearchSave.number);
+      long = prefs.longSearch;
+      lat = prefs.latSearch;
 
       final authBack = await siginWithPhoneBack(
           phone, code, address, city, number, long, lat);
@@ -431,12 +412,17 @@ class AuthenticationBLoC with ChangeNotifier {
   }
 
   Future editAddressStoreProfile(
-      String uid, String address, String number) async {
+      String uid, String location, String address, String number) async {
     // this.authenticated = true;
 
     final urlFinal = ('${Environment.apiUrl}/api/store/edit/address');
 
-    final data = {'uid': uid, 'address': address, 'number': number};
+    final data = {
+      'uid': uid,
+      'address': address,
+      'number': number,
+      'city': location
+    };
 
     String token = '';
     (UniversalPlatform.isWeb)
@@ -702,8 +688,6 @@ class AuthenticationBLoC with ChangeNotifier {
       prefs.setLocationSearch = true;
       prefs.setLocationCurrent = false;
       prefs.setSearchAddreses = placeStore;
-
-      print(prefs.locationSearch);
 
       return true;
     } else {
