@@ -255,7 +255,9 @@ void _listenNotification(context) {
   }
 }
 
-class _ProfileStoreProductItem extends StatelessWidget {
+String heroTag = '';
+
+class _ProfileStoreProductItem extends StatefulWidget {
   const _ProfileStoreProductItem(this.product, this.category, this.bloc);
 
   final String category;
@@ -265,14 +267,24 @@ class _ProfileStoreProductItem extends StatelessWidget {
   final TabsViewScrollBLoC bloc;
 
   @override
+  __ProfileStoreProductItemState createState() =>
+      __ProfileStoreProductItemState();
+}
+
+class __ProfileStoreProductItemState extends State<_ProfileStoreProductItem> {
+  @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context);
 
     final groceryBloc = Provider.of<GroceryStoreBLoC>(context);
-
+    final size = MediaQuery.of(context).size;
     final priceformat =
         NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
-            .format(product.price);
+            .format(widget.product.price);
+
+    final itemInCart = groceryBloc.cart.firstWhere(
+        (item) => item.product.id == widget.product.id,
+        orElse: () => null);
 
     return GestureDetector(
       onTap: () async {
@@ -287,12 +299,12 @@ class _ProfileStoreProductItem extends StatelessWidget {
               return FadeTransition(
                 opacity: animation,
                 child: ProductStoreDetails(
-                    category: category,
+                    category: widget.category,
                     isAuthUser: false,
-                    product: product,
-                    bloc: bloc,
+                    product: widget.product,
+                    bloc: widget.bloc,
                     onProductAdded: (int quantity) {
-                      groceryBloc.addProduct(product, quantity);
+                      groceryBloc.addProduct(widget.product, quantity);
                       HapticFeedback.lightImpact();
                       _listenNotification(context);
                     }),
@@ -303,7 +315,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
         groceryBloc.changeToNormal();
       },
       child: Container(
-        height: productHeight,
+        height: size.height / 5.5,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Card(
@@ -317,17 +329,19 @@ class _ProfileStoreProductItem extends StatelessWidget {
               children: [
                 Container(
                   child: Hero(
-                      tag: 'list_${product.images[0].url + product.name + '0'}',
+                      tag:
+                          'list_${widget.product.images[0].url + widget.product.name + '0'}' +
+                              heroTag,
                       child: Material(
                           type: MaterialType.transparency,
                           child: Container(
                               width: 100,
-                              height: 100,
+                              height: size.height / 5,
                               child: ClipRRect(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(12)),
                                 child: cachedContainNetworkImage(
-                                    product.images[0].url),
+                                    widget.product.images[0].url),
                               )))),
                 ),
                 const SizedBox(width: 10),
@@ -337,7 +351,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        product.name.capitalize(),
+                        widget.product.name.capitalize(),
                         style: TextStyle(
                           color: (currentTheme.customTheme)
                               ? Colors.white
@@ -348,24 +362,143 @@ class _ProfileStoreProductItem extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        product.description,
+                        widget.product.description,
                         maxLines: 2,
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: 10,
                         ),
                       ),
-                      const SizedBox(height: 5),
-                      Text(
-                        '\$$priceformat',
-                        style: TextStyle(
-                          color: (currentTheme.customTheme)
-                              ? Colors.white
-                              : _textColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      const SizedBox(height: 35),
+                      Row(
+                        children: [
+                          Text(
+                            '\$$priceformat',
+                            style: TextStyle(
+                              color: (currentTheme.customTheme)
+                                  ? Colors.white
+                                  : _textColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Spacer(),
+                          (itemInCart == null)
+                              ? SizedBox(
+                                  height: 30,
+                                  child: Container(
+                                    child: ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            heroTag = 'details0';
+                                          });
+
+                                          groceryBloc.addProduct(
+                                              widget.product,
+                                              (itemInCart != null)
+                                                  ? itemInCart.quantity
+                                                  : 1);
+                                          HapticFeedback.lightImpact();
+                                          _listenNotification(context);
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          elevation: 5.0,
+                                          fixedSize:
+                                              Size.fromWidth(size.width / 4),
+                                          primary: currentTheme
+                                              .currentTheme.primaryColor,
+                                          shape: new RoundedRectangleBorder(
+                                            borderRadius:
+                                                new BorderRadius.circular(30.0),
+                                          ),
+                                        ),
+                                        child: Text('Agregar',
+                                            style: TextStyle(fontSize: 15))),
+                                  ),
+                                )
+                              : Container(
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(25),
+                                    color: Colors.grey[200],
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      (itemInCart.quantity == 1)
+                                          ? Container(
+                                              padding:
+                                                  EdgeInsets.only(right: 0),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  HapticFeedback.lightImpact();
+                                                  groceryBloc.deleteProduct(
+                                                      itemInCart);
+                                                },
+                                                child: Icon(
+                                                  Icons.delete_outline,
+                                                  color: Colors.black,
+                                                  size: 20,
+                                                ),
+                                              ),
+                                            )
+                                          : Container(
+                                              padding:
+                                                  EdgeInsets.only(right: 0),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  HapticFeedback.lightImpact();
+                                                  if (itemInCart.quantity > 0) {
+                                                    groceryBloc.addProduct(
+                                                        widget.product, -1);
+                                                  }
+                                                },
+                                                child: Icon(
+                                                  Icons.remove,
+                                                  color: Colors.black,
+                                                  size: 25,
+                                                ),
+                                              ),
+                                            ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(right: 10),
+                                        child: Text(
+                                          itemInCart.quantity.toString(),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          HapticFeedback.lightImpact();
+
+                                          groceryBloc.addProduct(
+                                              widget.product, 1);
+                                        },
+                                        child: Container(
+                                          child: Icon(
+                                            Icons.add,
+                                            color: Colors.black,
+                                            size: 20,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                        ],
+                      )
                     ],
                   ),
                 ),

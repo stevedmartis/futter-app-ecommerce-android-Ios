@@ -225,7 +225,7 @@ class ProfileStoreProductItem extends StatelessWidget {
     final _bloc = Provider.of<TabsViewScrollBLoC>(context);
 
     final tag = 'list_${product.images[0].url + product.name + '0'}';
-
+    final size = MediaQuery.of(context).size;
     final priceformat =
         NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
             .format(product.price);
@@ -259,7 +259,7 @@ class ProfileStoreProductItem extends StatelessWidget {
         groceryBloc.changeToNormal();
       },
       child: Container(
-        height: productHeight,
+        height: size.height / 2,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
           child: Card(

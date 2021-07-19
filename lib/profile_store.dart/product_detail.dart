@@ -291,7 +291,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                           borderRadius: new BorderRadius.circular(30.0),
                         ),
                       ),
-                      child: Text('  Agregar a la bolsa  ',
+                      child: Text('Agregar a la bolsa',
                           style: TextStyle(fontSize: 18))),
                 ),
               ),

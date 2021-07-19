@@ -237,6 +237,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
         NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
             .format(product.price);
 
+    final size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () async {
         FocusScope.of(context).requestFocus(new FocusNode());
@@ -264,7 +265,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
         bloc.changeToNormal();
       },
       child: Container(
-        height: productHeight,
+        height: size.height / 3,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Card(

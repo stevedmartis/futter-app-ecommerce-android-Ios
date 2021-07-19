@@ -232,6 +232,8 @@ class _ProfileAuthStoreProductItem extends StatelessWidget {
     final priceformat =
         NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
             .format(product.price);
+
+    final size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () async {
         HapticFeedback.lightImpact();
@@ -252,7 +254,7 @@ class _ProfileAuthStoreProductItem extends StatelessWidget {
         );
       },
       child: Container(
-        height: productHeight,
+        height: size.height / 3,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Card(

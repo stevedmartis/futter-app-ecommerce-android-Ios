@@ -10,8 +10,6 @@ import 'package:http/http.dart' as http;
 
 const categoryHeight = 50.0;
 
-const productHeight = 110.0;
-
 class TabsViewScrollBLoC with ChangeNotifier {
   List<TabCategory> tabs = [];
 
@@ -61,7 +59,7 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
       offsetFrom = offsetTo;
       offsetTo = offsetFrom +
-          storeCategoriesProducts[i].products.length * productHeight +
+          storeCategoriesProducts[i].products.length * 110 +
           categoryHeight;
 
       category.position = i;
@@ -119,7 +117,7 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
       offsetFrom = offsetTo;
       offsetTo = offsetFrom +
-          storeCategoriesProducts[i].products.length * productHeight +
+          storeCategoriesProducts[i].products.length * 110 +
           categoryHeight;
 
       final item = tabs.firstWhere((item) => item.category.id == category.id,

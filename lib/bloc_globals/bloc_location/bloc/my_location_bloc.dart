@@ -134,7 +134,7 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
     if (place.placeId != '0') {
       final editProfileOk = await authBloc.editAddressStoreProfile(
           uid,
-          value.structuredFormatting.secondaryText.split(",").last,
+          value.structuredFormatting.secondaryText.split(",").first,
           value.structuredFormatting.mainText,
           value.structuredFormatting.number);
       if (editProfileOk != null) {

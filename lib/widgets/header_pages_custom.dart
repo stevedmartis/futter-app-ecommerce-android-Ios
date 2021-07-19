@@ -65,187 +65,48 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
 
     storeAuth = authService.storeAuth;
 
-    return Container(
-      color: (widget.showTitle)
-          ? Colors.black
-          : currentTheme.currentTheme.scaffoldBackgroundColor,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(width: 20),
-          (widget.leading)
-              ? Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: currentTheme.currentTheme.scaffoldBackgroundColor),
-                  child: Row(
-                    children: [
-                      Material(
-                        color:
-                            currentTheme.currentTheme.scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          splashColor: Colors.grey,
-                          borderRadius: BorderRadius.circular(20),
-                          radius: 30,
-                          onTap: () {
-                            HapticFeedback.lightImpact();
-                            Navigator.pop(context);
-                          },
-                          highlightColor: Colors.grey,
-                          child: Container(
-                            width: 34,
-                            height: 34,
-                            child: Icon(
-                              Icons.chevron_left,
-                              color: currentTheme.currentTheme.primaryColor,
-                              size: 30,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : GestureDetector(
-                  onTap: () {
-                    HapticFeedback.mediumImpact();
-                    {
-                      authService.redirect = 'profile';
-                      if (storeAuth.user.uid == '0') {
-                        Navigator.push(context, loginRoute(100));
-                      } else {
-                        authService.redirect = 'header';
-                        Navigator.push(context, profileAuthRoute(true));
-                      }
-                    }
-                  },
-                  child: Container(
-                      width: 50,
-                      height: 50,
-                      child: Hero(
-                        tag: 'user_auth_avatar-header',
-                        child: ClipRRect(
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(100.0)),
-                          child: (authService.storeAuth.imageAvatar != "")
-                              ? Container(
-                                  width: 150,
-                                  height: 150,
-                                  child: cachedNetworkImage(
-                                    authService.storeAuth.imageAvatar,
-                                  ),
-                                )
-                              : Image.asset(currentProfile.imageAvatar),
-                        ),
-                      )),
-                ),
-          Expanded(
-            child: Center(
-              child: AnimatedOpacity(
-                duration: Duration(milliseconds: 100),
-                opacity: (widget.showTitle) ? 1.0 : 0.0,
-                child: Container(
-                  alignment: Alignment.center,
-                  child: Text(
-                    widget.title,
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: (currentTheme.customTheme)
-                            ? Colors.white
-                            : Colors.black),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          (widget.showContent)
-              ? GestureDetector(
-                  onTap: () => showSearch(
-                      context: context,
-                      delegate: DataSearch(userAuth: profile)),
-                  child: Center(child: MyTextField(true)),
-                )
-              : Container(),
-          if (widget.isAdd)
-            (storeAuth.user.first)
+    return ClipRRect(
+      child: Container(
+        color: (widget.showTitle)
+            ? Colors.black
+            : currentTheme.currentTheme.scaffoldBackgroundColor,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(width: 20),
+            (widget.leading)
                 ? Container(
-                    child: DescribedFeatureOverlay(
-                      targetColor: Colors.black,
-                      featureId: 'feature1',
-                      tapTarget: Icon(
-                        Icons.add,
-                        color: currentTheme.currentTheme.primaryColor,
-                        size: 35,
-                      ),
-                      backgroundColor: currentTheme.currentTheme.accentColor,
-                      overflowMode: OverflowMode.extendBackground,
-                      title: const Text('Crear nuevo!'),
-                      description: Column(children: <Widget>[
-                        const Text(
-                            'Toca este boton para crear un nuevo Catalogo'),
-                        SizedBox(
-                          height: 50,
-                        )
-                      ]),
-                      child: Container(
-                        padding: EdgeInsets.only(right: 0),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: currentTheme.currentTheme.cardColor),
-                        child: Row(
-                          children: [
-                            Material(
-                              color: currentTheme.currentTheme.cardColor,
-                              borderRadius: BorderRadius.circular(20),
-                              child: InkWell(
-                                splashColor: Colors.grey,
-                                borderRadius: BorderRadius.circular(20),
-                                radius: 30,
-                                onTap: () => widget.onPress(),
-                                highlightColor: Colors.grey,
-                                child: Container(
-                                  width: 34,
-                                  height: 34,
-                                  child: Icon(
-                                    Icons.add,
-                                    color:
-                                        currentTheme.currentTheme.primaryColor,
-                                    size: 30,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                : Container(
-                    padding: EdgeInsets.only(right: 0),
+                    width: 40,
+                    height: 40,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: currentTheme.currentTheme.cardColor),
+                        color: (widget.showTitle)
+                            ? Colors.black
+                            : currentTheme
+                                .currentTheme.scaffoldBackgroundColor),
                     child: Row(
                       children: [
                         Material(
-                          color: currentTheme.currentTheme.cardColor,
+                          color: (widget.showTitle)
+                              ? Colors.black
+                              : currentTheme
+                                  .currentTheme.scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(20),
                           child: InkWell(
                             splashColor: Colors.grey,
                             borderRadius: BorderRadius.circular(20),
                             radius: 30,
-                            onTap: () => widget.onPress(),
+                            onTap: () {
+                              HapticFeedback.lightImpact();
+                              Navigator.pop(context);
+                            },
                             highlightColor: Colors.grey,
                             child: Container(
                               width: 34,
                               height: 34,
                               child: Icon(
-                                Icons.add,
+                                Icons.chevron_left,
                                 color: currentTheme.currentTheme.primaryColor,
                                 size: 30,
                               ),
@@ -254,64 +115,210 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                         ),
                       ],
                     ),
-                  ),
-          SizedBox(
-            width: 10,
-          )
-
-          /*  (widget.isPlantOrigen)
-              ? IconButton(
-                  onPressed: () {
-                    //   Navigator.push(context, _createRouteMessages());
-                  },
-                  icon: Stack(
-                    children: <Widget>[
-                      FaIcon(
-                        FontAwesomeIcons.commentDots,
-                        color: currentTheme.currentTheme.primaryColor,
-                        size: 30,
-                      ),
-                      (number > 0)
-                          ? Positioned(
-                              top: 0.0,
-                              right: 4.0,
-                              child: BounceInDown(
-                                from: 10,
-                                animate: (number > 0) ? true : false,
-                                child: Bounce(
-                                  delay: Duration(seconds: 2),
-                                  from: 15,
-                                  controller: (controller) =>
-                                      Provider.of<NotificationModel>(context)
-                                          .bounceController = controller,
-                                  child: Container(
-                                    child: Text(
-                                      '$number',
-                                      style: TextStyle(
-                                          color: (currentTheme.customTheme)
-                                              ? Colors.black
-                                              : Colors.white,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold),
+                  )
+                : GestureDetector(
+                    onTap: () {
+                      HapticFeedback.mediumImpact();
+                      {
+                        authService.redirect = 'profile';
+                        if (storeAuth.user.uid == '0') {
+                          Navigator.push(context, loginRoute(100));
+                        } else {
+                          authService.redirect = 'header';
+                          Navigator.push(context, profileAuthRoute(true));
+                        }
+                      }
+                    },
+                    child: Container(
+                        width: 50,
+                        height: 50,
+                        child: Hero(
+                          tag: 'user_auth_avatar-header',
+                          child: ClipRRect(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(100.0)),
+                            child: (authService.storeAuth.imageAvatar != "")
+                                ? Container(
+                                    width: 150,
+                                    height: 150,
+                                    child: cachedNetworkImage(
+                                      authService.storeAuth.imageAvatar,
                                     ),
-                                    alignment: Alignment.center,
-                                    width: 20,
-                                    height: 20,
-                                    decoration: BoxDecoration(
-                                        color: (currentTheme.customTheme)
-                                            ? currentTheme
-                                                .currentTheme.accentColor
-                                            : Colors.black,
-                                        shape: BoxShape.circle),
+                                  )
+                                : Image.asset(currentProfile.imageAvatar),
+                          ),
+                        )),
+                  ),
+            Expanded(
+              child: Center(
+                child: AnimatedOpacity(
+                  duration: Duration(milliseconds: 100),
+                  opacity: (widget.showTitle) ? 1.0 : 0.0,
+                  child: Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      widget.title,
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: (currentTheme.customTheme)
+                              ? Colors.white
+                              : Colors.black),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            (widget.showContent)
+                ? GestureDetector(
+                    onTap: () => showSearch(
+                        context: context,
+                        delegate: DataSearch(userAuth: profile)),
+                    child: Center(child: MyTextField(true)),
+                  )
+                : Container(),
+            if (widget.isAdd)
+              (storeAuth.user.first)
+                  ? Container(
+                      child: DescribedFeatureOverlay(
+                        targetColor: Colors.black,
+                        featureId: 'feature1',
+                        tapTarget: Icon(
+                          Icons.add,
+                          color: currentTheme.currentTheme.primaryColor,
+                          size: 35,
+                        ),
+                        backgroundColor: currentTheme.currentTheme.accentColor,
+                        overflowMode: OverflowMode.extendBackground,
+                        title: const Text('Crear nuevo!'),
+                        description: Column(children: <Widget>[
+                          const Text(
+                              'Toca este boton para crear un nuevo Catalogo'),
+                          SizedBox(
+                            height: 50,
+                          )
+                        ]),
+                        child: Container(
+                          padding: EdgeInsets.only(right: 0),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: currentTheme.currentTheme.cardColor),
+                          child: Row(
+                            children: [
+                              Material(
+                                color: currentTheme.currentTheme.cardColor,
+                                borderRadius: BorderRadius.circular(20),
+                                child: InkWell(
+                                  splashColor: Colors.grey,
+                                  borderRadius: BorderRadius.circular(20),
+                                  radius: 30,
+                                  onTap: () => widget.onPress(),
+                                  highlightColor: Colors.grey,
+                                  child: Container(
+                                    width: 34,
+                                    height: 34,
+                                    child: Icon(
+                                      Icons.add,
+                                      color: currentTheme
+                                          .currentTheme.primaryColor,
+                                      size: 30,
+                                    ),
                                   ),
                                 ),
                               ),
-                            )
-                          : Container()
-                    ],
-                  ))
-              : Container(), */
-        ],
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  : Container(
+                      padding: EdgeInsets.only(right: 0),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: currentTheme.currentTheme.cardColor),
+                      child: Row(
+                        children: [
+                          Material(
+                            color: currentTheme.currentTheme.cardColor,
+                            borderRadius: BorderRadius.circular(20),
+                            child: InkWell(
+                              splashColor: Colors.grey,
+                              borderRadius: BorderRadius.circular(20),
+                              radius: 30,
+                              onTap: () => widget.onPress(),
+                              highlightColor: Colors.grey,
+                              child: Container(
+                                width: 34,
+                                height: 34,
+                                child: Icon(
+                                  Icons.add,
+                                  color: currentTheme.currentTheme.primaryColor,
+                                  size: 30,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+            SizedBox(
+              width: 10,
+            )
+
+            /*  (widget.isPlantOrigen)
+                ? IconButton(
+                    onPressed: () {
+                      //   Navigator.push(context, _createRouteMessages());
+                    },
+                    icon: Stack(
+                      children: <Widget>[
+                        FaIcon(
+                          FontAwesomeIcons.commentDots,
+                          color: currentTheme.currentTheme.primaryColor,
+                          size: 30,
+                        ),
+                        (number > 0)
+                            ? Positioned(
+                                top: 0.0,
+                                right: 4.0,
+                                child: BounceInDown(
+                                  from: 10,
+                                  animate: (number > 0) ? true : false,
+                                  child: Bounce(
+                                    delay: Duration(seconds: 2),
+                                    from: 15,
+                                    controller: (controller) =>
+                                        Provider.of<NotificationModel>(context)
+                                            .bounceController = controller,
+                                    child: Container(
+                                      child: Text(
+                                        '$number',
+                                        style: TextStyle(
+                                            color: (currentTheme.customTheme)
+                                                ? Colors.black
+                                                : Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      alignment: Alignment.center,
+                                      width: 20,
+                                      height: 20,
+                                      decoration: BoxDecoration(
+                                          color: (currentTheme.customTheme)
+                                              ? currentTheme
+                                                  .currentTheme.accentColor
+                                              : Colors.black,
+                                          shape: BoxShape.circle),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Container()
+                      ],
+                    ))
+                : Container(), */
+          ],
+        ),
       ),
     );
   }

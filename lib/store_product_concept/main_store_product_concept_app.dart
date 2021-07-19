@@ -169,11 +169,12 @@ class _ProfileStoreProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     final priceformat =
         NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
             .format(product.price);
     return Container(
-      height: productHeight,
+      height: size.height / 3,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5),
         child: Card(
