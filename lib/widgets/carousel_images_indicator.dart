@@ -31,22 +31,20 @@ class _CarouselWithIndicatorState
           items: List.generate(
             widget.images.length,
             (index) => Container(
-              child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                  child: Hero(
-                    tag: widget.tag + '$index',
-                    child: Container(
-                      child: cachedNetworkImageDetail(
-                        widget.images[index].url,
-                      ),
-                    ),
-                  )),
+              child: Hero(
+                tag: widget.tag + '$index',
+                child: Container(
+                  child: cachedNetworkImageDetail(
+                    widget.images[index].url,
+                  ),
+                ),
+              ),
             ),
           ),
           options: CarouselOptions(
-              height: 300,
+              height: 250,
               aspectRatio: 16 / 6,
-              viewportFraction: 0.9,
+              viewportFraction: 1,
               initialPage: 0,
               enableInfiniteScroll: false,
               reverse: false,
@@ -60,7 +58,7 @@ class _CarouselWithIndicatorState
         if (widget.images.length > 1)
           Positioned(
             child: Container(
-              margin: EdgeInsets.only(top: 320),
+              margin: EdgeInsets.only(top: 350),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,

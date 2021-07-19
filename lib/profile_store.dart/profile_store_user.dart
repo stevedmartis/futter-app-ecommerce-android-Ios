@@ -282,9 +282,9 @@ class __ProfileStoreProductItemState extends State<_ProfileStoreProductItem> {
         NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
             .format(widget.product.price);
 
-    final itemInCart = groceryBloc.cart.firstWhere(
+    /*  final itemInCart = groceryBloc.cart.firstWhere(
         (item) => item.product.id == widget.product.id,
-        orElse: () => null);
+        orElse: () => null); */
 
     return GestureDetector(
       onTap: () async {
@@ -361,15 +361,19 @@ class __ProfileStoreProductItemState extends State<_ProfileStoreProductItem> {
                         ),
                       ),
                       const SizedBox(height: 5),
-                      Text(
-                        widget.product.description,
-                        maxLines: 2,
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 10,
+                      Container(
+                        width: size.width / 2,
+                        child: Text(
+                          widget.product.description,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 35),
+                      const SizedBox(height: 20),
                       Row(
                         children: [
                           Text(
@@ -381,7 +385,9 @@ class __ProfileStoreProductItemState extends State<_ProfileStoreProductItem> {
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
-                          ),
+                          )
+
+                          /*
                           Spacer(),
                           (itemInCart == null)
                               ? SizedBox(
@@ -389,9 +395,9 @@ class __ProfileStoreProductItemState extends State<_ProfileStoreProductItem> {
                                   child: Container(
                                     child: ElevatedButton(
                                         onPressed: () {
-                                          setState(() {
-                                            heroTag = 'details0';
-                                          });
+                                          
+                                          
+                                          
 
                                           groceryBloc.addProduct(
                                               widget.product,
@@ -497,6 +503,8 @@ class __ProfileStoreProductItemState extends State<_ProfileStoreProductItem> {
                                     ],
                                   ),
                                 ),
+
+                                */
                         ],
                       )
                     ],

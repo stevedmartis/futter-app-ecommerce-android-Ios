@@ -265,7 +265,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
         bloc.changeToNormal();
       },
       child: Container(
-        height: size.height / 3,
+        height: size.height / 5.5,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Card(
@@ -306,15 +306,18 @@ class _ProfileStoreProductItem extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 5),
-                      Text(
-                        product.description,
-                        maxLines: 2,
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 10,
+                      Container(
+                        width: size.width / 2,
+                        child: Text(
+                          product.description,
+                          maxLines: 2,
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 20),
                       Text(
                         '\$$priceformat',
                         style: TextStyle(

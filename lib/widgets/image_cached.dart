@@ -58,11 +58,10 @@ Widget cachedNetworkImageDetail(String image) {
   return CachedNetworkImage(
     imageUrl: image,
     imageBuilder: (context, imageProvider) => Container(
-      width: MediaQuery.of(context).size.width / 1.3,
       decoration: BoxDecoration(
         image: DecorationImage(
             image: imageProvider,
-            fit: BoxFit.fitWidth,
+            fit: BoxFit.cover,
             colorFilter:
                 ColorFilter.mode(Colors.transparent, BlendMode.colorBurn)),
       ),

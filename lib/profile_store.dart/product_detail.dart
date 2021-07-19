@@ -7,13 +7,14 @@ import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dar
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/utils.dart';
-import 'package:australti_ecommerce_app/widgets/carousel_images_indicator.dart';
 import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
+import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../global/extension.dart';
@@ -45,7 +46,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
     with TickerProviderStateMixin {
   String heroTag = '';
   int quantity = 1;
-
+  ScrollController _scrollController;
   final productService = new StoreProductService();
 
   AnimationController animatedController;
@@ -62,7 +63,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
   void initState() {
     animatedController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 150));
-
+    _scrollController = ScrollController()..addListener(() => setState(() {}));
     animatedController.addListener(() {
       setState(() {
         _angle = (animatedController.value != 0.0)
@@ -77,6 +78,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
 
   @override
   void dispose() {
+    _scrollController?.dispose();
     animatedController.dispose();
     super.dispose();
   }
@@ -86,275 +88,170 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-    final size = MediaQuery.of(context).size;
 
-    final storeBloc = Provider.of<FavoritesBLoC>(context, listen: false);
+    final storeBloc = Provider.of<FavoritesBLoC>(context);
     final authService = Provider.of<AuthenticationBLoC>(context);
     final tag = 'list_${widget.product.images[0].url}' +
         '${widget.product.name}' +
         heroTag;
-
-    final priceformat =
-        NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
-            .format(widget.product.price);
+    final size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(color: Colors.white),
-        actions: [
-          (!widget.isAuthUser)
-              ? Padding(
-                  padding: const EdgeInsets.only(right: 10.0, top: 10),
-                  child: CircleAvatar(
-                    backgroundColor: Colors.black,
-                    radius: 25,
-                    child: InkResponse(
-                        onTap: () {
-                          if (authService.storeAuth.user.uid == '0') {
-                            authService.redirect = 'favoriteBtn';
-                            Navigator.push(context, loginRoute(100));
-                          } else
-                            HapticFeedback.lightImpact();
-                          if (animatedController.status ==
-                              AnimationStatus.completed) {
-                            addToFavoriteButtonTapped();
-                            animatedController.reverse();
-                            storeBloc.productsFavoritesList.removeWhere(
-                                (item) => item.id == widget.product.id);
-                            showSnackBar(
-                                context, 'Se elimino de "Mis favoritos"');
-                          }
-
-                          if (animatedController.status ==
-                              AnimationStatus.dismissed) {
-                            addToFavoriteButtonTapped();
-
-                            animatedController.forward();
-
-                            storeBloc.productsFavoritesList
-                                .insert(0, widget.product);
-
-                            showSnackBar(
-                                context, 'Agregado en "Mis favoritos"');
-                          }
-                        },
-                        child: Transform.scale(
-                          scale: _angle,
-                          child: Icon(
-                            (_angle > 0.6)
-                                ? Icons.favorite
-                                : Icons.favorite_outline,
-                            color: (_angle > 0.6) ? Colors.red : Colors.grey,
-                            size: 50,
-                          ),
-                        )),
-                  ),
-                )
-              : Container(),
-        ],
-        backgroundColor: currentTheme.scaffoldBackgroundColor,
-        elevation: 0,
-      ),
-      backgroundColor: currentTheme.scaffoldBackgroundColor,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    top: 20.0, left: 20.0, right: 20.0, bottom: 0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 20.0),
-                        child: CarouselImagesProductIndicator(
-                            images: widget.product.images, tag: tag),
-                      ),
-                      Text(
-                        widget.product.name.capitalize(),
-                        style: Theme.of(context).textTheme.headline5.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        '100',
-                        style: Theme.of(context).textTheme.subtitle2.copyWith(
-                              color: Colors.grey,
-                            ),
-                      ),
-                      const SizedBox(height: 20),
-                      if (!widget.isAuthUser)
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(vertical: 5),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(25),
-                                color: Colors.grey[200],
-                              ),
-                              child: Row(
-                                children: [
-                                  const SizedBox(width: 10),
-                                  IconButton(
-                                    onPressed: () {
-                                      HapticFeedback.lightImpact();
-                                      if (quantity > 2) {
-                                        setState(() {
-                                          quantity--;
-                                        });
-                                      }
-                                    },
-                                    icon: Icon(
-                                      Icons.remove,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0),
-                                    child: Text(
-                                      quantity.toString(),
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {
-                                      HapticFeedback.lightImpact();
-                                      setState(() {
-                                        quantity++;
-                                      });
-                                    },
-                                    icon: Icon(
-                                      Icons.add,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                ],
-                              ),
-                            ),
-                            Spacer(),
-                            Text(
-                              '\$$priceformat',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline4
-                                  .copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      const SizedBox(height: 15),
-                      Text(
-                        'Descripción',
-                        style: Theme.of(context).textTheme.subtitle1.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        widget.product.description,
-                        style: Theme.of(context).textTheme.subtitle1.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w200,
-                            ),
-                      ),
-                    ],
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.only(left: 10.0, right: 10, bottom: 0),
+          child: SizedBox(
+            height: 50,
+            child: ElevatedButton(
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                  _addToCart(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  elevation: 5.0,
+                  fixedSize: Size.fromWidth(size.width),
+                  primary: currentTheme.primaryColor,
+                  shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(30.0),
                   ),
                 ),
-              ),
-            ),
-            if (!widget.isAuthUser)
-              Padding(
-                padding:
-                    const EdgeInsets.only(left: 10.0, right: 10, bottom: 0),
-                child: SizedBox(
-                  height: 50,
-                  child: ElevatedButton(
-                      onPressed: () {
-                        HapticFeedback.lightImpact();
-                        _addToCart(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        elevation: 5.0,
-                        fixedSize: Size.fromWidth(size.width),
-                        primary: currentTheme.primaryColor,
-                        shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(30.0),
-                        ),
-                      ),
-                      child: Text('Agregar a la bolsa',
-                          style: TextStyle(fontSize: 18))),
-                ),
-              ),
-            if (widget.isAuthUser)
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Row(
-                  children: [
-                    elevatedButtonCustom(
-                      context: context,
-                      isDelete: true,
-                      title: 'Eliminar',
-                      onPress: () {
-                        HapticFeedback.heavyImpact();
-
-                        final act = CupertinoActionSheet(
-                            title: Text('Eliminar este producto?',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20)),
-                            message: Text(
-                                'Se eliminara de tu lista de productos de forma permanente'),
-                            actions: <Widget>[
-                              CupertinoActionSheetAction(
-                                child: Text(
-                                  'Eliminar',
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                                onPressed: () {
-                                  HapticFeedback.heavyImpact();
-                                  _deleteProduct();
-                                },
-                              )
-                            ],
-                            cancelButton: CupertinoActionSheetAction(
-                              child: Text(
-                                'Cancelar',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                              onPressed: () {},
-                            ));
-                        showCupertinoModalPopup(
-                            context: context,
-                            builder: (BuildContext context) => act);
-                      },
-                    ),
-                    Spacer(),
-                    elevatedButtonCustom(
-                        context: context,
-                        title: 'Editar',
-                        onPress: () {
-                          HapticFeedback.lightImpact();
-                          Navigator.of(context).push(createRouteAddEditProduct(
-                              widget.product, true, widget.category));
-                        },
-                        isEdit: true,
-                        isDelete: false),
-                  ],
-                ),
-              )
-          ],
+                child:
+                    Text('Agregar a la bolsa', style: TextStyle(fontSize: 18))),
+          ),
         ),
-      ),
-    );
+        backgroundColor: currentTheme.scaffoldBackgroundColor,
+        body: CustomScrollView(
+            physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics()),
+            controller: _scrollController,
+            slivers: [
+              SliverAppBar(
+                  leading: Padding(
+                    padding: const EdgeInsets.only(left: 5.0, top: 10),
+                    child: CircleAvatar(
+                      backgroundColor: currentTheme.scaffoldBackgroundColor
+                          .withOpacity(0.70),
+                      radius: 50,
+                      child: InkResponse(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Icon(
+                            Icons.chevron_left,
+                            color: Colors.white,
+                            size: 35,
+                          )),
+                    ),
+                  ),
+                  leadingWidth: 70,
+                  backgroundColor: currentTheme.scaffoldBackgroundColor,
+                  actions: [
+                    (!widget.isAuthUser)
+                        ? Padding(
+                            padding:
+                                const EdgeInsets.only(right: 10.0, top: 10),
+                            child: CircleAvatar(
+                              backgroundColor: currentTheme
+                                  .scaffoldBackgroundColor
+                                  .withOpacity(0.70),
+                              radius: 20,
+                              child: InkResponse(
+                                  onTap: () {
+                                    if (authService.storeAuth.user.uid == '0') {
+                                      authService.redirect = 'favoriteBtn';
+                                      Navigator.push(context, loginRoute(100));
+                                    } else
+                                      HapticFeedback.lightImpact();
+                                    if (animatedController.status ==
+                                        AnimationStatus.completed) {
+                                      addToFavoriteButtonTapped();
+                                      animatedController.reverse();
+                                      storeBloc.productsFavoritesList
+                                          .removeWhere((item) =>
+                                              item.id == widget.product.id);
+                                      showSnackBar(context,
+                                          'Se elimino de "Mis favoritos"');
+                                    }
+                                    if (animatedController.status ==
+                                        AnimationStatus.dismissed) {
+                                      addToFavoriteButtonTapped();
+                                      animatedController.forward();
+                                      storeBloc.productsFavoritesList
+                                          .insert(0, widget.product);
+                                      showSnackBar(context,
+                                          'Agregado en "Mis favoritos"');
+                                    }
+                                  },
+                                  child: Transform.scale(
+                                    scale: _angle,
+                                    child: Icon(
+                                      (_angle > 0.6)
+                                          ? Icons.favorite
+                                          : Icons.favorite_outline,
+                                      color: (_angle > 0.6)
+                                          ? Colors.red
+                                          : Colors.grey,
+                                      size: 35,
+                                    ),
+                                  )),
+                            ),
+                          )
+                        : Container(),
+                  ],
+                  stretch: true,
+                  expandedHeight: 250.0,
+                  collapsedHeight: 70,
+                  floating: false,
+                  pinned: true,
+                  flexibleSpace: FlexibleSpaceBar(
+                    stretchModes: [
+                      StretchMode.zoomBackground,
+                      StretchMode.fadeTitle,
+                      // StretchMode.blurBackground
+                    ],
+                    background: Material(
+                      type: MaterialType.transparency,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(30.0),
+                          bottomRight: Radius.circular(30.0),
+                        ),
+                        child: (widget.product.images.length > 1)
+                            ? Swiper(
+                                itemCount: widget.product.images.length,
+                                itemBuilder:
+                                    (BuildContext context, int index) => Hero(
+                                  tag: tag + '$index',
+                                  child: Container(
+                                    child: cachedNetworkImageDetail(
+                                      widget.product.images[index].url,
+                                    ),
+                                  ),
+                                ),
+                                pagination: new SwiperPagination(
+                                    margin: new EdgeInsets.fromLTRB(
+                                        0.0, 0.0, 0.0, 20.0),
+                                    builder: new DotSwiperPaginationBuilder(
+                                        color: Colors.grey,
+                                        activeColor: currentTheme.accentColor,
+                                        size: 14.0,
+                                        activeSize: 18.0)),
+                                autoplay: false,
+                              )
+                            : Container(
+                                child: Hero(
+                                  tag: tag + '$index',
+                                  child: Container(
+                                    child: cachedNetworkImageDetail(
+                                      widget.product.images[0].url,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ),
+                    centerTitle: true,
+                  )),
+              makeInfoProduct(tag)
+            ]));
   }
 
   Future<bool> addToFavoriteButtonTapped() async {
@@ -420,4 +317,183 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
           ),
         ),
       );
+
+  SliverToBoxAdapter makeInfoProduct(String tag) {
+    return SliverToBoxAdapter(
+      child: infoProduct(tag),
+    );
+  }
+
+  Widget infoProduct(String tag) {
+    final priceformat =
+        NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
+            .format(widget.product.price);
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+              top: 20.0, left: 20.0, right: 20.0, bottom: 0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  widget.product.name.capitalize(),
+                  style: Theme.of(context).textTheme.headline5.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  '100',
+                  style: Theme.of(context).textTheme.subtitle2.copyWith(
+                        color: Colors.grey,
+                      ),
+                ),
+                const SizedBox(height: 20),
+                if (!widget.isAuthUser)
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25),
+                          color: Colors.grey[200],
+                        ),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 10),
+                            IconButton(
+                              onPressed: () {
+                                HapticFeedback.lightImpact();
+                                if (quantity > 1) {
+                                  setState(() {
+                                    quantity--;
+                                  });
+                                }
+                              },
+                              icon: Icon(
+                                Icons.remove,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Text(
+                                quantity.toString(),
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                HapticFeedback.lightImpact();
+                                setState(() {
+                                  quantity++;
+                                });
+                              },
+                              icon: Icon(
+                                Icons.add,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                          ],
+                        ),
+                      ),
+                      Spacer(),
+                      Text(
+                        '\$$priceformat',
+                        style: Theme.of(context).textTheme.headline4.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ],
+                  ),
+                const SizedBox(height: 15),
+                Text(
+                  'Descripción',
+                  style: Theme.of(context).textTheme.subtitle1.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  widget.product.description,
+                  style: Theme.of(context).textTheme.subtitle1.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w200,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (widget.isAuthUser)
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Row(
+              children: [
+                elevatedButtonCustom(
+                  context: context,
+                  isDelete: true,
+                  title: 'Eliminar',
+                  onPress: () {
+                    HapticFeedback.heavyImpact();
+
+                    final act = CupertinoActionSheet(
+                        title: Text('Eliminar este producto?',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 20)),
+                        message: Text(
+                            'Se eliminara de tu lista de productos de forma permanente'),
+                        actions: <Widget>[
+                          CupertinoActionSheetAction(
+                            child: Text(
+                              'Eliminar',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            onPressed: () {
+                              HapticFeedback.heavyImpact();
+                              _deleteProduct();
+                            },
+                          )
+                        ],
+                        cancelButton: CupertinoActionSheetAction(
+                          child: Text(
+                            'Cancelar',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                          onPressed: () {},
+                        ));
+                    showCupertinoModalPopup(
+                        context: context,
+                        builder: (BuildContext context) => act);
+                  },
+                ),
+                Spacer(),
+                elevatedButtonCustom(
+                    context: context,
+                    title: 'Editar',
+                    onPress: () {
+                      HapticFeedback.lightImpact();
+                      Navigator.of(context).push(createRouteAddEditProduct(
+                          widget.product, true, widget.category));
+                    },
+                    isEdit: true,
+                    isDelete: false),
+              ],
+            ),
+          )
+      ],
+    );
+  }
 }
