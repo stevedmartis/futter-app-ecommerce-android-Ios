@@ -54,7 +54,6 @@ class _OrderPageState extends State<OrderPage> {
 
     final orderService = Provider.of<OrderService>(context, listen: false);
 
-    print(orderService.order);
     storeAuth = authBloc.storeAuth;
 
     _scrollController = ScrollController()..addListener(() => setState(() {}));
@@ -110,6 +109,7 @@ class _OrderPageState extends State<OrderPage> {
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+    final size = MediaQuery.of(context).size;
 
     return SafeArea(
       child: Scaffold(
@@ -220,292 +220,288 @@ Widget _buildProductsList(context, minTimes, maxTimes) {
   }
 
   final List<ProductElement> products = order.products;
-  print(totalFormat);
-  return FadeIn(
-    child: Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: Card(
-        elevation: 6,
-        shadowColor: Colors.black,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        color: currentTheme.cardColor,
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.only(left: 20, right: 20),
-              child: FadeInLeft(
-                delay: Duration(milliseconds: 200),
-                child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10.0,
-                    ),
-                    child: Column(
-                      children: [
-                        if (!order.store.notLocation)
-                          Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    //Navigator.of(context).pop();
-                                  },
-                                  child: new Align(
-                                      alignment: Alignment.topCenter,
-                                      child: Container(
-                                        margin: EdgeInsets.only(right: 20),
-                                        padding: EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(100),
-                                            border: Border.all(
-                                                width: 2, color: Colors.grey)),
-                                        child: Icon(
-                                          Icons.fmd_bad,
-                                          size: 30,
-                                          color: Colors.grey,
-                                        ),
-                                      )),
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      child: Text(
-                                        'Tienda no disponible',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: 15,
-                                            color: Colors.white),
-                                      ),
-                                    ),
-                                    Container(
-                                      width: size.width / 1.7,
-                                      child: Text(
-                                        'No se encuentra en esta ubicación',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: 15,
-                                            color: Colors.grey),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ]),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
+
+  return Padding(
+    padding: const EdgeInsets.all(15.0),
+    child: Card(
+      elevation: 6,
+      shadowColor: Colors.black,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      color: currentTheme.cardColor,
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.only(left: 20, right: 20),
+            child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10.0,
+                ),
+                child: Column(
+                  children: [
+                    if (!order.store.notLocation)
+                      Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Container(
-                              width: 70,
-                              height: 70,
-                              child: AspectRatio(
-                                aspectRatio: 1,
-                                child: ClipRRect(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10.0)),
-                                  child: (store.imageAvatar != "")
-                                      ? Container(
-                                          child: (!store.notLocation)
-                                              ? cachedProductNetworkImage(
-                                                  store.imageAvatar,
-                                                )
-                                              : cachedNetworkImage(
-                                                  store.imageAvatar,
-                                                ),
-                                        )
-                                      : Image.asset(currentProfile.imageAvatar),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 10,
+                            GestureDetector(
+                              onTap: () {
+                                //Navigator.of(context).pop();
+                              },
+                              child: new Align(
+                                  alignment: Alignment.topCenter,
+                                  child: Container(
+                                    margin: EdgeInsets.only(right: 20),
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        border: Border.all(
+                                            width: 2, color: Colors.grey)),
+                                    child: Icon(
+                                      Icons.fmd_bad,
+                                      size: 30,
+                                      color: Colors.grey,
+                                    ),
+                                  )),
                             ),
                             Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Center(
-                                  child: Container(
-                                    width: size.width / 4.5,
-                                    margin: EdgeInsets.only(top: 5.0),
-                                    child: Text(
-                                      '${store.name.capitalize()}',
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                      style: TextStyle(
-                                          color: (!store.notLocation)
-                                              ? Colors.grey
-                                              : Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18),
-                                    ),
+                                Container(
+                                  child: Text(
+                                    'Tienda no disponible',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 15,
+                                        color: Colors.white),
+                                  ),
+                                ),
+                                Container(
+                                  width: size.width / 1.7,
+                                  child: Text(
+                                    'No se encuentra en esta ubicación',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 15,
+                                        color: Colors.grey),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ]),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 70,
+                          height: 70,
+                          child: AspectRatio(
+                            aspectRatio: 1,
+                            child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              child: (store.imageAvatar != "")
+                                  ? Container(
+                                      child: (!store.notLocation)
+                                          ? cachedProductNetworkImage(
+                                              store.imageAvatar,
+                                            )
+                                          : cachedNetworkImage(
+                                              store.imageAvatar,
+                                            ),
+                                    )
+                                  : Image.asset(currentProfile.imageAvatar),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Container(
+                                width: size.width / 4.5,
+                                margin: EdgeInsets.only(top: 5.0),
+                                child: Text(
+                                  '${store.name.capitalize()}',
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                      color: (!store.notLocation)
+                                          ? Colors.grey
+                                          : Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(top: 0.0),
+                                  child: Text(
+                                    '${store.address}, ${store.number}, ${store.city}',
+                                    style: TextStyle(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 15),
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 10,
+                                  width: 5.0,
                                 ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      margin: EdgeInsets.only(top: 0.0),
-                                      child: Text(
-                                        '${store.address}, ${store.number}, ${store.city}',
-                                        style: TextStyle(
-                                            color: Colors.grey,
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: 15),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 5.0,
-                                    ),
-                                  ],
-                                )
                               ],
-                            ),
-                            Spacer(),
+                            )
                           ],
                         ),
+                        Spacer(),
                       ],
-                    )),
-              ),
-            ),
-            Divider(),
-            Container(
-              padding: const EdgeInsets.only(
-                  top: 10.0, left: 20, bottom: 10, right: 20),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        child: Text(
-                          'DIRECCIÓN DE ENTREGA',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 13,
-                              color: Colors.grey),
-                        ),
+                    ),
+                  ],
+                )),
+          ),
+          Divider(),
+          Container(
+            padding: const EdgeInsets.only(
+                top: 10.0, left: 20, bottom: 10, right: 20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      child: Text(
+                        'DIRECCIÓN DE ENTREGA',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                            color: Colors.grey),
                       ),
-                      Container(
-                        width: size.width / 1.7,
-                        child: Text(
-                          prefs.addressSearchSave != ''
-                              ? '${prefs.addressSearchSave.mainText}'
-                              : '...',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 18,
-                              color: Colors.white),
+                    ),
+                    Container(
+                      width: size.width / 1.7,
+                      child: Text(
+                        prefs.addressSearchSave != ''
+                            ? '${prefs.addressSearchSave.mainText}'
+                            : '...',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                            color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  alignment: Alignment.centerRight,
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: currentTheme.scaffoldBackgroundColor,
+                  ),
+                  child: Row(
+                    children: [
+                      Material(
+                        color: currentTheme.scaffoldBackgroundColor,
+                        borderRadius: BorderRadius.circular(20),
+                        child: InkWell(
+                          splashColor: Colors.grey,
+                          borderRadius: BorderRadius.circular(20),
+                          radius: 40,
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+
+                            final place = prefs.addressSearchSave;
+
+                            var placeSave = new PlaceSearch(
+                                description: authBloc.storeAuth.user.uid,
+                                placeId: authBloc.storeAuth.user.uid,
+                                structuredFormatting: new StructuredFormatting(
+                                    mainText: place.mainText,
+                                    secondaryText: place.secondaryText,
+                                    number: place.number));
+                            Navigator.push(
+                                context, confirmLocationRoute(placeSave));
+                          },
+                          highlightColor: Colors.grey,
+                          child: Container(
+                            margin: EdgeInsets.only(left: 5.0),
+                            alignment: Alignment.center,
+                            width: 34,
+                            height: 34,
+                            child: Icon(
+                              Icons.edit_outlined,
+                              color: currentTheme.primaryColor,
+                              size: 25,
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  Container(
-                    alignment: Alignment.centerRight,
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: currentTheme.scaffoldBackgroundColor,
-                    ),
-                    child: Row(
-                      children: [
-                        Material(
-                          color: currentTheme.scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(20),
-                          child: InkWell(
-                            splashColor: Colors.grey,
-                            borderRadius: BorderRadius.circular(20),
-                            radius: 40,
-                            onTap: () {
-                              HapticFeedback.lightImpact();
-
-                              final place = prefs.addressSearchSave;
-
-                              var placeSave = new PlaceSearch(
-                                  description: authBloc.storeAuth.user.uid,
-                                  placeId: authBloc.storeAuth.user.uid,
-                                  structuredFormatting:
-                                      new StructuredFormatting(
-                                          mainText: place.mainText,
-                                          secondaryText: place.secondaryText,
-                                          number: place.number));
-                              Navigator.push(
-                                  context, confirmLocationRoute(placeSave));
-                            },
-                            highlightColor: Colors.grey,
-                            child: Container(
-                              margin: EdgeInsets.only(left: 5.0),
-                              alignment: Alignment.center,
-                              width: 34,
-                              height: 34,
-                              child: Icon(
-                                Icons.edit_outlined,
-                                color: currentTheme.primaryColor,
-                                size: 25,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Divider(),
-            SizedBox(height: 10),
-            Container(
-              padding: EdgeInsets.only(
-                left: 10.0,
-              ),
-              child: Stack(
-                children: [
-                  Container(
-                    padding: EdgeInsets.only(top: 10.0, left: 5),
-                    child: Text(
-                      '$totalQuantity',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15),
-                    ),
+          ),
+          Divider(),
+          SizedBox(height: 10),
+          Container(
+            padding: EdgeInsets.only(
+              left: 10.0,
+            ),
+            child: Stack(
+              children: [
+                Container(
+                  padding: EdgeInsets.only(top: 10.0, left: 5),
+                  child: Text(
+                    '$totalQuantity',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15),
                   ),
-                  Container(
-                    padding: EdgeInsets.only(top: 10.0, left: 20),
-                    child: Text(
-                      bloc.cart.length == 1 ? 'producto' : 'productos',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15),
-                    ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: 10.0, left: 20),
+                  child: Text(
+                    bloc.cart.length == 1 ? 'producto' : 'productos',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15),
                   ),
-                  Container(
-                    padding: EdgeInsets.only(right: 50),
-                    alignment: Alignment.centerRight,
-                    height: 50,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      itemCount: (products.length >= 3) ? 2 : products.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final item = products[index];
-                        return Stack(
+                ),
+                Container(
+                  padding: EdgeInsets.only(right: size.width / 5, bottom: 10),
+                  alignment: Alignment.centerRight,
+                  height: 60,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: (products.length >= 3) ? 2 : products.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final item = products[index];
+                      return FadeInRight(
+                        child: Stack(
                           children: [
                             Container(
                                 margin: EdgeInsets.only(left: 5.0),
@@ -539,122 +535,129 @@ Widget _buildProductsList(context, minTimes, maxTimes) {
                                           fontWeight: FontWeight.w500))),
                             ),
                           ],
-                        );
-                      },
-                    ),
-                  ),
-                  if (products.length >= 3)
-                    Container(
-                      padding: EdgeInsets.only(right: 20),
-                      alignment: Alignment.centerRight,
-                      child: FadeInRight(
-                        duration: Duration(milliseconds: 400),
-                        delay: Duration(milliseconds: 500),
-                        child: Container(
-                          decoration: new BoxDecoration(
-                            color: currentTheme.primaryColor,
-                            shape: BoxShape.circle,
-                          ),
-                          width: 30.0,
-                          height: 30.0,
-                          child: Center(
-                              child: Text('+${products.length - 2}',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold))),
                         ),
+                      );
+                    },
+                  ),
+                ),
+                if (products.length >= 3)
+                  Container(
+                    padding: EdgeInsets.only(right: size.width / 9, top: 10),
+                    alignment: Alignment.centerRight,
+                    child: FadeInRight(
+                      duration: Duration(milliseconds: 400),
+                      delay: Duration(milliseconds: 500),
+                      child: Container(
+                        decoration: new BoxDecoration(
+                          color: currentTheme.primaryColor,
+                          shape: BoxShape.circle,
+                        ),
+                        width: 30.0,
+                        height: 30.0,
+                        child: Center(
+                            child: Text('+${products.length - 2}',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold))),
                       ),
-                    )
-                ],
-              ),
-            ),
-            Divider(),
-            Container(
-              padding: EdgeInsets.only(left: 20, bottom: 0, top: 10, right: 20),
-              child: Row(
-                children: [
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Tu cargo',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.white),
                     ),
                   ),
-                  Spacer(),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      '\$$totalFormat',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            /* Container(
-              padding: EdgeInsets.only(left: 20, bottom: 10, top: 10),
-              child: Row(
-                children: [
-                  Container(
+                Container(
+                    padding: EdgeInsets.only(top: 10, right: 10),
+                    alignment: Alignment.centerRight,
                     child: Icon(
-                      Icons.location_city,
-                      color: Colors.grey,
-                    ),
+                      Icons.chevron_right,
+                      size: 30,
+                    ))
+              ],
+            ),
+          ),
+          Divider(),
+          Container(
+            padding: EdgeInsets.only(left: 20, bottom: 0, top: 10, right: 20),
+            child: Row(
+              children: [
+                Container(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Tu cargo',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.white),
                   ),
-                  SizedBox(
-                    width: 10,
+                ),
+                Spacer(),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '\$$totalFormat',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.white),
                   ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      prefs.addressSearchSave != ''
-                          ? '${prefs.addressSearchSave.secondaryText}'
-                          : '...',
-                      style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          fontSize: 20,
-                          color: Colors.grey),
-                    ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          /* Container(
+            padding: EdgeInsets.only(left: 20, bottom: 10, top: 10),
+            child: Row(
+              children: [
+                Container(
+                  child: Icon(
+                    Icons.location_city,
+                    color: Colors.grey,
                   ),
-                  Spacer(),
-                  Container(
-                    child: Icon(
-                      Icons.home_outlined,
-                      color: Colors.grey,
-                    ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    prefs.addressSearchSave != ''
+                        ? '${prefs.addressSearchSave.secondaryText}'
+                        : '...',
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 20,
+                        color: Colors.grey),
                   ),
-                  SizedBox(
-                    width: 10,
+                ),
+                Spacer(),
+                Container(
+                  child: Icon(
+                    Icons.home_outlined,
+                    color: Colors.grey,
                   ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      prefs.addressSearchSave != ''
-                          ? '${prefs.addressSearchSave.number}'
-                          : '...',
-                      style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          fontSize: 18,
-                          color: Colors.grey),
-                    ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    prefs.addressSearchSave != ''
+                        ? '${prefs.addressSearchSave.number}'
+                        : '...',
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 18,
+                        color: Colors.grey),
                   ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                ],
-              ),
-            ), */
-          ],
-        ),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+              ],
+            ),
+          ), */
+        ],
       ),
     ),
   );

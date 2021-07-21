@@ -67,16 +67,15 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
 
     return ClipRRect(
       child: Container(
-        color: (widget.showTitle)
-            ? Colors.black
-            : currentTheme.currentTheme.scaffoldBackgroundColor,
+        color: currentTheme.currentTheme.scaffoldBackgroundColor,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(width: 20),
             (widget.leading)
                 ? Container(
+                    alignment: Alignment.centerLeft,
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
@@ -149,22 +148,20 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                           ),
                         )),
                   ),
-            Expanded(
-              child: Center(
-                child: AnimatedOpacity(
-                  duration: Duration(milliseconds: 100),
-                  opacity: (widget.showTitle) ? 1.0 : 0.0,
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: Text(
-                      widget.title,
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: (currentTheme.customTheme)
-                              ? Colors.white
-                              : Colors.black),
-                    ),
+            Center(
+              child: AnimatedOpacity(
+                duration: Duration(milliseconds: 100),
+                opacity: (widget.showTitle) ? 1.0 : 0.0,
+                child: Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    widget.title,
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: (currentTheme.customTheme)
+                            ? Colors.white
+                            : Colors.black),
                   ),
                 ),
               ),
@@ -177,9 +174,11 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                     child: Center(child: MyTextField(true)),
                   )
                 : Container(),
+            Spacer(),
             if (widget.isAdd)
               (storeAuth.user.first)
                   ? Container(
+                      alignment: Alignment.centerRight,
                       child: DescribedFeatureOverlay(
                         targetColor: Colors.black,
                         featureId: 'feature1',

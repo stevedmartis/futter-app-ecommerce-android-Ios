@@ -221,6 +221,7 @@ class _AnimatedBarState extends State<AnimatedBar>
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Container(
+            padding: EdgeInsets.only(top: 10),
             width: MediaQuery.of(context).size.width / 1.3,
             margin: EdgeInsets.all(10),
             child: Row(
@@ -228,8 +229,8 @@ class _AnimatedBarState extends State<AnimatedBar>
               children: <Widget>[
                 // Text('${(controller.value * 100.0).toStringAsFixed(1)}%'),
                 Container(
-                  width: dotSize + widget.progressBarOne.value * 10,
-                  height: dotSize + widget.progressBarOne.value * 10,
+                  width: dotSize + widget.progressBarOne.value * 6,
+                  height: dotSize + widget.progressBarOne.value * 6,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(100),
                       border: Border.all(
@@ -250,7 +251,7 @@ class _AnimatedBarState extends State<AnimatedBar>
                           )
                         : Icon(
                             Icons.check_circle,
-                            size: 20 + widget.progressBarOne.value * 10,
+                            size: 20 + widget.progressBarOne.value * 6,
                             color: currentTheme.primaryColor,
                           ),
                   ),
@@ -270,8 +271,8 @@ class _AnimatedBarState extends State<AnimatedBar>
                 ),
 
                 Container(
-                  width: dotSize + widget.progressBarTwo.value * 10,
-                  height: dotSize + widget.progressBarTwo.value * 10,
+                  width: dotSize + widget.progressBarTwo.value * 6,
+                  height: dotSize + widget.progressBarTwo.value * 6,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(100),
                       border: Border.all(
@@ -292,7 +293,7 @@ class _AnimatedBarState extends State<AnimatedBar>
                           )
                         : Icon(
                             Icons.check_circle,
-                            size: 20 + widget.progressBarTwo.value * 10,
+                            size: 20 + widget.progressBarTwo.value * 6,
                             color: currentTheme.primaryColor,
                           ),
                   ),
@@ -312,8 +313,8 @@ class _AnimatedBarState extends State<AnimatedBar>
                 ),
 
                 Container(
-                  width: dotSize + widget.progressBarThree.value * 10,
-                  height: dotSize + widget.progressBarThree.value * 10,
+                  width: dotSize + widget.progressBarThree.value * 6,
+                  height: dotSize + widget.progressBarThree.value * 6,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(100),
                       border: Border.all(
@@ -334,7 +335,7 @@ class _AnimatedBarState extends State<AnimatedBar>
                           )
                         : Icon(
                             Icons.check_circle,
-                            size: 20 + widget.progressBarThree.value * 10,
+                            size: 20 + widget.progressBarThree.value * 6,
                             color: currentTheme.primaryColor,
                           ),
                   ),
@@ -362,8 +363,8 @@ class _AnimatedBarState extends State<AnimatedBar>
                 ),
 
                 Container(
-                  width: dotSize + widget.progressBarThree.value * 10,
-                  height: dotSize + widget.progressBarThree.value * 10,
+                  width: dotSize + widget.progressBarThree.value * 6,
+                  height: dotSize + widget.progressBarThree.value * 6,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(100),
                       border: Border.all(
@@ -384,7 +385,7 @@ class _AnimatedBarState extends State<AnimatedBar>
                           )
                         : Icon(
                             Icons.check_circle,
-                            size: 20 + widget.progressBarThree.value * 10,
+                            size: 20 + widget.progressBarThree.value * 6,
                             color: currentTheme.primaryColor,
                           ),
                   ),
@@ -439,58 +440,55 @@ class _AnimatedBarState extends State<AnimatedBar>
         child: AnimatedBuilder(
             animation: widget.controller,
             builder: (BuildContext context, Widget child) => ExpandableNotifier(
-                    child: Padding(
-                  padding: const EdgeInsets.only(left: 0, right: 0, bottom: 0),
-                  child: ScrollOnExpand(
-                    child: Card(
-                      elevation: 6,
-                      shadowColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      color: currentTheme.cardColor,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Expandable(
-                            collapsed: progressBar(),
-                            expanded: buildCollapsed2(),
-                          ),
-                          Divider(
-                            height: 1,
-                          ),
-                          Builder(
-                            builder: (context) {
-                              var controller = ExpandableController.of(context,
-                                  required: true);
-                              return Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    (!controller.expanded)
-                                        ? 'Ver más'
-                                        : 'Ver menos',
-                                    style: TextStyle(color: Colors.grey),
-                                  ),
-                                  IconButton(
-                                      onPressed: () {
-                                        controller.toggle();
-                                      },
-                                      icon: (!controller.expanded)
-                                          ? Icon(
-                                              Icons.expand_more,
-                                              color: Colors.white,
-                                            )
-                                          : Icon(
-                                              Icons.expand_less,
-                                              color: Colors.white,
-                                            ))
-                                ],
-                              );
-                            },
-                          ),
-                        ],
-                      ),
+                    child: ScrollOnExpand(
+                  child: Card(
+                    elevation: 6,
+                    shadowColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    color: currentTheme.cardColor,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Expandable(
+                          collapsed: progressBar(),
+                          expanded: buildCollapsed2(),
+                        ),
+                        Divider(
+                          height: 1,
+                        ),
+                        Builder(
+                          builder: (context) {
+                            var controller = ExpandableController.of(context,
+                                required: true);
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  (!controller.expanded)
+                                      ? 'Ver más'
+                                      : 'Ver menos',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                                IconButton(
+                                    onPressed: () {
+                                      controller.toggle();
+                                    },
+                                    icon: (!controller.expanded)
+                                        ? Icon(
+                                            Icons.expand_more,
+                                            color: Colors.white,
+                                          )
+                                        : Icon(
+                                            Icons.expand_less,
+                                            color: Colors.white,
+                                          ))
+                              ],
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ),
                 ))));
