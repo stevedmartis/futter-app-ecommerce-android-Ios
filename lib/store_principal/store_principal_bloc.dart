@@ -172,14 +172,13 @@ class StoreBLoC with ChangeNotifier {
     final Store store = storesListInitial
         .singleWhere((i) => i.user.uid == storeId, orElse: () => null);
 
-    print(store);
     return store;
   }
 
   Store getStoreAllDbByProducts(String storeId) {
     final Store store = storesAllDb.singleWhere((i) => i.user.uid == storeId,
         orElse: () => null);
-    print(store);
+
     return store;
   }
 

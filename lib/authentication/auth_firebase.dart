@@ -15,8 +15,6 @@ class FireBaseAuthBLoC with ChangeNotifier {
     };
 
     final PhoneVerificationCompleted verificationCompleted = (user) {
-      print(user);
-
       return user;
     };
 

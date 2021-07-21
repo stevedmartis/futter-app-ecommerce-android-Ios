@@ -130,7 +130,6 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
 
     prefs.setSearchAddreses = value;
 
-    print(prefs.addressSearchSave);
     if (place.placeId != '0') {
       final editProfileOk = await authBloc.editAddressStoreProfile(
           uid,

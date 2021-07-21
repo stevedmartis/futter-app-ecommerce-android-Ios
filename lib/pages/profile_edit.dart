@@ -506,7 +506,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                                   maxLines: 2,
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontWeight: FontWeight.w400,
+                                    fontWeight: FontWeight.bold,
                                     fontSize: 18,
                                   ),
                                 ),
@@ -571,8 +571,11 @@ class EditProfilePageState extends State<EditProfilePage> {
                                             context, contactoInfoStoreRoute());
                                       },
                                       child: ListTile(
-                                        leading: Text('Opciones de contacto',
-                                            style: TextStyle(fontSize: 18)),
+                                        leading: (isEmail)
+                                            ? Text('Contacto',
+                                                style: TextStyle(fontSize: 18))
+                                            : Text('Opciones de Contacto',
+                                                style: TextStyle(fontSize: 18)),
                                         title: Container(
                                           alignment: Alignment.centerRight,
                                           child: Row(
@@ -580,18 +583,23 @@ class EditProfilePageState extends State<EditProfilePage> {
                                                 MainAxisAlignment.end,
                                             children: [
                                               if (isEmail)
-                                                Icon(Icons.email,
-                                                    color: Colors.grey,
-                                                    size: 20),
-                                              SizedBox(width: 10),
+                                                Text(
+                                                  'Email',
+                                                  style: TextStyle(
+                                                      color: Colors.grey),
+                                                ),
                                               if (isPhone)
-                                                (UniversalPlatform.isAndroid)
-                                                    ? Icon(Icons.phone_android,
-                                                        color: Colors.grey,
-                                                        size: 20)
-                                                    : Icon(Icons.phone_iphone,
-                                                        color: Colors.grey,
-                                                        size: 20),
+                                                Text(
+                                                  ',',
+                                                  style: TextStyle(
+                                                      color: Colors.grey),
+                                                ),
+                                              if (isPhone)
+                                                Text(
+                                                  'Celular',
+                                                  style: TextStyle(
+                                                      color: Colors.grey),
+                                                )
                                             ],
                                           ),
                                         ),

@@ -195,8 +195,6 @@ showLocationMaterialCupertinoBottomSheet(BuildContext context,
                       onTap: () {
                         final place = prefs.addressSearchSave;
 
-                        print(place);
-
                         var placeSave = new PlaceSearch(
                             description: authBloc.storeAuth.user.uid,
                             placeId: authBloc.storeAuth.user.uid,

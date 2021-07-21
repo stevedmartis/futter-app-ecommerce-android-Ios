@@ -259,7 +259,7 @@ class ProfileStoreProductItem extends StatelessWidget {
         groceryBloc.changeToNormal();
       },
       child: Container(
-        height: size.height / 2,
+        height: size.height / 5.5,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
           child: Card(
@@ -291,23 +291,32 @@ class ProfileStoreProductItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        product.name.capitalize(),
-                        style: TextStyle(
-                          color: (currentTheme.customTheme)
-                              ? Colors.white
-                              : _textColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
+                      Container(
+                        width: size.width / 2,
+                        child: Text(
+                          product.name.capitalize(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: (currentTheme.customTheme)
+                                ? Colors.white
+                                : _textColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 5),
-                      Text(
-                        product.description,
-                        maxLines: 2,
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 10,
+                      Container(
+                        width: size.width / 2,
+                        child: Text(
+                          product.description,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 10,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 5),

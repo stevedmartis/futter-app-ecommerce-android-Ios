@@ -160,6 +160,7 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
     images.clear();
     images = [];
     tabsViewScrollBLoC.disposeImages();
+    tabsViewScrollBLoC.imagesProducts = [];
 
     super.dispose();
   }
@@ -169,11 +170,15 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
     final currentTheme = Provider.of<ThemeChanger>(context);
 
 //    final size = MediaQuery.of(context).size;
+    final productService = Provider.of<StoreProductService>(context);
+    final isControllerChange =
+        isNameChange && productService.isImagesChange && isPriceChange;
 
-    final isControllerChange = isNameChange;
-
-    final isControllerChangeEdit =
-        isNameChange || isAboutChange || isVisibilityChange || isPriceChange;
+    final isControllerChangeEdit = isNameChange ||
+        isAboutChange ||
+        isVisibilityChange ||
+        isPriceChange ||
+        productService.isImagesChange;
 
     return GestureDetector(
       onTap: () {
@@ -654,8 +659,6 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
   ) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
-    final productService = Provider.of<StoreProductService>(context);
-
     return GestureDetector(
         child: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -663,16 +666,14 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
             child: Text(
               (widget.isEdit) ? 'Guardar' : 'Crear',
               style: TextStyle(
-                  color: (isControllerChange && !errorRequired ||
-                          productService.isImagesChange)
+                  color: (isControllerChange && !errorRequired)
                       ? currentTheme.primaryColor
                       : Colors.grey,
                   fontSize: 18),
             ),
           ),
         ),
-        onTap: isControllerChange && !errorRequired && !loading ||
-                productService.isImagesChange
+        onTap: isControllerChange && !errorRequired && !loading
             ? () => {
                   HapticFeedback.lightImpact(),
                   setState(() {
@@ -864,7 +865,6 @@ class CurrencyInputFormatter extends TextInputFormatter {
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
     if (newValue.selection.baseOffset == 0) {
-      print(true);
       return newValue;
     }
 

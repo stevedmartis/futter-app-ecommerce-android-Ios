@@ -295,14 +295,19 @@ class _ProfileStoreProductItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        product.name.capitalize(),
-                        style: TextStyle(
-                          color: (currentTheme.customTheme)
-                              ? Colors.white
-                              : _textColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
+                      Container(
+                        width: size.width / 2,
+                        child: Text(
+                          product.name.capitalize(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: (currentTheme.customTheme)
+                                ? Colors.white
+                                : _textColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 5),
@@ -311,6 +316,7 @@ class _ProfileStoreProductItem extends StatelessWidget {
                         child: Text(
                           product.description,
                           maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: Colors.grey,
                             fontSize: 12,

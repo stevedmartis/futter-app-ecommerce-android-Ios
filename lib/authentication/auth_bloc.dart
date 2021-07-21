@@ -197,8 +197,6 @@ class AuthenticationBLoC with ChangeNotifier {
       prefs.setLocationCurrent = false;
       prefs.setSearchAddreses = placeStore;
 
-      print(prefs.locationSearch);
-
       return true;
     } else {
       return false;
@@ -557,8 +555,6 @@ class AuthenticationBLoC with ChangeNotifier {
       prefs.setLocationSearch = true;
       prefs.setLocationCurrent = false;
       prefs.setSearchAddreses = placeStore;
-
-      print(prefs.locationSearch);
 
       // await getProfileByUserId(this.profile.user.uid);
 

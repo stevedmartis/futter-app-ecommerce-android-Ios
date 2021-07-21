@@ -1,5 +1,3 @@
-import 'package:australti_ecommerce_app/android_messages_animation/main_android_messages_animation_app.dart';
-
 import 'package:australti_ecommerce_app/data_backup_animation/data_backup_home.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_home.dart';
 import 'package:australti_ecommerce_app/models/Address.dart';
@@ -20,6 +18,8 @@ import 'package:australti_ecommerce_app/pages/get_phone/firebase/auth/phone_auth
 import 'package:australti_ecommerce_app/pages/loading_page.dart';
 import 'package:australti_ecommerce_app/pages/login/login.dart';
 import 'package:australti_ecommerce_app/pages/onboarding/onboarding.dart';
+
+import 'package:australti_ecommerce_app/pages/order_progress.dart/order_page1.dart';
 
 import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/pages/profile_edit.dart';
@@ -45,7 +45,7 @@ final pageRouter = <_Route>[
   _Route(Icons.play_arrow, 'flow', MainStoreServicesApp()),
   _Route(Icons.play_arrow, 'loading', MyFavorites()),
   _Route(Icons.play_arrow, 'store', CatalogosListPage()),
-  _Route(Icons.play_arrow, 'message', MainAndroidMessagesAnimationApp()),
+  _Route(Icons.play_arrow, 'message', OrderPage()),
   _Route(Icons.play_arrow, 'notifications', MultipleCardFlow()),
 ];
 
@@ -213,6 +213,24 @@ Route ordenDetailImageRoute() {
   );
 }
 
+Route orderProggressRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => OrderPage(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(0.0, 1.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
+
 Route formCurrentLocationRoute(Address address) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) =>
@@ -233,7 +251,6 @@ Route formCurrentLocationRoute(Address address) {
 }
 
 Route confirmLocationRoute(PlaceSearch place) {
-  print(place);
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) =>
         ConfirmLocationPage(place),

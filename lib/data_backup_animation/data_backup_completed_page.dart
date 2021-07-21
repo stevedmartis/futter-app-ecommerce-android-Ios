@@ -1,3 +1,4 @@
+import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -73,7 +74,7 @@ class DataBackupCompletedPage extends AnimatedWidget {
                                 ),
                               ),
                               onPressed: () {
-                                Navigator.of(context).pop();
+                                Navigator.push(context, orderProggressRoute());
                               },
                             ),
                             const SizedBox(height: 40),

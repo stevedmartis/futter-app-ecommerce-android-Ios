@@ -80,8 +80,6 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
       }
     });
 
-    print(storesByProduct);
-
     minTimes = storesByProduct.fold<int>(0, (previousValue, store) {
       final getTimeMin = store.timeDelivery.toString().split("-").first.trim();
 
@@ -179,7 +177,7 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
           onTap: () {
             HapticFeedback.mediumImpact();
             Navigator.push(context, dataRoute());
-            // _createOrder(context);
+            _createOrder(context);
           },
           child: SizedBox(
             height: size.height / 7,
@@ -328,7 +326,7 @@ SliverToBoxAdapter addressDeliveryInfo(context, minTimes, maxTimes) {
                                   HapticFeedback.lightImpact();
 
                                   final place = prefs.addressSearchSave;
-                                  print(place);
+
                                   var placeSave = new PlaceSearch(
                                       description: authBloc.storeAuth.user.uid,
                                       placeId: authBloc.storeAuth.user.uid,
@@ -426,29 +424,24 @@ SliverToBoxAdapter addressDeliveryInfo(context, minTimes, maxTimes) {
               ],
             ),
           ),
-          Divider(),
           SizedBox(
             height: 10,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 15.0, right: 15),
+            child: Divider(),
           ),
           Row(
             children: [
               Container(
-                margin: EdgeInsets.only(left: 20),
-                child: Icon(
-                  Icons.schedule,
-                  size: 30,
-                  color: Colors.grey,
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(left: 10),
+                padding: EdgeInsets.only(left: 20),
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Entrega',
                   style: TextStyle(
                       fontWeight: FontWeight.normal,
                       fontSize: 18,
-                      color: Colors.white),
+                      color: Colors.grey),
                 ),
               ),
               Spacer(),
@@ -468,7 +461,6 @@ SliverToBoxAdapter addressDeliveryInfo(context, minTimes, maxTimes) {
           SizedBox(
             height: 10,
           ),
-          Divider(),
         ],
       ),
     ),
@@ -528,8 +520,6 @@ Widget _buildProductsList(context) {
     storesByProduct.add(product);
   }); */
 
-  print(mapList);
-
   return Container(
     padding: EdgeInsets.only(left: 20, right: 20),
     child: ListView.builder(
@@ -550,13 +540,14 @@ Widget _buildProductsList(context) {
           products = bloc.cart
               .where((element) => element.product.user == store.user.uid)
               .toList();
+          store.notLocation = true;
           totalQuantity = products.fold<int>(
             0,
             (previousValue, element) => previousValue + element.quantity,
           );
         } else {
           store = storeBloc.getStoreAllDbByProducts(item.product.user);
-
+          store.notLocation = false;
           products = bloc.cart
               .where((element) => element.product.user == store.user.uid)
               .toList();
@@ -566,7 +557,6 @@ Widget _buildProductsList(context) {
           );
         }
 
-        print(store);
         return FadeInLeft(
           delay: Duration(milliseconds: 100 * index),
           child: Padding(
@@ -888,7 +878,7 @@ SliverToBoxAdapter orderDetailInfo(context) {
               ],
             ),
           ),
-          Padding(
+          /* Padding(
             padding: const EdgeInsets.only(left: 15.0, right: 15),
             child: Divider(),
           ),
@@ -926,7 +916,7 @@ SliverToBoxAdapter orderDetailInfo(context) {
           SizedBox(
             height: 10,
           ),
-          Divider(),
+          Divider(), */
         ],
       ),
     ),
@@ -953,13 +943,11 @@ _createOrder(context) async {
       final product = Product(id: item.product.id, quantity: item.quantity);
       arrayProducts.add(product);
     });
-    print(arrayProducts);
+
     final storeProducts =
         StoresProduct(storeUid: storeId, products: arrayProducts);
     storesProducts.add(storeProducts);
   });
-
-  print(storesProducts);
 
   final OrderStoresProducts createOrderResp =
       await orderService.createOrder(clientId, storesProducts);
@@ -969,7 +957,8 @@ _createOrder(context) async {
       loading = false;
       orderService.order = createOrderResp.order;
 
-      Navigator.pop(context);
+      print(orderService.order);
+      Navigator.push(context, orderProggressRoute());
     } else {
       showAlertError(context, 'Error', 'Error');
     }

@@ -41,19 +41,6 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
   double get maxHeight => 400 + MediaQuery.of(context).padding.top;
   double get minHeight => MediaQuery.of(context).padding.bottom;
 
-  void _snapAppbar() {
-    final scrollDistance = maxHeight - minHeight;
-
-    if (_scrollController.offset > 0 &&
-        _scrollController.offset < scrollDistance) {
-      final double snapOffset =
-          _scrollController.offset / scrollDistance > 0.5 ? scrollDistance : 0;
-
-      Future.microtask(() => _scrollController.animateTo(snapOffset,
-          duration: Duration(milliseconds: 200), curve: Curves.easeIn));
-    }
-  }
-
   bool get _showTitle {
     return _scrollController.hasClients && _scrollController.offset >= 70;
   }
@@ -113,8 +100,6 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
 
           body: NotificationListener<ScrollEndNotification>(
             onNotification: (_) {
-              _snapAppbar();
-
               return false;
             },
             child: CustomScrollView(
@@ -254,7 +239,7 @@ class _ProfileAuthStoreProductItem extends StatelessWidget {
         );
       },
       child: Container(
-        height: size.height / 3,
+        height: size.height / 5.5,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Card(
@@ -283,24 +268,32 @@ class _ProfileAuthStoreProductItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        product.name.capitalize(),
-                        style: TextStyle(
-                          color: (currentTheme.customTheme)
-                              ? Colors.white
-                              : _textColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
+                      Container(
+                        child: Text(
+                          product.name.capitalize(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: (currentTheme.customTheme)
+                                ? Colors.white
+                                : _textColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 5),
                       if (product.description != "")
-                        Text(
-                          product.description.capitalize(),
-                          maxLines: 2,
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 10,
+                        Container(
+                          width: size.width / 2,
+                          child: Text(
+                            product.description.capitalize(),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 10,
+                            ),
                           ),
                         ),
                       const SizedBox(height: 5),

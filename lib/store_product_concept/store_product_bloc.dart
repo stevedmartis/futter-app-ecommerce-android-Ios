@@ -163,18 +163,12 @@ class TabsViewScrollBLoC with ChangeNotifier {
           : item.category.name.toLowerCase().contains(value.toLowerCase()));
 
       if (find.length > 0) {
-        print(find.first);
-
         final item = tabs.where(
           (item) => item.category.id == find.first.product.category,
         );
 
-        print(item);
-
         final indexCategory = tabs.indexOf(item.first);
         // final indexCategory = items.indexOf(categoryById);
-
-        print(indexCategory);
 
         onCategorySelected(indexCategory, animationRequired: true);
       }
@@ -266,9 +260,6 @@ class TabsViewScrollBLoC with ChangeNotifier {
     item.category.products.removeWhere((product) => product.id == product.id);
     productsByCategoryList.removeWhere((product) => product.id == product.id);
 
-    print(productsByCategoryList);
-
-    print(item.category.products);
     tabs = [];
     items = [];
 
@@ -277,6 +268,9 @@ class TabsViewScrollBLoC with ChangeNotifier {
   }
 
   void editProduct(TickerProvider ticket, ProfileStoreProduct product) {
+    if (productsByCategoryList.length == 0)
+      productsByCategory(product.category);
+
     final item = productsByCategoryList
         .firstWhere((item) => item.id == product.id, orElse: () => null);
 

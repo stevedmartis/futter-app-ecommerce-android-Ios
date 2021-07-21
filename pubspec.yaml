@@ -46,6 +46,7 @@ dependencies:
   url_launcher: ^6.0.9
   flutter_masked_text: ^0.8.0
   flutter_swiper: ^1.1.6
+  expandable: ^5.0.1
 
  
  

@@ -350,14 +350,19 @@ class __ProfileStoreProductItemState extends State<_ProfileStoreProductItem> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        widget.product.name.capitalize(),
-                        style: TextStyle(
-                          color: (currentTheme.customTheme)
-                              ? Colors.white
-                              : _textColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
+                      Container(
+                        width: size.width / 2,
+                        child: Text(
+                          widget.product.name.capitalize(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: (currentTheme.customTheme)
+                                ? Colors.white
+                                : _textColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 5),
@@ -373,7 +378,7 @@ class __ProfileStoreProductItemState extends State<_ProfileStoreProductItem> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 5),
                       Row(
                         children: [
                           Text(

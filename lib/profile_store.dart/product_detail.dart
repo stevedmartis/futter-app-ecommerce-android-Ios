@@ -96,27 +96,37 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
         heroTag;
     final size = MediaQuery.of(context).size;
     return Scaffold(
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.only(left: 10.0, right: 10, bottom: 0),
-          child: SizedBox(
-            height: 50,
-            child: ElevatedButton(
-                onPressed: () {
-                  HapticFeedback.lightImpact();
-                  _addToCart(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  elevation: 5.0,
-                  fixedSize: Size.fromWidth(size.width),
-                  primary: currentTheme.primaryColor,
-                  shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(30.0),
-                  ),
+        bottomNavigationBar: (!widget.isAuthUser)
+            ? Padding(
+                padding:
+                    const EdgeInsets.only(left: 10.0, right: 10, bottom: 0),
+                child: SizedBox(
+                  height: 50,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        _addToCart(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        elevation: 5.0,
+                        fixedSize: Size.fromWidth(size.width),
+                        primary: currentTheme.primaryColor,
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(30.0),
+                        ),
+                      ),
+                      child: Text('Agregar a la bolsa',
+                          style: TextStyle(fontSize: 18))),
                 ),
-                child:
-                    Text('Agregar a la bolsa', style: TextStyle(fontSize: 18))),
-          ),
-        ),
+              )
+            : Padding(
+                padding:
+                    const EdgeInsets.only(left: 10.0, right: 10, bottom: 0),
+                child: SizedBox(
+                  height: 50,
+                  child: Container(),
+                ),
+              ),
         backgroundColor: currentTheme.scaffoldBackgroundColor,
         body: CustomScrollView(
             physics: const BouncingScrollPhysics(
