@@ -1,10 +1,11 @@
+import 'package:australti_ecommerce_app/android_messages_animation/main_android_messages_animation_app.dart';
 import 'package:australti_ecommerce_app/data_backup_animation/data_backup_home.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_home.dart';
 import 'package:australti_ecommerce_app/models/Address.dart';
 
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
-import 'package:australti_ecommerce_app/multiple_card_flow/multiple_card_flow.dart';
+
 import 'package:australti_ecommerce_app/pages/account_store/category_store.dart';
 import 'package:australti_ecommerce_app/pages/account_store/contact_info_store.dart';
 import 'package:australti_ecommerce_app/pages/account_store/display_profile.dart';
@@ -19,15 +20,17 @@ import 'package:australti_ecommerce_app/pages/loading_page.dart';
 import 'package:australti_ecommerce_app/pages/login/login.dart';
 import 'package:australti_ecommerce_app/pages/onboarding/onboarding.dart';
 
-import 'package:australti_ecommerce_app/pages/order_progress.dart/order_page1.dart';
+import 'package:australti_ecommerce_app/pages/order_progress.dart/order_page.dart';
+import 'package:australti_ecommerce_app/pages/order_progress.dart/orders_list_page.dart';
 
 import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/pages/profile_edit.dart';
-import 'package:australti_ecommerce_app/pages/orden_detail_page.dart';
+import 'package:australti_ecommerce_app/pages/order_progress.dart/orden_detail_page.dart';
 import 'package:australti_ecommerce_app/pages/products_list.dart';
 import 'package:australti_ecommerce_app/pages/search_principal_page.dart';
 import 'package:australti_ecommerce_app/pages/single_image_upload.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile_store_auth.dart';
+import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 import 'package:australti_ecommerce_app/responses/place_search_response.dart';
 import 'package:australti_ecommerce_app/store_principal/main_store_principal.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
@@ -45,8 +48,7 @@ final pageRouter = <_Route>[
   _Route(Icons.play_arrow, 'flow', MainStoreServicesApp()),
   _Route(Icons.play_arrow, 'loading', MyFavorites()),
   _Route(Icons.play_arrow, 'store', CatalogosListPage()),
-  _Route(Icons.play_arrow, 'message', OrderPage()),
-  _Route(Icons.play_arrow, 'notifications', MultipleCardFlow()),
+  _Route(Icons.play_arrow, 'notifications', MainAndroidMessagesAnimationApp()),
 ];
 
 class _Route {
@@ -195,7 +197,7 @@ Route singleUploadImageRoute() {
   );
 }
 
-Route ordenDetailImageRoute() {
+Route orderDetailRoute() {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) => OrdenDetailPage(),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -213,9 +215,29 @@ Route ordenDetailImageRoute() {
   );
 }
 
-Route orderProggressRoute() {
+Route ordersListRoute() {
   return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => OrderPage(),
+    pageBuilder: (context, animation, secondaryAnimation) => OrderListPage(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(0.0, 1.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
+
+Route orderProggressRoute(Order order) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => OrderPage(
+      order: order,
+    ),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = Offset(0.0, 1.0);
       var end = Offset.zero;

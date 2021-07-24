@@ -1,9 +1,11 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
+import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_platform/universal_platform.dart';
 
@@ -42,6 +44,25 @@ class PrincipalMenu extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.push(context, ordersListRoute());
+                  },
+                  child: ListTile(
+                    leading: Icon(Icons.history,
+                        color: currentTheme.currentTheme.accentColor),
+                    title: Text(
+                      'Mis pedidos',
+                      style: TextStyle(
+                        color: (currentTheme.customTheme)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    HapticFeedback.heavyImpact();
                     socketService.disconnect();
 
                     prefs.setToken = '';

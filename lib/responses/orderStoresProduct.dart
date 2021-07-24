@@ -16,21 +16,21 @@ String orderStoresProductsToJson(OrderStoresProducts data) =>
 class OrderStoresProducts {
   OrderStoresProducts({
     this.ok,
-    this.order,
+    this.orders,
   });
 
   bool ok;
-  List<Order> order;
+  List<Order> orders;
 
   factory OrderStoresProducts.fromJson(Map<String, dynamic> json) =>
       OrderStoresProducts(
         ok: json["ok"],
-        order: List<Order>.from(json["order"].map((x) => Order.fromJson(x))),
+        orders: List<Order>.from(json["orders"].map((x) => Order.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
         "ok": ok,
-        "order": List<dynamic>.from(order.map((x) => x.toJson())),
+        "orders": List<dynamic>.from(orders.map((x) => x.toJson())),
       };
 }
 
@@ -40,8 +40,10 @@ class Order {
     this.store,
     this.client,
     this.products,
-    this.siActive,
+    this.isActive,
     this.isFinalice,
+    this.isPreparation,
+    this.isSend,
     this.isCancel,
     this.createdAt,
     this.updatedAt,
@@ -51,11 +53,14 @@ class Order {
   Store store;
   String client;
   List<ProductElement> products;
-  bool siActive;
+  bool isActive;
   bool isFinalice;
   bool isCancel;
   DateTime createdAt;
   DateTime updatedAt;
+
+  bool isPreparation;
+  bool isSend;
 
   factory Order.fromJson(Map<String, dynamic> json) => Order(
         id: json["id"],
@@ -63,9 +68,11 @@ class Order {
         client: json["client"],
         products: List<ProductElement>.from(
             json["products"].map((x) => ProductElement.fromJson(x))),
-        siActive: json["siActive"],
+        isActive: json["isActive"],
         isFinalice: json["isFinalice"],
         isCancel: json["isCancel"],
+        isPreparation: json["isPreparation"],
+        isSend: json["isPreparation"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
       );
@@ -75,9 +82,11 @@ class Order {
         "store": store.toJson(),
         "client": client,
         "products": List<dynamic>.from(products.map((x) => x.toJson())),
-        "siActive": siActive,
+        "isActive": isActive,
         "isFinalice": isFinalice,
         "isCancel": isCancel,
+        "isPreparation": isPreparation,
+        "isSend": isSend,
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
       };

@@ -16,6 +16,7 @@ import 'package:australti_ecommerce_app/store_principal/store_Service.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
+import 'package:australti_ecommerce_app/widgets/cross_fade.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:australti_ecommerce_app/widgets/modal_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
@@ -329,7 +330,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                       ),
                     ],
                     stretch: true,
-                    expandedHeight: 250.0,
+                    expandedHeight: 180.0,
                     collapsedHeight: 70,
                     floating: false,
                     pinned: true,
@@ -485,12 +486,18 @@ SliverPersistentHeader makeHeaderTitle(context, String titleService) {
               color: currentTheme.scaffoldBackgroundColor,
               child: Padding(
                 padding: const EdgeInsets.only(top: 0.0, left: 10),
-                child: Text(
-                  titleService,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                child: CrossFade<String>(
+                  initialData: '',
+                  data: titleService,
+                  builder: (value) => Container(
+                    child: Text(
+                      titleService,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -827,123 +834,133 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
     return AnimatedBuilder(
         animation: _controller,
         builder: (context, _) {
-          return Stack(
-            fit: StackFit.expand,
-            children: <Widget>[
-              Positioned(
-                left: _movement * _controller.value,
-                right: _movement * (1 - _controller.value),
-                child: Image.asset(
-                  widget.storeService.backImage,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Positioned.fill(
-                left: _movement * _controller.value,
-                right: _movement * (1 - _controller.value),
-                child: Container(
-                  child: Image.asset(
-                    widget.storeService.frontImage,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              Positioned.fill(
-                child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(0.0)),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(0.0),
-                        gradient: LinearGradient(
-                          colors: [
-                            Color.fromARGB(200, 0, 0, 0),
-                            Color.fromARGB(0, 0, 0, 0)
-                          ],
-                          begin: Alignment.topCenter,
-                          end: Alignment.center,
-                        ),
-                      ),
-                    )),
-              ),
-              Positioned(
-                top: 70,
-                left: 10,
-                right: 10,
-                height: 40,
-                child: FittedBox(
-                  child: Text(
-                    widget.storeService.name,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
+          return ClipRRect(
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(30.0),
+              bottomRight: Radius.circular(30.0),
+            ),
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                Positioned(
+                  left: _movement * _controller.value,
+                  right: _movement * (1 - _controller.value),
+                  child: ClipRRect(
+                    child: Image.asset(
+                      widget.storeService.backImage,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
-              ),
-              Positioned(
-                  top: 20,
+                Positioned.fill(
+                  left: _movement * _controller.value,
+                  right: _movement * (1 - _controller.value),
+                  child: ClipRRect(
+                    child: Container(
+                      child: Image.asset(
+                        widget.storeService.backImage,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned.fill(
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(0.0)),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(0.0),
+                          gradient: LinearGradient(
+                            colors: [
+                              Color.fromARGB(200, 0, 0, 0),
+                              Color.fromARGB(0, 0, 0, 0)
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.center,
+                          ),
+                        ),
+                      )),
+                ),
+                /* Positioned(
+                  top: 70,
                   left: 10,
                   right: 10,
                   height: 40,
-                  child: AnimatedOpacity(
-                      opacity: (prefs.addressSearchSave != '') ? 1.0 : 0.0,
-                      duration: Duration(milliseconds: 200),
-                      child: GestureDetector(
-                        onTap: () {
-                          HapticFeedback.lightImpact();
+                  child: FittedBox(
+                    child: Text(
+                      widget.storeService.name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ), */
+                Positioned(
+                    top: 20,
+                    left: 10,
+                    right: 10,
+                    height: 40,
+                    child: AnimatedOpacity(
+                        opacity: (prefs.addressSearchSave != '') ? 1.0 : 0.0,
+                        duration: Duration(milliseconds: 200),
+                        child: GestureDetector(
+                          onTap: () {
+                            HapticFeedback.lightImpact();
 
-                          showModalLocation(
-                              context,
-                              _selectedGender,
-                              prefs.addressSearchSave.secondaryText,
-                              authBloc.storeAuth.user.uid);
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          width: 100,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                alignment: Alignment.centerRight,
-                                child: Icon(
-                                  Icons.location_on,
-                                  color: currentTheme.accentColor,
-                                  size: 20,
+                            showModalLocation(
+                                context,
+                                _selectedGender,
+                                prefs.addressSearchSave.secondaryText,
+                                authBloc.storeAuth.user.uid);
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            width: 100,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  alignment: Alignment.centerRight,
+                                  child: Icon(
+                                    Icons.location_on,
+                                    color: currentTheme.accentColor,
+                                    size: 20,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              SizedBox(
-                                width: _size.width / 3,
-                                child: Container(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      prefs.addressSearchSave != ''
-                                          ? '${prefs.addressSearchSave.mainText}'
-                                          : '...',
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                      softWrap: false,
-                                      //'${state.location.latitude}',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 13,
-                                          color: Colors.white70),
-                                    )),
-                              ),
-                              GestureDetector(
-                                child: Container(
-                                  child: Icon(Icons.expand_more,
-                                      color: currentTheme.accentColor),
+                                SizedBox(
+                                  width: 10,
                                 ),
-                              )
-                            ],
+                                SizedBox(
+                                  width: _size.width / 3,
+                                  child: Container(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        prefs.addressSearchSave != ''
+                                            ? '${prefs.addressSearchSave.mainText}'
+                                            : '...',
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        softWrap: false,
+                                        //'${state.location.latitude}',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 13,
+                                            color: Colors.white70),
+                                      )),
+                                ),
+                                GestureDetector(
+                                  child: Container(
+                                    child: Icon(Icons.expand_more,
+                                        color: currentTheme.accentColor),
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                      ))),
-            ],
+                        ))),
+              ],
+            ),
           );
         });
   }
@@ -1185,9 +1202,11 @@ class TravelPhotoListItem extends StatelessWidget {
               Positioned.fill(
                 child: ClipRRect(
                   borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  child: Image.asset(
-                    travelPhoto.backImage,
-                    fit: BoxFit.cover,
+                  child: Container(
+                    child: Image.asset(
+                      travelPhoto.frontImage,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),

@@ -153,6 +153,7 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                 duration: Duration(milliseconds: 100),
                 opacity: (widget.showTitle) ? 1.0 : 0.0,
                 child: Container(
+                  padding: EdgeInsets.only(left: 20),
                   alignment: Alignment.center,
                   child: Text(
                     widget.title,

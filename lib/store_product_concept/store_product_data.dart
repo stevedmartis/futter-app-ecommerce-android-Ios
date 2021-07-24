@@ -81,6 +81,7 @@ class ProfileStoreProduct {
   bool isLike;
 
   String category;
+
   factory ProfileStoreProduct.fromJson(Map<String, dynamic> json) =>
       new ProfileStoreProduct(
         id: json["id"],

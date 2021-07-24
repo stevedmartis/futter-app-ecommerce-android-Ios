@@ -9,7 +9,7 @@ import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
 import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 import 'package:australti_ecommerce_app/responses/stores_products_order.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
-import 'package:australti_ecommerce_app/services/order_ervice.dart';
+import 'package:australti_ecommerce_app/services/order_service.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
@@ -27,7 +27,7 @@ import 'package:intl/intl.dart';
 import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
-import '../global/extension.dart';
+import '../../global/extension.dart';
 
 class OrdenDetailPage extends StatefulWidget {
   @override
@@ -176,11 +176,11 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
         bottomNavigationBar: GestureDetector(
           onTap: () {
             HapticFeedback.mediumImpact();
-            Navigator.push(context, dataRoute());
+
             _createOrder(context);
           },
           child: SizedBox(
-            height: size.height / 7,
+            height: size.height / 8,
             child: Center(
               child: goPayCartBtnSubtotal(
                 'Enviar orden',
@@ -955,10 +955,14 @@ _createOrder(context) async {
   if (createOrderResp != null) {
     if (createOrderResp.ok) {
       loading = false;
-      orderService.order = createOrderResp.order;
 
-      print(orderService.order);
-      Navigator.push(context, orderProggressRoute());
+      createOrderResp.orders.forEach((order) {
+        print(order);
+        orderService.orders = order;
+      });
+
+      Navigator.push(context, dataRoute());
+      print(orderService.getOrders);
     } else {
       showAlertError(context, 'Error', 'Error');
     }

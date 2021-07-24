@@ -47,6 +47,7 @@ dependencies:
   flutter_masked_text: ^0.8.0
   flutter_swiper: ^1.1.6
   expandable: ^5.0.1
+  firebase_messaging: ^10.0.4
 
  
  
@@ -63,6 +64,7 @@ flutter:
     - assets/logos/
     - assets/empty/
     - assets/on_board/
+    - assets/principal_stores/
 
 
 

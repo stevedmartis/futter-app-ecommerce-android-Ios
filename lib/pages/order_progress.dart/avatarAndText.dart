@@ -1,4 +1,3 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/widgets/cross_fade.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +17,7 @@ class AvatarAndText extends StatefulWidget {
 
 class _AvatarAndTextState extends State<AvatarAndText>
     with TickerProviderStateMixin {
-  final textOne = "Pedido enviada y recibida.";
+  final textOne = "Pedido enviado y recibido.";
   final imageTwo = "assets/images/Pan.png";
   final textTwo = "Estan preparando tu pedido.";
   final imageThree = "assets/images/FoodPackage.png";
@@ -87,7 +86,7 @@ class AvatarAnimation extends StatelessWidget {
     return Container(
       alignment: Alignment.center,
       padding: EdgeInsets.symmetric(horizontal: 20),
-      height: 90,
+      height: 50,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,

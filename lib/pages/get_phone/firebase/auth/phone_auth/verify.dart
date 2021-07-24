@@ -42,7 +42,7 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
 
     final phoneAuthDataProvider = Provider.of<PhoneAuthDataProvider>(context);
     final size = MediaQuery.of(context).size;
-
+    bool isDisabled = true;
     phoneAuthDataProvider.setMethods(
       onStarted: onStarted,
       onError: onError,
@@ -101,7 +101,6 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
                       builder: (context, AsyncSnapshot<String> snapshot) {
                         final codeOtp = snapshot.data;
 
-                        bool isDisabled = true;
                         (codeOtp != null)
                             ? (codeOtp.length < 9)
                                 ? isDisabled = true
@@ -164,7 +163,6 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
                       builder: (context, AsyncSnapshot<String> snapshot) {
                         final codeOtp = snapshot.data;
 
-                        bool isDisabled = true;
                         (codeOtp != null)
                             ? (codeOtp.length < 6)
                                 ? isDisabled = true

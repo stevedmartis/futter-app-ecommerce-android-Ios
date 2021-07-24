@@ -1,4 +1,5 @@
 import 'package:australti_ecommerce_app/pages/order_progress.dart/avatarAndText.dart';
+import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -8,8 +9,9 @@ import 'util.dart';
 import 'package:expandable/expandable.dart';
 
 class ProgressBar extends StatefulWidget {
-  ProgressBar({Key key}) : super(key: key);
+  ProgressBar({this.order});
 
+  final Order order;
   _ProgressBarState createState() => _ProgressBarState();
 }
 
@@ -37,12 +39,14 @@ class _ProgressBarState extends State<ProgressBar>
   Widget build(BuildContext context) {
     return AnimatedBar(
       controller: animationController,
+      order: widget.order,
     );
   }
 }
 
 class AnimatedBar extends StatefulWidget {
-  AnimatedBar({Key key, this.controller})
+  final Order order;
+  AnimatedBar({Key key, this.order, this.controller})
       : dotOneColor = ColorTween(
           begin: FoodColors.Grey,
           end: FoodColors.Yellow,
@@ -73,7 +77,14 @@ class AnimatedBar extends StatefulWidget {
             ),
           ),
         ),
-        progressBarOne = Tween(begin: 0.0, end: 1.0).animate(
+        progressBarOne = Tween(
+                begin: 0.0,
+                end: (order.isActive & (!order.isPreparation))
+                    ? 0.5
+                    : (order.isPreparation)
+                        ? 1.0
+                        : 0.0)
+            .animate(
           CurvedAnimation(
             parent: controller,
             curve: Interval(0.100, 0.450),
@@ -109,7 +120,14 @@ class AnimatedBar extends StatefulWidget {
             ),
           ),
         ),
-        progressBarTwo = Tween(begin: 0.0, end: 1.0).animate(
+        progressBarTwo = Tween(
+                begin: 0.0,
+                end: (order.isPreparation & (!order.isSend))
+                    ? 0.5
+                    : (order.isSend)
+                        ? 1.0
+                        : 0.0)
+            .animate(
           CurvedAnimation(
             parent: controller,
             curve: Interval(0.550, 0.900),
@@ -128,7 +146,14 @@ class AnimatedBar extends StatefulWidget {
             ),
           ),
         ),
-        progressBarThree = Tween(begin: 0.0, end: 1.0).animate(
+        progressBarThree = Tween(
+                begin: 0.0,
+                end: (order.isSend && (!order.isFinalice))
+                    ? 0.5
+                    : (order.isFinalice)
+                        ? 1.0
+                        : 0.0)
+            .animate(
           CurvedAnimation(
             parent: controller,
             curve: Interval(0.900, 1.000), // 900, 1.000
@@ -164,7 +189,14 @@ class AnimatedBar extends StatefulWidget {
             ),
           ),
         ),
-        progressBarFour = Tween(begin: 0.0, end: 1.0).animate(
+        progressBarFour = Tween(
+                begin: 0.0,
+                end: (order.isFinalice && (!order.isSend))
+                    ? 0.5
+                    : (order.isFinalice)
+                        ? 1.0
+                        : 0.0)
+            .animate(
           CurvedAnimation(
             parent: controller,
             curve: Interval(
@@ -221,9 +253,8 @@ class _AnimatedBarState extends State<AnimatedBar>
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(top: 10),
+            padding: EdgeInsets.only(top: 20),
             width: MediaQuery.of(context).size.width / 1.3,
-            margin: EdgeInsets.all(10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -363,29 +394,29 @@ class _AnimatedBarState extends State<AnimatedBar>
                 ),
 
                 Container(
-                  width: dotSize + widget.progressBarThree.value * 6,
-                  height: dotSize + widget.progressBarThree.value * 6,
+                  width: dotSize + widget.progressBarFour.value * 6,
+                  height: dotSize + widget.progressBarFour.value * 6,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(100),
                       border: Border.all(
-                          width: 0.5 + widget.progressBarThree.value * 3,
-                          color: (widget.progressBarThree.value >= 1.0)
+                          width: 0.5 + widget.progressBarFour.value * 3,
+                          color: (widget.progressBarFour.value >= 1.0)
                               ? currentTheme.primaryColor
                               : Colors.grey)),
                   child: AnimatedContainer(
                     duration: Duration(milliseconds: 200),
                     alignment: Alignment.center,
-                    child: (widget.progressBarThree.value != 1.0)
+                    child: (widget.progressBarFour.value != 1.0)
                         ? FaIcon(
                             FontAwesomeIcons.home,
                             size: 13,
-                            color: (widget.progressBarThree.value >= 1.0)
+                            color: (widget.progressBarFour.value >= 1.0)
                                 ? currentTheme.primaryColor
                                 : Colors.grey,
                           )
                         : Icon(
                             Icons.check_circle,
-                            size: 20 + widget.progressBarThree.value * 6,
+                            size: 20 + widget.progressBarFour.value * 6,
                             color: currentTheme.primaryColor,
                           ),
                   ),

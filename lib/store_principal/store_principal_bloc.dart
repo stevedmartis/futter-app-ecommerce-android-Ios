@@ -36,8 +36,8 @@ class StoreBLoC with ChangeNotifier {
         stores: 0),
     StoreServices(
         id: 1,
-        backImage: 'assets/frutas_verduras3.jpeg',
-        frontImage: 'assets/frutas_verduras3.jpeg',
+        backImage: 'assets/principal_stores/market-beta.jpg',
+        frontImage: 'assets/principal_stores/3.png',
         name: 'Mercados',
         stores: 0),
     StoreServices(

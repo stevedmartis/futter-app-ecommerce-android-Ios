@@ -8,16 +8,16 @@ import 'package:australti_ecommerce_app/pages/order_progress.dart/progressBar.da
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
 import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
-import 'package:australti_ecommerce_app/responses/stores_products_order.dart';
+
 import 'package:australti_ecommerce_app/routes/routes.dart';
-import 'package:australti_ecommerce_app/services/order_ervice.dart';
+
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
+
 import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
-import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -31,6 +31,8 @@ import 'package:provider/provider.dart';
 import '../../global/extension.dart';
 
 class OrderPage extends StatefulWidget {
+  final Order order;
+  OrderPage({@required this.order});
   @override
   _OrderPageState createState() => _OrderPageState();
 }
@@ -47,12 +49,11 @@ class _OrderPageState extends State<OrderPage> {
 
   int minTimes = 0;
   int maxTimes = 0;
-
+  Order order;
   @override
   void initState() {
+    order = widget.order;
     final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
-
-    final orderService = Provider.of<OrderService>(context, listen: false);
 
     storeAuth = authBloc.storeAuth;
 
@@ -60,17 +61,13 @@ class _OrderPageState extends State<OrderPage> {
 
     super.initState();
 
-    order = orderService.order[0];
+    //final getTimeMin =  order.store.timeDelivery.toString().split("-").first.trim();
 
-    final getTimeMin =
-        order.store.timeDelivery.toString().split("-").first.trim();
+    // final minInt = int.parse(getTimeMin);
 
-    final minInt = int.parse(getTimeMin);
+    //final getTimeMax =order.store.timeDelivery.toString().split("-").last.trim();
 
-    final getTimeMax =
-        order.store.timeDelivery.toString().split("-").last.trim();
-
-    final maxInt = int.parse(getTimeMax);
+    //final maxInt = int.parse(getTimeMax);
   }
 
   @override
@@ -109,7 +106,6 @@ class _OrderPageState extends State<OrderPage> {
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-    final size = MediaQuery.of(context).size;
 
     return SafeArea(
       child: Scaffold(
@@ -126,8 +122,8 @@ class _OrderPageState extends State<OrderPage> {
               controller: _scrollController,
               slivers: <Widget>[
                 makeHeaderCustom('Pedido#568'),
-                progressOrderExpanded(context),
-                makeListProducts(context, minTimes, maxTimes),
+                progressOrderExpanded(context, order),
+                makeListProducts(context, order, minTimes, maxTimes),
               ]),
         ),
       ),
@@ -160,36 +156,36 @@ class _OrderPageState extends State<OrderPage> {
 
 List<Store> storesByProduct = [];
 
-SliverToBoxAdapter progressOrderExpanded(context) {
+SliverToBoxAdapter progressOrderExpanded(context, Order order) {
   return SliverToBoxAdapter(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: ProgressBar()),
+            padding: EdgeInsets.symmetric(horizontal: 15),
+            child: ProgressBar(
+              order: order,
+            )),
       ],
     ),
   );
 }
 
-SliverList makeListProducts(context, minTimes, maxTimes) {
+SliverList makeListProducts(context, Order order, minTimes, maxTimes) {
   return SliverList(
       delegate: SliverChildListDelegate([
-    _buildProductsList(context, minTimes, maxTimes),
+    _buildProductsList(context, order, minTimes, maxTimes),
   ]));
 }
 
-Order order;
-
-int totalPriceElements() => order.products.fold<int>(
+int totalPriceElements(Order order) => order.products.fold<int>(
       0,
       (previousValue, element) =>
           previousValue + (element.quantity * element.product.price),
     );
 
-Widget _buildProductsList(context, minTimes, maxTimes) {
+Widget _buildProductsList(context, Order order, minTimes, maxTimes) {
   final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
   final size = MediaQuery.of(context).size;
@@ -203,7 +199,7 @@ Widget _buildProductsList(context, minTimes, maxTimes) {
 
   final totalFormat =
       NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
-          .format(totalPriceElements());
+          .format(totalPriceElements(order));
 
   final Store store = order.store;
   int totalQuantity = 0;
@@ -330,7 +326,7 @@ Widget _buildProductsList(context, minTimes, maxTimes) {
                           children: [
                             Center(
                               child: Container(
-                                width: size.width / 4.5,
+                                width: size.width / 2,
                                 margin: EdgeInsets.only(top: 5.0),
                                 child: Text(
                                   '${store.name.capitalize()}',
@@ -346,16 +342,19 @@ Widget _buildProductsList(context, minTimes, maxTimes) {
                               ),
                             ),
                             SizedBox(
-                              height: 10,
+                              height: 5,
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Container(
+                                  width: size.width / 2,
                                   margin: EdgeInsets.only(top: 0.0),
                                   child: Text(
                                     '${store.address}, ${store.number}, ${store.city}',
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
                                     style: TextStyle(
                                         color: Colors.grey,
                                         fontWeight: FontWeight.normal,
@@ -466,7 +465,7 @@ Widget _buildProductsList(context, minTimes, maxTimes) {
           SizedBox(height: 10),
           Container(
             padding: EdgeInsets.only(
-              left: 10.0,
+              left: 15.0,
             ),
             child: Stack(
               children: [
@@ -788,51 +787,6 @@ SliverToBoxAdapter orderDetailInfo(context) {
       ),
     ),
   );
-}
-
-_createOrder(context) async {
-  final List<StoresProduct> storesProducts = [];
-  final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
-  final orderService = Provider.of<OrderService>(context, listen: false);
-  final storeBloc = Provider.of<GroceryStoreBLoC>(context, listen: false);
-
-  final clientId = authService.storeAuth.user.uid;
-
-  final idsStores = storesByProduct.map((e) => e.user.uid).toList();
-
-  idsStores.forEach((storeId) {
-    final products = storeBloc.cart
-        .where((element) => element.product.user == storeId)
-        .toList();
-
-    List<Product> arrayProducts = [];
-    products.forEach((item) {
-      final product = Product(id: item.product.id, quantity: item.quantity);
-      arrayProducts.add(product);
-    });
-
-    final storeProducts =
-        StoresProduct(storeUid: storeId, products: arrayProducts);
-    storesProducts.add(storeProducts);
-  });
-
-  final OrderStoresProducts createOrderResp =
-      await orderService.createOrder(clientId, storesProducts);
-
-  if (createOrderResp != null) {
-    if (createOrderResp.ok) {
-      loading = false;
-      orderService.order = createOrderResp.order;
-
-      Navigator.pop(context);
-    } else {
-      showAlertError(context, 'Error', 'Error');
-    }
-  } else {
-    showAlertError(
-        context, 'Error del servidor', 'lo sentimos, Intentelo mas tarde');
-  }
-  //Navigator.pushReplacementNamed(context, '');
 }
 
 /* class _ProfileStoreCategoryItem extends StatelessWidget {

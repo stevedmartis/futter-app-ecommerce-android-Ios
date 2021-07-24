@@ -11,9 +11,11 @@ import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/responses/my_favorites_products_response.dart';
+import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 import 'package:australti_ecommerce_app/responses/stores_list_principal_response.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/services/catalogo.dart';
+import 'package:australti_ecommerce_app/services/order_service.dart';
 import 'package:australti_ecommerce_app/services/product.dart';
 import 'package:australti_ecommerce_app/services/stores_Services.dart'
     as storeServiceApi;
@@ -65,7 +67,7 @@ class _PrincipalPageState extends State<PrincipalPage>
     prefs.addressSearchSave;
     if (storeAuth.user.uid != '0') {
       storesByLocationlistServices(storeAuth.city, storeAuth.user.uid);
-
+      myOrders();
       myFavoritesProducts();
     } else if (prefs.addressSearchSave != '') {
       storesByLocationlistServices(
@@ -180,6 +182,20 @@ class _PrincipalPageState extends State<PrincipalPage>
     }
   }
 
+  void myOrders() async {
+    final orderService = Provider.of<OrderService>(context, listen: false);
+
+    final OrderStoresProducts resp =
+        await orderService.getMyOrders(storeAuth.user.uid);
+
+    if (resp.ok) {
+      resp.orders.forEach((order) {
+        print(order);
+        orderService.orders = order;
+      });
+    }
+  }
+
   bool _isDialogShowing = false;
 
   @override
@@ -210,34 +226,34 @@ class _PrincipalPageState extends State<PrincipalPage>
 
     if (state == AppLifecycleState.inactive) {}
   }
-/*   void _listenMessage(dynamic payload) {
-    final notifiModel = Provider.of<NotificationModel>(context, listen: false);
-    int numberMessages = notifiModel.number;
-    numberMessages++;
-    notifiModel.number = numberMessages;
-
-    if (numberMessages >= 2) {
-      final controller = notifiModel.bounceController;
-      controller.forward(from: 0.0);
-    }
-  } */
-
-  /*  void _listenNotification(dynamic payload) {
-    final currentPage =
-        Provider.of<MenuModel>(context, listen: false).currentPage;
-    if (currentPage != 4) {
-      final notifiModel =
-          Provider.of<NotificationModel>(context, listen: false);
-      int number = notifiModel.numberNotifiBell;
-      number++;
-      notifiModel.numberNotifiBell = number;
-
-      if (number >= 2) {
-        final controller = notifiModel.bounceControllerBell;
+  /*   void _listenMessage(dynamic payload) {
+      final notifiModel = Provider.of<NotificationModel>(context, listen: false);
+      int numberMessages = notifiModel.number;
+      numberMessages++;
+      notifiModel.number = numberMessages;
+  
+      if (numberMessages >= 2) {
+        final controller = notifiModel.bounceController;
         controller.forward(from: 0.0);
       }
-    }
-  } */
+    } */
+
+  /*  void _listenNotification(dynamic payload) {
+      final currentPage =
+          Provider.of<MenuModel>(context, listen: false).currentPage;
+      if (currentPage != 4) {
+        final notifiModel =
+            Provider.of<NotificationModel>(context, listen: false);
+        int number = notifiModel.numberNotifiBell;
+        number++;
+        notifiModel.numberNotifiBell = number;
+  
+        if (number >= 2) {
+          final controller = notifiModel.bounceControllerBell;
+          controller.forward(from: 0.0);
+        }
+      }
+    } */
 
   void showModalGpsLocation() async {
     _isDialogShowing = true;

@@ -2,7 +2,7 @@ import 'package:australti_ecommerce_app/global/enviroments.dart';
 import 'package:australti_ecommerce_app/responses/category_store_response.dart';
 import 'package:australti_ecommerce_app/responses/message_error_response.dart';
 import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
-import 'package:australti_ecommerce_app/responses/store_categories_response.dart';
+
 import 'package:australti_ecommerce_app/responses/stores_products_order.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 
@@ -12,52 +12,31 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 class OrderService with ChangeNotifier {
-  List<Order> _order;
-  List<Order> get order => this._order;
+  List<Order> _orders = [];
+  List<Order> get getOrders => this._orders;
+  set orders(Order order) {
+    this._orders.add(order);
 
-  set order(List<Order> orders) {
-    this._order = orders;
     notifyListeners();
   }
 
   final _storage = new FlutterSecureStorage();
 
-  Future getMyCategoriesProducts(String uid) async {
+  Future getMyOrders(String uid) async {
     // this.authenticated = true;
 
     final token = await this._storage.read(key: 'token');
-    final urlFinal =
-        ('${Environment.apiUrl}/api/catalogo/catalogos/products/user/$uid');
+    final urlFinal = ('${Environment.apiUrl}/api/order/orders/by/client/$uid');
 
     final resp = await http.get(Uri.parse(urlFinal),
         headers: {'Content-Type': 'application/json', 'x-token': token});
 
     if (resp.statusCode == 200) {
       // final roomResponse = roomsResponseFromJson(resp.body);
-      final catalogoResponse = storeCategoriesResponseFromJson(resp.body);
+      final ordersResponse = orderStoresProductsFromJson(resp.body);
       // this.rooms = roomResponse.rooms;
 
-      return catalogoResponse;
-    } else {
-      final respBody = errorMessageResponseFromJson(resp.body);
-
-      return respBody;
-    }
-  }
-
-  Future getAllCategoriesProducts(String uid, String authId) async {
-    final urlFinal =
-        ('${Environment.apiUrl}/api/catalogo/all/catalogos/products/user/$uid/$authId');
-
-    final resp = await http.get(Uri.parse(urlFinal),
-        headers: {'Content-Type': 'application/json'});
-
-    if (resp.statusCode == 200) {
-      // final roomResponse = roomsResponseFromJson(resp.body);
-      final catalogoResponse = storeCategoriesResponseFromJson(resp.body);
-      // this.rooms = roomResponse.rooms;
-
-      return catalogoResponse;
+      return ordersResponse;
     } else {
       final respBody = errorMessageResponseFromJson(resp.body);
 

@@ -319,7 +319,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
               onTap: () => {
                 HapticFeedback.mediumImpact(),
                 (bloc.cart.length > 0)
-                    ? Navigator.push(context, ordenDetailImageRoute())
+                    ? Navigator.push(context, orderDetailRoute())
                     : null
               },
               child: Padding(

@@ -1,4 +1,6 @@
+import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:australti_ecommerce_app/services/order_service.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +15,9 @@ class DataBackupCompletedPage extends AnimatedWidget {
 
   @override
   Widget build(BuildContext context) {
+    final orderService = Provider.of<OrderService>(context);
+    final List<Order> orders = orderService.getOrders;
+
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     return animation.value > 0
         ? Positioned.fill(
@@ -74,7 +79,10 @@ class DataBackupCompletedPage extends AnimatedWidget {
                                 ),
                               ),
                               onPressed: () {
-                                Navigator.push(context, orderProggressRoute());
+                                (orders.length != 1)
+                                    ? Navigator.push(context, ordersListRoute())
+                                    : Navigator.push(context,
+                                        orderProggressRoute(orders[0]));
                               },
                             ),
                             const SizedBox(height: 40),
