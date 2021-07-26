@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:animations/animations.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
@@ -6,11 +8,15 @@ import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/models/grocery_Store.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
+
+import 'package:australti_ecommerce_app/pages/order_progress.dart/progressBar.dart';
 import 'package:australti_ecommerce_app/pages/search_principal_page.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
+import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 import 'package:australti_ecommerce_app/responses/stores_list_principal_response.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:australti_ecommerce_app/services/order_service.dart';
 import 'package:australti_ecommerce_app/services/stores_Services.dart';
 import 'package:australti_ecommerce_app/store_principal/store_Service.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
@@ -19,10 +25,13 @@ import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
 import 'package:australti_ecommerce_app/widgets/cross_fade.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
 import 'package:australti_ecommerce_app/widgets/modal_bottom_sheet.dart';
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:provider/provider.dart';
@@ -48,6 +57,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
   bool isItems = false;
   bool loading = true;
+
   ValueNotifier<bool> notifierBottomBarVisible = ValueNotifier(true);
 
   double get maxHeight => 200 + MediaQuery.of(context).padding.top;
@@ -136,11 +146,28 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     HapticFeedback.heavyImpact();
     if (storeAuth.user.uid != '0') {
       storesByLocationlistServices(storeAuth.city, storeAuth.user.uid);
+      myOrders();
     } else if (prefs.addressSearchSave != '') {
       storesByLocationlistServices(
           prefs.addressSearchSave.secondaryText, storeAuth.user.uid);
     } else {
       storeslistServices();
+    }
+  }
+
+  void myOrders() async {
+    final orderService = Provider.of<OrderService>(context, listen: false);
+
+    final OrderStoresProducts resp =
+        await orderService.getMyOrders(storeAuth.user.uid);
+
+    orderService.ordersInitial = [];
+    if (resp.ok) {
+      resp.orders.forEach((order) {
+        orderService.ordersInitial.add(order);
+      });
+
+      orderService.orders = orderService.ordersInitial;
     }
   }
 
@@ -210,6 +237,8 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
     final groceryBloc = Provider.of<GroceryStoreBLoC>(context);
 
+    final orderService = Provider.of<OrderService>(context);
+
     isItems = groceryBloc.totalCartElements() > 0 ? true : false;
     storeAuth = authService.storeAuth;
 
@@ -244,7 +273,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                             HapticFeedback.mediumImpact();
                             if (storeAuth.user.uid == '0') {
                               authService.redirect = 'profile';
-                              Navigator.push(context, loginRoute(100));
+                              Navigator.push(context, loginRoute());
                             } else {
                               authService.redirect = 'home';
                               Navigator.push(context, profileAuthRoute(true));
@@ -380,6 +409,9 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                           }),
                     ),
                   ),
+
+                  if (orderService.ordersInitial.length > 0)
+                    makeListHorizontalCarouselOrdersProgress(context),
                   SliverAppBar(
                     automaticallyImplyLeading: false,
                     expandedHeight: 150.0,
@@ -409,6 +441,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
                   // makeHeaderPrincipal(context),
                   makeHeaderTitle(context, bloc.selected.name),
+
                   makeListRecomendations(loading),
                 ],
               ),
@@ -514,6 +547,144 @@ SliverList makeListRecomendations(bool loading) {
       )),
     ]),
   );
+}
+
+SliverList makeListHorizontalCarouselOrdersProgress(context) {
+  final orderService = Provider.of<OrderService>(context);
+
+  print(orderService.orders);
+  final List<Order> ordersProgress =
+      orderService.orders.where((i) => i.isActive).toList();
+
+  List<Order> orders = LinkedHashSet<Order>.from(ordersProgress).toList();
+  return SliverList(
+    delegate: SliverChildListDelegate([
+      FadeInRight(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10.0, bottom: 0),
+          child: SizedBox(
+            child: (orderService.loading)
+                ? buildLoadingWidget(context)
+                : CarouselSlider(
+                    items: List.generate(
+                      orders.length,
+                      (index) => OrderprogressStoreCard(
+                        order: orders[index],
+                      ),
+                    ),
+                    options: CarouselOptions(
+                        viewportFraction: 0.8,
+                        aspectRatio: 16 / 5.5,
+                        initialPage: 0,
+                        enableInfiniteScroll: false,
+                        reverse: false,
+                        autoPlay: true,
+                        autoPlayInterval: Duration(seconds: 5),
+                        autoPlayAnimationDuration: Duration(milliseconds: 800),
+                        scrollDirection: Axis.horizontal,
+                        onPageChanged: (index, reason) {}),
+                  ),
+          ),
+        ),
+      ),
+    ]),
+  );
+}
+
+class OrderprogressStoreCard extends StatelessWidget {
+  OrderprogressStoreCard({this.order});
+
+  final Order order;
+
+  @override
+  Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
+    final id = order.id;
+
+    final store = order.store;
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        Navigator.push(context, orderProggressRoute(order, false));
+      },
+      child: Card(
+        elevation: 6,
+        shadowColor: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        color: currentTheme.cardColor,
+        child: GestureDetector(
+          child: Padding(
+            padding: EdgeInsets.only(left: 15, bottom: 0),
+            child: SizedBox(
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    width: 50,
+                    height: 50,
+                    child: Hero(
+                      tag: 'order/$id',
+                      child: AspectRatio(
+                        aspectRatio: 1,
+                        child: ClipRRect(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(100.0)),
+                          child: (store.imageAvatar != "")
+                              ? Container(
+                                  child: cachedNetworkImage(
+                                    store.imageAvatar,
+                                  ),
+                                )
+                              : Image.asset(currentProfile.imageAvatar),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.only(top: 20),
+                          child: Text(
+                            'Pedido en curso',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(top: 0),
+                          child: Text(
+                            'Entrega estimada: 4 de Agosto',
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 12),
+                          ),
+                        ),
+                        Container(
+                            child: ProgressBar(
+                          key: ValueKey('order/$id'),
+                          order: order,
+                          principal: true,
+                        )),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class StoresListByService extends StatelessWidget {

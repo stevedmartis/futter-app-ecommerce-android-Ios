@@ -32,7 +32,8 @@ import '../../global/extension.dart';
 
 class OrderPage extends StatefulWidget {
   final Order order;
-  OrderPage({@required this.order});
+  final goToPrincipal;
+  OrderPage({@required this.order, this.goToPrincipal = false});
   @override
   _OrderPageState createState() => _OrderPageState();
 }
@@ -121,7 +122,7 @@ class _OrderPageState extends State<OrderPage> {
                   parent: AlwaysScrollableScrollPhysics()),
               controller: _scrollController,
               slivers: <Widget>[
-                makeHeaderCustom('Pedido#568'),
+                makeHeaderCustom('Pedido#568', widget.goToPrincipal),
                 progressOrderExpanded(context, order),
                 makeListProducts(context, order, minTimes, maxTimes),
               ]),
@@ -130,7 +131,7 @@ class _OrderPageState extends State<OrderPage> {
     );
   }
 
-  SliverPersistentHeader makeHeaderCustom(String title) {
+  SliverPersistentHeader makeHeaderCustom(String title, bool goToPrinipal) {
     //final catalogo = new ProfileStoreCategory();
 
     return SliverPersistentHeader(
@@ -145,6 +146,7 @@ class _OrderPageState extends State<OrderPage> {
               showTitle: _showTitle,
               title: title,
               leading: true,
+              goToPrinipal: goToPrinipal,
               action: Container(),
               onPress: () => {
 /*                         Navigator.of(context).push(createRouteAddEditProduct(
@@ -295,25 +297,28 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes) {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Container(
-                          width: 70,
-                          height: 70,
-                          child: AspectRatio(
-                            aspectRatio: 1,
-                            child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                              child: (store.imageAvatar != "")
-                                  ? Container(
-                                      child: (!store.notLocation)
-                                          ? cachedProductNetworkImage(
-                                              store.imageAvatar,
-                                            )
-                                          : cachedNetworkImage(
-                                              store.imageAvatar,
-                                            ),
-                                    )
-                                  : Image.asset(currentProfile.imageAvatar),
+                        Hero(
+                          tag: 'order/${order.id}',
+                          child: Container(
+                            width: 70,
+                            height: 70,
+                            child: AspectRatio(
+                              aspectRatio: 1,
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                child: (store.imageAvatar != "")
+                                    ? Container(
+                                        child: (!store.notLocation)
+                                            ? cachedProductNetworkImage(
+                                                store.imageAvatar,
+                                              )
+                                            : cachedNetworkImage(
+                                                store.imageAvatar,
+                                              ),
+                                      )
+                                    : Image.asset(currentProfile.imageAvatar),
+                              ),
                             ),
                           ),
                         ),
@@ -409,55 +414,57 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes) {
                     ),
                   ],
                 ),
-                Container(
-                  alignment: Alignment.centerRight,
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: currentTheme.scaffoldBackgroundColor,
-                  ),
-                  child: Row(
-                    children: [
-                      Material(
-                        color: currentTheme.scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          splashColor: Colors.grey,
+                if (!order.isSend)
+                  Container(
+                    alignment: Alignment.centerRight,
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: currentTheme.scaffoldBackgroundColor,
+                    ),
+                    child: Row(
+                      children: [
+                        Material(
+                          color: currentTheme.scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(20),
-                          radius: 40,
-                          onTap: () {
-                            HapticFeedback.lightImpact();
+                          child: InkWell(
+                            splashColor: Colors.grey,
+                            borderRadius: BorderRadius.circular(20),
+                            radius: 40,
+                            onTap: () {
+                              HapticFeedback.lightImpact();
 
-                            final place = prefs.addressSearchSave;
+                              final place = prefs.addressSearchSave;
 
-                            var placeSave = new PlaceSearch(
-                                description: authBloc.storeAuth.user.uid,
-                                placeId: authBloc.storeAuth.user.uid,
-                                structuredFormatting: new StructuredFormatting(
-                                    mainText: place.mainText,
-                                    secondaryText: place.secondaryText,
-                                    number: place.number));
-                            Navigator.push(
-                                context, confirmLocationRoute(placeSave));
-                          },
-                          highlightColor: Colors.grey,
-                          child: Container(
-                            margin: EdgeInsets.only(left: 5.0),
-                            alignment: Alignment.center,
-                            width: 34,
-                            height: 34,
-                            child: Icon(
-                              Icons.edit_outlined,
-                              color: currentTheme.primaryColor,
-                              size: 25,
+                              var placeSave = new PlaceSearch(
+                                  description: authBloc.storeAuth.user.uid,
+                                  placeId: authBloc.storeAuth.user.uid,
+                                  structuredFormatting:
+                                      new StructuredFormatting(
+                                          mainText: place.mainText,
+                                          secondaryText: place.secondaryText,
+                                          number: place.number));
+                              Navigator.push(
+                                  context, confirmLocationRoute(placeSave));
+                            },
+                            highlightColor: Colors.grey,
+                            child: Container(
+                              margin: EdgeInsets.only(left: 5.0),
+                              alignment: Alignment.center,
+                              width: 34,
+                              height: 34,
+                              child: Icon(
+                                Icons.edit_outlined,
+                                color: currentTheme.primaryColor,
+                                size: 25,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
               ],
             ),
           ),

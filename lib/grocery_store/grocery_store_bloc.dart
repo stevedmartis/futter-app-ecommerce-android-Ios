@@ -51,6 +51,14 @@ class GroceryStoreBLoC with ChangeNotifier {
     notifyListeners();
   }
 
+  void emptyCart() {
+    cart = [];
+    totalPriceElements();
+    isReload = false;
+    prefs.setCart = cart;
+    notifyListeners();
+  }
+
   double getTotalCartElements() {
     return cart.fold<double>(
       0.0,

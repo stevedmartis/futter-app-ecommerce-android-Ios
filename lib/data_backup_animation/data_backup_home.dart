@@ -1,3 +1,4 @@
+import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,9 @@ const mainDataBackupColor = Color(0xff32D73F);
 const secondaryDataBackupColor = Color(0xff3CFF50);
 
 class DataBackupHome extends StatefulWidget {
+  final List<Order> orders;
+
+  DataBackupHome({this.orders});
   @override
   _DataBackupHomeState createState() => _DataBackupHomeState();
 }
@@ -92,6 +96,7 @@ class _DataBackupHomeState extends State<DataBackupHome>
           ),
           DataBackupCompletedPage(
             endingAnimation: _endingAnimation,
+            ordersCreate: widget.orders,
           ),
         ],
       ),

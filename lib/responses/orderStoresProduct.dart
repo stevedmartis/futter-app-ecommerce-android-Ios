@@ -72,7 +72,7 @@ class Order {
         isFinalice: json["isFinalice"],
         isCancel: json["isCancel"],
         isPreparation: json["isPreparation"],
-        isSend: json["isPreparation"],
+        isSend: json["isSend"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
       );

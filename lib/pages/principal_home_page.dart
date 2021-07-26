@@ -67,6 +67,7 @@ class _PrincipalPageState extends State<PrincipalPage>
     prefs.addressSearchSave;
     if (storeAuth.user.uid != '0') {
       storesByLocationlistServices(storeAuth.city, storeAuth.user.uid);
+
       myOrders();
       myFavoritesProducts();
     } else if (prefs.addressSearchSave != '') {
@@ -185,14 +186,17 @@ class _PrincipalPageState extends State<PrincipalPage>
   void myOrders() async {
     final orderService = Provider.of<OrderService>(context, listen: false);
 
-    final OrderStoresProducts resp =
-        await orderService.getMyOrders(storeAuth.user.uid);
+    if (orderService.loading) {
+      final OrderStoresProducts resp =
+          await orderService.getMyOrders(storeAuth.user.uid);
 
-    if (resp.ok) {
-      resp.orders.forEach((order) {
-        print(order);
-        orderService.orders = order;
-      });
+      if (resp.ok) {
+        resp.orders.forEach((order) {
+          orderService.ordersInitial.add(order);
+        });
+
+        orderService.orders = orderService.ordersInitial;
+      }
     }
   }
 
@@ -468,7 +472,7 @@ class __PositionedMenuState extends State<_PositionedMenu> {
                               HapticFeedback.lightImpact();
                               authService.redirect = 'favorite';
                               if (authService.storeAuth.user.uid == '0') {
-                                Navigator.push(context, loginRoute(100));
+                                Navigator.push(context, loginRoute());
                               } else if (bloc.isVisible) {
                                 if (authService.storeAuth.user.first)
                                   Navigator.push(context, principalHomeRoute());
@@ -482,7 +486,7 @@ class __PositionedMenuState extends State<_PositionedMenu> {
                               HapticFeedback.lightImpact();
                               authService.redirect = 'vender';
                               if (authService.storeAuth.user.uid == '0') {
-                                Navigator.push(context, loginRoute(100));
+                                Navigator.push(context, loginRoute());
                               } else if (bloc.isVisible) {
                                 if (authService.storeAuth.user.first)
                                   Navigator.push(context, principalHomeRoute());

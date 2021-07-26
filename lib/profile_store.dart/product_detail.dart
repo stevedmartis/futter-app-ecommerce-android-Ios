@@ -167,7 +167,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                                   onTap: () {
                                     if (authService.storeAuth.user.uid == '0') {
                                       authService.redirect = 'favoriteBtn';
-                                      Navigator.push(context, loginRoute(100));
+                                      Navigator.push(context, loginRoute());
                                     } else
                                       HapticFeedback.lightImpact();
                                     if (animatedController.status ==

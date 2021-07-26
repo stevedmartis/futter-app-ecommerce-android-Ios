@@ -178,7 +178,7 @@ class _StoresListByServiceState extends State<StoresListByService> {
   Widget build(BuildContext context) {
     final orderService = Provider.of<OrderService>(context);
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-    orders = orderService.getOrders;
+    orders = orderService.orders;
 
     final List<Order> ordersProgress = orders.where((i) => i.isActive).toList();
 
@@ -190,10 +190,32 @@ class _StoresListByServiceState extends State<StoresListByService> {
         children: [
           Container(
             child: Text(
+              'Mis pedidos',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                  color: Colors.white),
+            ),
+          ),
+          SizedBox(height: 5),
+          Container(
+            child: Text(
+              'Encuentra aquí tus pedidos actuales y pasados.',
+              style: TextStyle(
+                  fontWeight: FontWeight.normal,
+                  fontSize: 15,
+                  color: Colors.grey),
+            ),
+          ),
+          SizedBox(height: 20),
+          Divider(),
+          SizedBox(height: 20),
+          Container(
+            child: Text(
               'Pedidos en curso',
               style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 30,
+                  fontSize: 25,
                   color: currentTheme.accentColor),
             ),
           ),
@@ -209,17 +231,13 @@ class _StoresListByServiceState extends State<StoresListByService> {
                       itemBuilder: (BuildContext ctxt, int index) {
                         final order = orders[index];
 
-                        return Stack(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: FadeIn(
-                                child: OrderStoreCard(
-                                  order: order,
-                                ),
-                              ),
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: FadeIn(
+                            child: OrderStoreCard(
+                              order: order,
                             ),
-                          ],
+                          ),
                         );
                       })
                   : Container(
@@ -252,7 +270,7 @@ class OrderStoreCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
-        Navigator.push(context, orderProggressRoute(order));
+        Navigator.push(context, orderProggressRoute(order, false));
       },
       child: Card(
         elevation: 6,
@@ -262,10 +280,6 @@ class OrderStoreCard extends StatelessWidget {
         ),
         color: currentTheme.cardColor,
         child: GestureDetector(
-          onTap: () {
-            HapticFeedback.lightImpact();
-            Navigator.push(context, profileCartRoute(store));
-          },
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: SizedBox(
@@ -273,7 +287,7 @@ class OrderStoreCard extends StatelessWidget {
               child: Row(
                 children: <Widget>[
                   Hero(
-                    tag: 'user_auth_avatar_list_$id',
+                    tag: 'order/$id',
                     child: AspectRatio(
                       aspectRatio: 1,
                       child: ClipRRect(
@@ -321,7 +335,8 @@ class OrderStoreCard extends StatelessWidget {
                   IconButton(
                       onPressed: () {
                         HapticFeedback.lightImpact();
-                        Navigator.push(context, orderProggressRoute(order));
+                        Navigator.push(
+                            context, orderProggressRoute(order, false));
                       },
                       icon: Icon(
                         Icons.chevron_right,

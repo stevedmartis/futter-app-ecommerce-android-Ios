@@ -1,6 +1,7 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/models/user.dart';
+import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/pages/search_home_page.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
@@ -19,6 +20,7 @@ class CustomAppBarHeaderPages extends StatefulWidget {
   final bool isAdd;
   final bool leading;
   final bool showTitle;
+  final bool goToPrinipal;
 
   final Widget action;
 
@@ -32,6 +34,7 @@ class CustomAppBarHeaderPages extends StatefulWidget {
       this.leading = false,
       this.isAdd = false,
       this.onPress,
+      this.goToPrinipal = false,
       this.showTitle});
 
   @override
@@ -80,17 +83,11 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                     height: 40,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: (widget.showTitle)
-                            ? Colors.black
-                            : currentTheme
-                                .currentTheme.scaffoldBackgroundColor),
+                        color: currentTheme.currentTheme.cardColor),
                     child: Row(
                       children: [
                         Material(
-                          color: (widget.showTitle)
-                              ? Colors.black
-                              : currentTheme
-                                  .currentTheme.scaffoldBackgroundColor,
+                          color: currentTheme.currentTheme.cardColor,
                           borderRadius: BorderRadius.circular(20),
                           child: InkWell(
                             splashColor: Colors.grey,
@@ -98,7 +95,15 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                             radius: 30,
                             onTap: () {
                               HapticFeedback.lightImpact();
-                              Navigator.pop(context);
+                              if (widget.goToPrinipal) {
+                                Provider.of<MenuModel>(context, listen: false)
+                                    .currentPage = 0;
+
+                                Navigator.pushReplacement(
+                                    context, principalHomeRoute());
+                              } else {
+                                Navigator.pop(context);
+                              }
                             },
                             highlightColor: Colors.grey,
                             child: Container(
@@ -121,7 +126,7 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                       {
                         authService.redirect = 'profile';
                         if (storeAuth.user.uid == '0') {
-                          Navigator.push(context, loginRoute(100));
+                          Navigator.push(context, loginRoute());
                         } else {
                           authService.redirect = 'header';
                           Navigator.push(context, profileAuthRoute(true));

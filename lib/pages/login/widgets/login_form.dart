@@ -1,6 +1,7 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:australti_ecommerce_app/services/order_service.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
@@ -160,9 +161,11 @@ class LoginForm extends StatelessWidget {
     } else if (authService.redirect == 'follow' ||
         authService.redirect == 'favoriteBtn') {
       Navigator.pop(context);
+    } else if (authService.redirect == 'create_order') {
+      authService.redirect = 'is_auth';
     }
-
-    if (!authService.storeAuth.user.first) {
+    if (authService.redirect != 'is_auth' &&
+        !authService.storeAuth.user.first) {
       Provider.of<MenuModel>(context, listen: false).currentPage = 0;
       Navigator.push(context, principalHomeRoute());
     }

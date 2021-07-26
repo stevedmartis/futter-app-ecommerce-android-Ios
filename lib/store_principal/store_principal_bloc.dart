@@ -30,8 +30,8 @@ class StoreBLoC with ChangeNotifier {
   List<StoreServices> servicesStores = [
     StoreServices(
         id: 0,
-        backImage: 'assets/store3d.jpg',
-        frontImage: 'assets/store3d.jpg',
+        backImage: 'assets/principal_stores/market-beta.jpg',
+        frontImage: 'assets/principal_stores/3.png',
         name: 'Seguidos',
         stores: 0),
     StoreServices(
@@ -42,14 +42,14 @@ class StoreBLoC with ChangeNotifier {
         stores: 0),
     StoreServices(
         id: 2,
-        backImage: 'assets/rest6.jpg',
-        frontImage: 'assets/rest6.jpg',
+        backImage: 'assets/principal_stores/market-beta.jpg',
+        frontImage: 'assets/principal_stores/3.png',
         name: 'Restaurantes',
         stores: 0),
     StoreServices(
         id: 3,
-        backImage: 'assets/licores1.jpeg',
-        frontImage: 'assets/licores1.jpeg',
+        backImage: 'assets/principal_stores/market-beta.jpg',
+        frontImage: 'assets/principal_stores/3.png',
         name: 'Licores',
         stores: 0)
   ];

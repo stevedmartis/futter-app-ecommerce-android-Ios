@@ -103,9 +103,7 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
       images.add("Add Image");
     });
 
-    //  plantBloc.imageUpdate.add(true);
     nameCtrl.addListener(() {
-      // print('${nameCtrl.text}');
       setState(() {
         if (widget.product.name != nameCtrl.text)
           this.isNameChange = true;

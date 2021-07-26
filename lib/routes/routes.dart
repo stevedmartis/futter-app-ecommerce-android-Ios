@@ -59,11 +59,14 @@ class _Route {
   _Route(this.icon, this.title, this.page);
 }
 
-Route loginRoute(double screenHeight) {
+Route loginRoute() {
   return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => Login(
-      screenHeight: screenHeight,
-    ),
+    pageBuilder: (context, animation, secondaryAnimation) {
+      final screenHeight = MediaQuery.of(context).size.height;
+      return Login(
+        screenHeight: screenHeight,
+      );
+    },
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = Offset(0.0, 0.0);
       var end = Offset.zero;
@@ -117,10 +120,10 @@ Route profileAuthRoute(isAuthUser) {
   );
 }
 
-Route dataRoute() {
+Route dataRoute(List<Order> orders) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) {
-      return DataBackupHome();
+      return DataBackupHome(orders: orders);
     },
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = Offset(0.0, 0.5);
@@ -219,7 +222,7 @@ Route ordersListRoute() {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) => OrderListPage(),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      var begin = Offset(0.0, 1.0);
+      var begin = Offset(1.0, 0.0);
       var end = Offset.zero;
       var curve = Curves.ease;
 
@@ -233,13 +236,14 @@ Route ordersListRoute() {
   );
 }
 
-Route orderProggressRoute(Order order) {
+Route orderProggressRoute(Order order, bool goToPrincipal) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) => OrderPage(
       order: order,
+      goToPrincipal: goToPrincipal,
     ),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      var begin = Offset(0.0, 1.0);
+      var begin = Offset(1.0, 0.0);
       var end = Offset.zero;
       var curve = Curves.ease;
 

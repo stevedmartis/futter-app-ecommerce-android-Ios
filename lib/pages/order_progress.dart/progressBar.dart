@@ -1,6 +1,6 @@
-import 'package:australti_ecommerce_app/pages/order_progress.dart/avatarAndText.dart';
 import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/cross_fade.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +9,8 @@ import 'util.dart';
 import 'package:expandable/expandable.dart';
 
 class ProgressBar extends StatefulWidget {
-  ProgressBar({this.order});
+  ProgressBar({Key key, this.order, this.principal = false});
+  final bool principal;
 
   final Order order;
   _ProgressBarState createState() => _ProgressBarState();
@@ -21,6 +22,7 @@ class _ProgressBarState extends State<ProgressBar>
 
   @override
   void initState() {
+    print(widget.order);
     super.initState();
     animationController = AnimationController(
       duration: Duration(milliseconds: 3000),
@@ -38,16 +40,23 @@ class _ProgressBarState extends State<ProgressBar>
   @override
   Widget build(BuildContext context) {
     return AnimatedBar(
-      controller: animationController,
-      order: widget.order,
-    );
+        key: widget.key,
+        controller: animationController,
+        order: widget.order,
+        principal: widget.principal);
   }
 }
 
 class AnimatedBar extends StatefulWidget {
+  final bool principal;
   final Order order;
-  AnimatedBar({Key key, this.order, this.controller})
-      : dotOneColor = ColorTween(
+  AnimatedBar({Key key, this.order, this.controller, this.principal})
+      : isActive = order.isActive,
+        isPreparation = order.isPreparation,
+        isSend = order.isSend,
+        isCancel = order.isCancel,
+        isFinalice = order.isFinalice,
+        dotOneColor = ColorTween(
           begin: FoodColors.Grey,
           end: FoodColors.Yellow,
         ).animate(
@@ -122,7 +131,7 @@ class AnimatedBar extends StatefulWidget {
         ),
         progressBarTwo = Tween(
                 begin: 0.0,
-                end: (order.isPreparation & (!order.isSend))
+                end: (order.isPreparation && !order.isSend)
                     ? 0.5
                     : (order.isSend)
                         ? 1.0
@@ -191,7 +200,7 @@ class AnimatedBar extends StatefulWidget {
         ),
         progressBarFour = Tween(
                 begin: 0.0,
-                end: (order.isFinalice && (!order.isSend))
+                end: (!order.isFinalice && order.isSend)
                     ? 0.5
                     : (order.isFinalice)
                         ? 1.0
@@ -221,6 +230,12 @@ class AnimatedBar extends StatefulWidget {
   final Animation<TextStyle> textThreeStyle;
   final Animation<double> progressBarThree;
 
+  final bool isActive;
+  final bool isPreparation;
+  final bool isSend;
+  final bool isCancel;
+  final bool isFinalice;
+
   final Animation<double> progressBarFour;
 
   @override
@@ -229,11 +244,12 @@ class AnimatedBar extends StatefulWidget {
 
 class _AnimatedBarState extends State<AnimatedBar>
     with TickerProviderStateMixin {
-  final dotSize = 30.0;
+  int dotSize = 0;
 
   AnimationController _animationController;
 
   void initState() {
+    dotSize = (widget.principal) ? 15 : 30;
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 450));
     super.initState();
@@ -249,11 +265,33 @@ class _AnimatedBarState extends State<AnimatedBar>
   Widget build(BuildContext context) {
     progressBar() {
       final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
+      String textOne = "Pedido enviado y recibido ...";
+
+      String textTwo = "Estan preparando tu pedido ...";
+
+      String textThree = "Tu pedido va en camino ...";
+
+      String textFour = "El pedido llego a tu dirección!";
+
+      String actualText = "";
+      if (widget.isActive && !widget.isPreparation) {
+        actualText = textOne;
+      } else if (widget.isPreparation && !widget.order.isSend) {
+        actualText = textTwo;
+      } else if (widget.isSend && !widget.isFinalice) {
+        actualText = textThree;
+      } else if (widget.order.isFinalice) {
+        actualText = textFour;
+      }
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(top: 20),
+            padding: EdgeInsets.only(
+              top: (widget.principal) ? 5.0 : 20,
+              right: (widget.principal) ? 20 : 0,
+            ),
             width: MediaQuery.of(context).size.width / 1.3,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -265,7 +303,9 @@ class _AnimatedBarState extends State<AnimatedBar>
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(100),
                       border: Border.all(
-                          width: 0.5 + widget.progressBarOne.value * 3,
+                          width: (widget.principal)
+                              ? 0.5 + widget.progressBarOne.value * 1
+                              : 0.5 + widget.progressBarOne.value * 3,
                           color: (widget.progressBarOne.value >= 0.5)
                               ? currentTheme.primaryColor
                               : Colors.grey)),
@@ -275,14 +315,16 @@ class _AnimatedBarState extends State<AnimatedBar>
                     child: (widget.progressBarOne.value != 1.0)
                         ? FaIcon(
                             FontAwesomeIcons.archive,
-                            size: 13,
+                            size: (widget.principal) ? 7 : 13,
                             color: (widget.progressBarOne.value >= 0.5)
                                 ? currentTheme.primaryColor
                                 : Colors.grey,
                           )
                         : Icon(
                             Icons.check_circle,
-                            size: 20 + widget.progressBarOne.value * 6,
+                            size: (widget.principal)
+                                ? 15
+                                : 20 + widget.progressBarOne.value * 6,
                             color: currentTheme.primaryColor,
                           ),
                   ),
@@ -307,7 +349,9 @@ class _AnimatedBarState extends State<AnimatedBar>
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(100),
                       border: Border.all(
-                          width: 0.5 + widget.progressBarTwo.value * 3,
+                          width: (widget.principal)
+                              ? 0.5 + widget.progressBarTwo.value * 1
+                              : 0.5 + widget.progressBarTwo.value * 3,
                           color: (widget.progressBarTwo.value >= 0.5)
                               ? currentTheme.primaryColor
                               : Colors.grey)),
@@ -317,14 +361,16 @@ class _AnimatedBarState extends State<AnimatedBar>
                     child: (widget.progressBarTwo.value != 1.0)
                         ? FaIcon(
                             FontAwesomeIcons.boxOpen,
-                            size: 13,
+                            size: (widget.principal) ? 7 : 13,
                             color: (widget.progressBarTwo.value >= 0.5)
                                 ? currentTheme.primaryColor
                                 : Colors.grey,
                           )
                         : Icon(
                             Icons.check_circle,
-                            size: 20 + widget.progressBarTwo.value * 6,
+                            size: (widget.principal)
+                                ? 15
+                                : 20 + widget.progressBarTwo.value * 6,
                             color: currentTheme.primaryColor,
                           ),
                   ),
@@ -349,7 +395,9 @@ class _AnimatedBarState extends State<AnimatedBar>
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(100),
                       border: Border.all(
-                          width: 0.5 + widget.progressBarThree.value * 3,
+                          width: (widget.principal)
+                              ? 0.5 + widget.progressBarThree.value * 1
+                              : 0.5 + widget.progressBarThree.value * 3,
                           color: (widget.progressBarThree.value >= 0.5)
                               ? currentTheme.primaryColor
                               : Colors.grey)),
@@ -359,14 +407,16 @@ class _AnimatedBarState extends State<AnimatedBar>
                     child: (widget.progressBarThree.value != 1.0)
                         ? FaIcon(
                             FontAwesomeIcons.truckLoading,
-                            size: 13,
+                            size: (widget.principal) ? 7 : 13,
                             color: (widget.progressBarThree.value >= 0.5)
                                 ? currentTheme.primaryColor
                                 : Colors.grey,
                           )
                         : Icon(
                             Icons.check_circle,
-                            size: 20 + widget.progressBarThree.value * 6,
+                            size: (widget.principal)
+                                ? 15
+                                : 20 + widget.progressBarThree.value * 6,
                             color: currentTheme.primaryColor,
                           ),
                   ),
@@ -399,8 +449,10 @@ class _AnimatedBarState extends State<AnimatedBar>
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(100),
                       border: Border.all(
-                          width: 0.5 + widget.progressBarFour.value * 3,
-                          color: (widget.progressBarFour.value >= 1.0)
+                          width: (widget.principal)
+                              ? 0.5 + widget.progressBarFour.value * 1
+                              : 0.5 + widget.progressBarFour.value * 3,
+                          color: (widget.progressBarFour.value == 1.0)
                               ? currentTheme.primaryColor
                               : Colors.grey)),
                   child: AnimatedContainer(
@@ -409,14 +461,16 @@ class _AnimatedBarState extends State<AnimatedBar>
                     child: (widget.progressBarFour.value != 1.0)
                         ? FaIcon(
                             FontAwesomeIcons.home,
-                            size: 13,
-                            color: (widget.progressBarFour.value >= 1.0)
+                            size: (widget.principal) ? 7 : 13,
+                            color: (widget.progressBarFour.value == 1.0)
                                 ? currentTheme.primaryColor
                                 : Colors.grey,
                           )
                         : Icon(
                             Icons.check_circle,
-                            size: 20 + widget.progressBarFour.value * 6,
+                            size: (widget.principal)
+                                ? 15
+                                : 20 + widget.progressBarFour.value * 6,
                             color: currentTheme.primaryColor,
                           ),
                   ),
@@ -424,37 +478,38 @@ class _AnimatedBarState extends State<AnimatedBar>
               ],
             ),
           ),
-          AvatarAndText(
-            animationController: widget.controller,
-            progressBarOne: widget.progressBarOne,
-            progressBarTwo: widget.progressBarTwo,
-            progressBarThree: widget.progressBarThree,
+          Container(
+            alignment:
+                (widget.principal) ? Alignment.centerLeft : Alignment.center,
+            padding: EdgeInsets.only(
+                right: (widget.principal) ? 0 : 20,
+                top: (widget.principal) ? 5 : 0,
+                left: (widget.principal) ? 0 : 20),
+            height: (widget.principal) ? 30 : 50,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                /* Container(
+            child: Image.asset(image, width: 125),
+          ), */
+                SizedBox(height: (widget.principal) ? 0 : 15),
+                CrossFade<String>(
+                  initialData: actualText,
+                  data: actualText,
+                  builder: (value) => Container(
+                    child: Text(
+                      value,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: (widget.principal) ? 12 : 18,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          /* Container(
-              margin: EdgeInsets.only(top: 5),
-              width: MediaQuery.of(context).size.width / 1.2,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    'Recibida',
-                    style: widget.textOneStyle.value,
-                  ),
-                  Text(
-                    'Preparando',
-                    style: widget.textTwoStyle.value,
-                  ),
-                  Text(
-                    'Enviado',
-                    style: widget.textThreeStyle.value,
-                  ),
-                  Text(
-                    'Lista',
-                    style: widget.textThreeStyle.value,
-                  ),
-                ],
-              ),
-            ) */
         ],
       );
     }
@@ -473,7 +528,7 @@ class _AnimatedBarState extends State<AnimatedBar>
             builder: (BuildContext context, Widget child) => ExpandableNotifier(
                     child: ScrollOnExpand(
                   child: Card(
-                    elevation: 6,
+                    elevation: (widget.principal) ? 0 : 6,
                     shadowColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -486,39 +541,43 @@ class _AnimatedBarState extends State<AnimatedBar>
                           collapsed: progressBar(),
                           expanded: buildCollapsed2(),
                         ),
-                        Divider(
-                          height: 1,
-                        ),
-                        Builder(
-                          builder: (context) {
-                            var controller = ExpandableController.of(context,
-                                required: true);
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  (!controller.expanded)
-                                      ? 'Ver más'
-                                      : 'Ver menos',
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                                IconButton(
-                                    onPressed: () {
-                                      controller.toggle();
-                                    },
-                                    icon: (!controller.expanded)
-                                        ? Icon(
-                                            Icons.expand_more,
-                                            color: Colors.white,
-                                          )
-                                        : Icon(
-                                            Icons.expand_less,
-                                            color: Colors.white,
-                                          ))
-                              ],
-                            );
-                          },
-                        ),
+                        if (!widget.principal)
+                          Divider(
+                            height: 1,
+                          ),
+                        (widget.principal)
+                            ? Container()
+                            : Builder(
+                                builder: (context) {
+                                  var controller = ExpandableController.of(
+                                      context,
+                                      required: true);
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        (!controller.expanded)
+                                            ? 'Ver más'
+                                            : 'Ver menos',
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                      IconButton(
+                                          onPressed: () {
+                                            controller.toggle();
+                                          },
+                                          icon: (!controller.expanded)
+                                              ? Icon(
+                                                  Icons.expand_more,
+                                                  color: Colors.white,
+                                                )
+                                              : Icon(
+                                                  Icons.expand_less,
+                                                  color: Colors.white,
+                                                ))
+                                    ],
+                                  );
+                                },
+                              ),
                       ],
                     ),
                   ),

@@ -69,9 +69,7 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
 
     isSwitchedVisibility = widget.category.visibility;
 
-    //  plantBloc.imageUpdate.add(true);
     nameCtrl.addListener(() {
-      // print('${nameCtrl.text}');
       setState(() {
         if (widget.category.name != nameCtrl.text)
           this.isNameChange = true;
@@ -135,9 +133,7 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
             color: currentTheme.currentTheme.accentColor,
           ),
           iconSize: 30,
-          onPressed: () =>
-              //  Navigator.pushReplacement(context, createRouteProfile()),
-              Navigator.pop(context),
+          onPressed: () => Navigator.pop(context),
           color: Colors.white,
         ),
         centerTitle: true,

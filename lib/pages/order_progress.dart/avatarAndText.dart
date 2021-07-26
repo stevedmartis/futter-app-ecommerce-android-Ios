@@ -1,27 +1,36 @@
+import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 import 'package:australti_ecommerce_app/widgets/cross_fade.dart';
 import 'package:flutter/material.dart';
 
 class AvatarAndText extends StatefulWidget {
   AvatarAndText(
-      {this.animationController,
+      {Key key,
+      this.animationController,
       this.progressBarOne,
       this.progressBarTwo,
-      this.progressBarThree});
+      this.progressBarThree,
+      this.principal,
+      this.order})
+      : super(key: key);
 
   final AnimationController animationController;
   final Animation<double> progressBarOne;
   final Animation<double> progressBarTwo;
   final Animation<double> progressBarThree;
+
+  final Order order;
+
+  final bool principal;
   _AvatarAndTextState createState() => _AvatarAndTextState();
 }
 
 class _AvatarAndTextState extends State<AvatarAndText>
     with TickerProviderStateMixin {
-  final textOne = "Pedido enviado y recibido.";
+  final textOne = "Pedido enviado y recibido ...";
   final imageTwo = "assets/images/Pan.png";
-  final textTwo = "Estan preparando tu pedido.";
+  final textTwo = "Estan preparando tu pedido ...";
   final imageThree = "assets/images/FoodPackage.png";
-  final textThree = "Tu pedido va en camino";
+  final textThree = "Tu pedido va en camino ...";
 
   final imageFour = "assets/images/FoodPackage.png";
   final textFour = "El pedido llego a tu dirección!";
@@ -32,30 +41,23 @@ class _AvatarAndTextState extends State<AvatarAndText>
   void initState() {
     super.initState();
 
-    widget.animationController.addListener(() {
-      if (widget.animationController.value > 0.100 &&
-          widget.progressBarTwo.value <= 0.0) {
-        setState(() {
-          actualText = textOne;
-        });
-      } else if (widget.animationController.value > 0.450 &&
-          widget.progressBarTwo.value <= 1.0 &&
-          widget.progressBarThree.value <= 0.0) {
-        setState(() {
-          actualImage = imageTwo;
-          actualText = textTwo;
-        });
-      } else if (widget.animationController.value > 0.900 &&
-          widget.animationController.value <= 1.000 &&
-          widget.progressBarThree.value < 1.0) {
-        setState(() {
-          actualImage = imageThree;
-          actualText = textThree;
-        });
-      } else if (widget.progressBarThree.value >= 1.0) {
-        actualText = textFour;
-      }
-    });
+    if (widget.order.isActive && !widget.order.isPreparation) {
+      setState(() {
+        actualText = textOne;
+      });
+    } else if (widget.order.isPreparation && !widget.order.isSend) {
+      setState(() {
+        actualImage = imageTwo;
+        actualText = textTwo;
+      });
+    } else if (widget.order.isSend && !widget.order.isFinalice) {
+      setState(() {
+        actualImage = imageThree;
+        actualText = textThree;
+      });
+    } else if (widget.order.isFinalice) {
+      actualText = textFour;
+    }
   }
 
   @override
@@ -69,24 +71,30 @@ class _AvatarAndTextState extends State<AvatarAndText>
     return AvatarAnimation(
         controller: widget.animationController,
         image: actualImage,
-        text: actualText);
+        text: actualText,
+        principal: widget.principal);
   }
 }
 
 class AvatarAnimation extends StatelessWidget {
-  AvatarAnimation({Key key, this.controller, this.image, this.text})
+  AvatarAnimation(
+      {Key key, this.controller, this.image, this.text, this.principal})
       : super(key: key);
 
   final AnimationController controller;
   final String image;
   final String text;
+  final bool principal;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      alignment: Alignment.center,
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      height: 50,
+      alignment: (principal) ? Alignment.centerLeft : Alignment.center,
+      padding: EdgeInsets.only(
+          right: (principal) ? 0 : 20,
+          top: (principal) ? 5 : 0,
+          left: (principal) ? 0 : 20),
+      height: (principal) ? 30 : 50,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -94,7 +102,7 @@ class AvatarAnimation extends StatelessWidget {
           /* Container(
             child: Image.asset(image, width: 125),
           ), */
-          SizedBox(height: 15),
+          SizedBox(height: (principal) ? 0 : 15),
           CrossFade<String>(
             initialData: this.text,
             data: this.text,
@@ -103,7 +111,7 @@ class AvatarAnimation extends StatelessWidget {
                 value,
                 style: TextStyle(
                     color: Colors.white,
-                    fontSize: 18,
+                    fontSize: (principal) ? 12 : 18,
                     fontWeight: FontWeight.w600),
               ),
             ),

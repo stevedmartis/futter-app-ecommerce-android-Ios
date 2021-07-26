@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_platform/universal_platform.dart';
+import '../../../global/extension.dart';
 
 class PrincipalMenu extends StatelessWidget {
   @override
@@ -33,7 +34,9 @@ class PrincipalMenu extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(20),
                   child: Text(
-                    profile.user.username,
+                    (profile.name != "")
+                        ? 'Hola, ${profile.name.capitalize()}'
+                        : 'Hola,  ${profile.name.capitalize()}',
                     style: TextStyle(
                       fontSize: 20,
                       color: (currentTheme.customTheme)

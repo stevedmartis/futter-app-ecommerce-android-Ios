@@ -919,7 +919,7 @@ class _ButtonFollowState extends State<ButtonFollow> {
                     HapticFeedback.lightImpact();
                     if (authService.storeAuth.user.uid == '0') {
                       authService.redirect = 'follow';
-                      Navigator.push(context, loginRoute(100));
+                      Navigator.push(context, loginRoute());
                     } else
                       this.changeFollow();
                   },

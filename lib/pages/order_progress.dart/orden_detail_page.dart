@@ -144,11 +144,20 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
     return _scrollController.hasClients && _scrollController.offset >= 70;
   }
 
+  bool isCreated = false;
+
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final size = MediaQuery.of(context).size;
+    final authService = Provider.of<AuthenticationBLoC>(context);
 
+    if (authService.redirect == 'is_auth' && !isCreated) {
+      setState(() {
+        isCreated = true;
+      });
+      _createOrder(context);
+    }
     return SafeArea(
       child: Scaffold(
         backgroundColor: currentTheme.scaffoldBackgroundColor,
@@ -165,7 +174,7 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
                   parent: AlwaysScrollableScrollPhysics()),
               controller: _scrollController,
               slivers: <Widget>[
-                makeHeaderCustom('Tu Orden'),
+                makeHeaderCustom('Tu pedido'),
                 titleBox(context),
                 addressDeliveryInfo(context, minTimes, maxTimes),
                 makeListProducts(context),
@@ -177,7 +186,12 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
           onTap: () {
             HapticFeedback.mediumImpact();
 
-            _createOrder(context);
+            if (storeAuth.user.uid == '0') {
+              authService.redirect = 'create_order';
+              Navigator.push(context, loginRoute());
+            } else {
+              _createOrder(context);
+            }
           },
           child: SizedBox(
             height: size.height / 8,
@@ -957,12 +971,18 @@ _createOrder(context) async {
       loading = false;
 
       createOrderResp.orders.forEach((order) {
-        print(order);
-        orderService.orders = order;
+        orderService.ordersInitial.add(order);
       });
 
-      Navigator.push(context, dataRoute());
-      print(orderService.getOrders);
+      orderService.orders = orderService.ordersInitial;
+
+      /*  setState(() {
+        isCreated = true;
+      }); */
+
+      Navigator.push(context, dataRoute(createOrderResp.orders));
+
+      storeBloc.emptyCart();
     } else {
       showAlertError(context, 'Error', 'Error');
     }

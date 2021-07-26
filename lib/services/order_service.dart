@@ -13,10 +13,21 @@ import 'package:flutter/material.dart';
 
 class OrderService with ChangeNotifier {
   List<Order> _orders = [];
-  List<Order> get getOrders => this._orders;
-  set orders(Order order) {
-    this._orders.add(order);
 
+  List<Order> ordersInitial = [];
+
+  bool _loading = true;
+  bool get loading => this._loading;
+  set loading(bool value) {
+    this._loading = value;
+  }
+
+  List<Order> get orders => this._orders;
+  set orders(List<Order> orders) {
+    this._orders = orders;
+    this._loading = false;
+
+    print(orders);
     notifyListeners();
   }
 
