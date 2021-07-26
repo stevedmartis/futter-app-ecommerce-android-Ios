@@ -317,7 +317,9 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                               children: [
                                 Container(
                                   margin: EdgeInsets.only(
-                                      left: 10,
+                                      left: (groceryBloc.cart.length <= 10)
+                                          ? 10
+                                          : 7,
                                       top: (isItems) ? 12 : 15,
                                       right: 15),
                                   child: (isItems)
@@ -337,9 +339,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                                   child: (groceryBloc.totalCartElements() > 0)
                                       ? Container(
                                           child: Text(
-                                            groceryBloc
-                                                .totalCartElements()
-                                                .toString(),
+                                            groceryBloc.cart.length.toString(),
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 12,
@@ -552,7 +552,6 @@ SliverList makeListRecomendations(bool loading) {
 SliverList makeListHorizontalCarouselOrdersProgress(context) {
   final orderService = Provider.of<OrderService>(context);
 
-  print(orderService.orders);
   final List<Order> ordersProgress =
       orderService.orders.where((i) => i.isActive).toList();
 

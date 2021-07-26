@@ -22,7 +22,6 @@ class _ProgressBarState extends State<ProgressBar>
 
   @override
   void initState() {
-    print(widget.order);
     super.initState();
     animationController = AnimationController(
       duration: Duration(milliseconds: 3000),

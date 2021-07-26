@@ -25,7 +25,7 @@ class CountryProvider with ChangeNotifier {
 
   set searchResults(List<Country> value) {
     _searchResults = value;
-    print('SearchResults ${searchResults.length}');
+
     notifyListeners();
   }
 

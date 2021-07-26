@@ -27,7 +27,6 @@ class OrderService with ChangeNotifier {
     this._orders = orders;
     this._loading = false;
 
-    print(orders);
     notifyListeners();
   }
 

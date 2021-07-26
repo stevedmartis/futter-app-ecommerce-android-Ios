@@ -51,6 +51,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
 
   AnimationController animatedController;
 
+  List<ProfileStoreProduct> productCount = [];
   void _addToCart(BuildContext context) {
     setState(() {
       heroTag = 'details';
@@ -61,6 +62,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
 
   @override
   void initState() {
+    productCount.add(widget.product);
     animatedController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 150));
     _scrollController = ScrollController()..addListener(() => setState(() {}));
@@ -95,29 +97,48 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
         '${widget.product.name}' +
         heroTag;
     final size = MediaQuery.of(context).size;
+
+    final priceformat =
+        NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
+            .format(widget.product.price * quantity);
+
     return Scaffold(
         bottomNavigationBar: (!widget.isAuthUser)
-            ? Padding(
-                padding:
-                    const EdgeInsets.only(left: 10.0, right: 10, bottom: 0),
-                child: SizedBox(
-                  height: 50,
-                  child: ElevatedButton(
-                      onPressed: () {
-                        HapticFeedback.lightImpact();
-                        _addToCart(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        elevation: 5.0,
-                        fixedSize: Size.fromWidth(size.width),
-                        primary: currentTheme.primaryColor,
-                        shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(30.0),
+            ? Container(
+                padding: EdgeInsets.all(5),
+                child: Row(children: [
+                  Text(
+                    '\$$priceformat',
+                    style: Theme.of(context).textTheme.headline4.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
                         ),
-                      ),
-                      child: Text('Agregar a la bolsa',
-                          style: TextStyle(fontSize: 18))),
-                ),
+                  ),
+                  Spacer(),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 10.0, right: 10, bottom: 0),
+                    child: SizedBox(
+                      height: 50,
+                      width: size.width / 2,
+                      child: ElevatedButton(
+                          onPressed: () {
+                            HapticFeedback.lightImpact();
+                            _addToCart(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            elevation: 5.0,
+                            fixedSize: Size.fromWidth(size.width),
+                            primary: currentTheme.primaryColor,
+                            shape: new RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(30.0),
+                            ),
+                          ),
+                          child:
+                              Text('Agregar', style: TextStyle(fontSize: 18))),
+                    ),
+                  )
+                ]),
               )
             : Padding(
                 padding:
@@ -335,10 +356,6 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
   }
 
   Widget infoProduct(String tag) {
-    final priceformat =
-        NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
-            .format(widget.product.price);
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -382,6 +399,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                                 HapticFeedback.lightImpact();
                                 if (quantity > 1) {
                                   setState(() {
+                                    productCount.removeLast();
                                     quantity--;
                                   });
                                 }
@@ -406,6 +424,8 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                                 HapticFeedback.lightImpact();
                                 setState(() {
                                   quantity++;
+
+                                  productCount.add(widget.product);
                                 });
                               },
                               icon: Icon(
@@ -416,14 +436,6 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                             const SizedBox(width: 10),
                           ],
                         ),
-                      ),
-                      Spacer(),
-                      Text(
-                        '\$$priceformat',
-                        style: Theme.of(context).textTheme.headline4.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
                       ),
                     ],
                   ),
