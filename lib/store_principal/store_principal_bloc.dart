@@ -30,14 +30,14 @@ class StoreBLoC with ChangeNotifier {
   List<StoreServices> servicesStores = [
     StoreServices(
         id: 0,
-        backImage: 'assets/principal_stores/market-beta.jpg',
-        frontImage: 'assets/principal_stores/3.png',
+        backImage: 'assets/principal_stores/mark_black.jpeg',
+        frontImage: 'assets/principal_stores/mark_black.jpeg',
         name: 'Seguidos',
         stores: 0),
     StoreServices(
         id: 1,
-        backImage: 'assets/principal_stores/market-beta.jpg',
-        frontImage: 'assets/principal_stores/3.png',
+        backImage: 'assets/principal_stores/mark_white.jpeg',
+        frontImage: 'assets/principal_stores/mark_white.jpeg',
         name: 'Mercados',
         stores: 0),
     StoreServices(

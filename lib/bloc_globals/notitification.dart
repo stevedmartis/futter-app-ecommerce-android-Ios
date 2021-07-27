@@ -33,7 +33,7 @@ class NotificationModel extends ChangeNotifier {
 
   set numberNotifiBell(int value) {
     this._numberNotifiBell = value;
-    notifyListeners();
+    //notifyListeners();
   }
 
   AnimationController get bounceControllerBell =>

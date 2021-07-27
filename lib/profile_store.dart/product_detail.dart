@@ -51,7 +51,6 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
 
   AnimationController animatedController;
 
-  List<ProfileStoreProduct> productCount = [];
   void _addToCart(BuildContext context) {
     setState(() {
       heroTag = 'details';
@@ -62,7 +61,6 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
 
   @override
   void initState() {
-    productCount.add(widget.product);
     animatedController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 150));
     _scrollController = ScrollController()..addListener(() => setState(() {}));
@@ -399,7 +397,6 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                                 HapticFeedback.lightImpact();
                                 if (quantity > 1) {
                                   setState(() {
-                                    productCount.removeLast();
                                     quantity--;
                                   });
                                 }
@@ -424,8 +421,6 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                                 HapticFeedback.lightImpact();
                                 setState(() {
                                   quantity++;
-
-                                  productCount.add(widget.product);
                                 });
                               },
                               icon: Icon(

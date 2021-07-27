@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 import 'data_backup_home.dart';
 
+//ignore: must_be_immutable
 class DataBackupCompletedPage extends AnimatedWidget {
   final List<Order> ordersCreate;
   DataBackupCompletedPage(
@@ -83,7 +84,7 @@ class DataBackupCompletedPage extends AnimatedWidget {
                                     : Navigator.push(
                                         context,
                                         orderProggressRoute(
-                                            ordersCreate.last, true));
+                                            ordersCreate.last, true, false));
                               },
                             ),
                             const SizedBox(height: 40),

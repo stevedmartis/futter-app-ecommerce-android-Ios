@@ -44,7 +44,10 @@ class Order {
     this.isFinalice,
     this.isPreparation,
     this.isSend,
-    this.isCancel,
+    this.isCancelByStore,
+    this.isCancelByClient,
+    this.isNotifiCheckStore,
+    this.isNotifiCheckClient,
     this.createdAt,
     this.updatedAt,
   });
@@ -55,7 +58,11 @@ class Order {
   List<ProductElement> products;
   bool isActive;
   bool isFinalice;
-  bool isCancel;
+  bool isCancelByStore;
+  bool isCancelByClient;
+  bool isNotifiCheckStore;
+  bool isNotifiCheckClient;
+
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -70,7 +77,10 @@ class Order {
             json["products"].map((x) => ProductElement.fromJson(x))),
         isActive: json["isActive"],
         isFinalice: json["isFinalice"],
-        isCancel: json["isCancel"],
+        isCancelByStore: json["isCancelByStore"],
+        isCancelByClient: json["isCancelByClient"],
+        isNotifiCheckStore: json["isNotifiCheckStore"],
+        isNotifiCheckClient: json["isNotifiCheckClient"],
         isPreparation: json["isPreparation"],
         isSend: json["isSend"],
         createdAt: DateTime.parse(json["createdAt"]),
@@ -84,7 +94,10 @@ class Order {
         "products": List<dynamic>.from(products.map((x) => x.toJson())),
         "isActive": isActive,
         "isFinalice": isFinalice,
-        "isCancel": isCancel,
+        "isCancelByStore": isCancelByStore,
+        "isCancelByClient": isCancelByClient,
+        "isNotifiCheckStore:": isNotifiCheckStore,
+        "isNotifiCheckClient": isNotifiCheckClient,
         "isPreparation": isPreparation,
         "isSend": isSend,
         "createdAt": createdAt.toIso8601String(),

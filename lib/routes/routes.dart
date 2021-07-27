@@ -1,4 +1,3 @@
-import 'package:australti_ecommerce_app/android_messages_animation/main_android_messages_animation_app.dart';
 import 'package:australti_ecommerce_app/data_backup_animation/data_backup_home.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_home.dart';
 import 'package:australti_ecommerce_app/models/Address.dart';
@@ -18,6 +17,7 @@ import 'package:australti_ecommerce_app/pages/form_current_location.dart';
 import 'package:australti_ecommerce_app/pages/get_phone/firebase/auth/phone_auth/get_phone.dart';
 import 'package:australti_ecommerce_app/pages/loading_page.dart';
 import 'package:australti_ecommerce_app/pages/login/login.dart';
+import 'package:australti_ecommerce_app/pages/notifications.dart';
 import 'package:australti_ecommerce_app/pages/onboarding/onboarding.dart';
 
 import 'package:australti_ecommerce_app/pages/order_progress.dart/order_page.dart';
@@ -48,7 +48,7 @@ final pageRouter = <_Route>[
   _Route(Icons.play_arrow, 'flow', MainStoreServicesApp()),
   _Route(Icons.play_arrow, 'loading', MyFavorites()),
   _Route(Icons.play_arrow, 'store', CatalogosListPage()),
-  _Route(Icons.play_arrow, 'notifications', MainAndroidMessagesAnimationApp()),
+  _Route(Icons.play_arrow, 'notifications', MyNotifications()),
 ];
 
 class _Route {
@@ -236,12 +236,10 @@ Route ordersListRoute() {
   );
 }
 
-Route orderProggressRoute(Order order, bool goToPrincipal) {
+Route orderProggressRoute(Order order, bool goToPrincipal, bool isStore) {
   return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => OrderPage(
-      order: order,
-      goToPrincipal: goToPrincipal,
-    ),
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        OrderPage(order: order, goToPrincipal: goToPrincipal, isStore: isStore),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = Offset(1.0, 0.0);
       var end = Offset.zero;

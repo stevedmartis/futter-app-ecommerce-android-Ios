@@ -70,6 +70,7 @@ class _DataBackupInitialPageState extends State<DataBackupInitialPage> {
   }
 }
 
+//ignore: must_be_immutable
 class ProgressCounter extends AnimatedWidget {
   ProgressCounter(Animation<double> animation) : super(listenable: animation);
 

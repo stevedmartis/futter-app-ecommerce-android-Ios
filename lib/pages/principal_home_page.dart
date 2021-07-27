@@ -5,6 +5,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:animations/animations.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc/favorites_bloc.dart';
+
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 
@@ -64,11 +65,15 @@ class _PrincipalPageState extends State<PrincipalPage>
 
     categoriesStoreProducts();
     storeslistServices();
-    prefs.addressSearchSave;
+
     if (storeAuth.user.uid != '0') {
       storesByLocationlistServices(storeAuth.city, storeAuth.user.uid);
 
-      myOrders();
+      _myOrdersClient();
+      if (storeAuth.service != 0) {
+        _myOrdersStore();
+      }
+
       myFavoritesProducts();
     } else if (prefs.addressSearchSave != '') {
       storesByLocationlistServices(
@@ -80,36 +85,24 @@ class _PrincipalPageState extends State<PrincipalPage>
 
     super.initState();
 
-    // getNotificationsActive();
-
-    //  this.socketService.socket?.on('principal-message', _listenMessage);
-    /*  this
+    this
         .socketService
         .socket
-        ?.on('principal-notification', _listenNotification); */
+        ?.on('orders-notification-client', _listenNotification);
+
+    this
+        .socketService
+        .socket
+        ?.on('orders-notification-store', _listenNotification);
   }
 
-/* 
-  void getNotificationsActive() async {
-    var notifications =
-        await notificationService.getNotificationByUser(profile.user.uid);
-
-    final notifiModel = Provider.of<NotificationModel>(context, listen: false);
-    int number = notifiModel.numberNotifiBell;
-    number = notifications.subscriptionsNotifi.length;
-    notifiModel.numberNotifiBell = number;
-
-    if (number >= 2) {
-      final controller = notifiModel.bounceControllerBell;
-      controller.forward(from: 0.0);
+  void _listenNotification(dynamic payload) {
+    print(payload);
+    if (storeAuth.service != 0) {
+      _myOrdersStore();
     }
-
-    int numberMessages = notifiModel.number;
-    numberMessages = notifications.messagesNotifi.length;
-    notifiModel.number = numberMessages;
-
   }
- */
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -183,19 +176,68 @@ class _PrincipalPageState extends State<PrincipalPage>
     }
   }
 
-  void myOrders() async {
+  void _myOrdersClient() async {
     final orderService = Provider.of<OrderService>(context, listen: false);
 
-    if (orderService.loading) {
-      final OrderStoresProducts resp =
-          await orderService.getMyOrders(storeAuth.user.uid);
+    final notifiModel = Provider.of<NotificationModel>(context, listen: false);
+    int number = notifiModel.numberNotifiBell;
 
-      if (resp.ok) {
-        resp.orders.forEach((order) {
-          orderService.ordersInitial.add(order);
-        });
+    orderService.ordersClientInitial = [];
 
-        orderService.orders = orderService.ordersInitial;
+    notifiModel.numberNotifiBell = number;
+
+    final OrderStoresProducts resp =
+        await orderService.getMyOrders(storeAuth.user.uid);
+
+    if (resp.ok) {
+      resp.orders.forEach((order) {
+        orderService.ordersClientInitial.add(order);
+      });
+
+      orderService.orders = orderService.ordersClientInitial;
+
+      final List<Order> orderNotificationClient =
+          orderService.orders.where((i) => i.isNotifiCheckClient).toList();
+
+      number = orderNotificationClient.length + orderNotificationClient.length;
+
+      if (number >= 2) {
+        notifiModel.bounceControllerBell;
+        //controller.forward(from: 0.0);
+      }
+    }
+  }
+
+  void _myOrdersStore() async {
+    final orderService = Provider.of<OrderService>(context, listen: false);
+
+    final notifiModel = Provider.of<NotificationModel>(context, listen: false);
+    int number = notifiModel.numberNotifiBell;
+
+    orderService.ordersStoreInitial = [];
+
+    notifiModel.numberNotifiBell = number;
+
+    final OrderStoresProducts resp =
+        await orderService.getMyOrdesStore(storeAuth.user.uid);
+
+    if (resp.ok) {
+      resp.orders.forEach((order) {
+        orderService.ordersStoreInitial.add(order);
+      });
+
+      orderService.orders = orderService.ordersStoreInitial;
+
+      final List<Order> orderNotificationStore =
+          orderService.ordersStore.where((i) => i.isNotifiCheckStore).toList();
+
+      // notificationBloc.notificationsList = orderNotificationStore;
+
+      number = orderNotificationStore.length + orderNotificationStore.length;
+
+      if (number >= 2) {
+        notifiModel.bounceControllerBell;
+        //controller.forward(from: 0.0);
       }
     }
   }

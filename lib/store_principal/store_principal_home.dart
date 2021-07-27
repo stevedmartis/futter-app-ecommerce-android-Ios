@@ -161,13 +161,13 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     final OrderStoresProducts resp =
         await orderService.getMyOrders(storeAuth.user.uid);
 
-    orderService.ordersInitial = [];
+    orderService.ordersClientInitial = [];
     if (resp.ok) {
       resp.orders.forEach((order) {
-        orderService.ordersInitial.add(order);
+        orderService.ordersClientInitial.add(order);
       });
 
-      orderService.orders = orderService.ordersInitial;
+      orderService.orders = orderService.ordersClientInitial;
     }
   }
 
@@ -410,8 +410,11 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                     ),
                   ),
 
-                  if (orderService.ordersInitial.length > 0)
+                  if (orderService.ordersClientInitial.length > 0)
                     makeListHorizontalCarouselOrdersProgress(context),
+
+                  if (orderService.ordersStoreInitial.length > 0)
+                    makeListHorizontalCarouselOrdersStoreProgress(context),
                   SliverAppBar(
                     automaticallyImplyLeading: false,
                     expandedHeight: 150.0,
@@ -555,6 +558,9 @@ SliverList makeListHorizontalCarouselOrdersProgress(context) {
   final List<Order> ordersProgress =
       orderService.orders.where((i) => i.isActive).toList();
 
+  final List<Order> ordersStoreActive =
+      orderService.ordersStore.where((i) => i.isActive).toList();
+
   List<Order> orders = LinkedHashSet<Order>.from(ordersProgress).toList();
   return SliverList(
     delegate: SliverChildListDelegate([
@@ -590,10 +596,53 @@ SliverList makeListHorizontalCarouselOrdersProgress(context) {
   );
 }
 
+SliverList makeListHorizontalCarouselOrdersStoreProgress(context) {
+  final orderService = Provider.of<OrderService>(context);
+
+  final List<Order> ordersStoreActive =
+      orderService.ordersStoreInitial.where((i) => i.isActive).toList();
+
+  return SliverList(
+    delegate: SliverChildListDelegate([
+      FadeInRight(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10.0, bottom: 0),
+          child: SizedBox(
+            child: (orderService.loading)
+                ? buildLoadingWidget(context)
+                : CarouselSlider(
+                    items: List.generate(
+                      ordersStoreActive.length,
+                      (index) => OrderprogressStoreCard(
+                        order: ordersStoreActive[index],
+                        isStore: true,
+                      ),
+                    ),
+                    options: CarouselOptions(
+                        viewportFraction: 0.8,
+                        aspectRatio: 16 / 5.5,
+                        initialPage: 0,
+                        enableInfiniteScroll: false,
+                        reverse: false,
+                        autoPlay: true,
+                        autoPlayInterval: Duration(seconds: 5),
+                        autoPlayAnimationDuration: Duration(milliseconds: 800),
+                        scrollDirection: Axis.horizontal,
+                        onPageChanged: (index, reason) {}),
+                  ),
+          ),
+        ),
+      ),
+    ]),
+  );
+}
+
 class OrderprogressStoreCard extends StatelessWidget {
-  OrderprogressStoreCard({this.order});
+  OrderprogressStoreCard({this.order, this.isStore = false});
 
   final Order order;
+
+  final bool isStore;
 
   @override
   Widget build(BuildContext context) {
@@ -605,7 +654,7 @@ class OrderprogressStoreCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
-        Navigator.push(context, orderProggressRoute(order, false));
+        Navigator.push(context, orderProggressRoute(order, false, isStore));
       },
       child: Card(
         elevation: 6,
@@ -650,7 +699,7 @@ class OrderprogressStoreCard extends StatelessWidget {
                         Container(
                           padding: EdgeInsets.only(top: 20),
                           child: Text(
-                            'Pedido en curso',
+                            (isStore) ? 'Pedido recibido' : 'Pedido en curso',
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -1180,12 +1229,12 @@ class MyTextField extends StatelessWidget {
 
     return AnimatedContainer(
         duration: Duration(milliseconds: 200),
-        width: size.width / 1.6,
+        width: size.width / 1.7,
         height: 40,
         decoration: BoxDecoration(
             color: (showTitle)
                 ? currentTheme.currentTheme.cardColor
-                : Colors.black.withOpacity(0.40),
+                : currentTheme.currentTheme.cardColor.withOpacity(0.0),
             borderRadius: BorderRadius.circular(20)),
         child: Padding(
           padding: const EdgeInsets.only(left: 10, right: 0),
@@ -1212,7 +1261,7 @@ class MyTextField extends StatelessWidget {
                       decoration: ShapeDecoration(
                         shadows: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.50),
+                            color: Colors.black.withOpacity(0.10),
                             offset: Offset(3.0, 3.0),
                             blurRadius: 2.0,
                             spreadRadius: 1.0,

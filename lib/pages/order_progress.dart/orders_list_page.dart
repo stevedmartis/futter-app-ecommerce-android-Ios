@@ -267,10 +267,11 @@ class OrderStoreCard extends StatelessWidget {
     final id = order.id;
 
     final store = order.store;
+
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
-        Navigator.push(context, orderProggressRoute(order, false));
+        Navigator.push(context, orderProggressRoute(order, false, false));
       },
       child: Card(
         elevation: 6,
@@ -336,7 +337,7 @@ class OrderStoreCard extends StatelessWidget {
                       onPressed: () {
                         HapticFeedback.lightImpact();
                         Navigator.push(
-                            context, orderProggressRoute(order, false));
+                            context, orderProggressRoute(order, false, false));
                       },
                       icon: Icon(
                         Icons.chevron_right,

@@ -23,6 +23,7 @@ import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
 
+import 'bloc_globals/bloc/notifications_bloc.dart';
 import 'bloc_globals/notitification.dart';
 import 'grocery_store/grocery_store_bloc.dart';
 
@@ -48,6 +49,7 @@ void main() async {
     ChangeNotifierProvider(create: (_) => StoreService()),
     ChangeNotifierProvider(create: (_) => FireBaseAuthBLoC()),
     ChangeNotifierProvider(create: (_) => FollowService()),
+    ChangeNotifierProvider(create: (_) => NotificationsBLoC()),
     ChangeNotifierProvider(
       create: (context) => CountryProvider(),
     ),

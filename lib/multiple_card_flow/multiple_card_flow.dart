@@ -335,6 +335,7 @@ class ReviewWidget extends StatelessWidget {
   }
 }
 
+//ignore: must_be_immutable
 class _MyTextField extends AnimatedWidget {
   _MyTextField(Animation<double> animation) : super(listenable: animation);
 

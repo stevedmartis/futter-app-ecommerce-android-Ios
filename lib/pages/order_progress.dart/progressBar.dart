@@ -53,7 +53,8 @@ class AnimatedBar extends StatefulWidget {
       : isActive = order.isActive,
         isPreparation = order.isPreparation,
         isSend = order.isSend,
-        isCancel = order.isCancel,
+        isCancelByClient = order.isCancelByClient,
+        isCancelByStore = order.isCancelByStore,
         isFinalice = order.isFinalice,
         dotOneColor = ColorTween(
           begin: FoodColors.Grey,
@@ -232,7 +233,8 @@ class AnimatedBar extends StatefulWidget {
   final bool isActive;
   final bool isPreparation;
   final bool isSend;
-  final bool isCancel;
+  final bool isCancelByClient;
+  final bool isCancelByStore;
   final bool isFinalice;
 
   final Animation<double> progressBarFour;

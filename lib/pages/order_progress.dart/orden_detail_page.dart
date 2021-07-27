@@ -10,6 +10,7 @@ import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 import 'package:australti_ecommerce_app/responses/stores_products_order.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/services/order_service.dart';
+import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
@@ -246,6 +247,67 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
                                             catalogo, false)), */
                                   }), */
             )))));
+  }
+
+  _createOrder(context) async {
+    final List<StoresProduct> storesProducts = [];
+    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+    final orderService = Provider.of<OrderService>(context, listen: false);
+    final storeBloc = Provider.of<GroceryStoreBLoC>(context, listen: false);
+
+    final socketService = Provider.of<SocketService>(context, listen: false);
+    final clientId = authService.storeAuth.user.uid;
+
+    final idsStores = storesByProduct.map((e) => e.user.uid).toList();
+
+    idsStores.forEach((storeId) {
+      final products = storeBloc.cart
+          .where((element) => element.product.user == storeId)
+          .toList();
+
+      List<Product> arrayProducts = [];
+      products.forEach((item) {
+        final product = Product(id: item.product.id, quantity: item.quantity);
+        arrayProducts.add(product);
+      });
+
+      final storeProducts =
+          StoresProduct(storeUid: storeId, products: arrayProducts);
+      storesProducts.add(storeProducts);
+    });
+
+    final OrderStoresProducts createOrderResp =
+        await orderService.createOrder(clientId, storesProducts);
+
+    if (createOrderResp != null) {
+      if (createOrderResp.ok) {
+        loading = false;
+
+        createOrderResp.orders.forEach((order) {
+          orderService.ordersClientInitial.add(order);
+        });
+
+        orderService.orders = orderService.ordersClientInitial;
+
+        /*  setState(() {
+        isCreated = true;
+      }); */
+
+        Navigator.push(context, dataRoute(createOrderResp.orders));
+
+        socketService.emit('orders-notification-store', {
+          'storesIds': idsStores,
+        });
+
+        storeBloc.emptyCart();
+      } else {
+        showAlertError(context, 'Error', 'Error');
+      }
+    } else {
+      showAlertError(
+          context, 'Error del servidor', 'lo sentimos, Intentelo mas tarde');
+    }
+    //Navigator.pushReplacementNamed(context, '');
   }
 }
 
@@ -935,62 +997,6 @@ SliverToBoxAdapter orderDetailInfo(context) {
       ),
     ),
   );
-}
-
-_createOrder(context) async {
-  final List<StoresProduct> storesProducts = [];
-  final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
-  final orderService = Provider.of<OrderService>(context, listen: false);
-  final storeBloc = Provider.of<GroceryStoreBLoC>(context, listen: false);
-
-  final clientId = authService.storeAuth.user.uid;
-
-  final idsStores = storesByProduct.map((e) => e.user.uid).toList();
-
-  idsStores.forEach((storeId) {
-    final products = storeBloc.cart
-        .where((element) => element.product.user == storeId)
-        .toList();
-
-    List<Product> arrayProducts = [];
-    products.forEach((item) {
-      final product = Product(id: item.product.id, quantity: item.quantity);
-      arrayProducts.add(product);
-    });
-
-    final storeProducts =
-        StoresProduct(storeUid: storeId, products: arrayProducts);
-    storesProducts.add(storeProducts);
-  });
-
-  final OrderStoresProducts createOrderResp =
-      await orderService.createOrder(clientId, storesProducts);
-
-  if (createOrderResp != null) {
-    if (createOrderResp.ok) {
-      loading = false;
-
-      createOrderResp.orders.forEach((order) {
-        orderService.ordersInitial.add(order);
-      });
-
-      orderService.orders = orderService.ordersInitial;
-
-      /*  setState(() {
-        isCreated = true;
-      }); */
-
-      Navigator.push(context, dataRoute(createOrderResp.orders));
-
-      storeBloc.emptyCart();
-    } else {
-      showAlertError(context, 'Error', 'Error');
-    }
-  } else {
-    showAlertError(
-        context, 'Error del servidor', 'lo sentimos, Intentelo mas tarde');
-  }
-  //Navigator.pushReplacementNamed(context, '');
 }
 
 /* class _ProfileStoreCategoryItem extends StatelessWidget {

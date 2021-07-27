@@ -28,6 +28,7 @@ class SocketService with ChangeNotifier {
     });
 
     this._socket.on('connection', (_) {
+      print('sdfsd');
       this._serverStatus = ServerStatus.Online;
       notifyListeners();
     });

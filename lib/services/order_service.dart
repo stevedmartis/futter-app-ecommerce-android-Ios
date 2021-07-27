@@ -13,8 +13,10 @@ import 'package:flutter/material.dart';
 
 class OrderService with ChangeNotifier {
   List<Order> _orders = [];
+  List<Order> _ordersStore = [];
+  List<Order> ordersClientInitial = [];
 
-  List<Order> ordersInitial = [];
+  List<Order> ordersStoreInitial = [];
 
   bool _loading = true;
   bool get loading => this._loading;
@@ -30,6 +32,14 @@ class OrderService with ChangeNotifier {
     notifyListeners();
   }
 
+  List<Order> get ordersStore => this._ordersStore;
+  set ordersStore(List<Order> orders) {
+    this._ordersStore = orders;
+    this._loading = false;
+
+    notifyListeners();
+  }
+
   final _storage = new FlutterSecureStorage();
 
   Future getMyOrders(String uid) async {
@@ -37,6 +47,28 @@ class OrderService with ChangeNotifier {
 
     final token = await this._storage.read(key: 'token');
     final urlFinal = ('${Environment.apiUrl}/api/order/orders/by/client/$uid');
+
+    final resp = await http.get(Uri.parse(urlFinal),
+        headers: {'Content-Type': 'application/json', 'x-token': token});
+
+    if (resp.statusCode == 200) {
+      // final roomResponse = roomsResponseFromJson(resp.body);
+      final ordersResponse = orderStoresProductsFromJson(resp.body);
+      // this.rooms = roomResponse.rooms;
+
+      return ordersResponse;
+    } else {
+      final respBody = errorMessageResponseFromJson(resp.body);
+
+      return respBody;
+    }
+  }
+
+  Future getMyOrdesStore(String uid) async {
+    // this.authenticated = true;
+
+    final token = await this._storage.read(key: 'token');
+    final urlFinal = ('${Environment.apiUrl}/api/order/orders/by/store/$uid');
 
     final resp = await http.get(Uri.parse(urlFinal),
         headers: {'Content-Type': 'application/json', 'x-token': token});

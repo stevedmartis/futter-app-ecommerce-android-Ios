@@ -32,8 +32,10 @@ import '../../global/extension.dart';
 
 class OrderPage extends StatefulWidget {
   final Order order;
-  final goToPrincipal;
-  OrderPage({@required this.order, this.goToPrincipal = false});
+  final bool goToPrincipal;
+  final bool isStore;
+  OrderPage(
+      {@required this.order, this.goToPrincipal = false, this.isStore = false});
   @override
   _OrderPageState createState() => _OrderPageState();
 }
@@ -238,58 +240,6 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes) {
                 ),
                 child: Column(
                   children: [
-                    if (!order.store.notLocation)
-                      Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                //Navigator.of(context).pop();
-                              },
-                              child: new Align(
-                                  alignment: Alignment.topCenter,
-                                  child: Container(
-                                    margin: EdgeInsets.only(right: 20),
-                                    padding: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        border: Border.all(
-                                            width: 2, color: Colors.grey)),
-                                    child: Icon(
-                                      Icons.fmd_bad,
-                                      size: 30,
-                                      color: Colors.grey,
-                                    ),
-                                  )),
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  child: Text(
-                                    'Tienda no disponible',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: 15,
-                                        color: Colors.white),
-                                  ),
-                                ),
-                                Container(
-                                  width: size.width / 1.7,
-                                  child: Text(
-                                    'No se encuentra en esta ubicación',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: 15,
-                                        color: Colors.grey),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ]),
                     SizedBox(
                       height: 10,
                     ),
@@ -309,13 +259,9 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes) {
                                     BorderRadius.all(Radius.circular(10.0)),
                                 child: (store.imageAvatar != "")
                                     ? Container(
-                                        child: (!store.notLocation)
-                                            ? cachedProductNetworkImage(
-                                                store.imageAvatar,
-                                              )
-                                            : cachedNetworkImage(
-                                                store.imageAvatar,
-                                              ),
+                                        child: cachedNetworkImage(
+                                          store.imageAvatar,
+                                        ),
                                       )
                                     : Image.asset(currentProfile.imageAvatar),
                               ),
@@ -518,11 +464,8 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes) {
                                     child: ClipRRect(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(100.0)),
-                                        child: (!store.notLocation)
-                                            ? cachedProductNetworkImage(
-                                                item.product.images[0].url)
-                                            : cachedNetworkImage(
-                                                item.product.images[0].url)))),
+                                        child: cachedNetworkImage(
+                                            item.product.images[0].url)))),
                             Container(
                               decoration: new BoxDecoration(
                                 color: (!store.notLocation)
