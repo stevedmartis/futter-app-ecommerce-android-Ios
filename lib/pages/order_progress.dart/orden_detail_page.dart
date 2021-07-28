@@ -198,7 +198,7 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
             height: size.height / 8,
             child: Center(
               child: goPayCartBtnSubtotal(
-                'Enviar orden',
+                'Enviar pedido',
                 [
                   currentTheme.primaryColor,
                   currentTheme.primaryColor,
@@ -553,7 +553,7 @@ SliverToBoxAdapter titleBox(context) {
         children: [
           Container(
             child: Text(
-              'Tu Orden',
+              'Tu pedido',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
             ),
           ),
@@ -903,7 +903,7 @@ SliverToBoxAdapter orderDetailInfo(context) {
                         children: [
                           Container(
                             child: Text(
-                              'Detalle de la orden',
+                              'Detalle del pedido',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,

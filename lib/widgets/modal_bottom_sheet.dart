@@ -20,12 +20,13 @@ import 'package:universal_platform/universal_platform.dart';
 showMaterialCupertinoBottomSheet(
     BuildContext context, String titulo, String subtitulo) {
   if (UniversalPlatform.isIOS) {
+    final size = MediaQuery.of(context).size;
     return showModalBottomSheet(
       backgroundColor: Colors.transparent,
       context: context,
       isScrollControlled: true,
       builder: (context) => Container(
-          height: 500,
+          height: size.height / 1.2,
           decoration: BoxDecoration(
             color: Colors.black,
             borderRadius: BorderRadius.only(

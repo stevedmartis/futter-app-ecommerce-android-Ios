@@ -30,10 +30,10 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
     store = authService.storeAuth;
 
-    authService.serviceChange = store.service;
-
     SchedulerBinding.instance.addPostFrameCallback((_) {
       if (store.user.first) openSheetBottom();
+
+      authService.serviceChange = store.service;
     });
     super.initState();
   }
@@ -363,7 +363,7 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
 
         showSnackBar(context, 'Categoria guardada');
 
-        (store.user.first || store.service == 0)
+        (authService.isChangeToSale)
             ? Navigator.push(context, contactoInfoStoreRoute())
             : Navigator.pop(context);
       } else {

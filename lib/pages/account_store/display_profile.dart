@@ -427,7 +427,8 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
     final minTime = minTimeDeliveryCtrl.text.trim();
     final maxTime = maxTimeDeliveryCtrl.text.trim();
 
-    final timeDelivery = '$minTime - $maxTime';
+    final timeDelivery =
+        (minTime != "" && maxTime != "") ? '$minTime - $maxTime' : '';
 
     final editProfileOk = await authService.editDisplayStoreProfile(
       storeProfile.user.uid,
@@ -444,7 +445,7 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
 
         showSnackBar(context, 'Información de contacto guardada');
 
-        (store.user.first || store.service == 0)
+        (authService.isChangeToSale)
             ? Navigator.push(
                 context, locationStoreRoute(prefs.addressSearchSave))
             : Navigator.pop(context);

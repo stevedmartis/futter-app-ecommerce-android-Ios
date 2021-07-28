@@ -241,7 +241,8 @@ class EditProfilePageState extends State<EditProfilePage> {
 
     final isEmail = (authService.storeAuth.user.email != "");
     final isPhone = (authService.storeAuth.user.email != "0");
-
+    final isOff = (authService.storeAuth.percentOff != 0);
+    final visibility = authService.storeAuth.visibility;
     if (authService.storeAuth.service == 1) categoryCtrl.text = 'Restaurante';
 
     if (authService.storeAuth.service == 2)
@@ -478,7 +479,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                               height: 1,
                             ),
                             SizedBox(height: 15),
-                            if (store.user.first && store.service == 0)
+                            if (store.service == 0)
                               MaterialButton(
                                   materialTapTargetSize:
                                       MaterialTapTargetSize.shrinkWrap,
@@ -491,6 +492,8 @@ class EditProfilePageState extends State<EditProfilePage> {
                                         fontSize: 15),
                                   ),
                                   onPressed: () {
+                                    authService.isChangeToSale = true;
+
                                     FocusScope.of(context)
                                         .requestFocus(new FocusNode());
 
@@ -550,14 +553,27 @@ class EditProfilePageState extends State<EditProfilePage> {
                                       child: ListTile(
                                         leading: Text('Visualización de perfi',
                                             style: TextStyle(fontSize: 18)),
-                                        /*  title: Container(
+                                        title: Container(
                                           alignment: Alignment.centerRight,
-                                          child: Text(
-                                              prefs.addressSearchSave.mainText,
-                                              style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 15)),
-                                        ), */
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              if (visibility)
+                                                Text(
+                                                  'Visible, ',
+                                                  style: TextStyle(
+                                                      color: Colors.grey),
+                                                ),
+                                              if (isOff)
+                                                Text(
+                                                  ' %${authService.storeAuth.percentOff} OFF',
+                                                  style: TextStyle(
+                                                      color: Colors.grey),
+                                                ),
+                                            ],
+                                          ),
+                                        ),
                                         trailing: Icon(Icons.chevron_right,
                                             color: Colors.grey),
                                       ),

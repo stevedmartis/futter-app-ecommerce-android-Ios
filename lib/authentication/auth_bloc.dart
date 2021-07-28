@@ -24,6 +24,9 @@ enum AuthState { isClient, isStore }
 class AuthenticationBLoC with ChangeNotifier {
   final prefs = new AuthUserPreferences();
   bool _imageProfileChanges = false;
+
+  bool _isChangeToSale = false;
+
   set imageProfileChange(bool value) {
     this._imageProfileChanges = value;
     notifyListeners();
@@ -39,6 +42,14 @@ class AuthenticationBLoC with ChangeNotifier {
   }
 
   int get serviceSelect => this._serviceSelect;
+
+  bool get isChangeToSale => this._isChangeToSale;
+
+  set isChangeToSale(bool value) {
+    this._isChangeToSale = value;
+
+    notifyListeners();
+  }
 
   AuthState authState = AuthState.isStore;
   static String redirectUri =

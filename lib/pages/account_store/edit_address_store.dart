@@ -91,7 +91,7 @@ class _LocationStorePageState extends State<LocationStorePage> {
                               final places = snapshot.data;
 
                               bool isDisabled = false;
-                              (places != null)
+                              (places != null || numberCtrl.text != "")
                                   ? (places != "")
                                       ? isDisabled = true
                                       : isDisabled = false
@@ -313,7 +313,7 @@ class _LocationStorePageState extends State<LocationStorePage> {
 
         showSnackBar(context, 'Categoria guardada');
 
-        (storeProfile.user.first || storeProfile.service == 0)
+        (authService.isChangeToSale)
             ? Navigator.push(context, profileEditRoute())
             : Navigator.pop(context);
       } else {

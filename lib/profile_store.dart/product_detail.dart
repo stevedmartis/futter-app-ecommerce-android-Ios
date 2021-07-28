@@ -103,48 +103,172 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
     return Scaffold(
         bottomNavigationBar: (!widget.isAuthUser)
             ? Container(
-                padding: EdgeInsets.all(5),
+                padding:
+                    EdgeInsets.only(top: 5, bottom: 10, right: 0, left: 10),
                 child: Row(children: [
-                  Text(
-                    '\$$priceformat',
-                    style: Theme.of(context).textTheme.headline4.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25),
+                          color: Colors.grey[200],
                         ),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 10),
+                            IconButton(
+                              onPressed: () {
+                                HapticFeedback.lightImpact();
+                                if (quantity > 1) {
+                                  setState(() {
+                                    quantity--;
+                                  });
+                                }
+                              },
+                              icon: Icon(
+                                Icons.remove,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Text(
+                                quantity.toString(),
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                HapticFeedback.lightImpact();
+                                setState(() {
+                                  quantity++;
+                                });
+                              },
+                              icon: Icon(
+                                Icons.add,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   Spacer(),
                   Padding(
                     padding:
                         const EdgeInsets.only(left: 10.0, right: 10, bottom: 0),
                     child: SizedBox(
-                      height: 50,
-                      width: size.width / 2,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            HapticFeedback.lightImpact();
-                            _addToCart(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            elevation: 5.0,
-                            fixedSize: Size.fromWidth(size.width),
-                            primary: currentTheme.primaryColor,
-                            shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(30.0),
+                        height: 50,
+                        width: size.width / 2.2,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              HapticFeedback.lightImpact();
+                              _addToCart(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              elevation: 5.0,
+                              fixedSize: Size.fromWidth(size.width),
+                              primary: currentTheme.primaryColor,
+                              shape: new RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(30.0),
+                              ),
                             ),
-                          ),
-                          child:
-                              Text('Agregar', style: TextStyle(fontSize: 18))),
-                    ),
+                            child: Row(children: [
+                              Text('Add', style: TextStyle(fontSize: 15)),
+                              Spacer(),
+                              Text(
+                                '\$$priceformat',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline4
+                                    .copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15),
+                              ),
+                            ]))),
                   )
                 ]),
               )
             : Padding(
-                padding:
-                    const EdgeInsets.only(left: 10.0, right: 10, bottom: 0),
-                child: SizedBox(
-                  height: 50,
-                  child: Container(),
+                padding: const EdgeInsets.only(
+                  left: 10.0,
+                  right: 10,
+                  bottom: 20,
                 ),
+                child: SizedBox(
+                    height: 50,
+                    child: Row(
+                      children: [
+                        elevatedButtonCustom(
+                          context: context,
+                          isDelete: true,
+                          title: 'Eliminar',
+                          onPress: () {
+                            HapticFeedback.heavyImpact();
+
+                            final act = CupertinoActionSheet(
+                                title: Text('Eliminar este producto?',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20)),
+                                message: Text(
+                                    'Se eliminara de tu lista de productos de forma permanente'),
+                                actions: <Widget>[
+                                  CupertinoActionSheetAction(
+                                    child: Text(
+                                      'Eliminar',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                    onPressed: () {
+                                      HapticFeedback.heavyImpact();
+                                      _deleteProduct();
+                                    },
+                                  )
+                                ],
+                                cancelButton: CupertinoActionSheetAction(
+                                  child: Text(
+                                    'Cancelar',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                  onPressed: () {},
+                                ));
+                            showCupertinoModalPopup(
+                                context: context,
+                                builder: (BuildContext context) => act);
+                          },
+                        ),
+                        Spacer(),
+                        SizedBox(
+                            height: 100,
+                            width: size.width / 3,
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  HapticFeedback.lightImpact();
+                                  Navigator.of(context).push(
+                                      createRouteAddEditProduct(widget.product,
+                                          true, widget.category));
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 5.0,
+                                  fixedSize: Size.fromWidth(size.width),
+                                  primary: Colors.grey[200],
+                                  shape: new RoundedRectangleBorder(
+                                    borderRadius:
+                                        new BorderRadius.circular(30.0),
+                                  ),
+                                ),
+                                child: Text(
+                                  'Editar',
+                                  style: TextStyle(color: Colors.black),
+                                )))
+                      ],
+                    )),
               ),
         backgroundColor: currentTheme.scaffoldBackgroundColor,
         body: CustomScrollView(
@@ -380,61 +504,6 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                       ),
                 ),
                 const SizedBox(height: 20),
-                if (!widget.isAuthUser)
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
-                          color: Colors.grey[200],
-                        ),
-                        child: Row(
-                          children: [
-                            const SizedBox(width: 10),
-                            IconButton(
-                              onPressed: () {
-                                HapticFeedback.lightImpact();
-                                if (quantity > 1) {
-                                  setState(() {
-                                    quantity--;
-                                  });
-                                }
-                              },
-                              icon: Icon(
-                                Icons.remove,
-                                color: Colors.black,
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20.0),
-                              child: Text(
-                                quantity.toString(),
-                                style: TextStyle(
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                HapticFeedback.lightImpact();
-                                setState(() {
-                                  quantity++;
-                                });
-                              },
-                              icon: Icon(
-                                Icons.add,
-                                color: Colors.black,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                const SizedBox(height: 15),
                 Text(
                   'Descripción',
                   style: Theme.of(context).textTheme.subtitle1.copyWith(
@@ -454,62 +523,6 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
             ),
           ),
         ),
-        if (widget.isAuthUser)
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Row(
-              children: [
-                elevatedButtonCustom(
-                  context: context,
-                  isDelete: true,
-                  title: 'Eliminar',
-                  onPress: () {
-                    HapticFeedback.heavyImpact();
-
-                    final act = CupertinoActionSheet(
-                        title: Text('Eliminar este producto?',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 20)),
-                        message: Text(
-                            'Se eliminara de tu lista de productos de forma permanente'),
-                        actions: <Widget>[
-                          CupertinoActionSheetAction(
-                            child: Text(
-                              'Eliminar',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                            onPressed: () {
-                              HapticFeedback.heavyImpact();
-                              _deleteProduct();
-                            },
-                          )
-                        ],
-                        cancelButton: CupertinoActionSheetAction(
-                          child: Text(
-                            'Cancelar',
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                          onPressed: () {},
-                        ));
-                    showCupertinoModalPopup(
-                        context: context,
-                        builder: (BuildContext context) => act);
-                  },
-                ),
-                Spacer(),
-                elevatedButtonCustom(
-                    context: context,
-                    title: 'Editar',
-                    onPress: () {
-                      HapticFeedback.lightImpact();
-                      Navigator.of(context).push(createRouteAddEditProduct(
-                          widget.product, true, widget.category));
-                    },
-                    isEdit: true,
-                    isDelete: false),
-              ],
-            ),
-          )
       ],
     );
   }

@@ -1,12 +1,15 @@
-import 'package:australti_ecommerce_app/bloc_globals/bloc/notifications_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
-import 'package:australti_ecommerce_app/models/profile.dart';
+
 import 'package:australti_ecommerce_app/models/store.dart';
 
 import 'package:australti_ecommerce_app/profile_store.dart/product_detail.dart';
+import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
+import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
+import 'package:australti_ecommerce_app/routes/routes.dart';
 
 import 'package:australti_ecommerce_app/services/catalogo.dart';
+import 'package:australti_ecommerce_app/services/order_service.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
@@ -19,6 +22,7 @@ import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -26,6 +30,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../global/extension.dart';
+import 'order_progress.dart/progressBar.dart';
 
 class MyNotifications extends StatefulWidget {
   @override
@@ -127,8 +132,6 @@ class CatalogsList extends StatefulWidget {
 
 class _CatalogsListState extends State<CatalogsList>
     with TickerProviderStateMixin {
-  Profile profile;
-
   final catalogoService = new StoreCategoiesService();
 
   List<TabCategory> catalogos = [];
@@ -147,31 +150,40 @@ class _CatalogsListState extends State<CatalogsList>
 
   @override
   Widget build(BuildContext context) {
-    //final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
-    final _bloc = Provider.of<NotificationsBLoC>(context);
+    final _bloc = Provider.of<OrderService>(context);
+
+    final odersNotifications =
+        _bloc.ordersStoreInitial.where((i) => i.isNotifiCheckStore).toList();
+
     return Stack(
       children: [
-        /*  Container(
+        Container(
           padding: EdgeInsets.only(top: 20, left: 20),
           child: Text(
-            '',
+            'Notificaciones',
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 30,
                 color: currentTheme.accentColor),
           ),
-        ), */
+        ),
         Container(
           padding: EdgeInsets.only(top: 70),
           child: ListView.builder(
             shrinkWrap: true,
             controller: scrollController,
-            itemCount: _bloc.notificationsList.length,
+            itemCount: odersNotifications.length,
             itemBuilder: (context, index) {
-              if (_bloc.notificationsList.length > 0) {
-                final item = _bloc.notificationsList[index];
-                return Container();
+              if (odersNotifications.length > 0) {
+                final order = odersNotifications[index];
+                return Container(
+                  child: OrderNotificationStoreCard(
+                    order: order,
+                    isStore: true,
+                  ),
+                );
               } else {
                 return Center(
                     child: Container(
@@ -182,6 +194,104 @@ class _CatalogsListState extends State<CatalogsList>
           ),
         ),
       ],
+    );
+  }
+}
+
+class OrderNotificationStoreCard extends StatelessWidget {
+  OrderNotificationStoreCard({this.order, this.isStore = false});
+
+  final Order order;
+
+  final bool isStore;
+
+  @override
+  Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
+    final id = order.id;
+
+    final store = order.store;
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        Navigator.push(context, orderProggressRoute(order, false, isStore));
+      },
+      child: Card(
+        elevation: 6,
+        shadowColor: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        color: currentTheme.cardColor,
+        child: GestureDetector(
+          child: Padding(
+            padding: EdgeInsets.only(left: 15, bottom: 0),
+            child: SizedBox(
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    width: 50,
+                    height: 50,
+                    child: Hero(
+                      tag: 'order/$id',
+                      child: AspectRatio(
+                        aspectRatio: 1,
+                        child: ClipRRect(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(100.0)),
+                          child: (store.imageAvatar != "")
+                              ? Container(
+                                  child: cachedNetworkImage(
+                                    store.imageAvatar,
+                                  ),
+                                )
+                              : Image.asset(currentProfile.imageAvatar),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.only(top: 20),
+                          child: Text(
+                            (isStore) ? 'Pedido recibido' : 'Pedido en curso',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(top: 0),
+                          child: Text(
+                            'Entrega estimada: 4 de Agosto',
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 12),
+                          ),
+                        ),
+                        Container(
+                            child: ProgressBar(
+                          key: ValueKey('order/$id'),
+                          order: order,
+                          principal: true,
+                        )),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -401,7 +401,6 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                           closedShape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20)),
                           openBuilder: (_, closeContainer) {
-                            HapticFeedback.lightImpact();
                             return SearchPrincipalPage();
                           },
                           closedBuilder: (_, openContainer) {
@@ -517,22 +516,20 @@ SliverPersistentHeader makeHeaderTitle(context, String titleService) {
       delegate: SliverCustomHeaderDelegate(
           minHeight: 40,
           maxHeight: 40,
-          child: FadeIn(
-            child: Container(
-              color: currentTheme.scaffoldBackgroundColor,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 0.0, left: 10),
-                child: CrossFade<String>(
-                  initialData: '',
-                  data: titleService,
-                  builder: (value) => Container(
-                    child: Text(
-                      titleService,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
+          child: Container(
+            color: currentTheme.scaffoldBackgroundColor,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 0.0, left: 10),
+              child: CrossFade<String>(
+                initialData: '',
+                data: titleService,
+                builder: (value) => Container(
+                  child: Text(
+                    titleService,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
@@ -557,9 +554,6 @@ SliverList makeListHorizontalCarouselOrdersProgress(context) {
 
   final List<Order> ordersProgress =
       orderService.orders.where((i) => i.isActive).toList();
-
-  final List<Order> ordersStoreActive =
-      orderService.ordersStore.where((i) => i.isActive).toList();
 
   List<Order> orders = LinkedHashSet<Order>.from(ordersProgress).toList();
   return SliverList(
@@ -932,7 +926,9 @@ class StoreCard extends StatelessWidget {
                     Container(
                       child: Container(
                         child: Text(
-                          '${store.about.capitalize()}',
+                          (store.about != "")
+                              ? '${store.about.capitalize()}'
+                              : '',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           style: TextStyle(
@@ -949,7 +945,9 @@ class StoreCard extends StatelessWidget {
                         SizedBox(width: 5.0), */
                         Container(
                           child: Text(
-                            '${store.timeDelivery}',
+                            (store.timeDelivery != "")
+                                ? '${store.timeDelivery}'
+                                : '',
                             style: TextStyle(color: Colors.white54),
                           ),
                         ),

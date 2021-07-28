@@ -314,7 +314,7 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
 
         showSnackBar(context, 'Información de contacto guardada');
 
-        (store.user.first || store.service == 0)
+        (authService.isChangeToSale)
             ? Navigator.push(context, displayProfileStoreRoute())
             : Navigator.pop(context);
       } else {
