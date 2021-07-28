@@ -1,6 +1,8 @@
 import 'dart:ui';
 
+import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
+import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -102,36 +104,82 @@ class _MenuItems extends StatelessWidget {
   }
 }
 
-class _GridLayoutMenuButton extends StatelessWidget {
+class _GridLayoutMenuButton extends StatefulWidget {
   final int index;
   final GLMenuButton item;
 
   _GridLayoutMenuButton(this.index, this.item);
 
   @override
+  __GridLayoutMenuButtonState createState() => __GridLayoutMenuButtonState();
+}
+
+class __GridLayoutMenuButtonState extends State<_GridLayoutMenuButton> {
+  @override
   Widget build(BuildContext context) {
     final intemSelected = Provider.of<MenuModel>(context).currentPage;
     final authBloc = Provider.of<AuthenticationBLoC>(context);
-
+    final notifiBloc = Provider.of<NotificationModel>(context);
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
+    int number = notifiBloc.numberNotifiBell;
     return GestureDetector(
-      onTap: () {
-        if (authBloc.storeAuth.user.uid != "0")
-          Provider.of<MenuModel>(context, listen: false).currentPage = index;
-        item.onPressed();
-      },
-      behavior: HitTestBehavior.translucent,
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 900),
-        child: Icon(
-          item.icon,
-          size: (intemSelected == index) ? 35 : 30,
-          color:
-              (intemSelected == index) ? currentTheme.accentColor : Colors.grey,
-        ),
-      ),
-    );
+        onTap: () {
+          if (authBloc.storeAuth.user.uid != "0")
+            Provider.of<MenuModel>(context, listen: false).currentPage =
+                widget.index;
+          widget.item.onPressed();
+
+          notifiBloc.numberNotifiBell = 0;
+        },
+        behavior: HitTestBehavior.translucent,
+        child: Stack(
+          children: [
+            AnimatedContainer(
+              alignment: Alignment.center,
+              duration: Duration(milliseconds: 900),
+              child: Icon(
+                widget.item.icon,
+                size: (intemSelected == widget.index) ? 35 : 30,
+                color: (intemSelected == widget.index)
+                    ? currentTheme.accentColor
+                    : Colors.grey,
+              ),
+            ),
+            if (widget.index == 3)
+              (number > 0)
+                  ? Container(
+                      margin: EdgeInsets.only(right: 35),
+                      alignment: Alignment.centerRight,
+                      child: BounceInDown(
+                        from: 5,
+                        animate: (number > 0) ? true : false,
+                        child: Bounce(
+                          delay: Duration(seconds: 2),
+                          from: 5,
+                          controller: (controller) =>
+                              Provider.of<NotificationModel>(context)
+                                  .bounceControllerBell = controller,
+                          child: Container(
+                            child: Text(
+                              '$number',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            alignment: Alignment.center,
+                            width: 15,
+                            height: 15,
+                            decoration: BoxDecoration(
+                                color: Colors.black, shape: BoxShape.circle),
+                          ),
+                        ),
+                      ),
+                    )
+                  : Container()
+          ],
+        ));
   }
 }
 

@@ -567,7 +567,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                                                 ),
                                               if (isOff)
                                                 Text(
-                                                  ' %${authService.storeAuth.percentOff} OFF',
+                                                  '${authService.storeAuth.percentOff}% OFF',
                                                   style: TextStyle(
                                                       color: Colors.grey),
                                                 ),

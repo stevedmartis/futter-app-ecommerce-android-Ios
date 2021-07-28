@@ -4,7 +4,6 @@ import 'package:australti_ecommerce_app/responses/message_error_response.dart';
 import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 
 import 'package:australti_ecommerce_app/responses/stores_products_order.dart';
-import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
@@ -38,6 +37,17 @@ class OrderService with ChangeNotifier {
     this._loading = false;
 
     notifyListeners();
+  }
+
+  void orderCheckNotifiStore(String orderId) {
+    final order = ordersStoreInitial.firstWhere((item) => item.id == orderId,
+        orElse: () => null);
+
+    order.isNotifiCheckStore = false;
+
+    print(order);
+
+    //notifyListeners();
   }
 
   final _storage = new FlutterSecureStorage();
@@ -113,20 +123,16 @@ class OrderService with ChangeNotifier {
     }
   }
 
-  Future editCatalogo(ProfileStoreCategory category) async {
+  Future editOrderNotifiStore(String orderId) async {
     // this.authenticated = true;
 
     final data = {
-      'id': category.id,
-      'description': category.description,
-      'name': category.name,
-      'position': category.position,
-      'uid': category.store.user.uid,
-      'visibility': category.visibility,
+      'id': orderId,
     };
 
     final token = await this._storage.read(key: 'token');
-    final urlFinal = ('${Environment.apiUrl}/api/catalogo/update/catalogo');
+    final urlFinal =
+        ('${Environment.apiUrl}/api/order/update/notification/store');
 
     final resp = await http.post(Uri.parse(urlFinal),
         body: jsonEncode(data),
@@ -134,10 +140,10 @@ class OrderService with ChangeNotifier {
 
     if (resp.statusCode == 200) {
       // final roomResponse = roomsResponseFromJson(resp.body);
-      final catalogoResponse = categoryResponseFromJson(resp.body);
+      final orderResponse = orderStoresProductsFromJson(resp.body);
       // this.rooms = roomResponse.rooms;
 
-      return catalogoResponse;
+      return orderResponse;
     } else {
       final respBody = errorMessageResponseFromJson(resp.body);
 

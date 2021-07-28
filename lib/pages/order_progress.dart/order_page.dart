@@ -1,5 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
+import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
@@ -10,6 +11,7 @@ import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
 import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 
 import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:australti_ecommerce_app/services/order_service.dart';
 
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
@@ -61,7 +63,7 @@ class _OrderPageState extends State<OrderPage> {
     storeAuth = authBloc.storeAuth;
 
     _scrollController = ScrollController()..addListener(() => setState(() {}));
-
+    updateNotifiOrderStore();
     super.initState();
 
     //final getTimeMin =  order.store.timeDelivery.toString().split("-").first.trim();
@@ -76,6 +78,15 @@ class _OrderPageState extends State<OrderPage> {
   @override
   void didUpdateWidget(Widget old) {
     super.didUpdateWidget(old);
+  }
+
+  void updateNotifiOrderStore() async {
+    final orderBloc = Provider.of<OrderService>(context, listen: false);
+
+    if (widget.isStore && order.isNotifiCheckStore) {
+      orderBloc.orderCheckNotifiStore(order.id);
+      orderBloc.editOrderNotifiStore(order.id);
+    }
   }
 
   @override

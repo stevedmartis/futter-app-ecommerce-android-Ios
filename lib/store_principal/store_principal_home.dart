@@ -686,19 +686,57 @@ class OrderprogressStoreCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.only(top: 20),
-                          child: Text(
-                            (isStore) ? 'Pedido recibido' : 'Pedido en curso',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15),
-                          ),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(top: 20, right: 10),
+                              child: Text(
+                                (isStore)
+                                    ? 'Pedido recibido'
+                                    : 'Pedido en curso',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(
+                                top: 10,
+                              ),
+                              alignment: Alignment.centerRight,
+                              child: BounceInDown(
+                                from: 5,
+                                animate: order.isNotifiCheckStore,
+                                child: Bounce(
+                                  delay: Duration(seconds: 1),
+                                  from: 5,
+                                  controller: (controller) =>
+                                      Provider.of<NotificationModel>(context)
+                                          .bounceControllerBell = controller,
+                                  child: Container(
+                                    child: Text(
+                                      '',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    alignment: Alignment.center,
+                                    width: 15,
+                                    height: 15,
+                                    decoration: BoxDecoration(
+                                        color: currentTheme.accentColor,
+                                        shape: BoxShape.circle),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         Container(
                           padding: EdgeInsets.only(top: 0),
@@ -716,9 +754,7 @@ class OrderprogressStoreCard extends StatelessWidget {
                           order: order,
                           principal: true,
                         )),
-                      ],
-                    ),
-                  ),
+                      ])),
                 ],
               ),
             ),

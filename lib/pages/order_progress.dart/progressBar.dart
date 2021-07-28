@@ -250,7 +250,7 @@ class _AnimatedBarState extends State<AnimatedBar>
   AnimationController _animationController;
 
   void initState() {
-    dotSize = (widget.principal) ? 15 : 30;
+    dotSize = (widget.principal) ? 20 : 30;
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 450));
     super.initState();
@@ -290,8 +290,9 @@ class _AnimatedBarState extends State<AnimatedBar>
         children: <Widget>[
           Container(
             padding: EdgeInsets.only(
-              top: (widget.principal) ? 5.0 : 20,
+              top: (widget.principal) ? 10.0 : 20,
               right: (widget.principal) ? 20 : 0,
+              bottom: (widget.principal) ? 10 : 0,
             ),
             width: MediaQuery.of(context).size.width / 1.3,
             child: Row(
@@ -316,7 +317,7 @@ class _AnimatedBarState extends State<AnimatedBar>
                     child: (widget.progressBarOne.value != 1.0)
                         ? FaIcon(
                             FontAwesomeIcons.archive,
-                            size: (widget.principal) ? 7 : 13,
+                            size: (widget.principal) ? 10 : 13,
                             color: (widget.progressBarOne.value >= 0.5)
                                 ? currentTheme.primaryColor
                                 : Colors.grey,
@@ -362,7 +363,7 @@ class _AnimatedBarState extends State<AnimatedBar>
                     child: (widget.progressBarTwo.value != 1.0)
                         ? FaIcon(
                             FontAwesomeIcons.boxOpen,
-                            size: (widget.principal) ? 7 : 13,
+                            size: (widget.principal) ? 10 : 13,
                             color: (widget.progressBarTwo.value >= 0.5)
                                 ? currentTheme.primaryColor
                                 : Colors.grey,
@@ -408,7 +409,7 @@ class _AnimatedBarState extends State<AnimatedBar>
                     child: (widget.progressBarThree.value != 1.0)
                         ? FaIcon(
                             FontAwesomeIcons.truckLoading,
-                            size: (widget.principal) ? 7 : 13,
+                            size: (widget.principal) ? 10 : 13,
                             color: (widget.progressBarThree.value >= 0.5)
                                 ? currentTheme.primaryColor
                                 : Colors.grey,
@@ -462,7 +463,7 @@ class _AnimatedBarState extends State<AnimatedBar>
                     child: (widget.progressBarFour.value != 1.0)
                         ? FaIcon(
                             FontAwesomeIcons.home,
-                            size: (widget.principal) ? 7 : 13,
+                            size: (widget.principal) ? 10 : 13,
                             color: (widget.progressBarFour.value == 1.0)
                                 ? currentTheme.primaryColor
                                 : Colors.grey,

@@ -10,11 +10,6 @@ class NotificationModel extends ChangeNotifier {
 
   dynamic get payload => this._payload;
 
-  set number(int value) {
-    this._number = value;
-    notifyListeners();
-  }
-
   set payload(dynamic value) {
     this._payload = value;
     notifyListeners();

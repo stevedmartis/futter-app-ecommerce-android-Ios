@@ -216,8 +216,6 @@ class _PrincipalPageState extends State<PrincipalPage>
 
     orderService.ordersStoreInitial = [];
 
-    notifiModel.numberNotifiBell = number;
-
     final OrderStoresProducts resp =
         await orderService.getMyOrdesStore(storeAuth.user.uid);
 
@@ -228,12 +226,15 @@ class _PrincipalPageState extends State<PrincipalPage>
 
       orderService.orders = orderService.ordersStoreInitial;
 
-      final List<Order> orderNotificationStore =
-          orderService.ordersStore.where((i) => i.isNotifiCheckStore).toList();
+      final List<Order> orderNotificationStore = orderService.ordersStoreInitial
+          .where((i) => i.isNotifiCheckStore)
+          .toList();
 
       // notificationBloc.notificationsList = orderNotificationStore;
 
-      number = orderNotificationStore.length + orderNotificationStore.length;
+      number = orderNotificationStore.length;
+
+      notifiModel.numberNotifiBell = number;
 
       if (number >= 2) {
         notifiModel.bounceControllerBell;
@@ -469,7 +470,7 @@ class __PositionedMenuState extends State<_PositionedMenu> {
   @override
   Widget build(BuildContext context) {
     double widthView = MediaQuery.of(context).size.width;
-
+    final int number = Provider.of<NotificationModel>(context).numberNotifiBell;
     final appTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final bloc = Provider.of<StoreBLoC>(context);
 
@@ -480,6 +481,7 @@ class __PositionedMenuState extends State<_PositionedMenu> {
     final currentPage = Provider.of<MenuModel>(context).currentPage;
     final authService = Provider.of<AuthenticationBLoC>(context);
 
+    print(number);
     return Positioned(
         bottom: 0,
         child: IgnorePointer(
