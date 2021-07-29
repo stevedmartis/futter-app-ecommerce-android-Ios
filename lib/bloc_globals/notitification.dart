@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 
 class NotificationModel extends ChangeNotifier {
   int _number = 0;
@@ -8,6 +9,7 @@ class NotificationModel extends ChangeNotifier {
 
   int get number => this._number;
 
+  final _numberSteamNotifiBell = BehaviorSubject<int>();
   dynamic get payload => this._payload;
 
   set payload(dynamic value) {
@@ -37,4 +39,12 @@ class NotificationModel extends ChangeNotifier {
   set bounceControllerBell(AnimationController controller) {
     this._bounceControllerNotifiBeel = controller;
   }
+
+  @override
+  void dispose() {
+    _numberSteamNotifiBell.close();
+    super.dispose();
+  }
+
+  BehaviorSubject<int> get numberSteamNotifiBell => _numberSteamNotifiBell;
 }

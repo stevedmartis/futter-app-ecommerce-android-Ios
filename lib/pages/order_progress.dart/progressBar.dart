@@ -292,7 +292,7 @@ class _AnimatedBarState extends State<AnimatedBar>
             padding: EdgeInsets.only(
               top: (widget.principal) ? 10.0 : 20,
               right: (widget.principal) ? 20 : 0,
-              bottom: (widget.principal) ? 10 : 0,
+              bottom: (widget.principal) ? 5 : 0,
             ),
             width: MediaQuery.of(context).size.width / 1.3,
             child: Row(

@@ -18,15 +18,11 @@ class FireBaseAuthBLoC with ChangeNotifier {
       return user;
     };
 
-    print("verificationCompleted: + $verificationCompleted");
-
     final PhoneVerificationFailed verificationFailed = (exception) {
       print("${exception.message}");
 
       return exception;
     };
-
-    print("verificationFailed: + $verificationFailed");
 
     final PhoneCodeAutoRetrievalTimeout retrievalTimeout =
         (String verificationId) {

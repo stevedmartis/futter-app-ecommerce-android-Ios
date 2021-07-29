@@ -97,7 +97,6 @@ class _PrincipalPageState extends State<PrincipalPage>
   }
 
   void _listenNotification(dynamic payload) {
-    print(payload);
     if (storeAuth.service != 0) {
       _myOrdersStore();
     }
@@ -182,13 +181,10 @@ class _PrincipalPageState extends State<PrincipalPage>
     final notifiModel = Provider.of<NotificationModel>(context, listen: false);
     int number = notifiModel.numberNotifiBell;
 
-    orderService.ordersClientInitial = [];
-
-    notifiModel.numberNotifiBell = number;
-
     final OrderStoresProducts resp =
         await orderService.getMyOrders(storeAuth.user.uid);
 
+    orderService.ordersClientInitial = [];
     if (resp.ok) {
       resp.orders.forEach((order) {
         orderService.ordersClientInitial.add(order);
@@ -199,8 +195,11 @@ class _PrincipalPageState extends State<PrincipalPage>
       final List<Order> orderNotificationClient =
           orderService.orders.where((i) => i.isNotifiCheckClient).toList();
 
-      number = orderNotificationClient.length + orderNotificationClient.length;
+      number = orderNotificationClient.length;
 
+      notifiModel.numberNotifiBell = number;
+
+      notifiModel.numberSteamNotifiBell.sink.add(number);
       if (number >= 2) {
         notifiModel.bounceControllerBell;
         //controller.forward(from: 0.0);
@@ -235,7 +234,7 @@ class _PrincipalPageState extends State<PrincipalPage>
       number = orderNotificationStore.length;
 
       notifiModel.numberNotifiBell = number;
-
+      notifiModel.numberSteamNotifiBell.sink.add(number);
       if (number >= 2) {
         notifiModel.bounceControllerBell;
         //controller.forward(from: 0.0);
@@ -470,7 +469,7 @@ class __PositionedMenuState extends State<_PositionedMenu> {
   @override
   Widget build(BuildContext context) {
     double widthView = MediaQuery.of(context).size.width;
-    final int number = Provider.of<NotificationModel>(context).numberNotifiBell;
+
     final appTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final bloc = Provider.of<StoreBLoC>(context);
 
@@ -481,7 +480,6 @@ class __PositionedMenuState extends State<_PositionedMenu> {
     final currentPage = Provider.of<MenuModel>(context).currentPage;
     final authService = Provider.of<AuthenticationBLoC>(context);
 
-    print(number);
     return Positioned(
         bottom: 0,
         child: IgnorePointer(

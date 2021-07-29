@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:animate_do/animate_do.dart';
 import 'package:animations/animations.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
+
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
@@ -249,7 +250,8 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
           backgroundColor: currentTheme.scaffoldBackgroundColor,
           body: NotificationListener<ScrollEndNotification>(
             onNotification: (_) {
-              _snapAppbar();
+              if (_scrollController.offset < 100 ||
+                  _scrollController.offset > 130) _snapAppbar();
 
               return false;
             },
@@ -552,7 +554,7 @@ SliverList makeListRecomendations(bool loading) {
 SliverList makeListHorizontalCarouselOrdersProgress(context) {
   final orderService = Provider.of<OrderService>(context);
 
-  final List<Order> ordersProgress =
+  List<Order> ordersProgress =
       orderService.orders.where((i) => i.isActive).toList();
 
   List<Order> orders = LinkedHashSet<Order>.from(ordersProgress).toList();
@@ -569,6 +571,7 @@ SliverList makeListHorizontalCarouselOrdersProgress(context) {
                       orders.length,
                       (index) => OrderprogressStoreCard(
                         order: orders[index],
+                        isStore: false,
                       ),
                     ),
                     options: CarouselOptions(
@@ -593,7 +596,7 @@ SliverList makeListHorizontalCarouselOrdersProgress(context) {
 SliverList makeListHorizontalCarouselOrdersStoreProgress(context) {
   final orderService = Provider.of<OrderService>(context);
 
-  final List<Order> ordersStoreActive =
+  List<Order> ordersStoreActive =
       orderService.ordersStoreInitial.where((i) => i.isActive).toList();
 
   return SliverList(
@@ -631,7 +634,7 @@ SliverList makeListHorizontalCarouselOrdersStoreProgress(context) {
   );
 }
 
-class OrderprogressStoreCard extends StatelessWidget {
+class OrderprogressStoreCard extends StatefulWidget {
   OrderprogressStoreCard({this.order, this.isStore = false});
 
   final Order order;
@@ -639,16 +642,22 @@ class OrderprogressStoreCard extends StatelessWidget {
   final bool isStore;
 
   @override
+  _OrderprogressStoreCardState createState() => _OrderprogressStoreCardState();
+}
+
+class _OrderprogressStoreCardState extends State<OrderprogressStoreCard> {
+  @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+    final notifiBloc = Provider.of<NotificationModel>(context);
+    final id = widget.order.id;
 
-    final id = order.id;
-
-    final store = order.store;
+    final store = widget.order.store;
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
-        Navigator.push(context, orderProggressRoute(order, false, isStore));
+        Navigator.push(
+            context, orderProggressRoute(widget.order, false, widget.isStore));
       },
       child: Card(
         elevation: 6,
@@ -693,9 +702,9 @@ class OrderprogressStoreCard extends StatelessWidget {
                         Row(
                           children: [
                             Container(
-                              padding: EdgeInsets.only(top: 20, right: 10),
+                              padding: EdgeInsets.only(top: 10, right: 10),
                               child: Text(
-                                (isStore)
+                                (widget.isStore)
                                     ? 'Pedido recibido'
                                     : 'Pedido en curso',
                                 style: TextStyle(
@@ -704,38 +713,104 @@ class OrderprogressStoreCard extends StatelessWidget {
                                     fontSize: 15),
                               ),
                             ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                top: 10,
-                              ),
-                              alignment: Alignment.centerRight,
-                              child: BounceInDown(
-                                from: 5,
-                                animate: order.isNotifiCheckStore,
-                                child: Bounce(
-                                  delay: Duration(seconds: 1),
-                                  from: 5,
-                                  controller: (controller) =>
-                                      Provider.of<NotificationModel>(context)
-                                          .bounceControllerBell = controller,
-                                  child: Container(
-                                    child: Text(
-                                      '',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    alignment: Alignment.center,
-                                    width: 15,
-                                    height: 15,
-                                    decoration: BoxDecoration(
-                                        color: currentTheme.accentColor,
-                                        shape: BoxShape.circle),
-                                  ),
+                            if (widget.isStore)
+                              if (widget.order.isNotifiCheckStore)
+                                StreamBuilder(
+                                  stream: notifiBloc.numberSteamNotifiBell,
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot snapshot) {
+                                    int number = (snapshot.data != null)
+                                        ? snapshot.data
+                                        : 0;
+
+                                    if (number > 0)
+                                      return Container(
+                                        margin: EdgeInsets.only(right: 0),
+                                        alignment: Alignment.centerRight,
+                                        child: BounceInDown(
+                                          from: 5,
+                                          animate: (number > 0) ? true : false,
+                                          child: Bounce(
+                                            delay: Duration(seconds: 2),
+                                            from: 5,
+                                            controller: (controller) =>
+                                                Provider.of<NotificationModel>(
+                                                            context)
+                                                        .bounceControllerBell =
+                                                    controller,
+                                            child: Container(
+                                              child: Text(
+                                                '',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 10,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              alignment: Alignment.center,
+                                              width: 15,
+                                              height: 15,
+                                              decoration: BoxDecoration(
+                                                  color:
+                                                      currentTheme.accentColor,
+                                                  shape: BoxShape.circle),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+
+                                    return Container();
+                                  },
                                 ),
-                              ),
-                            ),
+                            if (!widget.isStore)
+                              if (widget.order.isNotifiCheckClient)
+                                StreamBuilder(
+                                  stream: notifiBloc.numberSteamNotifiBell,
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot snapshot) {
+                                    int number = (snapshot.data != null)
+                                        ? snapshot.data
+                                        : 0;
+
+                                    if (number > 0)
+                                      return Container(
+                                        margin: EdgeInsets.only(right: 0),
+                                        alignment: Alignment.centerRight,
+                                        child: BounceInDown(
+                                          from: 5,
+                                          animate: (number > 0) ? true : false,
+                                          child: Bounce(
+                                            delay: Duration(seconds: 2),
+                                            from: 5,
+                                            controller: (controller) =>
+                                                Provider.of<NotificationModel>(
+                                                            context)
+                                                        .bounceControllerBell =
+                                                    controller,
+                                            child: Container(
+                                              child: Text(
+                                                '',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 10,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              alignment: Alignment.center,
+                                              width: 15,
+                                              height: 15,
+                                              decoration: BoxDecoration(
+                                                  color:
+                                                      currentTheme.accentColor,
+                                                  shape: BoxShape.circle),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+
+                                    return Container();
+                                  },
+                                )
                           ],
                         ),
                         Container(
@@ -748,12 +823,14 @@ class OrderprogressStoreCard extends StatelessWidget {
                                 fontSize: 12),
                           ),
                         ),
-                        Container(
-                            child: ProgressBar(
-                          key: ValueKey('order/$id'),
-                          order: order,
-                          principal: true,
-                        )),
+                        Expanded(
+                          child: Container(
+                              child: ProgressBar(
+                            key: ValueKey('order/$id'),
+                            order: widget.order,
+                            principal: true,
+                          )),
+                        )
                       ])),
                 ],
               ),

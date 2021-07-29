@@ -1,5 +1,5 @@
 import 'package:australti_ecommerce_app/global/enviroments.dart';
-import 'package:australti_ecommerce_app/responses/category_store_response.dart';
+
 import 'package:australti_ecommerce_app/responses/message_error_response.dart';
 import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 
@@ -45,7 +45,14 @@ class OrderService with ChangeNotifier {
 
     order.isNotifiCheckStore = false;
 
-    print(order);
+    //notifyListeners();
+  }
+
+  void orderCheckNotifiClient(String orderId) {
+    final order =
+        orders.firstWhere((item) => item.id == orderId, orElse: () => null);
+
+    order.isNotifiCheckClient = false;
 
     //notifyListeners();
   }
@@ -123,16 +130,14 @@ class OrderService with ChangeNotifier {
     }
   }
 
-  Future editOrderNotifiStore(String orderId) async {
+  Future editOrderNotifiOrder(String orderId, bool isStore) async {
     // this.authenticated = true;
 
-    final data = {
-      'id': orderId,
-    };
+    final data = {'id': orderId, 'isStore': isStore};
 
     final token = await this._storage.read(key: 'token');
     final urlFinal =
-        ('${Environment.apiUrl}/api/order/update/notification/store');
+        ('${Environment.apiUrl}/api/order/update/notification/order');
 
     final resp = await http.post(Uri.parse(urlFinal),
         body: jsonEncode(data),

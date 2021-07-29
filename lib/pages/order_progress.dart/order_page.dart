@@ -83,9 +83,22 @@ class _OrderPageState extends State<OrderPage> {
   void updateNotifiOrderStore() async {
     final orderBloc = Provider.of<OrderService>(context, listen: false);
 
+    final notifiModel = Provider.of<NotificationModel>(context, listen: false);
+    int number = notifiModel.numberNotifiBell;
+    number--;
+    notifiModel.numberNotifiBell = number;
+
+    notifiModel.numberSteamNotifiBell.sink.add(number);
+
     if (widget.isStore && order.isNotifiCheckStore) {
-      orderBloc.orderCheckNotifiStore(order.id);
-      orderBloc.editOrderNotifiStore(order.id);
+      orderBloc.orderCheckNotifiStore(
+        order.id,
+      );
+      orderBloc.editOrderNotifiOrder(order.id, true);
+    } else {
+      orderBloc.orderCheckNotifiClient(order.id);
+
+      orderBloc.editOrderNotifiOrder(order.id, false);
     }
   }
 

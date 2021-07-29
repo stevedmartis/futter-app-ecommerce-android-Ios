@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 
@@ -94,7 +95,7 @@ class _MyNotificationsState extends State<MyNotifications> {
   ) {
     return SliverList(
         delegate: SliverChildListDelegate([
-      CatalogsList(bloc: tabsViewScrollBLoC, loading: loading),
+      NotificationList(loading: loading),
     ]));
   }
 
@@ -119,18 +120,16 @@ class _MyNotificationsState extends State<MyNotifications> {
   }
 }
 
-class CatalogsList extends StatefulWidget {
-  CatalogsList({this.bloc, this.loading});
-
-  final TabsViewScrollBLoC bloc;
+class NotificationList extends StatefulWidget {
+  NotificationList({this.loading});
 
   final bool loading;
 
   @override
-  _CatalogsListState createState() => _CatalogsListState();
+  _NotificationListState createState() => _NotificationListState();
 }
 
-class _CatalogsListState extends State<CatalogsList>
+class _NotificationListState extends State<NotificationList>
     with TickerProviderStateMixin {
   final catalogoService = new StoreCategoiesService();
 
@@ -154,46 +153,67 @@ class _CatalogsListState extends State<CatalogsList>
 
     final _bloc = Provider.of<OrderService>(context);
 
-    final odersNotifications =
-        _bloc.ordersStoreInitial.where((i) => i.isNotifiCheckStore).toList();
+    final odersNotificationsClient = _bloc.ordersClientInitial;
 
-    return Stack(
-      children: [
-        Container(
-          padding: EdgeInsets.only(top: 20, left: 20),
-          child: Text(
-            'Notificaciones',
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 30,
-                color: currentTheme.accentColor),
+    final odersNotificationsStore = _bloc.ordersStoreInitial;
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 20.0, right: 20),
+      child: Stack(
+        children: [
+          Container(
+            padding: EdgeInsets.only(top: 20, left: 10),
+            child: Text(
+              'Notificaciones',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                  color: currentTheme.accentColor),
+            ),
           ),
-        ),
-        Container(
-          padding: EdgeInsets.only(top: 70),
-          child: ListView.builder(
-            shrinkWrap: true,
-            controller: scrollController,
-            itemCount: odersNotifications.length,
-            itemBuilder: (context, index) {
-              if (odersNotifications.length > 0) {
-                final order = odersNotifications[index];
+          Container(
+            padding: EdgeInsets.only(top: 70),
+            child: ListView.builder(
+              shrinkWrap: true,
+              controller: scrollController,
+              itemCount: odersNotificationsClient.length,
+              itemBuilder: (context, index) {
+                if (odersNotificationsClient.length > 0) {
+                  final order = odersNotificationsClient[index];
+                  return Container(
+                    child: OrderNotificationStoreCard(
+                      order: order,
+                      isStore: false,
+                    ),
+                  );
+                } else {
+                  return Center(
+                      child: Container(
+                    child: Text('Aun no tienes notificaciones'),
+                  ));
+                }
+              },
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 70),
+            child: ListView.builder(
+              shrinkWrap: true,
+              controller: scrollController,
+              itemCount: odersNotificationsStore.length,
+              itemBuilder: (context, index) {
+                final order = odersNotificationsStore[index];
                 return Container(
                   child: OrderNotificationStoreCard(
                     order: order,
                     isStore: true,
                   ),
                 );
-              } else {
-                return Center(
-                    child: Container(
-                  child: Text('Aun no tienes notificaciones'),
-                ));
-              }
-            },
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -212,6 +232,8 @@ class OrderNotificationStoreCard extends StatelessWidget {
     final id = order.id;
 
     final store = order.store;
+
+    final notifiBloc = Provider.of<NotificationModel>(context);
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
@@ -257,15 +279,119 @@ class OrderNotificationStoreCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.only(top: 20),
-                          child: Text(
-                            (isStore) ? 'Pedido recibido' : 'Pedido en curso',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15),
-                          ),
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(top: 10, right: 10),
+                              child: Text(
+                                (isStore)
+                                    ? 'Pedido recibido'
+                                    : 'Pedido en curso',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15),
+                              ),
+                            ),
+                            if (isStore)
+                              if (order.isNotifiCheckStore)
+                                StreamBuilder(
+                                  stream: notifiBloc.numberSteamNotifiBell,
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot snapshot) {
+                                    int number = (snapshot.data != null)
+                                        ? snapshot.data
+                                        : 0;
+
+                                    if (number > 0)
+                                      return Container(
+                                        margin: EdgeInsets.only(right: 0),
+                                        alignment: Alignment.centerRight,
+                                        child: BounceInDown(
+                                          from: 5,
+                                          animate: (number > 0) ? true : false,
+                                          child: Bounce(
+                                            delay: Duration(seconds: 2),
+                                            from: 5,
+                                            controller: (controller) =>
+                                                Provider.of<NotificationModel>(
+                                                            context)
+                                                        .bounceControllerBell =
+                                                    controller,
+                                            child: Container(
+                                              child: Text(
+                                                '',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 10,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              alignment: Alignment.center,
+                                              width: 15,
+                                              height: 15,
+                                              decoration: BoxDecoration(
+                                                  color:
+                                                      currentTheme.accentColor,
+                                                  shape: BoxShape.circle),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+
+                                    return Container();
+                                  },
+                                ),
+                            if (!isStore)
+                              if (order.isNotifiCheckClient)
+                                StreamBuilder(
+                                  stream: notifiBloc.numberSteamNotifiBell,
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot snapshot) {
+                                    int number = (snapshot.data != null)
+                                        ? snapshot.data
+                                        : 0;
+
+                                    if (number > 0)
+                                      return Container(
+                                        margin: EdgeInsets.only(right: 0),
+                                        alignment: Alignment.centerRight,
+                                        child: BounceInDown(
+                                          from: 5,
+                                          animate: (number > 0) ? true : false,
+                                          child: Bounce(
+                                            delay: Duration(seconds: 2),
+                                            from: 5,
+                                            controller: (controller) =>
+                                                Provider.of<NotificationModel>(
+                                                            context)
+                                                        .bounceControllerBell =
+                                                    controller,
+                                            child: Container(
+                                              child: Text(
+                                                '',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 10,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              alignment: Alignment.center,
+                                              width: 15,
+                                              height: 15,
+                                              decoration: BoxDecoration(
+                                                  color:
+                                                      currentTheme.accentColor,
+                                                  shape: BoxShape.circle),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+
+                                    return Container();
+                                  },
+                                ),
+                          ],
                         ),
                         Container(
                           padding: EdgeInsets.only(top: 0),

@@ -36,7 +36,7 @@ class StoreBLoC with ChangeNotifier {
         stores: 0),
     StoreServices(
         id: 1,
-        backImage: 'assets/principal_stores/headers/mark_header.png',
+        backImage: 'assets/principal_stores/headers/market_header.png',
         frontImage: 'assets/principal_stores/mini/mark_mini.png',
         name: 'Mercados',
         stores: 0),
@@ -139,7 +139,6 @@ class StoreBLoC with ChangeNotifier {
 
     storesListState = newList;
 
-    print(storesListState);
     notifierTotal.value = 2;
     notifyListeners();
   }

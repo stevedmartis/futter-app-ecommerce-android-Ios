@@ -122,7 +122,6 @@ class __GridLayoutMenuButtonState extends State<_GridLayoutMenuButton> {
     final notifiBloc = Provider.of<NotificationModel>(context);
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
-    int number = notifiBloc.numberNotifiBell;
     return GestureDetector(
         onTap: () {
           if (authBloc.storeAuth.user.uid != "0")
@@ -140,16 +139,21 @@ class __GridLayoutMenuButtonState extends State<_GridLayoutMenuButton> {
               duration: Duration(milliseconds: 900),
               child: Icon(
                 widget.item.icon,
-                size: (intemSelected == widget.index) ? 35 : 30,
+                size: 30,
                 color: (intemSelected == widget.index)
                     ? currentTheme.accentColor
                     : Colors.grey,
               ),
             ),
             if (widget.index == 3)
-              (number > 0)
-                  ? Container(
-                      margin: EdgeInsets.only(right: 35),
+              StreamBuilder(
+                stream: notifiBloc.numberSteamNotifiBell,
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  int number = (snapshot.data != null) ? snapshot.data : 0;
+
+                  if (number > 0)
+                    return Container(
+                      margin: EdgeInsets.only(right: 0),
                       alignment: Alignment.centerRight,
                       child: BounceInDown(
                         from: 5,
@@ -164,7 +168,7 @@ class __GridLayoutMenuButtonState extends State<_GridLayoutMenuButton> {
                             child: Text(
                               '$number',
                               style: TextStyle(
-                                  color: Colors.white,
+                                  color: Colors.black,
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -172,12 +176,15 @@ class __GridLayoutMenuButtonState extends State<_GridLayoutMenuButton> {
                             width: 15,
                             height: 15,
                             decoration: BoxDecoration(
-                                color: Colors.black, shape: BoxShape.circle),
+                                color: Colors.white, shape: BoxShape.circle),
                           ),
                         ),
                       ),
-                    )
-                  : Container()
+                    );
+
+                  return Container();
+                },
+              )
           ],
         ));
   }
