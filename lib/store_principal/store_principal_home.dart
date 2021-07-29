@@ -243,6 +243,15 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     isItems = groceryBloc.totalCartElements() > 0 ? true : false;
     storeAuth = authService.storeAuth;
 
+    List<Order> orderClientActive =
+        orderService.orders.where((i) => i.isActive).toList();
+
+    /*  final List<Order> orderNotificationClient =
+        ordersProgress.where((i) => i.isNotifiCheckClient).toList();
+ */
+    List<Order> ordersStoreActive =
+        orderService.ordersStore.where((i) => i.isActive).toList();
+
     if (groceryBloc.isReload) this.getCartSave();
     groceryBloc.changeReaload();
     return SafeArea(
@@ -411,11 +420,13 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                     ),
                   ),
 
-                  if (orderService.orders.length > 0)
-                    makeListHorizontalCarouselOrdersProgress(context),
+                  if (orderClientActive.length > 0)
+                    makeListHorizontalCarouselOrdersProgress(
+                        context, orderClientActive),
 
-                  if (orderService.ordersStore.length > 0)
-                    makeListHorizontalCarouselOrdersStoreProgress(context),
+                  if (ordersStoreActive.length > 0)
+                    makeListHorizontalCarouselOrdersStoreProgress(
+                        context, ordersStoreActive),
                   SliverAppBar(
                     automaticallyImplyLeading: false,
                     expandedHeight: 150.0,
@@ -551,11 +562,9 @@ SliverList makeListRecomendations(bool loading) {
   );
 }
 
-SliverList makeListHorizontalCarouselOrdersProgress(context) {
+SliverList makeListHorizontalCarouselOrdersProgress(
+    context, List<Order> orderNotificationClient) {
   final orderService = Provider.of<OrderService>(context);
-
-  List<Order> ordersProgress =
-      orderService.orders.where((i) => i.isActive).toList();
 
   return SliverList(
     delegate: SliverChildListDelegate([
@@ -567,15 +576,15 @@ SliverList makeListHorizontalCarouselOrdersProgress(context) {
                 ? buildLoadingWidget(context)
                 : CarouselSlider(
                     items: List.generate(
-                      ordersProgress.length,
+                      orderNotificationClient.length,
                       (index) => OrderprogressStoreCard(
-                        order: ordersProgress[index],
+                        order: orderNotificationClient[index],
                         isStore: false,
                       ),
                     ),
                     options: CarouselOptions(
                         viewportFraction:
-                            (ordersProgress.length > 1) ? 0.8 : 0.9,
+                            (orderNotificationClient.length > 1) ? 0.8 : 0.9,
                         aspectRatio: 16 / 5.5,
                         initialPage: 0,
                         enableInfiniteScroll: false,
@@ -593,11 +602,9 @@ SliverList makeListHorizontalCarouselOrdersProgress(context) {
   );
 }
 
-SliverList makeListHorizontalCarouselOrdersStoreProgress(context) {
+SliverList makeListHorizontalCarouselOrdersStoreProgress(
+    context, List<Order> orderNotificationStore) {
   final orderService = Provider.of<OrderService>(context);
-
-  List<Order> ordersStoreActive =
-      orderService.ordersStore.where((i) => i.isActive).toList();
 
   return SliverList(
     delegate: SliverChildListDelegate([
@@ -609,15 +616,15 @@ SliverList makeListHorizontalCarouselOrdersStoreProgress(context) {
                 ? buildLoadingWidget(context)
                 : CarouselSlider(
                     items: List.generate(
-                      ordersStoreActive.length,
+                      orderNotificationStore.length,
                       (index) => OrderprogressStoreCard(
-                        order: ordersStoreActive[index],
+                        order: orderNotificationStore[index],
                         isStore: true,
                       ),
                     ),
                     options: CarouselOptions(
                         viewportFraction:
-                            (ordersStoreActive.length > 1) ? 0.8 : 0.9,
+                            (orderNotificationStore.length > 1) ? 0.8 : 0.9,
                         aspectRatio: 16 / 5.5,
                         initialPage: 0,
                         enableInfiniteScroll: false,

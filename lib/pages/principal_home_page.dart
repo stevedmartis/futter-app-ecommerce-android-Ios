@@ -186,12 +186,12 @@ class _PrincipalPageState extends State<PrincipalPage>
 
     orderService.orders = [];
     if (resp.ok) {
-      final List<Order> orderNotificationClient =
-          resp.orders.where((i) => i.isNotifiCheckClient).toList();
+      orderService.orders = resp.orders;
 
-      orderService.orders = orderNotificationClient;
+      final List<Order> orderNotificationStore =
+          orderService.orders.where((i) => i.isNotifiCheckClient).toList();
 
-      number = orderNotificationClient.length;
+      number = orderNotificationStore.length;
 
       notifiModel.numberNotifiBell = number;
 
@@ -215,13 +215,13 @@ class _PrincipalPageState extends State<PrincipalPage>
         await orderService.getMyOrdesStore(storeAuth.user.uid);
 
     if (resp.ok) {
-      final List<Order> orderNotificationStore =
-          resp.orders.where((i) => i.isNotifiCheckStore).toList();
-
-      orderService.ordersStore = orderNotificationStore;
-      number = orderNotificationStore.length;
+      orderService.ordersStore = resp.orders;
 
       notifiModel.numberNotifiBell = number;
+
+      final List<Order> orderNotificationStore =
+          orderService.ordersStore.where((i) => i.isNotifiCheckStore).toList();
+      number = orderNotificationStore.length;
       notifiModel.numberSteamNotifiBell.sink.add(number);
       if (number >= 2) {
         notifiModel.bounceControllerBell;

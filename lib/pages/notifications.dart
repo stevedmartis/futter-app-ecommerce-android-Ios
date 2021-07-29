@@ -153,10 +153,10 @@ class _NotificationListState extends State<NotificationList>
 
     final _bloc = Provider.of<OrderService>(context);
 
-    final odersNotificationsClient = _bloc.ordersClientInitial;
+    final odersNotificationsClient = _bloc.orders;
 
-    final odersNotificationsStore = _bloc.ordersStoreInitial;
-
+    final odersNotificationsStore = _bloc.ordersStore;
+    final _size = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.only(left: 20.0, right: 20),
       child: Column(
@@ -183,6 +183,7 @@ class _NotificationListState extends State<NotificationList>
                 if (odersNotificationsClient.length > 0) {
                   final order = odersNotificationsClient[index];
                   return Container(
+                    height: _size.height / 5.1,
                     child: OrderNotificationStoreCard(
                       order: order,
                       isStore: false,
@@ -198,7 +199,7 @@ class _NotificationListState extends State<NotificationList>
             ),
           ),
           Container(
-            padding: EdgeInsets.only(top: 20),
+            padding: EdgeInsets.only(top: 10),
             child: ListView.builder(
               shrinkWrap: true,
               controller: scrollController,
@@ -206,6 +207,7 @@ class _NotificationListState extends State<NotificationList>
               itemBuilder: (context, index) {
                 final order = odersNotificationsStore[index];
                 return Container(
+                  height: _size.height / 5.1,
                   child: OrderNotificationStoreCard(
                     order: order,
                     isStore: true,
@@ -286,9 +288,12 @@ class OrderNotificationStoreCard extends StatelessWidget {
                             Container(
                               padding: EdgeInsets.only(top: 10, right: 10),
                               child: Text(
-                                (isStore)
-                                    ? 'Pedido recibido'
-                                    : 'Pedido en curso',
+                                (order.isCancelByClient ||
+                                        order.isCancelByStore)
+                                    ? 'Pedido cancelado'
+                                    : (isStore)
+                                        ? 'Pedido recibido'
+                                        : 'Pedido en curso',
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
