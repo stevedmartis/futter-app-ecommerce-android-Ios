@@ -16,6 +16,7 @@ import 'package:australti_ecommerce_app/services/order_service.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
 
 import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
@@ -25,6 +26,7 @@ import 'package:flutter/material.dart';
 
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
@@ -102,6 +104,21 @@ class _OrderPageState extends State<OrderPage> {
     }
   }
 
+  void closeOrder() async {
+    final orderBloc = Provider.of<OrderService>(context, listen: false);
+
+    if (widget.isStore) {
+      orderBloc.orderCancelByStore(
+        order.id,
+      );
+      // orderBloc.editOrderNotifiOrder(order.id, true);
+    } else {
+      orderBloc.orderCancelByClient(order.id);
+
+      //orderBloc.editOrderNotifiOrder(order.id, false);
+    }
+  }
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -133,11 +150,159 @@ class _OrderPageState extends State<OrderPage> {
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+    final size = MediaQuery.of(context).size;
 
+    final orderId = order.id.substring(11, 15);
     return SafeArea(
       child: Scaffold(
         backgroundColor: currentTheme.scaffoldBackgroundColor,
+        bottomNavigationBar: (widget.isStore)
+            ? Container(
+                padding:
+                    EdgeInsets.only(top: 5, bottom: 10, right: 10, left: 10),
+                child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                  elevatedButtonCustom(
+                    context: context,
+                    isCancel: true,
+                    title: 'Cancelar',
+                    onPress: () {
+                      HapticFeedback.heavyImpact();
 
+                      final act = CupertinoActionSheet(
+                          title: Text('Cancelar este pedido?',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 20)),
+                          message: Text(
+                              'Se cancelara el pago, pasara a cerrado y se notificara al cliente'),
+                          actions: <Widget>[
+                            CupertinoActionSheetAction(
+                              child: Text(
+                                'Cancelar',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                              onPressed: () {
+                                HapticFeedback.heavyImpact();
+
+                                closeOrder();
+                                Navigator.pop(context);
+                              },
+                            )
+                          ],
+                          cancelButton: CupertinoActionSheetAction(
+                            child: Text(
+                              'Cerrar',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ));
+                      showCupertinoModalPopup(
+                          context: context,
+                          builder: (BuildContext context) => act);
+                    },
+                  ),
+                  Spacer(),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 10.0, right: 10, bottom: 0),
+                    child: Container(
+                        height: 50,
+                        width: size.width / 2.2,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              HapticFeedback.lightImpact();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              elevation: 5.0,
+                              fixedSize: Size.fromWidth(size.width),
+                              primary: currentTheme.primaryColor,
+                              shape: new RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(30.0),
+                              ),
+                            ),
+                            child: Row(children: [
+                              Text('Preparar', style: TextStyle(fontSize: 15)),
+                              Spacer(),
+                              FaIcon(
+                                FontAwesomeIcons.boxOpen,
+                                size: 15,
+                                color: Colors.white,
+                              )
+                            ]))),
+                  )
+                ]),
+              )
+            : Padding(
+                padding: const EdgeInsets.only(
+                  left: 10.0,
+                  right: 10,
+                  bottom: 20,
+                ),
+                child: SizedBox(
+                    height: 50,
+                    child: Row(
+                      children: [
+                        elevatedButtonCustom(
+                          context: context,
+                          isDelete: true,
+                          title: 'Eliminar',
+                          onPress: () {
+                            HapticFeedback.heavyImpact();
+
+                            final act = CupertinoActionSheet(
+                                title: Text('Eliminar este producto?',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20)),
+                                message: Text(
+                                    'Se eliminara de tu lista de productos de forma permanente'),
+                                actions: <Widget>[
+                                  CupertinoActionSheetAction(
+                                    child: Text(
+                                      'Eliminar',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                    onPressed: () {
+                                      HapticFeedback.heavyImpact();
+                                    },
+                                  )
+                                ],
+                                cancelButton: CupertinoActionSheetAction(
+                                  child: Text(
+                                    'Cancelar',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                  onPressed: () {},
+                                ));
+                            showCupertinoModalPopup(
+                                context: context,
+                                builder: (BuildContext context) => act);
+                          },
+                        ),
+                        Spacer(),
+                        SizedBox(
+                            height: 100,
+                            width: size.width / 3,
+                            child: ElevatedButton(
+                                onPressed: () {
+                                  HapticFeedback.lightImpact();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 5.0,
+                                  fixedSize: Size.fromWidth(size.width),
+                                  primary: Colors.grey[200],
+                                  shape: new RoundedRectangleBorder(
+                                    borderRadius:
+                                        new BorderRadius.circular(30.0),
+                                  ),
+                                ),
+                                child: Text(
+                                  'Editar',
+                                  style: TextStyle(color: Colors.black),
+                                )))
+                      ],
+                    )),
+              ),
         // tab bar view
         body: NotificationListener<ScrollEndNotification>(
           onNotification: (_) {
@@ -148,9 +313,10 @@ class _OrderPageState extends State<OrderPage> {
                   parent: AlwaysScrollableScrollPhysics()),
               controller: _scrollController,
               slivers: <Widget>[
-                makeHeaderCustom('Pedido#568', widget.goToPrincipal),
-                progressOrderExpanded(context, order),
-                makeListProducts(context, order, minTimes, maxTimes),
+                makeHeaderCustom('Pedido#$orderId', widget.goToPrincipal),
+                progressOrderExpanded(context, order, widget.isStore),
+                makeListProducts(
+                    context, order, minTimes, maxTimes, widget.isStore),
               ]),
         ),
       ),
@@ -184,7 +350,7 @@ class _OrderPageState extends State<OrderPage> {
 
 List<Store> storesByProduct = [];
 
-SliverToBoxAdapter progressOrderExpanded(context, Order order) {
+SliverToBoxAdapter progressOrderExpanded(context, Order order, bool isStore) {
   return SliverToBoxAdapter(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -194,16 +360,18 @@ SliverToBoxAdapter progressOrderExpanded(context, Order order) {
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: ProgressBar(
               order: order,
+              isStore: isStore,
             )),
       ],
     ),
   );
 }
 
-SliverList makeListProducts(context, Order order, minTimes, maxTimes) {
+SliverList makeListProducts(
+    context, Order order, minTimes, maxTimes, bool isStore) {
   return SliverList(
       delegate: SliverChildListDelegate([
-    _buildProductsList(context, order, minTimes, maxTimes),
+    _buildProductsList(context, order, minTimes, maxTimes, isStore),
   ]));
 }
 
@@ -213,7 +381,8 @@ int totalPriceElements(Order order) => order.products.fold<int>(
           previousValue + (element.quantity * element.product.price),
     );
 
-Widget _buildProductsList(context, Order order, minTimes, maxTimes) {
+Widget _buildProductsList(
+    context, Order order, minTimes, maxTimes, bool isStore) {
   final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
   final size = MediaQuery.of(context).size;
@@ -385,56 +554,57 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes) {
                   ],
                 ),
                 if (!order.isSend)
-                  Container(
-                    alignment: Alignment.centerRight,
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: currentTheme.scaffoldBackgroundColor,
-                    ),
-                    child: Row(
-                      children: [
-                        Material(
-                          color: currentTheme.scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(20),
-                          child: InkWell(
-                            splashColor: Colors.grey,
+                  if (!isStore)
+                    Container(
+                      alignment: Alignment.centerRight,
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: currentTheme.scaffoldBackgroundColor,
+                      ),
+                      child: Row(
+                        children: [
+                          Material(
+                            color: currentTheme.scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(20),
-                            radius: 40,
-                            onTap: () {
-                              HapticFeedback.lightImpact();
+                            child: InkWell(
+                              splashColor: Colors.grey,
+                              borderRadius: BorderRadius.circular(20),
+                              radius: 40,
+                              onTap: () {
+                                HapticFeedback.lightImpact();
 
-                              final place = prefs.addressSearchSave;
+                                final place = prefs.addressSearchSave;
 
-                              var placeSave = new PlaceSearch(
-                                  description: authBloc.storeAuth.user.uid,
-                                  placeId: authBloc.storeAuth.user.uid,
-                                  structuredFormatting:
-                                      new StructuredFormatting(
-                                          mainText: place.mainText,
-                                          secondaryText: place.secondaryText,
-                                          number: place.number));
-                              Navigator.push(
-                                  context, confirmLocationRoute(placeSave));
-                            },
-                            highlightColor: Colors.grey,
-                            child: Container(
-                              margin: EdgeInsets.only(left: 5.0),
-                              alignment: Alignment.center,
-                              width: 34,
-                              height: 34,
-                              child: Icon(
-                                Icons.edit_outlined,
-                                color: currentTheme.primaryColor,
-                                size: 25,
+                                var placeSave = new PlaceSearch(
+                                    description: authBloc.storeAuth.user.uid,
+                                    placeId: authBloc.storeAuth.user.uid,
+                                    structuredFormatting:
+                                        new StructuredFormatting(
+                                            mainText: place.mainText,
+                                            secondaryText: place.secondaryText,
+                                            number: place.number));
+                                Navigator.push(
+                                    context, confirmLocationRoute(placeSave));
+                              },
+                              highlightColor: Colors.grey,
+                              child: Container(
+                                margin: EdgeInsets.only(left: 5.0),
+                                alignment: Alignment.center,
+                                width: 34,
+                                height: 34,
+                                child: Icon(
+                                  Icons.edit_outlined,
+                                  color: currentTheme.primaryColor,
+                                  size: 25,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
               ],
             ),
           ),
@@ -553,7 +723,7 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes) {
                 Container(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Tu cargo',
+                    (isStore) ? 'Tu pago' : 'Tu cargo',
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,

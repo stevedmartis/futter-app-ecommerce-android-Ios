@@ -15,7 +15,8 @@ elevatedButtonCustom(
     VoidCallback onPress,
     bool isEdit = false,
     bool isDelete = false,
-    bool isAccent = false}) {
+    bool isAccent = false,
+    bool isCancel = false}) {
   final currentTheme =
       Provider.of<ThemeChanger>(context, listen: false).currentTheme;
 
@@ -33,7 +34,7 @@ elevatedButtonCustom(
                 ? currentTheme.accentColor
                 : (isEdit)
                     ? Colors.grey
-                    : isDelete
+                    : isDelete || isCancel
                         ? currentTheme.scaffoldBackgroundColor
                         : Colors.black;
         return BorderSide(color: color, width: 2);
@@ -46,7 +47,9 @@ elevatedButtonCustom(
                 ? Colors.white
                 : isDelete
                     ? Colors.red
-                    : Colors.white)),
+                    : isCancel
+                        ? Colors.grey
+                        : Colors.white)),
   );
 }
 

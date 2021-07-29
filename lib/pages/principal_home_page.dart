@@ -184,16 +184,12 @@ class _PrincipalPageState extends State<PrincipalPage>
     final OrderStoresProducts resp =
         await orderService.getMyOrders(storeAuth.user.uid);
 
-    orderService.ordersClientInitial = [];
+    orderService.orders = [];
     if (resp.ok) {
-      resp.orders.forEach((order) {
-        orderService.ordersClientInitial.add(order);
-      });
-
-      orderService.orders = orderService.ordersClientInitial;
-
       final List<Order> orderNotificationClient =
-          orderService.orders.where((i) => i.isNotifiCheckClient).toList();
+          resp.orders.where((i) => i.isNotifiCheckClient).toList();
+
+      orderService.orders = orderNotificationClient;
 
       number = orderNotificationClient.length;
 
@@ -213,24 +209,16 @@ class _PrincipalPageState extends State<PrincipalPage>
     final notifiModel = Provider.of<NotificationModel>(context, listen: false);
     int number = notifiModel.numberNotifiBell;
 
-    orderService.ordersStoreInitial = [];
+    orderService.ordersStore = [];
 
     final OrderStoresProducts resp =
         await orderService.getMyOrdesStore(storeAuth.user.uid);
 
     if (resp.ok) {
-      resp.orders.forEach((order) {
-        orderService.ordersStoreInitial.add(order);
-      });
+      final List<Order> orderNotificationStore =
+          resp.orders.where((i) => i.isNotifiCheckStore).toList();
 
-      orderService.orders = orderService.ordersStoreInitial;
-
-      final List<Order> orderNotificationStore = orderService.ordersStoreInitial
-          .where((i) => i.isNotifiCheckStore)
-          .toList();
-
-      // notificationBloc.notificationsList = orderNotificationStore;
-
+      orderService.ordersStore = orderNotificationStore;
       number = orderNotificationStore.length;
 
       notifiModel.numberNotifiBell = number;

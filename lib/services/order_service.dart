@@ -36,14 +36,13 @@ class OrderService with ChangeNotifier {
     this._ordersStore = orders;
     this._loading = false;
 
-    notifyListeners();
+    //notifyListeners();
   }
 
   void orderCheckNotifiStore(String orderId) {
-    final order = ordersStoreInitial.firstWhere((item) => item.id == orderId,
+    final order = ordersStore.firstWhere((item) => item.id == orderId,
         orElse: () => null);
-
-    order.isNotifiCheckStore = false;
+    if (order != null) order.isNotifiCheckStore = false;
 
     //notifyListeners();
   }
@@ -51,10 +50,26 @@ class OrderService with ChangeNotifier {
   void orderCheckNotifiClient(String orderId) {
     final order =
         orders.firstWhere((item) => item.id == orderId, orElse: () => null);
-
-    order.isNotifiCheckClient = false;
+    if (order != null) order.isNotifiCheckClient = false;
 
     //notifyListeners();
+  }
+
+  void orderCancelByStore(String orderId) {
+    final order = ordersStore.firstWhere((item) => item.id == orderId,
+        orElse: () => null);
+
+    if (order != null) order.isCancelByStore = true;
+
+    notifyListeners();
+  }
+
+  void orderCancelByClient(String orderId) {
+    final order =
+        orders.firstWhere((item) => item.id == orderId, orElse: () => null);
+    if (order != null) order.isCancelByClient = true;
+
+    notifyListeners();
   }
 
   final _storage = new FlutterSecureStorage();

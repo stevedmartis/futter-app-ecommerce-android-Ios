@@ -9,8 +9,10 @@ import 'util.dart';
 import 'package:expandable/expandable.dart';
 
 class ProgressBar extends StatefulWidget {
-  ProgressBar({Key key, this.order, this.principal = false});
+  ProgressBar(
+      {Key key, this.order, this.principal = false, this.isStore = false});
   final bool principal;
+  final bool isStore;
 
   final Order order;
   _ProgressBarState createState() => _ProgressBarState();
@@ -39,17 +41,23 @@ class _ProgressBarState extends State<ProgressBar>
   @override
   Widget build(BuildContext context) {
     return AnimatedBar(
-        key: widget.key,
-        controller: animationController,
-        order: widget.order,
-        principal: widget.principal);
+      key: widget.key,
+      controller: animationController,
+      order: widget.order,
+      principal: widget.principal,
+      isStore: widget.isStore,
+    );
   }
 }
 
 class AnimatedBar extends StatefulWidget {
   final bool principal;
   final Order order;
-  AnimatedBar({Key key, this.order, this.controller, this.principal})
+
+  final bool isStore;
+
+  AnimatedBar(
+      {Key key, this.order, this.controller, this.principal, this.isStore})
       : isActive = order.isActive,
         isPreparation = order.isPreparation,
         isSend = order.isSend,
@@ -267,13 +275,21 @@ class _AnimatedBarState extends State<AnimatedBar>
     progressBar() {
       final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
-      String textOne = "Pedido enviado y recibido ...";
+      String textOne = (widget.isStore)
+          ? "Pedido recibido para enviar ..."
+          : "Pedido enviado y recibido ...";
 
-      String textTwo = "Estan preparando tu pedido ...";
+      String textTwo = (widget.isStore)
+          ? "Estas preparando el pedido ..."
+          : "Estan preparando tu pedido ...";
 
-      String textThree = "Tu pedido va en camino ...";
+      String textThree = (widget.isStore)
+          ? "Haz enviado el pedido ..."
+          : "Tu pedido va en camino ...";
 
-      String textFour = "El pedido llego a tu dirección!";
+      String textFour = (widget.isStore)
+          ? "El pedido llego al cliente!"
+          : "El pedido llego a tu dirección!";
 
       String actualText = "";
       if (widget.isActive && !widget.isPreparation) {
@@ -285,6 +301,18 @@ class _AnimatedBarState extends State<AnimatedBar>
       } else if (widget.order.isFinalice) {
         actualText = textFour;
       }
+
+      if (widget.isStore && widget.order.isCancelByStore)
+        actualText = 'Pedido cancelado.';
+
+      if (!widget.isStore && widget.order.isCancelByStore)
+        actualText = 'Pedido cancelado por la tienda.';
+
+      if (widget.isStore && widget.order.isCancelByClient)
+        actualText = 'Pedido cancelado por el cliente.';
+
+      if (!widget.isStore && widget.order.isCancelByStore)
+        actualText = 'Pedido cancelado.';
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
@@ -487,29 +515,22 @@ class _AnimatedBarState extends State<AnimatedBar>
                 right: (widget.principal) ? 0 : 20,
                 top: (widget.principal) ? 5 : 0,
                 left: (widget.principal) ? 0 : 20),
-            height: (widget.principal) ? 30 : 50,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                /* Container(
-            child: Image.asset(image, width: 125),
-          ), */
-                SizedBox(height: (widget.principal) ? 0 : 15),
-                CrossFade<String>(
-                  initialData: actualText,
-                  data: actualText,
-                  builder: (value) => Container(
-                    child: Text(
-                      value,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: (widget.principal) ? 12 : 18,
-                          fontWeight: FontWeight.w600),
-                    ),
-                  ),
+            height: (widget.principal) ? 20 : 50,
+            child: CrossFade<String>(
+              initialData: actualText,
+              data: actualText,
+              builder: (value) => Container(
+                child: Text(
+                  value,
+                  style: TextStyle(
+                      color: (widget.order.isCancelByClient ||
+                              widget.order.isCancelByStore)
+                          ? Colors.grey
+                          : Colors.white,
+                      fontSize: (widget.principal) ? 12 : 18,
+                      fontWeight: FontWeight.normal),
                 ),
-              ],
+              ),
             ),
           ),
         ],

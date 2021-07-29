@@ -159,10 +159,12 @@ class _NotificationListState extends State<NotificationList>
 
     return Padding(
       padding: const EdgeInsets.only(left: 20.0, right: 20),
-      child: Stack(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.only(top: 20, left: 10),
+            padding: EdgeInsets.only(top: 20, left: 0),
             child: Text(
               'Notificaciones',
               style: TextStyle(
@@ -172,7 +174,7 @@ class _NotificationListState extends State<NotificationList>
             ),
           ),
           Container(
-            padding: EdgeInsets.only(top: 70),
+            padding: EdgeInsets.only(top: 20),
             child: ListView.builder(
               shrinkWrap: true,
               controller: scrollController,
@@ -196,7 +198,7 @@ class _NotificationListState extends State<NotificationList>
             ),
           ),
           Container(
-            padding: EdgeInsets.only(top: 70),
+            padding: EdgeInsets.only(top: 20),
             child: ListView.builder(
               shrinkWrap: true,
               controller: scrollController,
@@ -408,6 +410,7 @@ class OrderNotificationStoreCard extends StatelessWidget {
                           key: ValueKey('order/$id'),
                           order: order,
                           principal: true,
+                          isStore: isStore,
                         )),
                       ],
                     ),

@@ -411,10 +411,10 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                     ),
                   ),
 
-                  if (orderService.ordersClientInitial.length > 0)
+                  if (orderService.orders.length > 0)
                     makeListHorizontalCarouselOrdersProgress(context),
 
-                  if (orderService.ordersStoreInitial.length > 0)
+                  if (orderService.ordersStore.length > 0)
                     makeListHorizontalCarouselOrdersStoreProgress(context),
                   SliverAppBar(
                     automaticallyImplyLeading: false,
@@ -557,7 +557,6 @@ SliverList makeListHorizontalCarouselOrdersProgress(context) {
   List<Order> ordersProgress =
       orderService.orders.where((i) => i.isActive).toList();
 
-  List<Order> orders = LinkedHashSet<Order>.from(ordersProgress).toList();
   return SliverList(
     delegate: SliverChildListDelegate([
       FadeInRight(
@@ -568,14 +567,15 @@ SliverList makeListHorizontalCarouselOrdersProgress(context) {
                 ? buildLoadingWidget(context)
                 : CarouselSlider(
                     items: List.generate(
-                      orders.length,
+                      ordersProgress.length,
                       (index) => OrderprogressStoreCard(
-                        order: orders[index],
+                        order: ordersProgress[index],
                         isStore: false,
                       ),
                     ),
                     options: CarouselOptions(
-                        viewportFraction: 0.8,
+                        viewportFraction:
+                            (ordersProgress.length > 1) ? 0.8 : 0.9,
                         aspectRatio: 16 / 5.5,
                         initialPage: 0,
                         enableInfiniteScroll: false,
@@ -597,7 +597,7 @@ SliverList makeListHorizontalCarouselOrdersStoreProgress(context) {
   final orderService = Provider.of<OrderService>(context);
 
   List<Order> ordersStoreActive =
-      orderService.ordersStoreInitial.where((i) => i.isActive).toList();
+      orderService.ordersStore.where((i) => i.isActive).toList();
 
   return SliverList(
     delegate: SliverChildListDelegate([
@@ -616,7 +616,8 @@ SliverList makeListHorizontalCarouselOrdersStoreProgress(context) {
                       ),
                     ),
                     options: CarouselOptions(
-                        viewportFraction: 0.8,
+                        viewportFraction:
+                            (ordersStoreActive.length > 1) ? 0.8 : 0.9,
                         aspectRatio: 16 / 5.5,
                         initialPage: 0,
                         enableInfiniteScroll: false,
@@ -704,9 +705,12 @@ class _OrderprogressStoreCardState extends State<OrderprogressStoreCard> {
                             Container(
                               padding: EdgeInsets.only(top: 10, right: 10),
                               child: Text(
-                                (widget.isStore)
-                                    ? 'Pedido recibido'
-                                    : 'Pedido en curso',
+                                (widget.order.isCancelByClient ||
+                                        widget.order.isCancelByStore)
+                                    ? 'Pedido cancelado'
+                                    : (widget.isStore)
+                                        ? 'Pedido recibido'
+                                        : 'Pedido en curso',
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
@@ -814,7 +818,6 @@ class _OrderprogressStoreCardState extends State<OrderprogressStoreCard> {
                           ],
                         ),
                         Container(
-                          padding: EdgeInsets.only(top: 0),
                           child: Text(
                             'Entrega estimada: 4 de Agosto',
                             style: TextStyle(
@@ -829,8 +832,9 @@ class _OrderprogressStoreCardState extends State<OrderprogressStoreCard> {
                             key: ValueKey('order/$id'),
                             order: widget.order,
                             principal: true,
+                            isStore: widget.isStore,
                           )),
-                        )
+                        ),
                       ])),
                 ],
               ),
