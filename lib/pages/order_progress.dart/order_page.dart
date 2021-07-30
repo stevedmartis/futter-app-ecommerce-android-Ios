@@ -12,6 +12,7 @@ import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/services/order_service.dart';
+import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
@@ -106,16 +107,23 @@ class _OrderPageState extends State<OrderPage> {
 
   void closeOrder() async {
     final orderBloc = Provider.of<OrderService>(context, listen: false);
-
+    final socketService = Provider.of<SocketService>(context, listen: false);
     if (widget.isStore) {
       orderBloc.orderCancelByStore(
         order.id,
       );
-      // orderBloc.editOrderNotifiOrder(order.id, true);
+      orderBloc.editOrderClose(order.id, true);
+
+      socketService
+          .emit('orders-notification-client', {'client': order.client});
     } else {
       orderBloc.orderCancelByClient(order.id);
 
-      //orderBloc.editOrderNotifiOrder(order.id, false);
+      orderBloc.editOrderClose(order.id, false);
+
+      socketService.emit('orders-notification-store', {
+        'storesIds': [order.store],
+      });
     }
   }
 

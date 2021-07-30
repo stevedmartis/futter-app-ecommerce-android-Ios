@@ -246,9 +246,6 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     List<Order> orderClientActive =
         orderService.orders.where((i) => i.isActive).toList();
 
-    /*  final List<Order> orderNotificationClient =
-        ordersProgress.where((i) => i.isNotifiCheckClient).toList();
- */
     List<Order> ordersStoreActive =
         orderService.ordersStore.where((i) => i.isActive).toList();
 
@@ -465,37 +462,6 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     );
   }
 }
-
-/* class NestedScrollModal extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return NestedScrollView(
-      controller: ScrollController(),
-      physics: ScrollPhysics(parent: PageScrollPhysics()),
-      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-        return <Widget>[
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                Container(height: 100, color: Colors.blue),
-              ],
-            ),
-          ),
-        ];
-      },
-      body: ListView.builder(
-        controller: ModalScrollController.of(context),
-        itemBuilder: (context, index) {
-          return Container(
-            height: 100,
-            color: index.isOdd ? Colors.green : Colors.orange,
-          );
-        },
-        itemCount: 12,
-      ),
-    );
-  }
-} */
 
 SliverPersistentHeader makeHeaderPrincipal(context) {
   final size = MediaQuery.of(context).size;
@@ -1064,9 +1030,6 @@ class StoreCard extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        /*  Icon(Icons.delivery_dining,
-                            size: 20, color: Colors.white54),
-                        SizedBox(width: 5.0), */
                         Container(
                           child: Text(
                             (store.timeDelivery != "")
@@ -1418,7 +1381,7 @@ void showModalLocation(context, selectedGender, String uid, String location) {
       HapticFeedback.lightImpact();
       myLocationBloc.initPositionLocation();
       storesByLocationlistServices(
-          prefs.addressSearchSave.secondaryText, location, uid);
+          context, prefs.addressSearchSave.secondaryText, uid);
       Navigator.pop(context);
     },
     () {

@@ -94,11 +94,17 @@ class AuthUserPreferences {
   }
 
   get addressSearchSave {
-    final place = json.decode(_prefs.getString('placeSearch') ?? '');
+    final placeSearch = _prefs.getString('placeSearch') ?? '';
 
-    final PlacesSearch fromjson = placeSearchFromJson(place);
+    if (placeSearch != '') {
+      final place = json.decode(_prefs.getString('placeSearch') ?? '');
 
-    return fromjson;
+      final PlacesSearch fromjson = placeSearchFromJson(place);
+
+      return fromjson;
+    } else {
+      return placeSearch;
+    }
   }
 
   set setCart(List<GroceryProductItem> cart) {

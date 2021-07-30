@@ -96,7 +96,9 @@ class AuthenticationBLoC with ChangeNotifier {
 
       address = prefs.addressSearchSave.mainText;
       city = prefs.addressSearchSave.secondaryText;
-      number = int.parse(prefs.addressSearchSave.number);
+      number = (prefs.addressSearchSave.number != '')
+          ? int.parse(prefs.addressSearchSave.number)
+          : 0;
       long = prefs.longSearch;
       lat = prefs.latSearch;
 
@@ -136,7 +138,9 @@ class AuthenticationBLoC with ChangeNotifier {
 
       address = prefs.addressSearchSave.mainText;
       city = prefs.addressSearchSave.secondaryText;
-      number = int.parse(prefs.addressSearchSave.number);
+      number = (prefs.addressSearchSave.number != '')
+          ? int.parse(prefs.addressSearchSave.number)
+          : 0;
       long = prefs.longSearch;
       lat = prefs.latSearch;
 
@@ -160,7 +164,9 @@ class AuthenticationBLoC with ChangeNotifier {
 
       address = prefs.addressSearchSave.mainText;
       city = prefs.addressSearchSave.secondaryText;
-      number = int.parse(prefs.addressSearchSave.number);
+      number = (prefs.addressSearchSave.number != 0)
+          ? int.parse(prefs.addressSearchSave.number)
+          : '';
       long = prefs.longSearch;
       lat = prefs.latSearch;
 

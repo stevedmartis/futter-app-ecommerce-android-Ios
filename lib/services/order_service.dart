@@ -171,6 +171,31 @@ class OrderService with ChangeNotifier {
     }
   }
 
+  Future editOrderClose(String orderId, bool isStore) async {
+    // this.authenticated = true;
+
+    final data = {'id': orderId, 'isStore': isStore};
+
+    final token = await this._storage.read(key: 'token');
+    final urlFinal = ('${Environment.apiUrl}/api/order/update/cancel/order');
+
+    final resp = await http.post(Uri.parse(urlFinal),
+        body: jsonEncode(data),
+        headers: {'Content-Type': 'application/json', 'x-token': token});
+
+    if (resp.statusCode == 200) {
+      // final roomResponse = roomsResponseFromJson(resp.body);
+      final orderResponse = orderStoresProductsFromJson(resp.body);
+      // this.rooms = roomResponse.rooms;
+
+      return orderResponse;
+    } else {
+      final respBody = errorMessageResponseFromJson(resp.body);
+
+      return respBody;
+    }
+  }
+
   Future deleteCatalogo(String catalogoId) async {
     final token = await this._storage.read(key: 'token');
 

@@ -88,12 +88,18 @@ class _PrincipalPageState extends State<PrincipalPage>
     this
         .socketService
         .socket
-        ?.on('orders-notification-client', _listenNotification);
+        ?.on('orders-notification-client', _listenNotificationClient);
 
     this
         .socketService
         .socket
         ?.on('orders-notification-store', _listenNotification);
+  }
+
+  void _listenNotificationClient(dynamic payload) {
+    if (storeAuth.service != 0) {
+      _myOrdersClient();
+    }
   }
 
   void _listenNotification(dynamic payload) {
