@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:animate_do/animate_do.dart';
 import 'package:animations/animations.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
@@ -11,6 +9,7 @@ import 'package:australti_ecommerce_app/models/grocery_Store.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 
 import 'package:australti_ecommerce_app/pages/order_progress.dart/progressBar.dart';
+import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/pages/search_principal_page.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
@@ -19,6 +18,7 @@ import 'package:australti_ecommerce_app/responses/stores_list_principal_response
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/services/order_service.dart';
 import 'package:australti_ecommerce_app/services/stores_Services.dart';
+
 import 'package:australti_ecommerce_app/store_principal/store_Service.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
@@ -49,6 +49,7 @@ class StorePrincipalHome extends StatefulWidget {
 
 class _StorePrincipalHomeState extends State<StorePrincipalHome> {
   ScrollController _scrollController;
+
   bool _isVisible = true;
   final prefs = new AuthUserPreferences();
 
@@ -147,7 +148,10 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     HapticFeedback.heavyImpact();
     if (storeAuth.user.uid != '0') {
       storesByLocationlistServices(storeAuth.city, storeAuth.user.uid);
-      myOrders();
+      _myOrdersClient();
+      if (storeAuth.service != 0) {
+        _myOrdersStore();
+      }
     } else if (prefs.addressSearchSave != '') {
       storesByLocationlistServices(
           prefs.addressSearchSave.secondaryText, storeAuth.user.uid);
@@ -156,19 +160,60 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     }
   }
 
-  void myOrders() async {
+  void _myOrdersClient() async {
     final orderService = Provider.of<OrderService>(context, listen: false);
+
+    final notifiModel = Provider.of<NotificationModel>(context, listen: false);
+    int number = notifiModel.numberNotifiBell;
 
     final OrderStoresProducts resp =
         await orderService.getMyOrders(storeAuth.user.uid);
 
-    orderService.ordersClientInitial = [];
+    orderService.orders = [];
     if (resp.ok) {
-      resp.orders.forEach((order) {
-        orderService.ordersClientInitial.add(order);
+      orderService.orders = resp.orders;
+
+      final List<Order> orderNotificationStore =
+          orderService.orders.where((i) => i.isNotifiCheckClient).toList();
+
+      number = orderNotificationStore.length;
+
+      notifiModel.numberNotifiBell = number;
+
+      notifiModel.numberSteamNotifiBell.sink.add(number);
+      if (number >= 2) {
+        notifiModel.bounceControllerBell;
+        //controller.forward(from: 0.0);
+      }
+    }
+  }
+
+  void _myOrdersStore() async {
+    final orderService = Provider.of<OrderService>(context, listen: false);
+
+    final notifiModel = Provider.of<NotificationModel>(context, listen: false);
+    int number = notifiModel.numberNotifiBell;
+    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+    orderService.ordersStore = [];
+
+    final OrderStoresProducts resp =
+        await orderService.getMyOrdesStore(authService.storeAuth.user.uid);
+
+    if (resp.ok) {
+      setState(() {
+        orderService.ordersStore = resp.orders;
       });
 
-      orderService.orders = orderService.ordersClientInitial;
+      notifiModel.numberNotifiBell = number;
+
+      final List<Order> orderNotificationStore =
+          orderService.ordersStore.where((i) => i.isNotifiCheckStore).toList();
+      number = orderNotificationStore.length;
+      notifiModel.numberSteamNotifiBell.sink.add(number);
+      if (number >= 2) {
+        notifiModel.bounceControllerBell;
+        //controller.forward(from: 0.0);
+      }
     }
   }
 
@@ -240,6 +285,10 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
     final orderService = Provider.of<OrderService>(context);
 
+    final intemSelected = Provider.of<MenuModel>(context).currentPage;
+
+    final notifiBloc = Provider.of<NotificationModel>(context);
+
     isItems = groceryBloc.totalCartElements() > 0 ? true : false;
     storeAuth = authService.storeAuth;
 
@@ -309,62 +358,136 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                               )),
                         )),
                     actions: [
-                      Swing(
-                        animate: isItems,
-                        delay: Duration(seconds: 1),
-                        controller: (controller) =>
-                            Provider.of<NotificationModel>(context)
-                                .bounceControllerBell = controller,
-                        child: GestureDetector(
-                            onTap: () {
-                              HapticFeedback.lightImpact();
-                              showMaterialCupertinoBottomSheet(
-                                  context, 'hello', 'hello2');
-                            },
-                            child: Stack(
+                      Container(
+                        padding: EdgeInsets.only(right: 5, top: 10),
+                        child: Row(
+                          children: [
+                            Stack(
                               children: [
                                 Container(
-                                  margin: EdgeInsets.only(
-                                      left: (groceryBloc.cart.length <= 10)
-                                          ? 10
-                                          : 7,
-                                      top: (isItems) ? 12 : 15,
-                                      right: 15),
-                                  child: (isItems)
-                                      ? Icon(
-                                          Icons.shopping_bag,
-                                          color: currentTheme.primaryColor,
-                                          size: 40,
-                                        )
-                                      : Icon(
-                                          Icons.shopping_bag_outlined,
-                                          color: currentTheme.primaryColor,
-                                          size: 35,
-                                        ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(left: 22, top: 30),
-                                  child: (groceryBloc.totalCartElements() > 0)
-                                      ? Container(
-                                          child: Text(
-                                            groceryBloc.cart.length.toString(),
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold),
+                                    child: GestureDetector(
+                                  onTap: () {
+                                    HapticFeedback.lightImpact();
+                                    Navigator.push(
+                                        context, notificationsRoute());
+                                  },
+                                  child: Container(
+                                    child: (intemSelected == 3)
+                                        ? Icon(Icons.notifications, size: 32)
+                                        : Icon(Icons.notifications_outlined,
+                                            size: 32),
+                                  ),
+                                )),
+                                StreamBuilder(
+                                  stream: notifiBloc.numberSteamNotifiBell,
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot snapshot) {
+                                    int number = (snapshot.data != null)
+                                        ? snapshot.data
+                                        : 0;
+
+                                    if (number > 0)
+                                      return Container(
+                                        margin: EdgeInsets.only(bottom: 20),
+                                        alignment: Alignment.centerRight,
+                                        child: BounceInDown(
+                                          from: 5,
+                                          animate: (number > 0) ? true : false,
+                                          child: Bounce(
+                                            delay: Duration(seconds: 2),
+                                            from: 5,
+                                            controller: (controller) =>
+                                                Provider.of<NotificationModel>(
+                                                            context)
+                                                        .bounceControllerBell =
+                                                    controller,
+                                            child: Container(
+                                              child: Text(
+                                                '$number',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 10,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              alignment: Alignment.center,
+                                              width: 15,
+                                              height: 15,
+                                              decoration: BoxDecoration(
+                                                  color:
+                                                      currentTheme.primaryColor,
+                                                  shape: BoxShape.circle),
+                                            ),
                                           ),
-                                          alignment: Alignment.center,
-                                          width: 15,
-                                          height: 15,
-                                          decoration: BoxDecoration(
-                                              color: Color(0xff32D73F),
-                                              shape: BoxShape.circle),
-                                        )
-                                      : Container(),
+                                        ),
+                                      );
+
+                                    return Container();
+                                  },
                                 ),
                               ],
-                            )),
-                      ),
+                            ),
+                            Swing(
+                              animate: isItems,
+                              delay: Duration(seconds: 1),
+                              controller: (controller) =>
+                                  Provider.of<NotificationModel>(context)
+                                      .bounceControllerBell = controller,
+                              child: GestureDetector(
+                                  onTap: () {
+                                    HapticFeedback.lightImpact();
+                                    showMaterialCupertinoBottomSheet(
+                                        context, 'hello', 'hello2');
+                                  },
+                                  child: Container(
+                                    child: Stack(
+                                      children: [
+                                        Container(
+                                          child: (isItems)
+                                              ? Icon(
+                                                  Icons.shopping_bag,
+                                                  color:
+                                                      currentTheme.primaryColor,
+                                                  size: 32,
+                                                )
+                                              : Icon(
+                                                  Icons.shopping_bag_outlined,
+                                                  color: Colors.white,
+                                                  size: 32,
+                                                ),
+                                        ),
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                              left: 10, top: 10),
+                                          child: (groceryBloc
+                                                      .totalCartElements() >
+                                                  0)
+                                              ? Container(
+                                                  child: Text(
+                                                    groceryBloc.cart.length
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  alignment: Alignment.center,
+                                                  width: 15,
+                                                  height: 15,
+                                                  decoration: BoxDecoration(
+                                                      color: Color(0xff32D73F),
+                                                      shape: BoxShape.circle),
+                                                )
+                                              : Container(),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                            ),
+                          ],
+                        ),
+                      )
                     ],
                     stretch: true,
                     expandedHeight: 180.0,

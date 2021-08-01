@@ -238,7 +238,7 @@ class TabsViewScrollBLoC with ChangeNotifier {
   void productsByCategory(String categoryId) {
     final category = storeCategoriesProducts.where((i) => i.id == categoryId);
 
-    productsByCategoryList = category.single.products;
+    if (category != null) productsByCategoryList = category.single.products;
   }
 
   void addProductsByCategory(TickerProvider ticket, ProfileStoreProduct product,

@@ -114,6 +114,7 @@ class _MyNotificationsState extends State<MyNotifications> {
                   showTitle: _showTitle,
                   title: title,
                   isAdd: false,
+                  leading: true,
                   action: Container(),
                   //   Container()
                 ))));

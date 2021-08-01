@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
@@ -145,46 +144,6 @@ class __GridLayoutMenuButtonState extends State<_GridLayoutMenuButton> {
                     : Colors.grey,
               ),
             ),
-            if (widget.index == 3)
-              StreamBuilder(
-                stream: notifiBloc.numberSteamNotifiBell,
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  int number = (snapshot.data != null) ? snapshot.data : 0;
-
-                  if (number > 0)
-                    return Container(
-                      margin: EdgeInsets.only(right: 0),
-                      alignment: Alignment.centerRight,
-                      child: BounceInDown(
-                        from: 5,
-                        animate: (number > 0) ? true : false,
-                        child: Bounce(
-                          delay: Duration(seconds: 2),
-                          from: 5,
-                          controller: (controller) =>
-                              Provider.of<NotificationModel>(context)
-                                  .bounceControllerBell = controller,
-                          child: Container(
-                            child: Text(
-                              '$number',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            alignment: Alignment.center,
-                            width: 15,
-                            height: 15,
-                            decoration: BoxDecoration(
-                                color: Colors.white, shape: BoxShape.circle),
-                          ),
-                        ),
-                      ),
-                    );
-
-                  return Container();
-                },
-              )
           ],
         ));
   }

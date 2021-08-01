@@ -69,10 +69,13 @@ class _PrincipalPageState extends State<PrincipalPage>
     if (storeAuth.user.uid != '0') {
       storesByLocationlistServices(storeAuth.city, storeAuth.user.uid);
 
+      Timer(new Duration(milliseconds: 0), () {
+        if (storeAuth.service != 0) {
+          _myOrdersStore();
+        }
+      });
+
       _myOrdersClient();
-      if (storeAuth.service != 0) {
-        _myOrdersStore();
-      }
 
       myFavoritesProducts();
     } else if (prefs.addressSearchSave != '') {
@@ -83,8 +86,6 @@ class _PrincipalPageState extends State<PrincipalPage>
     if (!isWeb) locationStatus();
     if (!isWeb) WidgetsBinding.instance.addObserver(this);
 
-    super.initState();
-
     this
         .socketService
         .socket
@@ -94,12 +95,12 @@ class _PrincipalPageState extends State<PrincipalPage>
         .socketService
         .socket
         ?.on('orders-notification-store', _listenNotification);
+
+    super.initState();
   }
 
   void _listenNotificationClient(dynamic payload) {
-    if (storeAuth.service != 0) {
-      _myOrdersClient();
-    }
+    _myOrdersClient();
   }
 
   void _listenNotification(dynamic payload) {
@@ -528,14 +529,6 @@ class __PositionedMenuState extends State<_PositionedMenu> {
                                   Navigator.push(context, principalHomeRoute());
                                 _onItemTapped(2);
                               }
-                            }),
-                        GLMenuButton(
-                            icon: (currentPage == 3)
-                                ? Icons.notifications
-                                : Icons.notifications_outlined,
-                            onPressed: () {
-                              HapticFeedback.lightImpact();
-                              if (bloc.isVisible) _onItemTapped(3);
                             }),
                       ]),
                 ),

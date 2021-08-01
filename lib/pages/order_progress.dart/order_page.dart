@@ -17,7 +17,6 @@ import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
 
 import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
@@ -105,28 +104,6 @@ class _OrderPageState extends State<OrderPage> {
     }
   }
 
-  void closeOrder() async {
-    final orderBloc = Provider.of<OrderService>(context, listen: false);
-    final socketService = Provider.of<SocketService>(context, listen: false);
-    if (widget.isStore) {
-      orderBloc.orderCancelByStore(
-        order.id,
-      );
-      orderBloc.editOrderClose(order.id, true);
-
-      socketService
-          .emit('orders-notification-client', {'client': order.client});
-    } else {
-      orderBloc.orderCancelByClient(order.id);
-
-      orderBloc.editOrderClose(order.id, false);
-
-      socketService.emit('orders-notification-store', {
-        'storesIds': [order.store],
-      });
-    }
-  }
-
   @override
   void dispose() {
     _scrollController.dispose();
@@ -160,57 +137,32 @@ class _OrderPageState extends State<OrderPage> {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final size = MediaQuery.of(context).size;
 
+    void prepareOrder() async {
+      final orderBloc = Provider.of<OrderService>(context, listen: false);
+      final socketService = Provider.of<SocketService>(context, listen: false);
+
+      orderBloc.orderPrepareStore(
+        order.id,
+      );
+      final resp = await orderBloc.editOrderPrepare(order.id);
+
+      if (resp.ok) {
+        socketService
+            .emit('orders-notification-client', {'client': order.client});
+
+        Navigator.pop(context);
+      }
+    }
+
     final orderId = order.id.substring(11, 15);
     return SafeArea(
       child: Scaffold(
         backgroundColor: currentTheme.scaffoldBackgroundColor,
-        bottomNavigationBar: (widget.isStore)
+        bottomNavigationBar: (widget.isStore && !order.isPreparation)
             ? Container(
                 padding:
                     EdgeInsets.only(top: 5, bottom: 10, right: 10, left: 10),
                 child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  elevatedButtonCustom(
-                    context: context,
-                    isCancel: true,
-                    title: 'Cancelar',
-                    onPress: () {
-                      HapticFeedback.heavyImpact();
-
-                      final act = CupertinoActionSheet(
-                          title: Text('Cancelar este pedido?',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 20)),
-                          message: Text(
-                              'Se cancelara el pago, pasara a cerrado y se notificara al cliente'),
-                          actions: <Widget>[
-                            CupertinoActionSheetAction(
-                              child: Text(
-                                'Cancelar',
-                                style: TextStyle(color: Colors.red),
-                              ),
-                              onPressed: () {
-                                HapticFeedback.heavyImpact();
-
-                                closeOrder();
-                                Navigator.pop(context);
-                              },
-                            )
-                          ],
-                          cancelButton: CupertinoActionSheetAction(
-                            child: Text(
-                              'Cerrar',
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ));
-                      showCupertinoModalPopup(
-                          context: context,
-                          builder: (BuildContext context) => act);
-                    },
-                  ),
-                  Spacer(),
                   Padding(
                     padding:
                         const EdgeInsets.only(left: 10.0, right: 10, bottom: 0),
@@ -220,6 +172,7 @@ class _OrderPageState extends State<OrderPage> {
                         child: ElevatedButton(
                             onPressed: () {
                               HapticFeedback.lightImpact();
+                              prepareOrder();
                             },
                             style: ElevatedButton.styleFrom(
                               elevation: 5.0,
@@ -241,76 +194,11 @@ class _OrderPageState extends State<OrderPage> {
                   )
                 ]),
               )
-            : Padding(
-                padding: const EdgeInsets.only(
-                  left: 10.0,
-                  right: 10,
-                  bottom: 20,
-                ),
-                child: SizedBox(
-                    height: 50,
-                    child: Row(
-                      children: [
-                        elevatedButtonCustom(
-                          context: context,
-                          isDelete: true,
-                          title: 'Eliminar',
-                          onPress: () {
-                            HapticFeedback.heavyImpact();
-
-                            final act = CupertinoActionSheet(
-                                title: Text('Eliminar este producto?',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 20)),
-                                message: Text(
-                                    'Se eliminara de tu lista de productos de forma permanente'),
-                                actions: <Widget>[
-                                  CupertinoActionSheetAction(
-                                    child: Text(
-                                      'Eliminar',
-                                      style: TextStyle(color: Colors.red),
-                                    ),
-                                    onPressed: () {
-                                      HapticFeedback.heavyImpact();
-                                    },
-                                  )
-                                ],
-                                cancelButton: CupertinoActionSheetAction(
-                                  child: Text(
-                                    'Cancelar',
-                                    style: TextStyle(color: Colors.grey),
-                                  ),
-                                  onPressed: () {},
-                                ));
-                            showCupertinoModalPopup(
-                                context: context,
-                                builder: (BuildContext context) => act);
-                          },
-                        ),
-                        Spacer(),
-                        SizedBox(
-                            height: 100,
-                            width: size.width / 3,
-                            child: ElevatedButton(
-                                onPressed: () {
-                                  HapticFeedback.lightImpact();
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 5.0,
-                                  fixedSize: Size.fromWidth(size.width),
-                                  primary: Colors.grey[200],
-                                  shape: new RoundedRectangleBorder(
-                                    borderRadius:
-                                        new BorderRadius.circular(30.0),
-                                  ),
-                                ),
-                                child: Text(
-                                  'Editar',
-                                  style: TextStyle(color: Colors.black),
-                                )))
-                      ],
-                    )),
+            : Container(
+                width: 0,
+                height: 0,
               ),
+
         // tab bar view
         body: NotificationListener<ScrollEndNotification>(
           onNotification: (_) {
@@ -418,6 +306,34 @@ Widget _buildProductsList(
   } else {
     storeBloc.getStoreAllDbByProducts(store.user.uid);
     store.notLocation = false;
+  }
+
+  void closeOrder() async {
+    final orderBloc = Provider.of<OrderService>(context, listen: false);
+    final socketService = Provider.of<SocketService>(context, listen: false);
+    if (isStore) {
+      orderBloc.orderCancelByStore(
+        order.id,
+      );
+      final resp = await orderBloc.editOrderClose(order.id, true);
+
+      if (resp.ok) {
+        socketService
+            .emit('orders-notification-client', {'client': order.client});
+        Navigator.pop(context);
+      }
+    } else {
+      orderBloc.orderCancelByClient(order.id);
+
+      final resp = await orderBloc.editOrderClose(order.id, false);
+
+      if (resp.ok) {
+        socketService.emit('orders-notification-store', {
+          'storesIds': [order.store],
+        });
+        Navigator.pop(context);
+      }
+    }
   }
 
   final List<ProductElement> products = order.products;
@@ -752,9 +668,73 @@ Widget _buildProductsList(
               ],
             ),
           ),
-          SizedBox(
-            height: 20,
-          ),
+          if (order.isPreparation)
+            SizedBox(
+              height: 20,
+            ),
+          if (!order.isCancelByClient &&
+              !order.isCancelByStore &&
+              !order.isPreparation)
+            Column(
+              children: [
+                SizedBox(
+                  height: 10,
+                ),
+                Divider(),
+                SizedBox(
+                  height: 10,
+                ),
+                GestureDetector(
+                    onTap: () {
+                      {
+                        HapticFeedback.heavyImpact();
+
+                        final act = CupertinoActionSheet(
+                            title: Text('Cancelar este pedido?',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20)),
+                            message: Text(
+                                'Se cancelara el pago, se notificara al cliente y no podras volver a modifcar el pedido'),
+                            actions: <Widget>[
+                              CupertinoActionSheetAction(
+                                child: Text(
+                                  'Si',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                                onPressed: () {
+                                  HapticFeedback.heavyImpact();
+
+                                  closeOrder();
+                                  Navigator.pop(context);
+                                },
+                              )
+                            ],
+                            cancelButton: CupertinoActionSheetAction(
+                              child: Text(
+                                'No',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ));
+                        showCupertinoModalPopup(
+                            context: context,
+                            builder: (BuildContext context) => act);
+                      }
+                    },
+                    child: Container(
+                      child: Text(
+                        'Cancelar pedido',
+                        style: TextStyle(color: currentTheme.primaryColor),
+                      ),
+                    )),
+                SizedBox(
+                  height: 20,
+                ),
+              ],
+            )
+
           /* Container(
             padding: EdgeInsets.only(left: 20, bottom: 10, top: 10),
             child: Row(

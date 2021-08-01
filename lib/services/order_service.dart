@@ -36,7 +36,7 @@ class OrderService with ChangeNotifier {
     this._ordersStore = orders;
     this._loading = false;
 
-    //notifyListeners();
+    notifyListeners();
   }
 
   void orderCheckNotifiStore(String orderId) {
@@ -60,6 +60,15 @@ class OrderService with ChangeNotifier {
         orElse: () => null);
 
     if (order != null) order.isCancelByStore = true;
+
+    notifyListeners();
+  }
+
+  void orderPrepareStore(String orderId) {
+    final order = ordersStore.firstWhere((item) => item.id == orderId,
+        orElse: () => null);
+
+    if (order != null) order.isPreparation = true;
 
     notifyListeners();
   }
@@ -178,6 +187,31 @@ class OrderService with ChangeNotifier {
 
     final token = await this._storage.read(key: 'token');
     final urlFinal = ('${Environment.apiUrl}/api/order/update/cancel/order');
+
+    final resp = await http.post(Uri.parse(urlFinal),
+        body: jsonEncode(data),
+        headers: {'Content-Type': 'application/json', 'x-token': token});
+
+    if (resp.statusCode == 200) {
+      // final roomResponse = roomsResponseFromJson(resp.body);
+      final orderResponse = orderStoresProductsFromJson(resp.body);
+      // this.rooms = roomResponse.rooms;
+
+      return orderResponse;
+    } else {
+      final respBody = errorMessageResponseFromJson(resp.body);
+
+      return respBody;
+    }
+  }
+
+  Future editOrderPrepare(String orderId) async {
+    // this.authenticated = true;
+
+    final data = {'id': orderId};
+
+    final token = await this._storage.read(key: 'token');
+    final urlFinal = ('${Environment.apiUrl}/api/order/update/prepare');
 
     final resp = await http.post(Uri.parse(urlFinal),
         body: jsonEncode(data),

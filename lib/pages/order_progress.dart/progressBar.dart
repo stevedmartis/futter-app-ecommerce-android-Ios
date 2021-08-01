@@ -336,26 +336,40 @@ class _AnimatedBarState extends State<AnimatedBar>
                           width: (widget.principal)
                               ? 0.5 + widget.progressBarOne.value * 1
                               : 0.5 + widget.progressBarOne.value * 3,
-                          color: (widget.progressBarOne.value >= 0.5)
-                              ? currentTheme.primaryColor
+                          color: (!widget.isCancelByClient &&
+                                  !widget.isCancelByStore)
+                              ? (widget.progressBarOne.value >= 0.5)
+                                  ? currentTheme.primaryColor
+                                  : Colors.grey
                               : Colors.grey)),
                   child: AnimatedContainer(
                     duration: Duration(milliseconds: 200),
                     alignment: Alignment.center,
-                    child: (widget.progressBarOne.value != 1.0)
-                        ? FaIcon(
-                            FontAwesomeIcons.archive,
-                            size: (widget.principal) ? 10 : 13,
-                            color: (widget.progressBarOne.value >= 0.5)
-                                ? currentTheme.primaryColor
-                                : Colors.grey,
-                          )
-                        : Icon(
-                            Icons.check_circle,
-                            size: (widget.principal)
-                                ? 15
-                                : 20 + widget.progressBarOne.value * 6,
-                            color: currentTheme.primaryColor,
+                    child: (!widget.isCancelByClient && !widget.isCancelByStore)
+                        ? (widget.progressBarOne.value != 1.0)
+                            ? FaIcon(
+                                FontAwesomeIcons.archive,
+                                size: (widget.principal) ? 10 : 13,
+                                color: (widget.progressBarOne.value >= 0.5)
+                                    ? currentTheme.primaryColor
+                                    : Colors.grey,
+                              )
+                            : Icon(
+                                Icons.check_circle,
+                                size: (widget.principal)
+                                    ? 15
+                                    : 20 + widget.progressBarOne.value * 6,
+                                color: currentTheme.primaryColor,
+                              )
+                        : FaIcon(
+                            FontAwesomeIcons.timesCircle,
+                            size: (!widget.isCancelByClient &&
+                                    !widget.isCancelByStore)
+                                ? 20
+                                : (widget.principal)
+                                    ? 15
+                                    : 20,
+                            color: Colors.grey,
                           ),
                   ),
                 ),
@@ -366,7 +380,10 @@ class _AnimatedBarState extends State<AnimatedBar>
                     height: 2,
                     child: LinearProgressIndicator(
                       backgroundColor: FoodColors.Grey,
-                      value: widget.progressBarOne.value,
+                      value:
+                          (!widget.isCancelByClient && !widget.isCancelByStore)
+                              ? widget.progressBarOne.value
+                              : 0,
                       valueColor:
                           AlwaysStoppedAnimation<Color>(FoodColors.Yellow),
                     ),
