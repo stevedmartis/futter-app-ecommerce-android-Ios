@@ -1,6 +1,7 @@
 import 'package:australti_ecommerce_app/data_backup_animation/data_backup_home.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_home.dart';
 import 'package:australti_ecommerce_app/models/Address.dart';
+import 'package:australti_ecommerce_app/models/credit_Card.dart';
 
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
@@ -11,6 +12,8 @@ import 'package:australti_ecommerce_app/pages/account_store/display_profile.dart
 import 'package:australti_ecommerce_app/pages/account_store/edit_address_store.dart';
 import 'package:australti_ecommerce_app/pages/categories_store.dart';
 import 'package:australti_ecommerce_app/pages/confirm_location.dart';
+import 'package:australti_ecommerce_app/pages/credit_Card/card_page.dart';
+import 'package:australti_ecommerce_app/pages/credit_Card/cards_list.dart';
 import 'package:australti_ecommerce_app/pages/discovery_demo.dart';
 import 'package:australti_ecommerce_app/pages/favorite.dart';
 import 'package:australti_ecommerce_app/pages/form_current_location.dart';
@@ -47,7 +50,7 @@ final Map<String, Widget Function(BuildContext)> appRoutes = {
 final pageRouter = <_Route>[
   _Route(Icons.play_arrow, 'flow', MainStoreServicesApp()),
   _Route(Icons.play_arrow, 'loading', MyFavorites()),
-  _Route(Icons.play_arrow, 'store', CatalogosListPage()),
+  _Route(Icons.play_arrow, 'store', CreditCardListPage()), //CatalogosListPage
   _Route(Icons.play_arrow, 'notifications', MyNotifications()),
 ];
 
@@ -125,6 +128,28 @@ Route notificationsRoute() {
     pageBuilder: (context, animation, secondaryAnimation) => MyNotifications(),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = Offset(5.0, 0.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
+
+Route cardRouter(CreditCard card) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return CardDetailPage(
+        creditCard: card,
+      );
+    },
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(0.0, -0.5);
       var end = Offset.zero;
       var curve = Curves.ease;
 

@@ -202,6 +202,8 @@ class _PrincipalPageState extends State<PrincipalPage>
 
       notifiModel.numberNotifiBell = number;
 
+      orderService.loading = true;
+
       notifiModel.numberSteamNotifiBell.sink.add(number);
       if (number >= 2) {
         notifiModel.bounceControllerBell;
@@ -225,6 +227,8 @@ class _PrincipalPageState extends State<PrincipalPage>
       orderService.ordersStore = resp.orders;
 
       notifiModel.numberNotifiBell = number;
+
+      orderService.loading = true;
 
       final List<Order> orderNotificationStore =
           orderService.ordersStore.where((i) => i.isNotifiCheckStore).toList();

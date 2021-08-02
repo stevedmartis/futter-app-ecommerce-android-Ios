@@ -154,51 +154,150 @@ class _OrderPageState extends State<OrderPage> {
       }
     }
 
+    void deliverOrder() async {
+      final orderBloc = Provider.of<OrderService>(context, listen: false);
+      final socketService = Provider.of<SocketService>(context, listen: false);
+
+      orderBloc.orderDeliverStore(
+        order.id,
+      );
+      final resp = await orderBloc.editOrderDelivery(order.id);
+
+      if (resp.ok) {
+        socketService
+            .emit('orders-notification-client', {'client': order.client});
+
+        Navigator.pop(context);
+      }
+    }
+
+    void deliveredOrder() async {
+      final orderBloc = Provider.of<OrderService>(context, listen: false);
+      final socketService = Provider.of<SocketService>(context, listen: false);
+
+      orderBloc.orderDeliveredStore(
+        order.id,
+      );
+      final resp = await orderBloc.editOrderDelivered(order.id);
+
+      if (resp.ok) {
+        socketService
+            .emit('orders-notification-client', {'client': order.client});
+
+        Navigator.pop(context);
+      }
+    }
+
     final orderId = order.id.substring(11, 15);
     return SafeArea(
       child: Scaffold(
         backgroundColor: currentTheme.scaffoldBackgroundColor,
-        bottomNavigationBar: (widget.isStore && !order.isPreparation)
-            ? Container(
-                padding:
-                    EdgeInsets.only(top: 5, bottom: 10, right: 10, left: 10),
-                child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 10.0, right: 10, bottom: 0),
+        bottomNavigationBar: (widget.isStore)
+            ? Padding(
+                padding: const EdgeInsets.all(20),
+                child: Container(
+                    height: 50,
+                    width: size.width / 2.2,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          HapticFeedback.lightImpact();
+
+                          if (!order.isPreparation &&
+                              !widget.order.isDelivery) {
+                            prepareOrder();
+                          } else if (!order.isDelivery && !order.isDelivered) {
+                            deliverOrder();
+                          } else if (!order.isDelivered) {
+                            deliveredOrder();
+                          } else if (order.isDelivered) {
+                            Navigator.pop(context);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          elevation: 5.0,
+                          fixedSize: Size.fromWidth(size.width),
+                          primary: (order.isDelivered)
+                              ? Colors.grey[800]
+                              : currentTheme.primaryColor,
+                          shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0),
+                          ),
+                        ),
+                        child: Row(children: [
+                          Text(
+                              (!order.isPreparation && !order.isDelivery)
+                                  ? 'Preparar'
+                                  : (order.isPreparation && !order.isDelivery)
+                                      ? 'Enviar'
+                                      : (order.isDelivery && !order.isDelivered)
+                                          ? 'Entregar'
+                                          : 'Evaluar experiencia (proximamente)',
+                              style:
+                                  TextStyle(fontSize: 15, color: Colors.white)),
+                          Spacer(),
+                          (!order.isPreparation && !order.isDelivery)
+                              ? FaIcon(
+                                  FontAwesomeIcons.boxOpen,
+                                  size: 15,
+                                  color: Colors.white,
+                                )
+                              : (order.isPreparation && !order.isDelivery)
+                                  ? FaIcon(
+                                      FontAwesomeIcons.truckLoading,
+                                      size: 15,
+                                      color: Colors.white,
+                                    )
+                                  : (order.isDelivery && !order.isDelivered)
+                                      ? FaIcon(
+                                          FontAwesomeIcons.home,
+                                          size: 15,
+                                          color: Colors.white,
+                                        )
+                                      : FaIcon(
+                                          FontAwesomeIcons.star,
+                                          size: 15,
+                                          color: Colors.white,
+                                        )
+                        ]))),
+              )
+            : (order.isDelivered)
+                ? Padding(
+                    padding: const EdgeInsets.only(
+                        left: 20.0, right: 20, bottom: 0, top: 20),
                     child: Container(
                         height: 50,
                         width: size.width / 2.2,
                         child: ElevatedButton(
                             onPressed: () {
-                              HapticFeedback.lightImpact();
-                              prepareOrder();
+                              //HapticFeedback.lightImpact();
+
+                              Navigator.pop(context);
                             },
                             style: ElevatedButton.styleFrom(
                               elevation: 5.0,
                               fixedSize: Size.fromWidth(size.width),
-                              primary: currentTheme.primaryColor,
+                              primary: (order.isDelivered)
+                                  ? Colors.grey[800]
+                                  : currentTheme.primaryColor,
                               shape: new RoundedRectangleBorder(
                                 borderRadius: new BorderRadius.circular(30.0),
                               ),
                             ),
                             child: Row(children: [
-                              Text('Preparar', style: TextStyle(fontSize: 15)),
+                              Text('Evaluar experiencia (proximamente)',
+                                  style: TextStyle(
+                                      fontSize: 15, color: Colors.white)),
                               Spacer(),
                               FaIcon(
-                                FontAwesomeIcons.boxOpen,
+                                FontAwesomeIcons.star,
                                 size: 15,
                                 color: Colors.white,
                               )
-                            ]))),
-                  )
-                ]),
-              )
-            : Container(
-                width: 0,
-                height: 0,
-              ),
-
+                            ]))))
+                : Container(
+                    width: 0,
+                    height: 0,
+                  ),
         // tab bar view
         body: NotificationListener<ScrollEndNotification>(
           onNotification: (_) {
@@ -329,7 +428,7 @@ Widget _buildProductsList(
 
       if (resp.ok) {
         socketService.emit('orders-notification-store', {
-          'storesIds': [order.store],
+          'storesIds': [order.store.user.uid],
         });
         Navigator.pop(context);
       }
@@ -477,7 +576,9 @@ Widget _buildProductsList(
                     ),
                   ],
                 ),
-                if (!order.isSend)
+                if (!order.isDelivery &&
+                    !order.isCancelByClient &&
+                    !order.isCancelByStore)
                   if (!isStore)
                     Container(
                       alignment: Alignment.centerRight,
@@ -668,7 +769,9 @@ Widget _buildProductsList(
               ],
             ),
           ),
-          if (order.isPreparation)
+          if (order.isCancelByClient ||
+              order.isCancelByStore ||
+              order.isPreparation)
             SizedBox(
               height: 20,
             ),

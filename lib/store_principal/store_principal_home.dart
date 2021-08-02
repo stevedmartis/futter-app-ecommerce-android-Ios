@@ -9,7 +9,7 @@ import 'package:australti_ecommerce_app/models/grocery_Store.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 
 import 'package:australti_ecommerce_app/pages/order_progress.dart/progressBar.dart';
-import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
+
 import 'package:australti_ecommerce_app/pages/search_principal_page.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
@@ -60,6 +60,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
   bool isItems = false;
   bool loading = true;
 
+  bool loadingOrders = false;
   ValueNotifier<bool> notifierBottomBarVisible = ValueNotifier(true);
 
   double get maxHeight => 200 + MediaQuery.of(context).padding.top;
@@ -173,6 +174,10 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     if (resp.ok) {
       orderService.orders = resp.orders;
 
+      setState(() {
+        loadingOrders = true;
+      });
+
       final List<Order> orderNotificationStore =
           orderService.orders.where((i) => i.isNotifiCheckClient).toList();
 
@@ -202,6 +207,8 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     if (resp.ok) {
       setState(() {
         orderService.ordersStore = resp.orders;
+
+        loadingOrders = true;
       });
 
       notifiModel.numberNotifiBell = number;
@@ -285,8 +292,6 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
     final orderService = Provider.of<OrderService>(context);
 
-    final intemSelected = Provider.of<MenuModel>(context).currentPage;
-
     final notifiBloc = Provider.of<NotificationModel>(context);
 
     isItems = groceryBloc.totalCartElements() > 0 ? true : false;
@@ -305,8 +310,8 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
           backgroundColor: currentTheme.scaffoldBackgroundColor,
           body: NotificationListener<ScrollEndNotification>(
             onNotification: (_) {
-              if (_scrollController.offset < 100 ||
-                  _scrollController.offset > 130) _snapAppbar();
+              if (_scrollController.offset < 70 ||
+                  _scrollController.offset > 100) _snapAppbar();
 
               return false;
             },
@@ -358,49 +363,41 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                               )),
                         )),
                     actions: [
-                      Container(
-                        padding: EdgeInsets.only(right: 5, top: 10),
-                        child: Row(
-                          children: [
-                            Stack(
-                              children: [
-                                Container(
-                                    child: GestureDetector(
-                                  onTap: () {
-                                    HapticFeedback.lightImpact();
-                                    Navigator.push(
-                                        context, notificationsRoute());
-                                  },
-                                  child: Container(
-                                    child: (intemSelected == 3)
-                                        ? Icon(Icons.notifications, size: 32)
-                                        : Icon(Icons.notifications_outlined,
-                                            size: 32),
-                                  ),
-                                )),
-                                StreamBuilder(
-                                  stream: notifiBloc.numberSteamNotifiBell,
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot snapshot) {
-                                    int number = (snapshot.data != null)
-                                        ? snapshot.data
-                                        : 0;
+                      GestureDetector(
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          Navigator.push(context, notificationsRoute());
+                        },
+                        child: Container(
+                          padding: EdgeInsets.only(right: 10, top: 18),
+                          child: Row(
+                            children: [
+                              StreamBuilder(
+                                stream: notifiBloc.numberSteamNotifiBell,
+                                builder: (BuildContext context,
+                                    AsyncSnapshot snapshot) {
+                                  int number = (snapshot.data != null)
+                                      ? snapshot.data
+                                      : 0;
 
-                                    if (number > 0)
-                                      return Container(
-                                        margin: EdgeInsets.only(bottom: 20),
-                                        alignment: Alignment.centerRight,
-                                        child: BounceInDown(
-                                          from: 5,
-                                          animate: (number > 0) ? true : false,
-                                          child: Bounce(
-                                            delay: Duration(seconds: 2),
-                                            from: 5,
-                                            controller: (controller) =>
-                                                Provider.of<NotificationModel>(
-                                                            context)
-                                                        .bounceControllerBell =
-                                                    controller,
+                                  return Swing(
+                                    animate: number > 0,
+                                    delay: Duration(seconds: 1),
+                                    controller: (controller) =>
+                                        Provider.of<NotificationModel>(context)
+                                            .bounceControllerBell = controller,
+                                    child: Stack(
+                                      children: [
+                                        Container(
+                                            padding: EdgeInsets.only(right: 8),
+                                            child: FaIcon(
+                                              FontAwesomeIcons.bell,
+                                              color: Colors.white,
+                                              size: 25,
+                                            )),
+                                        if (number > 0)
+                                          Container(
+                                            margin: EdgeInsets.only(bottom: 20),
                                             child: Container(
                                               child: Text(
                                                 '$number',
@@ -419,73 +416,62 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                                                   shape: BoxShape.circle),
                                             ),
                                           ),
-                                        ),
-                                      );
-
-                                    return Container();
-                                  },
-                                ),
-                              ],
-                            ),
-                            Swing(
-                              animate: isItems,
-                              delay: Duration(seconds: 1),
-                              controller: (controller) =>
-                                  Provider.of<NotificationModel>(context)
-                                      .bounceControllerBell = controller,
-                              child: GestureDetector(
-                                  onTap: () {
-                                    HapticFeedback.lightImpact();
-                                    showMaterialCupertinoBottomSheet(
-                                        context, 'hello', 'hello2');
-                                  },
-                                  child: Container(
-                                    child: Stack(
-                                      children: [
-                                        Container(
-                                          child: (isItems)
-                                              ? Icon(
-                                                  Icons.shopping_bag,
-                                                  color:
-                                                      currentTheme.primaryColor,
-                                                  size: 32,
-                                                )
-                                              : Icon(
-                                                  Icons.shopping_bag_outlined,
-                                                  color: Colors.white,
-                                                  size: 32,
-                                                ),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                              left: 10, top: 10),
-                                          child: (groceryBloc
-                                                      .totalCartElements() >
-                                                  0)
-                                              ? Container(
-                                                  child: Text(
-                                                    groceryBloc.cart.length
-                                                        .toString(),
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                  alignment: Alignment.center,
-                                                  width: 15,
-                                                  height: 15,
-                                                  decoration: BoxDecoration(
-                                                      color: Color(0xff32D73F),
-                                                      shape: BoxShape.circle),
-                                                )
-                                              : Container(),
-                                        ),
                                       ],
                                     ),
-                                  )),
-                            ),
-                          ],
+                                  );
+                                },
+                              ),
+                              Swing(
+                                animate: isItems,
+                                delay: Duration(seconds: 1),
+                                controller: (controller) =>
+                                    Provider.of<NotificationModel>(context)
+                                        .bounceControllerBell = controller,
+                                child: GestureDetector(
+                                    onTap: () {
+                                      HapticFeedback.lightImpact();
+                                      showMaterialCupertinoBottomSheet(
+                                          context, 'hello', 'hello2');
+                                    },
+                                    child: Container(
+                                      child: Stack(
+                                        children: [
+                                          Container(
+                                              child: Icon(
+                                            Icons.shopping_bag_outlined,
+                                            color: Colors.white,
+                                            size: 30,
+                                          )),
+                                          Container(
+                                            child: (groceryBloc
+                                                        .totalCartElements() >
+                                                    0)
+                                                ? Container(
+                                                    child: Text(
+                                                      groceryBloc.cart.length
+                                                          .toString(),
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    alignment: Alignment.center,
+                                                    width: 15,
+                                                    height: 15,
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            Color(0xff32D73F),
+                                                        shape: BoxShape.circle),
+                                                  )
+                                                : Container(),
+                                          ),
+                                        ],
+                                      ),
+                                    )),
+                              ),
+                            ],
+                          ),
                         ),
                       )
                     ],
@@ -539,45 +525,45 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                           }),
                     ),
                   ),
-
                   if (orderClientActive.length > 0)
                     makeListHorizontalCarouselOrdersProgress(
                         context, orderClientActive),
-
                   if (ordersStoreActive.length > 0)
                     makeListHorizontalCarouselOrdersStoreProgress(
                         context, ordersStoreActive),
-                  SliverAppBar(
-                    automaticallyImplyLeading: false,
-                    expandedHeight: 150.0,
-                    collapsedHeight: 150.0,
-                    pinned: false,
-                    actionsIconTheme: IconThemeData(opacity: 0.0),
-                    flexibleSpace: Stack(
-                      children: <Widget>[
-                        Positioned.fill(
-                          child: Material(
-                              type: MaterialType.transparency,
-                              child: Container(
-                                  color: currentTheme.scaffoldBackgroundColor,
-                                  child: StoreServicesList(
-                                    onPhotoSelected: (item) => {
-                                      _changeService(bloc, item.id),
-                                      setState(() {
-                                        HapticFeedback.lightImpact();
-                                        bloc.selected = item;
-                                      })
-                                    },
-                                  ))),
-                        )
-                      ],
+                  if (orderService.loading)
+                    SliverAppBar(
+                      automaticallyImplyLeading: false,
+                      expandedHeight: 150.0,
+                      collapsedHeight: 150.0,
+                      pinned: false,
+                      actionsIconTheme: IconThemeData(opacity: 0.0),
+                      flexibleSpace: Stack(
+                        children: <Widget>[
+                          Positioned.fill(
+                            child: Material(
+                                type: MaterialType.transparency,
+                                child: Container(
+                                    color: currentTheme.scaffoldBackgroundColor,
+                                    child: FadeIn(
+                                      delay: Duration(milliseconds: 300),
+                                      child: StoreServicesList(
+                                        onPhotoSelected: (item) => {
+                                          _changeService(bloc, item.id),
+                                          setState(() {
+                                            HapticFeedback.lightImpact();
+                                            bloc.selected = item;
+                                          })
+                                        },
+                                      ),
+                                    ))),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-
-                  // makeHeaderPrincipal(context),
-                  makeHeaderTitle(context, bloc.selected.name),
-
-                  makeListRecomendations(loading),
+                  if (orderService.loading)
+                    makeHeaderTitle(context, bloc.selected.name),
+                  if (orderService.loading) makeListRecomendations(loading),
                 ],
               ),
             ),
@@ -618,20 +604,23 @@ SliverPersistentHeader makeHeaderTitle(context, String titleService) {
       delegate: SliverCustomHeaderDelegate(
           minHeight: 40,
           maxHeight: 40,
-          child: Container(
-            color: currentTheme.scaffoldBackgroundColor,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 0.0, left: 10),
-              child: CrossFade<String>(
-                initialData: '',
-                data: titleService,
-                builder: (value) => Container(
-                  child: Text(
-                    titleService,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
+          child: FadeIn(
+            delay: Duration(milliseconds: 500),
+            child: Container(
+              color: currentTheme.scaffoldBackgroundColor,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 0.0, left: 10),
+                child: CrossFade<String>(
+                  initialData: '',
+                  data: titleService,
+                  builder: (value) => Container(
+                    child: Text(
+                      titleService,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ),
@@ -643,10 +632,13 @@ SliverPersistentHeader makeHeaderTitle(context, String titleService) {
 SliverList makeListRecomendations(bool loading) {
   return SliverList(
     delegate: SliverChildListDelegate([
-      Container(
-          child: StoresListByService(
-        loading: loading,
-      )),
+      FadeIn(
+        delay: Duration(milliseconds: 600),
+        child: Container(
+            child: StoresListByService(
+          loading: loading,
+        )),
+      ),
     ]),
   );
 }
@@ -661,7 +653,7 @@ SliverList makeListHorizontalCarouselOrdersProgress(
         child: Padding(
           padding: const EdgeInsets.only(top: 10.0, bottom: 0),
           child: SizedBox(
-            child: (orderService.loading)
+            child: (!orderService.loading)
                 ? buildLoadingWidget(context)
                 : CarouselSlider(
                     items: List.generate(
@@ -701,7 +693,7 @@ SliverList makeListHorizontalCarouselOrdersStoreProgress(
         child: Padding(
           padding: const EdgeInsets.only(top: 10.0, bottom: 0),
           child: SizedBox(
-            child: (orderService.loading)
+            child: (!orderService.loading)
                 ? buildLoadingWidget(context)
                 : CarouselSlider(
                     items: List.generate(
@@ -747,9 +739,19 @@ class _OrderprogressStoreCardState extends State<OrderprogressStoreCard> {
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final notifiBloc = Provider.of<NotificationModel>(context);
+    final authService = Provider.of<AuthenticationBLoC>(context);
     final id = widget.order.id;
 
     final store = widget.order.store;
+
+    /* final getTimeMin =
+        authService.storeAuth.timeDelivery.toString().split("-").first;
+
+    final getTimeMax =
+        authService.storeAuth.timeDelivery.toString().split("-").last;
+
+    final estimated = getTimeMin + getTimeMax; */
+
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
@@ -763,177 +765,199 @@ class _OrderprogressStoreCardState extends State<OrderprogressStoreCard> {
           borderRadius: BorderRadius.circular(20),
         ),
         color: currentTheme.cardColor,
-        child: GestureDetector(
-          child: Padding(
-            padding: EdgeInsets.only(left: 15, bottom: 0),
-            child: SizedBox(
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    width: 50,
-                    height: 50,
-                    child: Hero(
-                      tag: 'order/$id',
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        child: ClipRRect(
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(100.0)),
-                          child: (store.imageAvatar != "")
-                              ? Container(
-                                  child: cachedNetworkImage(
-                                    store.imageAvatar,
-                                  ),
-                                )
-                              : Image.asset(currentProfile.imageAvatar),
-                        ),
+        child: Padding(
+          padding: EdgeInsets.only(left: 15, bottom: 0),
+          child: SizedBox(
+            child: Row(
+              children: <Widget>[
+                Container(
+                  width: 50,
+                  height: 50,
+                  child: Hero(
+                    tag: 'order/$id',
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(100.0)),
+                        child: (store.imageAvatar != "")
+                            ? Container(
+                                child: cachedNetworkImage(
+                                  store.imageAvatar,
+                                ),
+                              )
+                            : Image.asset(currentProfile.imageAvatar),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                        Row(
-                          children: [
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                      Row(
+                        children: [
+                          if (!widget.isStore)
                             Container(
-                              padding: EdgeInsets.only(top: 10, right: 10),
-                              child: Text(
-                                (widget.order.isCancelByClient ||
-                                        widget.order.isCancelByStore)
-                                    ? 'Pedido cancelado'
-                                    : (widget.isStore)
-                                        ? 'Pedido recibido'
-                                        : 'Pedido en curso',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15),
+                                padding: EdgeInsets.only(top: 10, right: 10),
+                                child: Text(
+                                  (!widget.order.isCancelByClient &&
+                                          !widget.order.isCancelByStore)
+                                      ? (!widget.order.isPreparation &&
+                                              !widget.order.isDelivery)
+                                          ? 'Pedido enviado'
+                                          : (widget.order.isPreparation &&
+                                                  !widget.order.isDelivery)
+                                              ? 'Pedido en preparación'
+                                              : (widget.order.isDelivery &&
+                                                      !widget.order.isDelivered)
+                                                  ? 'Entregar'
+                                                  : 'Pedido Entregado.'
+                                      : 'Pedido cancelado',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15),
+                                )),
+                          if (widget.isStore)
+                            Container(
+                                padding: EdgeInsets.only(top: 10, right: 10),
+                                child: Text(
+                                  (!widget.order.isCancelByClient &&
+                                          !widget.order.isCancelByStore)
+                                      ? (!widget.order.isPreparation &&
+                                              !widget.order.isDelivery)
+                                          ? 'Pedido recibido'
+                                          : (widget.order.isPreparation &&
+                                                  !widget.order.isDelivery)
+                                              ? 'Pedido en preparación'
+                                              : (widget.order.isDelivery &&
+                                                      !widget.order.isDelivered)
+                                                  ? 'Pedido en curso'
+                                                  : 'Pedido Entregado.'
+                                      : 'Pedido cancelado',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15),
+                                )),
+                          if (widget.isStore)
+                            if (widget.order.isNotifiCheckStore)
+                              StreamBuilder(
+                                stream: notifiBloc.numberSteamNotifiBell,
+                                builder: (BuildContext context,
+                                    AsyncSnapshot snapshot) {
+                                  int number = (snapshot.data != null)
+                                      ? snapshot.data
+                                      : 0;
+
+                                  if (number > 0)
+                                    return Container(
+                                      margin: EdgeInsets.only(right: 0),
+                                      alignment: Alignment.centerRight,
+                                      child: BounceInDown(
+                                        from: 5,
+                                        animate: (number > 0) ? true : false,
+                                        child: Bounce(
+                                          delay: Duration(seconds: 2),
+                                          from: 5,
+                                          controller: (controller) =>
+                                              Provider.of<NotificationModel>(
+                                                          context)
+                                                      .bounceControllerBell =
+                                                  controller,
+                                          child: Container(
+                                            child: Text(
+                                              '',
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            alignment: Alignment.center,
+                                            width: 15,
+                                            height: 15,
+                                            decoration: BoxDecoration(
+                                                color: currentTheme.accentColor,
+                                                shape: BoxShape.circle),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+
+                                  return Container();
+                                },
                               ),
-                            ),
-                            if (widget.isStore)
-                              if (widget.order.isNotifiCheckStore)
-                                StreamBuilder(
-                                  stream: notifiBloc.numberSteamNotifiBell,
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot snapshot) {
-                                    int number = (snapshot.data != null)
-                                        ? snapshot.data
-                                        : 0;
+                          if (!widget.isStore)
+                            if (widget.order.isNotifiCheckClient)
+                              StreamBuilder(
+                                stream: notifiBloc.numberSteamNotifiBell,
+                                builder: (BuildContext context,
+                                    AsyncSnapshot snapshot) {
+                                  int number = (snapshot.data != null)
+                                      ? snapshot.data
+                                      : 0;
 
-                                    if (number > 0)
-                                      return Container(
-                                        margin: EdgeInsets.only(right: 0),
-                                        alignment: Alignment.centerRight,
-                                        child: BounceInDown(
+                                  if (number > 0)
+                                    return Container(
+                                      margin: EdgeInsets.only(right: 0),
+                                      alignment: Alignment.centerRight,
+                                      child: BounceInDown(
+                                        from: 5,
+                                        animate: (number > 0) ? true : false,
+                                        child: Bounce(
+                                          delay: Duration(seconds: 2),
                                           from: 5,
-                                          animate: (number > 0) ? true : false,
-                                          child: Bounce(
-                                            delay: Duration(seconds: 2),
-                                            from: 5,
-                                            controller: (controller) =>
-                                                Provider.of<NotificationModel>(
-                                                            context)
-                                                        .bounceControllerBell =
-                                                    controller,
-                                            child: Container(
-                                              child: Text(
-                                                '',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 10,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              alignment: Alignment.center,
-                                              width: 15,
-                                              height: 15,
-                                              decoration: BoxDecoration(
-                                                  color:
-                                                      currentTheme.accentColor,
-                                                  shape: BoxShape.circle),
+                                          controller: (controller) =>
+                                              Provider.of<NotificationModel>(
+                                                          context)
+                                                      .bounceControllerBell =
+                                                  controller,
+                                          child: Container(
+                                            child: Text(
+                                              '',
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
                                             ),
+                                            alignment: Alignment.center,
+                                            width: 15,
+                                            height: 15,
+                                            decoration: BoxDecoration(
+                                                color: currentTheme.accentColor,
+                                                shape: BoxShape.circle),
                                           ),
                                         ),
-                                      );
+                                      ),
+                                    );
 
-                                    return Container();
-                                  },
-                                ),
-                            if (!widget.isStore)
-                              if (widget.order.isNotifiCheckClient)
-                                StreamBuilder(
-                                  stream: notifiBloc.numberSteamNotifiBell,
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot snapshot) {
-                                    int number = (snapshot.data != null)
-                                        ? snapshot.data
-                                        : 0;
-
-                                    if (number > 0)
-                                      return Container(
-                                        margin: EdgeInsets.only(right: 0),
-                                        alignment: Alignment.centerRight,
-                                        child: BounceInDown(
-                                          from: 5,
-                                          animate: (number > 0) ? true : false,
-                                          child: Bounce(
-                                            delay: Duration(seconds: 2),
-                                            from: 5,
-                                            controller: (controller) =>
-                                                Provider.of<NotificationModel>(
-                                                            context)
-                                                        .bounceControllerBell =
-                                                    controller,
-                                            child: Container(
-                                              child: Text(
-                                                '',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 10,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              alignment: Alignment.center,
-                                              width: 15,
-                                              height: 15,
-                                              decoration: BoxDecoration(
-                                                  color:
-                                                      currentTheme.accentColor,
-                                                  shape: BoxShape.circle),
-                                            ),
-                                          ),
-                                        ),
-                                      );
-
-                                    return Container();
-                                  },
-                                )
-                          ],
+                                  return Container();
+                                },
+                              )
+                        ],
+                      ),
+                      Container(
+                        child: Text(
+                          'Entrega estimada: ${authService.storeAuth.timeDelivery} mins',
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 12),
                         ),
-                        Container(
-                          child: Text(
-                            'Entrega estimada: 4 de Agosto',
-                            style: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.normal,
-                                fontSize: 12),
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                              child: ProgressBar(
-                            key: ValueKey('order/$id'),
-                            order: widget.order,
-                            principal: true,
-                            isStore: widget.isStore,
-                          )),
-                        ),
-                      ])),
-                ],
-              ),
+                      ),
+                      Expanded(
+                        child: Container(
+                            child: ProgressBar(
+                          key: ValueKey('order/$id'),
+                          order: widget.order,
+                          principal: true,
+                          isStore: widget.isStore,
+                        )),
+                      ),
+                    ])),
+              ],
             ),
           ),
         ),

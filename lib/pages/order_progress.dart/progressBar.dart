@@ -60,9 +60,10 @@ class AnimatedBar extends StatefulWidget {
       {Key key, this.order, this.controller, this.principal, this.isStore})
       : isActive = order.isActive,
         isPreparation = order.isPreparation,
-        isSend = order.isSend,
+        isDelivery = order.isDelivery,
         isCancelByClient = order.isCancelByClient,
         isCancelByStore = order.isCancelByStore,
+        isDelivered = order.isDelivered,
         isFinalice = order.isFinalice,
         dotOneColor = ColorTween(
           begin: FoodColors.Grey,
@@ -139,9 +140,9 @@ class AnimatedBar extends StatefulWidget {
         ),
         progressBarTwo = Tween(
                 begin: 0.0,
-                end: (order.isPreparation && !order.isSend)
+                end: (order.isPreparation && !order.isDelivery)
                     ? 0.5
-                    : (order.isSend)
+                    : (order.isDelivery)
                         ? 1.0
                         : 0.0)
             .animate(
@@ -165,9 +166,9 @@ class AnimatedBar extends StatefulWidget {
         ),
         progressBarThree = Tween(
                 begin: 0.0,
-                end: (order.isSend && (!order.isFinalice))
+                end: (order.isDelivery && (!order.isDelivered))
                     ? 0.5
-                    : (order.isFinalice)
+                    : (order.isDelivered)
                         ? 1.0
                         : 0.0)
             .animate(
@@ -208,9 +209,9 @@ class AnimatedBar extends StatefulWidget {
         ),
         progressBarFour = Tween(
                 begin: 0.0,
-                end: (!order.isFinalice && order.isSend)
+                end: (!order.isDelivered && order.isDelivery)
                     ? 0.5
-                    : (order.isFinalice)
+                    : (order.isDelivered)
                         ? 1.0
                         : 0.0)
             .animate(
@@ -240,7 +241,8 @@ class AnimatedBar extends StatefulWidget {
 
   final bool isActive;
   final bool isPreparation;
-  final bool isSend;
+  final bool isDelivery;
+  final bool isDelivered;
   final bool isCancelByClient;
   final bool isCancelByStore;
   final bool isFinalice;
@@ -276,29 +278,29 @@ class _AnimatedBarState extends State<AnimatedBar>
       final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
       String textOne = (widget.isStore)
-          ? "Pedido recibido para enviar ..."
-          : "Pedido enviado y recibido ...";
+          ? "Prepara el pedido ..."
+          : "El pedido esta en proceso ...";
 
       String textTwo = (widget.isStore)
           ? "Estas preparando el pedido ..."
           : "Estan preparando tu pedido ...";
 
       String textThree = (widget.isStore)
-          ? "Haz enviado el pedido ..."
+          ? "Estas entregando el pedido ..."
           : "Tu pedido va en camino ...";
 
       String textFour = (widget.isStore)
-          ? "El pedido llego al cliente!"
+          ? "Entregado, evalua la experiencia!"
           : "El pedido llego a tu dirección!";
 
       String actualText = "";
       if (widget.isActive && !widget.isPreparation) {
         actualText = textOne;
-      } else if (widget.isPreparation && !widget.order.isSend) {
+      } else if (widget.isPreparation && !widget.order.isDelivery) {
         actualText = textTwo;
-      } else if (widget.isSend && !widget.isFinalice) {
+      } else if (widget.isDelivery && !widget.isDelivered) {
         actualText = textThree;
-      } else if (widget.order.isFinalice) {
+      } else if (widget.order.isDelivered) {
         actualText = textFour;
       }
 
@@ -313,244 +315,262 @@ class _AnimatedBarState extends State<AnimatedBar>
 
       if (!widget.isStore && widget.order.isCancelByStore)
         actualText = 'Pedido cancelado.';
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.only(
-              top: (widget.principal) ? 10.0 : 20,
-              right: (widget.principal) ? 20 : 0,
-              bottom: (widget.principal) ? 5 : 0,
-            ),
-            width: MediaQuery.of(context).size.width / 1.3,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                // Text('${(controller.value * 100.0).toStringAsFixed(1)}%'),
-                Container(
-                  width: dotSize + widget.progressBarOne.value * 6,
-                  height: dotSize + widget.progressBarOne.value * 6,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      border: Border.all(
-                          width: (widget.principal)
-                              ? 0.5 + widget.progressBarOne.value * 1
-                              : 0.5 + widget.progressBarOne.value * 3,
-                          color: (!widget.isCancelByClient &&
-                                  !widget.isCancelByStore)
-                              ? (widget.progressBarOne.value >= 0.5)
-                                  ? currentTheme.primaryColor
-                                  : Colors.grey
-                              : Colors.grey)),
-                  child: AnimatedContainer(
-                    duration: Duration(milliseconds: 200),
-                    alignment: Alignment.center,
-                    child: (!widget.isCancelByClient && !widget.isCancelByStore)
-                        ? (widget.progressBarOne.value != 1.0)
-                            ? FaIcon(
-                                FontAwesomeIcons.archive,
-                                size: (widget.principal) ? 10 : 13,
-                                color: (widget.progressBarOne.value >= 0.5)
-                                    ? currentTheme.primaryColor
-                                    : Colors.grey,
-                              )
-                            : Icon(
-                                Icons.check_circle,
-                                size: (widget.principal)
-                                    ? 15
-                                    : 20 + widget.progressBarOne.value * 6,
-                                color: currentTheme.primaryColor,
-                              )
-                        : FaIcon(
-                            FontAwesomeIcons.timesCircle,
-                            size: (!widget.isCancelByClient &&
+      return Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.only(
+                top: (widget.principal) ? 10.0 : 0,
+                right: (widget.principal) ? 20 : 0,
+                bottom: (widget.principal) ? 5 : 0,
+              ),
+              width: MediaQuery.of(context).size.width / 1.3,
+              height: (!widget.principal) ? 80 : 40,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  // Text('${(controller.value * 100.0).toStringAsFixed(1)}%'),
+                  Container(
+                    width: dotSize + widget.progressBarOne.value * 6,
+                    height: dotSize + widget.progressBarOne.value * 6,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(
+                            width: (widget.principal)
+                                ? 0.5 + widget.progressBarOne.value * 1
+                                : 0.5 + widget.progressBarOne.value * 3,
+                            color: (!widget.isCancelByClient &&
                                     !widget.isCancelByStore)
-                                ? 20
-                                : (widget.principal)
-                                    ? 15
-                                    : 20,
-                            color: Colors.grey,
-                          ),
-                  ),
-                ),
-
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    height: 2,
-                    child: LinearProgressIndicator(
-                      backgroundColor: FoodColors.Grey,
-                      value:
-                          (!widget.isCancelByClient && !widget.isCancelByStore)
-                              ? widget.progressBarOne.value
-                              : 0,
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(FoodColors.Yellow),
+                                ? (widget.progressBarOne.value >= 0.5)
+                                    ? currentTheme.primaryColor
+                                    : Colors.grey
+                                : Colors.grey)),
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 200),
+                      alignment: Alignment.center,
+                      child: (!widget.isCancelByClient &&
+                              !widget.isCancelByStore)
+                          ? (widget.progressBarOne.value != 1.0)
+                              ? FaIcon(
+                                  FontAwesomeIcons.archive,
+                                  size: (widget.principal) ? 10 : 13,
+                                  color: (widget.progressBarOne.value >= 0.5)
+                                      ? currentTheme.primaryColor
+                                      : Colors.grey,
+                                )
+                              : Icon(
+                                  Icons.check_circle,
+                                  size: (widget.principal)
+                                      ? 15
+                                      : 20 + widget.progressBarOne.value * 6,
+                                  color: currentTheme.primaryColor,
+                                )
+                          : FaIcon(
+                              FontAwesomeIcons.timesCircle,
+                              size: (!widget.isCancelByClient &&
+                                      !widget.isCancelByStore)
+                                  ? 20
+                                  : (widget.principal)
+                                      ? 15
+                                      : 20,
+                              color: Colors.grey,
+                            ),
                     ),
                   ),
-                ),
 
-                Container(
-                  width: dotSize + widget.progressBarTwo.value * 6,
-                  height: dotSize + widget.progressBarTwo.value * 6,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      border: Border.all(
-                          width: (widget.principal)
-                              ? 0.5 + widget.progressBarTwo.value * 1
-                              : 0.5 + widget.progressBarTwo.value * 3,
-                          color: (widget.progressBarTwo.value >= 0.5)
-                              ? currentTheme.primaryColor
-                              : Colors.grey)),
-                  child: AnimatedContainer(
-                    duration: Duration(milliseconds: 200),
-                    alignment: Alignment.center,
-                    child: (widget.progressBarTwo.value != 1.0)
-                        ? FaIcon(
-                            FontAwesomeIcons.boxOpen,
-                            size: (widget.principal) ? 10 : 13,
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      height: 2,
+                      child: LinearProgressIndicator(
+                        backgroundColor: FoodColors.Grey,
+                        value: (!widget.isCancelByClient &&
+                                !widget.isCancelByStore)
+                            ? widget.progressBarOne.value
+                            : 0,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(FoodColors.Yellow),
+                      ),
+                    ),
+                  ),
+
+                  Container(
+                    width: dotSize + widget.progressBarTwo.value * 6,
+                    height: dotSize + widget.progressBarTwo.value * 6,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(
+                            width: (widget.principal)
+                                ? 0.5 + widget.progressBarTwo.value * 1
+                                : 0.5 + widget.progressBarTwo.value * 3,
                             color: (widget.progressBarTwo.value >= 0.5)
                                 ? currentTheme.primaryColor
-                                : Colors.grey,
-                          )
-                        : Icon(
-                            Icons.check_circle,
-                            size: (widget.principal)
-                                ? 15
-                                : 20 + widget.progressBarTwo.value * 6,
-                            color: currentTheme.primaryColor,
-                          ),
-                  ),
-                ),
-
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    height: 2,
-                    child: LinearProgressIndicator(
-                      backgroundColor: FoodColors.Grey,
-                      value: widget.progressBarTwo.value,
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(FoodColors.Yellow),
+                                : Colors.grey)),
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 200),
+                      alignment: Alignment.center,
+                      child: (widget.progressBarTwo.value != 1.0)
+                          ? FaIcon(
+                              FontAwesomeIcons.boxOpen,
+                              size: (widget.principal) ? 10 : 13,
+                              color: (widget.progressBarTwo.value >= 0.5)
+                                  ? currentTheme.primaryColor
+                                  : Colors.grey,
+                            )
+                          : Icon(
+                              Icons.check_circle,
+                              size: (widget.principal)
+                                  ? 15
+                                  : 20 + widget.progressBarTwo.value * 6,
+                              color: currentTheme.primaryColor,
+                            ),
                     ),
                   ),
-                ),
 
-                Container(
-                  width: dotSize + widget.progressBarThree.value * 6,
-                  height: dotSize + widget.progressBarThree.value * 6,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      border: Border.all(
-                          width: (widget.principal)
-                              ? 0.5 + widget.progressBarThree.value * 1
-                              : 0.5 + widget.progressBarThree.value * 3,
-                          color: (widget.progressBarThree.value >= 0.5)
-                              ? currentTheme.primaryColor
-                              : Colors.grey)),
-                  child: AnimatedContainer(
-                    duration: Duration(milliseconds: 200),
-                    alignment: Alignment.center,
-                    child: (widget.progressBarThree.value != 1.0)
-                        ? FaIcon(
-                            FontAwesomeIcons.truckLoading,
-                            size: (widget.principal) ? 10 : 13,
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      height: 2,
+                      child: LinearProgressIndicator(
+                        backgroundColor: FoodColors.Grey,
+                        value: widget.progressBarTwo.value,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(FoodColors.Yellow),
+                      ),
+                    ),
+                  ),
+
+                  Container(
+                    width: dotSize + widget.progressBarThree.value * 6,
+                    height: dotSize + widget.progressBarThree.value * 6,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(
+                            width: (widget.principal)
+                                ? 0.5 + widget.progressBarThree.value * 1
+                                : 0.5 + widget.progressBarThree.value * 3,
                             color: (widget.progressBarThree.value >= 0.5)
                                 ? currentTheme.primaryColor
-                                : Colors.grey,
-                          )
-                        : Icon(
-                            Icons.check_circle,
-                            size: (widget.principal)
-                                ? 15
-                                : 20 + widget.progressBarThree.value * 6,
-                            color: currentTheme.primaryColor,
-                          ),
-                  ),
-                ),
-
-                /*  Container(
-                    width: dotSize,
-                    height: dotSize,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(dotSize / 2),
-                        color: Colors.grey),
-                  ), */
-
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    height: 2,
-                    child: LinearProgressIndicator(
-                      backgroundColor: FoodColors.Grey,
-                      value: widget.progressBarThree.value,
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(FoodColors.Yellow),
+                                : Colors.grey)),
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 200),
+                      alignment: Alignment.center,
+                      child: (widget.progressBarThree.value != 1.0)
+                          ? FaIcon(
+                              FontAwesomeIcons.truckLoading,
+                              size: (widget.principal) ? 10 : 13,
+                              color: (widget.progressBarThree.value >= 0.5)
+                                  ? currentTheme.primaryColor
+                                  : Colors.grey,
+                            )
+                          : Icon(
+                              Icons.check_circle,
+                              size: (widget.principal)
+                                  ? 15
+                                  : 20 + widget.progressBarThree.value * 6,
+                              color: currentTheme.primaryColor,
+                            ),
                     ),
                   ),
-                ),
 
-                Container(
-                  width: dotSize + widget.progressBarFour.value * 6,
-                  height: dotSize + widget.progressBarFour.value * 6,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      border: Border.all(
-                          width: (widget.principal)
-                              ? 0.5 + widget.progressBarFour.value * 1
-                              : 0.5 + widget.progressBarFour.value * 3,
-                          color: (widget.progressBarFour.value == 1.0)
-                              ? currentTheme.primaryColor
-                              : Colors.grey)),
-                  child: AnimatedContainer(
-                    duration: Duration(milliseconds: 200),
-                    alignment: Alignment.center,
-                    child: (widget.progressBarFour.value != 1.0)
-                        ? FaIcon(
-                            FontAwesomeIcons.home,
-                            size: (widget.principal) ? 10 : 13,
+                  /*  Container(
+                      width: dotSize,
+                      height: dotSize,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(dotSize / 2),
+                          color: Colors.grey),
+                    ), */
+
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      height: 2,
+                      child: LinearProgressIndicator(
+                        backgroundColor: FoodColors.Grey,
+                        value: widget.progressBarThree.value,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(FoodColors.Yellow),
+                      ),
+                    ),
+                  ),
+
+                  Container(
+                    width: dotSize + widget.progressBarFour.value * 6,
+                    height: dotSize + widget.progressBarFour.value * 6,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(
+                            width: (widget.principal)
+                                ? 0.5 + widget.progressBarFour.value * 1
+                                : 0.5 + widget.progressBarFour.value * 3,
                             color: (widget.progressBarFour.value == 1.0)
                                 ? currentTheme.primaryColor
-                                : Colors.grey,
-                          )
-                        : Icon(
-                            Icons.check_circle,
-                            size: (widget.principal)
-                                ? 15
-                                : 20 + widget.progressBarFour.value * 6,
-                            color: currentTheme.primaryColor,
-                          ),
+                                : Colors.grey)),
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 200),
+                      alignment: Alignment.center,
+                      child: (widget.progressBarFour.value != 1.0)
+                          ? FaIcon(
+                              FontAwesomeIcons.home,
+                              size: (widget.principal) ? 10 : 13,
+                              color: (widget.progressBarFour.value == 1.0)
+                                  ? currentTheme.primaryColor
+                                  : Colors.grey,
+                            )
+                          : Icon(
+                              Icons.check_circle,
+                              size: (widget.principal)
+                                  ? 15
+                                  : 20 + widget.progressBarFour.value * 6,
+                              color: currentTheme.primaryColor,
+                            ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Container(
-            alignment:
-                (widget.principal) ? Alignment.centerLeft : Alignment.center,
-            padding: EdgeInsets.only(
+            Container(
+              alignment:
+                  (widget.principal) ? Alignment.centerLeft : Alignment.center,
+              padding: EdgeInsets.only(
                 right: (widget.principal) ? 0 : 20,
                 top: (widget.principal) ? 5 : 0,
-                left: (widget.principal) ? 0 : 20),
-            height: (widget.principal) ? 20 : 50,
-            child: CrossFade<String>(
-              initialData: actualText,
-              data: actualText,
-              builder: (value) => Container(
-                child: Text(
-                  value,
-                  style: TextStyle(
-                      color: (widget.order.isCancelByClient ||
-                              widget.order.isCancelByStore)
-                          ? Colors.grey
-                          : Colors.white,
-                      fontSize: (widget.principal) ? 12 : 18,
-                      fontWeight: FontWeight.normal),
+                left: (widget.principal) ? 0 : 20,
+              ),
+              height: (widget.principal) ? 20 : 50,
+              child: CrossFade<String>(
+                initialData: actualText,
+                data: actualText,
+                builder: (value) => Container(
+                  child: (widget.order.isDelivered)
+                      ? Text(
+                          value,
+                          style: TextStyle(
+                              color: currentTheme.primaryColor,
+                              fontSize: (widget.principal) ? 12 : 18,
+                              fontWeight: FontWeight.normal),
+                        )
+                      : Text(
+                          value,
+                          style: TextStyle(
+                              color: (widget.order.isCancelByClient ||
+                                      widget.order.isCancelByStore)
+                                  ? Colors.grey
+                                  : Colors.white,
+                              fontSize: (widget.principal) ? 12 : 18,
+                              fontWeight: FontWeight.normal),
+                        ),
                 ),
               ),
             ),
-          ),
-        ],
+            if (!widget.principal)
+              SizedBox(
+                height: 10,
+              )
+          ],
+        ),
       );
     }
 
@@ -581,11 +601,14 @@ class _AnimatedBarState extends State<AnimatedBar>
                           collapsed: progressBar(),
                           expanded: buildCollapsed2(),
                         ),
+
+                        /* 
+                        
                         if (!widget.principal)
                           Divider(
                             height: 1,
                           ),
-                        (widget.principal)
+                          (widget.principal)
                             ? Container()
                             : Builder(
                                 builder: (context) {
@@ -617,7 +640,7 @@ class _AnimatedBarState extends State<AnimatedBar>
                                     ],
                                   );
                                 },
-                              ),
+                              ), */
                       ],
                     ),
                   ),

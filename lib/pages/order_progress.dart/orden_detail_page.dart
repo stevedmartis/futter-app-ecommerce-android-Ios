@@ -66,7 +66,9 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
     bloc.cart.forEach(
         (e) => map.update(e.product.user, (x) => e, ifAbsent: () => e));
 
-    final mapList = map.values.toList();
+    mapList = map.values.toList();
+
+    storesByProduct = [];
 
     mapList.forEach((item) {
       final store = storeBloc.getStoreByProducts(item.product.user);
@@ -279,6 +281,7 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
     final OrderStoresProducts createOrderResp =
         await orderService.createOrder(clientId, storesProducts);
 
+    orderService.ordersClientInitial = [];
     if (createOrderResp != null) {
       if (createOrderResp.ok) {
         loading = false;
@@ -293,11 +296,13 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
         isCreated = true;
       }); */
 
-        Navigator.push(context, dataRoute(createOrderResp.orders));
+        Navigator.push(context, dataRoute(orderService.ordersClientInitial));
 
         socketService.emit('orders-notification-store', {
           'storesIds': idsStores,
         });
+
+        orderService.loading = false;
 
         storeBloc.emptyCart();
       } else {

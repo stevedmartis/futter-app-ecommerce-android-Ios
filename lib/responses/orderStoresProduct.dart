@@ -43,9 +43,10 @@ class Order {
     this.isActive,
     this.isFinalice,
     this.isPreparation,
-    this.isSend,
+    this.isDelivery,
     this.isCancelByStore,
     this.isCancelByClient,
+    this.isDelivered,
     this.isNotifiCheckStore,
     this.isNotifiCheckClient,
     this.createdAt,
@@ -67,7 +68,8 @@ class Order {
   DateTime updatedAt;
 
   bool isPreparation;
-  bool isSend;
+  bool isDelivery;
+  bool isDelivered;
 
   factory Order.fromJson(Map<String, dynamic> json) => Order(
         id: json["id"],
@@ -82,7 +84,8 @@ class Order {
         isNotifiCheckStore: json["isNotifiCheckStore"],
         isNotifiCheckClient: json["isNotifiCheckClient"],
         isPreparation: json["isPreparation"],
-        isSend: json["isSend"],
+        isDelivered: json["isDelivered"],
+        isDelivery: json["isDelivery"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
       );
@@ -99,7 +102,8 @@ class Order {
         "isNotifiCheckStore:": isNotifiCheckStore,
         "isNotifiCheckClient": isNotifiCheckClient,
         "isPreparation": isPreparation,
-        "isSend": isSend,
+        "isDelivery": isDelivery,
+        "isDelivered": isDelivered,
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
       };

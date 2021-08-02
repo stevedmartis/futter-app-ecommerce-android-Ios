@@ -48,6 +48,7 @@ dependencies:
   flutter_swiper: ^1.1.6
   expandable: ^5.0.1
   firebase_messaging: ^10.0.4
+  flutter_credit_card: ^2.0.0
 
  
  

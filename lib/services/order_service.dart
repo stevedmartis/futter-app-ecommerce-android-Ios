@@ -17,16 +17,17 @@ class OrderService with ChangeNotifier {
 
   List<Order> ordersStoreInitial = [];
 
-  bool _loading = true;
+  bool _loading = false;
   bool get loading => this._loading;
   set loading(bool value) {
     this._loading = value;
+
+    notifyListeners();
   }
 
   List<Order> get orders => this._orders;
   set orders(List<Order> orders) {
     this._orders = orders;
-    this._loading = false;
 
     notifyListeners();
   }
@@ -34,7 +35,6 @@ class OrderService with ChangeNotifier {
   List<Order> get ordersStore => this._ordersStore;
   set ordersStore(List<Order> orders) {
     this._ordersStore = orders;
-    this._loading = false;
 
     notifyListeners();
   }
@@ -69,6 +69,24 @@ class OrderService with ChangeNotifier {
         orElse: () => null);
 
     if (order != null) order.isPreparation = true;
+
+    notifyListeners();
+  }
+
+  void orderDeliverStore(String orderId) {
+    final order = ordersStore.firstWhere((item) => item.id == orderId,
+        orElse: () => null);
+
+    if (order != null) order.isDelivery = true;
+
+    notifyListeners();
+  }
+
+  void orderDeliveredStore(String orderId) {
+    final order = ordersStore.firstWhere((item) => item.id == orderId,
+        orElse: () => null);
+
+    if (order != null) order.isDelivered = true;
 
     notifyListeners();
   }
@@ -212,6 +230,54 @@ class OrderService with ChangeNotifier {
 
     final token = await this._storage.read(key: 'token');
     final urlFinal = ('${Environment.apiUrl}/api/order/update/prepare');
+
+    final resp = await http.post(Uri.parse(urlFinal),
+        body: jsonEncode(data),
+        headers: {'Content-Type': 'application/json', 'x-token': token});
+
+    if (resp.statusCode == 200) {
+      // final roomResponse = roomsResponseFromJson(resp.body);
+      final orderResponse = orderStoresProductsFromJson(resp.body);
+      // this.rooms = roomResponse.rooms;
+
+      return orderResponse;
+    } else {
+      final respBody = errorMessageResponseFromJson(resp.body);
+
+      return respBody;
+    }
+  }
+
+  Future editOrderDelivery(String orderId) async {
+    // this.authenticated = true;
+    final data = {'id': orderId};
+
+    final token = await this._storage.read(key: 'token');
+    final urlFinal = ('${Environment.apiUrl}/api/order/update/delivery');
+
+    final resp = await http.post(Uri.parse(urlFinal),
+        body: jsonEncode(data),
+        headers: {'Content-Type': 'application/json', 'x-token': token});
+
+    if (resp.statusCode == 200) {
+      // final roomResponse = roomsResponseFromJson(resp.body);
+      final orderResponse = orderStoresProductsFromJson(resp.body);
+      // this.rooms = roomResponse.rooms;
+
+      return orderResponse;
+    } else {
+      final respBody = errorMessageResponseFromJson(resp.body);
+
+      return respBody;
+    }
+  }
+
+  Future editOrderDelivered(String orderId) async {
+    // this.authenticated = true;
+    final data = {'id': orderId};
+
+    final token = await this._storage.read(key: 'token');
+    final urlFinal = ('${Environment.apiUrl}/api/order/update/delivered');
 
     final resp = await http.post(Uri.parse(urlFinal),
         body: jsonEncode(data),

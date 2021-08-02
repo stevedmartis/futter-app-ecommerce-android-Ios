@@ -45,12 +45,12 @@ class _AvatarAndTextState extends State<AvatarAndText>
       setState(() {
         actualText = textOne;
       });
-    } else if (widget.order.isPreparation && !widget.order.isSend) {
+    } else if (widget.order.isPreparation && !widget.order.isDelivery) {
       setState(() {
         actualImage = imageTwo;
         actualText = textTwo;
       });
-    } else if (widget.order.isSend && !widget.order.isFinalice) {
+    } else if (widget.order.isDelivery && !widget.order.isFinalice) {
       setState(() {
         actualImage = imageThree;
         actualText = textThree;
