@@ -18,9 +18,9 @@ class ThemeChanger with ChangeNotifier {
         _darkTheme = false;
         _customTheme = false;
         _currentTheme = ThemeData.light().copyWith(
-            accentColor: Color(0xffF78C39),
-            scaffoldBackgroundColor: Color(0xFFEDE9EC),
-            primaryColor: Color(0xFFCBC3C5),
+            accentColor: Color(0xffFEB42C),
+            scaffoldBackgroundColor: Colors.white,
+            primaryColor: Color(0xff32D73F),
             brightness: Brightness.light,
             cardColor: Color(0xFFEDE9EC));
 

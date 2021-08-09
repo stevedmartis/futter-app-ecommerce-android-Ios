@@ -2,6 +2,7 @@ import 'package:australti_ecommerce_app/models/credit_Card.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
+import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,6 +22,10 @@ class _CardDetailPageState extends State<CardDetailPage> {
   @override
   void initState() {
     _scrollController = ScrollController()..addListener(() => setState(() {}));
+
+    Future.delayed(Duration.zero, () {
+      showSnackBar(context, 'Se cambio la tarjeta de pagos');
+    });
 
     super.initState();
   }
@@ -44,6 +49,7 @@ class _CardDetailPageState extends State<CardDetailPage> {
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: currentTheme.scaffoldBackgroundColor,
@@ -54,18 +60,21 @@ class _CardDetailPageState extends State<CardDetailPage> {
             slivers: <Widget>[
               makeHeaderCustom(widget.creditCard.brand.capitalize()),
               SliverToBoxAdapter(
-                child: Hero(
-                  tag: widget.creditCard.cardNumber,
-                  child: CreditCardWidget(
-                    cardBgColor: currentTheme.cardColor,
-                    cardNumber: widget.creditCard.cardNumberHidden,
-                    expiryDate: widget.creditCard.expiracyDate,
-                    cardHolderName: widget.creditCard.cardHolderName,
-                    cvvCode: widget.creditCard.cvv,
-                    showBackView: false,
+                  child: Stack(
+                children: [
+                  Hero(
+                    tag: widget.creditCard.cardNumber,
+                    child: CreditCardWidget(
+                      cardBgColor: currentTheme.cardColor,
+                      cardNumber: widget.creditCard.cardNumberHidden,
+                      expiryDate: widget.creditCard.expiracyDate,
+                      cardHolderName: widget.creditCard.cardHolderName,
+                      cvvCode: widget.creditCard.cvv,
+                      showBackView: false,
+                    ),
                   ),
-                ),
-              )
+                ],
+              ))
               //makeListProducts(context)
             ]),
       ),

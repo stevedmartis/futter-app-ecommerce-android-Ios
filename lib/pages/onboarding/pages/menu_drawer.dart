@@ -65,6 +65,28 @@ class PrincipalMenu extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.push(context, myCardsRoute());
+                  },
+                  child: ListTile(
+                    leading: Icon(Icons.payment,
+                        color: currentTheme.currentTheme.accentColor),
+                    title: Text(
+                      'Mis tarjetas',
+                      style: TextStyle(
+                        color: (currentTheme.customTheme)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: size.height / 1.7,
+                ),
+                Divider(),
+                GestureDetector(
+                  onTap: () {
                     HapticFeedback.heavyImpact();
                     socketService.disconnect();
 

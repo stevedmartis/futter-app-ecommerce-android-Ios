@@ -1,12 +1,20 @@
-import 'package:australti_ecommerce_app/pages/credit_Card/data.dart';
+import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
+import 'package:australti_ecommerce_app/bloc_globals/bloc/cards_services_bloc.dart';
+import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
+import 'package:australti_ecommerce_app/models/credit_Card.dart';
+
 import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:australti_ecommerce_app/services/stripe_service.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
+import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
+
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class CreditCardListPage extends StatefulWidget {
@@ -15,11 +23,15 @@ class CreditCardListPage extends StatefulWidget {
 }
 
 class _CreditCardListPageState extends State<CreditCardListPage> {
+  final stripeService = new StripeService();
+
   @override
   void initState() {
     _scrollController = ScrollController()..addListener(() => setState(() {}));
 
     super.initState();
+
+    StripeService.init();
   }
 
   @override
@@ -41,6 +53,7 @@ class _CreditCardListPageState extends State<CreditCardListPage> {
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: currentTheme.scaffoldBackgroundColor,
@@ -69,6 +82,13 @@ class _CreditCardListPageState extends State<CreditCardListPage> {
   SliverPersistentHeader makeHeaderCustom(String title) {
     //final catalogo = new ProfileStoreCategory();
 
+    final cardBloc = Provider.of<CreditCardServices>(context);
+    final bloc = Provider.of<GroceryStoreBLoC>(context);
+    final authBloc = Provider.of<AuthenticationBLoC>(context);
+    final totalFormat =
+        NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
+            .format(bloc.totalPriceElements());
+
     return SliverPersistentHeader(
         pinned: true,
         floating: true,
@@ -80,15 +100,48 @@ class _CreditCardListPageState extends State<CreditCardListPage> {
                 child: CustomAppBarHeaderPages(
                     showTitle: _showTitle,
                     title: title,
+                    leading: true,
                     isAdd: true,
                     action: Container(),
                     //   Container()
-                    onPress: () => {
-                          HapticFeedback.lightImpact(),
-                          /*  Navigator.of(context).push(
+                    onPress: () async {
+                      HapticFeedback.lightImpact();
+
+                      showModalLoading(context);
+
+                      final amount = totalFormat;
+                      final currency = 'USD';
+
+                      final resp = await this
+                          .stripeService
+                          .payWithNewCreditCard(
+                              amount: amount, currency: currency);
+
+                      Navigator.pop(context);
+
+                      if (resp.id != '0') {
+                        final respCard = await cardBloc.createNewCreditCard(
+                            authBloc.storeAuth.user.uid, resp.id);
+
+                        // cardBloc.addNewCard()
+
+                        if (respCard.ok) {
+                          CreditCard cardSelect = cardBloc.myCards
+                              .firstWhere((item) => item.isSelect);
+
+                          cardSelect.isSelect = false;
+
+                          cardBloc.changeCardSelectToPay(respCard.card);
+                          showSnackBar(context, 'Tarjeta OK');
+                        }
+                      } else {
+                        showSnackBar(context, 'Algo salió mal ');
+                        Navigator.pop(context);
+                      }
+                      /*  Navigator.of(context).push(
                                   createRouteAddEditCategory(
                                       category, false)), */
-                        }))));
+                    }))));
   }
 }
 
@@ -105,9 +158,18 @@ class _CreditCardsListState extends State<CreditCardsList> {
         width: size.width, height: size.height, child: _buildCatalogoWidget());
   }
 
+  bool isCardChange = false;
+
   Widget _buildCatalogoWidget() {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final size = MediaQuery.of(context).size;
+
+    final cardBloc = Provider.of<CreditCardServices>(context);
+
+    final item = cardBloc.myCards.indexWhere(
+      (item) => item.id == cardBloc.cardselectedToPay.value.id,
+    );
+
     return Stack(
       children: [
         Container(
@@ -121,11 +183,12 @@ class _CreditCardsListState extends State<CreditCardsList> {
           ),
         ),
         PageView.builder(
-            controller: PageController(viewportFraction: 0.9),
+            controller:
+                PageController(viewportFraction: 0.9, initialPage: item),
             physics: BouncingScrollPhysics(),
-            itemCount: tarjetas.length,
+            itemCount: cardBloc.myCards.length,
             itemBuilder: (_, i) {
-              final card = tarjetas[i];
+              final card = cardBloc.myCards[i];
 
               return Container(
                 padding: EdgeInsets.only(
@@ -133,6 +196,7 @@ class _CreditCardsListState extends State<CreditCardsList> {
                 ),
                 child: GestureDetector(
                   onTap: () {
+                    cardBloc.cardselectedToPay.value = card;
                     Navigator.push(context, cardRouter(card));
                   },
                   child: Hero(

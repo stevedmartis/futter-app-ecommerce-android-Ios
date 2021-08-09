@@ -369,8 +369,10 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                           Navigator.push(context, notificationsRoute());
                         },
                         child: Container(
-                          padding: EdgeInsets.only(right: 10, top: 18),
+                          padding: EdgeInsets.only(right: 10, top: 10),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               StreamBuilder(
                                 stream: notifiBloc.numberSteamNotifiBell,
@@ -380,43 +382,45 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                                       ? snapshot.data
                                       : 0;
 
-                                  return Swing(
-                                    animate: number > 0,
-                                    delay: Duration(seconds: 1),
-                                    controller: (controller) =>
-                                        Provider.of<NotificationModel>(context)
-                                            .bounceControllerBell = controller,
-                                    child: Stack(
-                                      children: [
-                                        Container(
-                                            padding: EdgeInsets.only(right: 8),
-                                            child: FaIcon(
-                                              FontAwesomeIcons.bell,
-                                              color: Colors.white,
-                                              size: 25,
-                                            )),
-                                        if (number > 0)
+                                  return Container(
+                                    child: Swing(
+                                      animate: number > 0,
+                                      delay: Duration(seconds: 1),
+                                      controller: (controller) => Provider.of<
+                                              NotificationModel>(context)
+                                          .bounceControllerBell = controller,
+                                      child: Stack(
+                                        children: [
                                           Container(
-                                            margin: EdgeInsets.only(bottom: 20),
-                                            child: Container(
-                                              child: Text(
-                                                '$number',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 10,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                              padding:
+                                                  EdgeInsets.only(right: 8),
+                                              child: FaIcon(
+                                                FontAwesomeIcons.bell,
+                                                color: Colors.white,
+                                                size: 25,
+                                              )),
+                                          if (number > 0)
+                                            Container(
+                                              child: Container(
+                                                child: Text(
+                                                  '$number',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                alignment: Alignment.center,
+                                                width: 15,
+                                                height: 15,
+                                                decoration: BoxDecoration(
+                                                    color: currentTheme
+                                                        .primaryColor,
+                                                    shape: BoxShape.circle),
                                               ),
-                                              alignment: Alignment.center,
-                                              width: 15,
-                                              height: 15,
-                                              decoration: BoxDecoration(
-                                                  color:
-                                                      currentTheme.primaryColor,
-                                                  shape: BoxShape.circle),
                                             ),
-                                          ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   );
                                 },
@@ -434,6 +438,8 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                                           context, 'hello', 'hello2');
                                     },
                                     child: Container(
+                                      padding:
+                                          EdgeInsets.only(top: isItems ? 0 : 5),
                                       child: Stack(
                                         children: [
                                           Container(

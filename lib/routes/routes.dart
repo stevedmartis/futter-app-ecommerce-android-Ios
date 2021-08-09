@@ -50,7 +50,7 @@ final Map<String, Widget Function(BuildContext)> appRoutes = {
 final pageRouter = <_Route>[
   _Route(Icons.play_arrow, 'flow', MainStoreServicesApp()),
   _Route(Icons.play_arrow, 'loading', MyFavorites()),
-  _Route(Icons.play_arrow, 'store', CreditCardListPage()), //CatalogosListPage
+  _Route(Icons.play_arrow, 'store', CatalogosListPage()), //CatalogosListPage
   _Route(Icons.play_arrow, 'notifications', MyNotifications()),
 ];
 
@@ -211,6 +211,25 @@ Route groceryListRoute(ProfileStoreCategory category, bloc) {
     ),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = Offset(-0.5, 0.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
+
+Route myCardsRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        CreditCardListPage(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(0.5, 0.0);
       var end = Offset.zero;
       var curve = Curves.ease;
 

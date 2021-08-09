@@ -5,11 +5,13 @@ import 'package:animate_do/animate_do.dart';
 import 'package:animations/animations.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc/favorites_bloc.dart';
+import 'package:australti_ecommerce_app/bloc_globals/bloc/cards_services_bloc.dart';
 
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 
 import 'package:australti_ecommerce_app/models/store.dart';
+
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/responses/my_favorites_products_response.dart';
 import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
@@ -60,8 +62,11 @@ class _PrincipalPageState extends State<PrincipalPage>
     this.socketService = Provider.of<SocketService>(context, listen: false);
 
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+    final cardBloc = Provider.of<CreditCardServices>(context, listen: false);
 
     storeAuth = authService.storeAuth;
+
+    cardBloc.getMyCreditCards(storeAuth.user.uid);
 
     categoriesStoreProducts();
     storeslistServices();

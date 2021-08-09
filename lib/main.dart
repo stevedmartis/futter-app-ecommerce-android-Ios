@@ -12,6 +12,7 @@ import 'package:australti_ecommerce_app/services/follow_service.dart';
 import 'package:australti_ecommerce_app/services/order_service.dart';
 import 'package:australti_ecommerce_app/services/product.dart';
 import 'package:australti_ecommerce_app/services/stores_Services.dart';
+
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
@@ -23,6 +24,7 @@ import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
 
+import 'bloc_globals/bloc/cards_services_bloc.dart';
 import 'bloc_globals/bloc/notifications_bloc.dart';
 import 'bloc_globals/notitification.dart';
 import 'grocery_store/grocery_store_bloc.dart';
@@ -56,12 +58,15 @@ void main() async {
     ChangeNotifierProvider(
       create: (context) => PhoneAuthDataProvider(),
     ),
+    ChangeNotifierProvider(
+      create: (context) => CreditCardServices(),
+    ),
     ChangeNotifierProvider(create: (_) => FavoritesBLoC()),
     ChangeNotifierProvider(create: (_) => OrderService()),
-  ], child: MyApp()));
+  ], child: FreeilyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class FreeilyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations(
