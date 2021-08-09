@@ -37,11 +37,14 @@ class CreditCardServices with ChangeNotifier {
       final cardsResponse = creditCardsFromJson(resp.body);
 
       myCards = cardsResponse.cards;
-      CreditCard cardSelect =
-          cardsResponse.cards.firstWhere((item) => item.isSelect);
 
-      changeCardSelectToPay(cardSelect);
-      notifyListeners();
+      if (myCards.length > 0) {
+        CreditCard cardSelect =
+            cardsResponse.cards.firstWhere((item) => item.isSelect);
+
+        changeCardSelectToPay(cardSelect);
+        notifyListeners();
+      }
       return cardsResponse;
     } else {
       // final respBody = errorMessageResponseFromJson(resp.body);

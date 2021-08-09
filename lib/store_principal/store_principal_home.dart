@@ -172,18 +172,20 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
     orderService.orders = [];
     if (resp.ok) {
-      orderService.orders = resp.orders;
-
-      setState(() {
-        loadingOrders = true;
-      });
-
-      final List<Order> orderNotificationStore =
-          orderService.orders.where((i) => i.isNotifiCheckClient).toList();
+      final List<Order> orderNotificationStore = resp.orders
+          .where((i) =>
+              !i.isFinalice ||
+              i.isNotifiCheckClient ||
+              i.isCancelByClient ||
+              i.isCancelByStore)
+          .toList();
+      orderService.orders = orderNotificationStore;
 
       number = orderNotificationStore.length;
 
       notifiModel.numberNotifiBell = number;
+
+      orderService.loading = true;
 
       notifiModel.numberSteamNotifiBell.sink.add(number);
       if (number >= 2) {
@@ -198,23 +200,27 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
     final notifiModel = Provider.of<NotificationModel>(context, listen: false);
     int number = notifiModel.numberNotifiBell;
-    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+
     orderService.ordersStore = [];
 
     final OrderStoresProducts resp =
-        await orderService.getMyOrdesStore(authService.storeAuth.user.uid);
+        await orderService.getMyOrdesStore(storeAuth.user.uid);
 
     if (resp.ok) {
-      setState(() {
-        orderService.ordersStore = resp.orders;
+      final List<Order> orderNotificationStore = resp.orders
+          .where((i) =>
+              !i.isFinalice ||
+              i.isNotifiCheckStore ||
+              i.isCancelByClient ||
+              i.isCancelByStore)
+          .toList();
 
-        loadingOrders = true;
-      });
+      orderService.ordersStore = orderNotificationStore;
 
       notifiModel.numberNotifiBell = number;
 
-      final List<Order> orderNotificationStore =
-          orderService.ordersStore.where((i) => i.isNotifiCheckStore).toList();
+      orderService.loading = true;
+
       number = orderNotificationStore.length;
       notifiModel.numberSteamNotifiBell.sink.add(number);
       if (number >= 2) {
