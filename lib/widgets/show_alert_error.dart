@@ -9,6 +9,8 @@ showAlertError(BuildContext context, String titulo, String subtitulo) {
   bool isIos = UniversalPlatform.isIOS;
   bool isAndroid = UniversalPlatform.isAndroid;
   bool isWeb = UniversalPlatform.isWeb;
+  final currentTheme =
+      Provider.of<ThemeChanger>(context, listen: false).currentTheme;
   if (isAndroid) {
     return showDialog(
         context: context,
@@ -20,9 +22,9 @@ showAlertError(BuildContext context, String titulo, String subtitulo) {
               content: Text(subtitulo, style: TextStyle(color: Colors.grey)),
               actions: <Widget>[
                 MaterialButton(
-                    child: Text('Aceptar'),
+                    child: Text('Ok'),
                     elevation: 5,
-                    textColor: Colors.blue,
+                    textColor: currentTheme.accentColor,
                     onPressed: () => Navigator.pop(context))
               ],
             ));
@@ -31,11 +33,14 @@ showAlertError(BuildContext context, String titulo, String subtitulo) {
         context: context,
         builder: (_) => CupertinoAlertDialog(
               title: Text(titulo),
-              content: Text(subtitulo),
+              content: Text(subtitulo, style: TextStyle(color: Colors.grey)),
               actions: <Widget>[
                 CupertinoDialogAction(
                   isDefaultAction: true,
-                  child: Text('Aceptar'),
+                  child: Text(
+                    'Aceptar',
+                    style: TextStyle(color: currentTheme.accentColor),
+                  ),
                   onPressed: () => Navigator.pop(context),
                 )
               ],

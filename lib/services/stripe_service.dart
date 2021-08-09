@@ -50,10 +50,6 @@ class StripeService {
       final paymentMethod = await StripePayment.paymentRequestWithCardForm(
           CardFormPaymentRequest());
 
-      print(paymentMethod);
-      /*    final resp = await this._makeThePay(
-          amount: amount, currency: currency, paymentMethod: paymentMethod);
- */
       return paymentMethod;
     } catch (e) {
       return PaymentMethod(id: '0');
@@ -89,7 +85,6 @@ class StripeService {
 
       return resp;
     } catch (e) {
-      print('Error en intento: ${e.toString()}');
       return StripeCustomResponse(ok: false, msg: e.toString());
     }
   }
@@ -110,7 +105,6 @@ class StripeService {
       final resppayintent = paymentIntentResponseFromJson(resp.body);
       return resppayintent;
     } catch (e) {
-      print('Error en intento: ${e.toString()}');
       return PaymentIntentResponse(status: '400');
     }
   }
@@ -136,7 +130,6 @@ class StripeService {
             ok: false, msg: 'Fallo: ${paymentResult.status}');
       }
     } catch (e) {
-      print(e.toString());
       return StripeCustomResponse(ok: false, msg: e.toString());
     }
   }

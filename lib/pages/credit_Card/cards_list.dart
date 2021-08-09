@@ -133,6 +133,9 @@ class _CreditCardListPageState extends State<CreditCardListPage> {
 
                           cardBloc.changeCardSelectToPay(respCard.card);
                           showSnackBar(context, 'Tarjeta OK');
+                        } else {
+                          showAlertError(context, 'Tarjeta existente.',
+                              'Ya tienes una tarjeta con el mismo numero');
                         }
                       } else {
                         showSnackBar(context, 'Algo salió mal ');
