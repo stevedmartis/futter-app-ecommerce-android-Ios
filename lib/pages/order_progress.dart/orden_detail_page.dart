@@ -13,6 +13,7 @@ import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 import 'package:australti_ecommerce_app/responses/stores_products_order.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/services/order_service.dart';
+import 'package:australti_ecommerce_app/services/stripe_service.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
@@ -259,10 +260,13 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
     final orderService = Provider.of<OrderService>(context, listen: false);
     final storeBloc = Provider.of<GroceryStoreBLoC>(context, listen: false);
-
+    final creditCardService =
+        Provider.of<CreditCardServices>(context, listen: false);
     final socketService = Provider.of<SocketService>(context, listen: false);
     final clientId = authService.storeAuth.user.uid;
-
+    final creditCardClient = (prefs.pyamentMethodCashOption)
+        ? 'cash'
+        : creditCardService.cardselectedToPay.value.id;
     final idsStores = storesByProduct.map((e) => e.user.uid).toList();
 
     idsStores.forEach((storeId) {
@@ -281,8 +285,8 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
       storesProducts.add(storeProducts);
     });
 
-    final OrderStoresProducts createOrderResp =
-        await orderService.createOrder(clientId, storesProducts);
+    final OrderStoresProducts createOrderResp = await orderService.createOrder(
+        clientId, storesProducts, creditCardClient);
 
     orderService.ordersClientInitial = [];
     if (createOrderResp != null) {
@@ -890,74 +894,159 @@ Widget _buildProductsList(context) {
                   StreamBuilder<CreditCard>(
                       stream: cardBloc.cardselectedToPay.stream,
                       builder: (context, AsyncSnapshot<CreditCard> snapshot) {
-                        CreditCard cardSelected = snapshot.data;
-                        return (cardSelected != null)
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    child: getCardTypeIcon(
-                                        cardSelected.cardNumber),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Container(
-                                            child: Text(
-                                              '${cardSelected.brand.toUpperCase()}',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 15),
+                        if (snapshot.connectionState ==
+                            ConnectionState.active) {
+                          CreditCard cardSelected = snapshot.data;
+                          return (cardSelected != null)
+                              ? (cardSelected.id != '0')
+                                  ? Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          child: getCardTypeIcon(
+                                              (cardSelected.cardNumber != null)
+                                                  ? cardSelected.cardNumber
+                                                  : ''),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  child: Text(
+                                                    '${cardSelected.brand.toUpperCase()}',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 15),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  child: Text(
+                                                      ' *${cardSelected.cardNumberHidden}',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 14)),
+                                                ),
+                                              ],
                                             ),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Container(
+                                              child: Text(
+                                                  '${cardSelected.cardHolderName}',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                      fontSize: 13,
+                                                      color: Colors.grey)),
+                                            ),
+                                          ],
+                                        ),
+                                        Spacer(),
+                                        GestureDetector(
+                                          onTap: () => {
+                                            Navigator.push(context,
+                                                paymentMethodsOptionsRoute())
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.only(top: 10),
+                                            child: Text('Cambiar',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w700,
+                                                    fontSize: 14,
+                                                    color: currentTheme
+                                                        .primaryColor)),
                                           ),
-                                          Container(
-                                            child: Text(
-                                                ' *${cardSelected.cardNumberHidden}',
+                                        )
+                                      ],
+                                    )
+                                  : Row(
+                                      children: [
+                                        Align(
+                                            alignment: Alignment.bottomLeft,
+                                            child: Container(
+                                              margin:
+                                                  EdgeInsets.only(right: 20),
+                                              padding: EdgeInsets.all(10),
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          100),
+                                                  border: Border.all(
+                                                      width: 2,
+                                                      color: Colors.grey)),
+                                              child: Icon(
+                                                Icons.attach_money,
+                                                size: 30,
+                                                color: currentTheme.accentColor,
+                                              ),
+                                            )),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              child: Text(
+                                                'Pagar con efectivo',
                                                 style: TextStyle(
                                                     fontWeight: FontWeight.bold,
-                                                    fontSize: 14)),
+                                                    fontSize: 16,
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Container(
+                                              width: size.width / 2,
+                                              child: Text(
+                                                'Efectivo al momento de recibir el pedido.',
+                                                maxLines: 2,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    fontSize: 14,
+                                                    color: Colors.grey),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        GestureDetector(
+                                          onTap: () => {
+                                            Navigator.push(context,
+                                                paymentMethodsOptionsRoute())
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.only(top: 10),
+                                            child: Text('Cambiar',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w700,
+                                                    fontSize: 14,
+                                                    color: currentTheme
+                                                        .primaryColor)),
                                           ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Container(
-                                        child: Text(
-                                            '${cardSelected.cardHolderName}',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 13,
-                                                color: Colors.grey)),
-                                      ),
-                                    ],
-                                  ),
-                                  Spacer(),
-                                  GestureDetector(
-                                    onTap: () => {
-                                      Navigator.push(context, myCardsRoute())
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.only(top: 10),
-                                      child: Text('Cambiar',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 14,
-                                              color:
-                                                  currentTheme.primaryColor)),
-                                    ),
-                                  )
-                                ],
-                              )
-                            : Container();
+                                        )
+                                      ],
+                                    )
+                              : Container();
+                        } else {
+                          return Container();
+                        }
                       })
                 ],
               )),

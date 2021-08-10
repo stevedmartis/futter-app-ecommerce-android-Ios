@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:australti_ecommerce_app/bloc_globals/bloc/cards_services_bloc.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
@@ -28,7 +29,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
     final bloc = Provider.of<GroceryStoreBLoC>(context);
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final size = MediaQuery.of(context).size;
-
+    final creditCardBloc = Provider.of<CreditCardServices>(context);
     return SafeArea(
       child: TweenAnimationBuilder<double>(
         duration: const Duration(milliseconds: 500),
@@ -318,8 +319,14 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
             GestureDetector(
               onTap: () => {
                 HapticFeedback.mediumImpact(),
-                (bloc.cart.length > 0)
+                /* (bloc.cart.length > 0)
                     ? Navigator.push(context, orderDetailRoute())
+                    : null */
+
+                (bloc.cart.length > 0)
+                    ? (creditCardBloc.cardselectedToPay.value != null)
+                        ? Navigator.push(context, orderDetailRoute())
+                        : Navigator.push(context, paymentMethodsOptionsRoute())
                     : null
               },
               child: Padding(

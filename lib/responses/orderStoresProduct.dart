@@ -39,6 +39,7 @@ class Order {
     this.id,
     this.store,
     this.client,
+    this.creditCardClient,
     this.products,
     this.isActive,
     this.isFinalice,
@@ -56,6 +57,7 @@ class Order {
   String id;
   Store store;
   String client;
+  String creditCardClient;
   List<ProductElement> products;
   bool isActive;
   bool isFinalice;
@@ -75,6 +77,7 @@ class Order {
         id: json["id"],
         store: Store.fromJson(json["store"]),
         client: json["client"],
+        creditCardClient: json["creditCardClient"],
         products: List<ProductElement>.from(
             json["products"].map((x) => ProductElement.fromJson(x))),
         isActive: json["isActive"],
@@ -94,6 +97,7 @@ class Order {
         "id": id,
         "store": store.toJson(),
         "client": client,
+        "creditCardClient": creditCardClient,
         "products": List<dynamic>.from(products.map((x) => x.toJson())),
         "isActive": isActive,
         "isFinalice": isFinalice,

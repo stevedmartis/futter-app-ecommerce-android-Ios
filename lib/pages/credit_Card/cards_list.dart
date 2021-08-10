@@ -123,27 +123,26 @@ class _CreditCardListPageState extends State<CreditCardListPage> {
                         final respCard = await cardBloc.createNewCreditCard(
                             authBloc.storeAuth.user.uid, resp.id);
 
-                        // cardBloc.addNewCard()
-
                         if (respCard.ok) {
-                          CreditCard cardSelect = cardBloc.myCards
-                              .firstWhere((item) => item.isSelect);
+                          if (cardBloc.myCards[0] != null) {
+                            CreditCard cardSelect = cardBloc.myCards
+                                .firstWhere((item) => item.isSelect);
 
-                          cardSelect.isSelect = false;
-
+                            if (cardSelect != null) cardSelect.isSelect = false;
+                          }
                           cardBloc.changeCardSelectToPay(respCard.card);
-                          showSnackBar(context, 'Tarjeta OK');
+                          cardBloc.addNewCard(respCard.card);
+                          prefs.setPyamentMethodCashOption = false;
+                          showSnackBar(context, 'Tarjeta Agregada con exito');
                         } else {
                           showAlertError(context, 'Tarjeta existente.',
                               'Ya tienes una tarjeta con el mismo numero');
                         }
                       } else {
-                        showSnackBar(context, 'Algo salió mal ');
+                        if (resp.customerId != 'cancel')
+                          showSnackBar(context, 'Algo salió mal ');
                         Navigator.pop(context);
                       }
-                      /*  Navigator.of(context).push(
-                                  createRouteAddEditCategory(
-                                      category, false)), */
                     }))));
   }
 }
@@ -199,6 +198,7 @@ class _CreditCardsListState extends State<CreditCardsList> {
                 ),
                 child: GestureDetector(
                   onTap: () {
+                    prefs.setPyamentMethodCashOption = false;
                     cardBloc.cardselectedToPay.value = card;
                     Navigator.push(context, cardRouter(card));
                   },

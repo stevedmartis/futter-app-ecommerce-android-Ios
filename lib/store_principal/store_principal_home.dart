@@ -1,10 +1,12 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:animations/animations.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
+import 'package:australti_ecommerce_app/bloc_globals/bloc/cards_services_bloc.dart';
 
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
+import 'package:australti_ecommerce_app/models/credit_Card.dart';
 import 'package:australti_ecommerce_app/models/grocery_Store.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 
@@ -146,10 +148,13 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
   }
 
   pullToRefreshData() async {
+    final cardBloc = Provider.of<CreditCardServices>(context, listen: false);
     HapticFeedback.heavyImpact();
     if (storeAuth.user.uid != '0') {
       storesByLocationlistServices(storeAuth.city, storeAuth.user.uid);
       _myOrdersClient();
+
+      cardBloc.getMyCreditCards(storeAuth.user.uid);
       if (storeAuth.service != 0) {
         _myOrdersStore();
       }

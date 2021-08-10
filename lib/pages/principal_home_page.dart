@@ -22,6 +22,7 @@ import 'package:australti_ecommerce_app/services/order_service.dart';
 import 'package:australti_ecommerce_app/services/product.dart';
 import 'package:australti_ecommerce_app/services/stores_Services.dart'
     as storeServiceApi;
+import 'package:australti_ecommerce_app/services/stripe_service.dart';
 
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 

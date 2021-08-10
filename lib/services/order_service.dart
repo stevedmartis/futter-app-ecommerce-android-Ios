@@ -64,6 +64,15 @@ class OrderService with ChangeNotifier {
     notifyListeners();
   }
 
+  void changePymentMethodRoCash(String orderId, String cardId) {
+    final order = ordersStore.firstWhere((item) => item.id == orderId,
+        orElse: () => null);
+
+    if (order != null) order.creditCardClient = cardId;
+
+    notifyListeners();
+  }
+
   void orderPrepareStore(String orderId) {
     final order = ordersStore.firstWhere((item) => item.id == orderId,
         orElse: () => null);
@@ -145,7 +154,8 @@ class OrderService with ChangeNotifier {
     }
   }
 
-  Future createOrder(String client, List<StoresProduct> storeProducts) async {
+  Future createOrder(String client, List<StoresProduct> storeProducts,
+      String creditCardClient) async {
     // this.authenticated = true;
 
     final urlFinal = ('${Environment.apiUrl}/api/order/create');
@@ -153,6 +163,7 @@ class OrderService with ChangeNotifier {
     final data = {
       'client': client,
       'storesProducts': storeProducts,
+      'creditCardClient': creditCardClient
     };
 
     final token = await this._storage.read(key: 'token');

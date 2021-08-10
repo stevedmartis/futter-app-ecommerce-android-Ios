@@ -27,6 +27,8 @@ class _CardDetailPageState extends State<CardDetailPage> {
       showSnackBar(context, 'Se cambio la tarjeta de pagos');
     });
 
+    prefs.setPyamentMethodCashOption = false;
+
     super.initState();
   }
 

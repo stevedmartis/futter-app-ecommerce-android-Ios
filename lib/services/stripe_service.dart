@@ -52,7 +52,13 @@ class StripeService {
 
       return paymentMethod;
     } catch (e) {
-      return PaymentMethod(id: '0');
+      return PaymentMethod(
+          id: '0',
+          customerId: (e.message.toString() ==
+                      'PlatformException(-, null, null, null)' ||
+                  e.message.toString() == 'Cancelled by user')
+              ? 'cancel'
+              : '');
     }
   }
 

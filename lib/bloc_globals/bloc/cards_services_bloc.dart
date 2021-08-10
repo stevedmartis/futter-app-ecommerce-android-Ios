@@ -21,6 +21,11 @@ class CreditCardServices with ChangeNotifier {
     _cardSelectToPay.sink.add(card);
   }
 
+  addNewCard(CreditCard card) {
+    myCards.add(card);
+    notifyListeners();
+  }
+
   BehaviorSubject<CreditCard> get cardselectedToPay => _cardSelectToPay;
 
   Future getMyCreditCards(String uid) async {
@@ -44,6 +49,8 @@ class CreditCardServices with ChangeNotifier {
 
         changeCardSelectToPay(cardSelect);
         notifyListeners();
+      } else {
+        changeCardSelectToPay(null);
       }
       return cardsResponse;
     } else {

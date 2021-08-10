@@ -25,6 +25,7 @@ import 'package:australti_ecommerce_app/pages/onboarding/onboarding.dart';
 
 import 'package:australti_ecommerce_app/pages/order_progress.dart/order_page.dart';
 import 'package:australti_ecommerce_app/pages/order_progress.dart/orders_list_page.dart';
+import 'package:australti_ecommerce_app/pages/payment_method_options_page.dart';
 
 import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/pages/profile_edit.dart';
@@ -249,6 +250,25 @@ Route singleUploadImageRoute() {
         SingleImageUpload(),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = Offset(-0.5, 0.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
+
+paymentMethodsOptionsRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        PaymentMethosOptionsPage(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(0.0, 1.0);
       var end = Offset.zero;
       var curve = Curves.ease;
 
