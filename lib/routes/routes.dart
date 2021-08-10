@@ -5,6 +5,7 @@ import 'package:australti_ecommerce_app/models/credit_Card.dart';
 
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/pages/account_store/bank_account_payments_store.dart';
 
 import 'package:australti_ecommerce_app/pages/account_store/category_store.dart';
 import 'package:australti_ecommerce_app/pages/account_store/contact_info_store.dart';
@@ -263,10 +264,10 @@ Route singleUploadImageRoute() {
   );
 }
 
-paymentMethodsOptionsRoute() {
+paymentMethodsOptionsRoute(bool orderPage) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) =>
-        PaymentMethosOptionsPage(),
+        PaymentMethosOptionsPage(orderPage),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = Offset(0.0, 1.0);
       var end = Offset.zero;
@@ -491,6 +492,26 @@ Route contactoInfoStoreRoute() {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) {
       return ContactInfoStore();
+    },
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(0.5, 0.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
+
+Route bankAccountStoreRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return BankAccountStore();
     },
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = Offset(0.5, 0.0);

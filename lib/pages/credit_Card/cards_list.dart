@@ -124,7 +124,8 @@ class _CreditCardListPageState extends State<CreditCardListPage> {
                             authBloc.storeAuth.user.uid, resp.id);
 
                         if (respCard.ok) {
-                          if (cardBloc.myCards[0] != null) {
+                          if (cardBloc.myCards.length >
+                              0) if (cardBloc.myCards[0] != null) {
                             CreditCard cardSelect = cardBloc.myCards
                                 .firstWhere((item) => item.isSelect);
 

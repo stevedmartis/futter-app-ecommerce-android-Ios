@@ -41,6 +41,24 @@ class Validators {
     }
   });
 
+  final validationRutRequired =
+      StreamTransformer<String, String>.fromHandlers(handleData: (text, sink) {
+    if (text.length >= 9) {
+      sink.add(text);
+    } else {
+      sink.addError('Rut invalido');
+    }
+  });
+
+  final validationNumberBank =
+      StreamTransformer<String, String>.fromHandlers(handleData: (text, sink) {
+    if (text.length >= 9) {
+      sink.add(text);
+    } else {
+      sink.addError('Número de cuenta de invalido');
+    }
+  });
+
   final validationAddressRequired =
       StreamTransformer<String, String>.fromHandlers(handleData: (text, sink) {
     if (text.length >= 15) {

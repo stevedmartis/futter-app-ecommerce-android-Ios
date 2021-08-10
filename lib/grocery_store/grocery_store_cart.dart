@@ -326,7 +326,8 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                 (bloc.cart.length > 0)
                     ? (creditCardBloc.cardselectedToPay.value != null)
                         ? Navigator.push(context, orderDetailRoute())
-                        : Navigator.push(context, paymentMethodsOptionsRoute())
+                        : Navigator.push(
+                            context, paymentMethodsOptionsRoute(true))
                     : null
               },
               child: Padding(

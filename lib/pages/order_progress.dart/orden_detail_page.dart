@@ -13,7 +13,7 @@ import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 import 'package:australti_ecommerce_app/responses/stores_products_order.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/services/order_service.dart';
-import 'package:australti_ecommerce_app/services/stripe_service.dart';
+
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
@@ -958,8 +958,10 @@ Widget _buildProductsList(context) {
                                         Spacer(),
                                         GestureDetector(
                                           onTap: () => {
-                                            Navigator.push(context,
-                                                paymentMethodsOptionsRoute())
+                                            Navigator.push(
+                                                context,
+                                                paymentMethodsOptionsRoute(
+                                                    false))
                                           },
                                           child: Container(
                                             padding: EdgeInsets.only(top: 10),
@@ -1028,8 +1030,10 @@ Widget _buildProductsList(context) {
                                         ),
                                         GestureDetector(
                                           onTap: () => {
-                                            Navigator.push(context,
-                                                paymentMethodsOptionsRoute())
+                                            Navigator.push(
+                                                context,
+                                                paymentMethodsOptionsRoute(
+                                                    false))
                                           },
                                           child: Container(
                                             padding: EdgeInsets.only(top: 10),

@@ -29,6 +29,9 @@ import 'dart:math' as math;
 import 'package:provider/provider.dart';
 
 class PaymentMethosOptionsPage extends StatefulWidget {
+  PaymentMethosOptionsPage(this.orderPage);
+  final bool orderPage;
+
   @override
   _PaymentMethosOptionsPageState createState() =>
       _PaymentMethosOptionsPageState();
@@ -101,7 +104,7 @@ class _PaymentMethosOptionsPageState extends State<PaymentMethosOptionsPage> {
               controller: _scrollController,
               slivers: <Widget>[
                 makeHeaderCustom('Metodo de pago'),
-                makeListOptions(loading)
+                makeListOptions(loading, widget.orderPage)
               ]),
         ),
       ),
@@ -132,21 +135,23 @@ class _PaymentMethosOptionsPageState extends State<PaymentMethosOptionsPage> {
   }
 }
 
-SliverList makeListOptions(bool loading) {
+SliverList makeListOptions(bool loading, bool orderPage) {
   return SliverList(
     delegate: SliverChildListDelegate([
       Container(
           child: OptionsList(
         loading: loading,
+        orderPage: orderPage,
       )),
     ]),
   );
 }
 
 class OptionsList extends StatefulWidget {
-  const OptionsList({Key key, this.loading}) : super(key: key);
+  const OptionsList({Key key, this.loading, this.orderPage}) : super(key: key);
 
   final bool loading;
+  final bool orderPage;
 
   @override
   _OptionsListState createState() => _OptionsListState();
@@ -218,7 +223,9 @@ class _OptionsListState extends State<OptionsList> {
             child: Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
               child: FadeIn(
-                child: CashOption(),
+                child: CashOption(
+                  orderPage: widget.orderPage,
+                ),
               ),
             ),
           ),
@@ -273,7 +280,7 @@ class _CreditCardOptionState extends State<CreditCardOption> {
 
             if (cardSelect != null) cardSelect.isSelect = false;
           }
-
+          Navigator.pop(context);
           cardBloc.addNewCard(respCard.card);
           cardBloc.changeCardSelectToPay(respCard.card);
           prefs.setPyamentMethodCashOption = false;
@@ -417,8 +424,8 @@ class MyCreditsCardOption extends StatelessWidget {
 }
 
 class CashOption extends StatelessWidget {
-  CashOption();
-
+  CashOption({this.orderPage});
+  final bool orderPage;
   final stripeService = new StripeService();
 
   @override
@@ -435,7 +442,9 @@ class CashOption extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         cardBloc.changeCardSelectToPay(cardCash);
-        Navigator.pop(context);
+        (orderPage)
+            ? Navigator.push(context, orderDetailRoute())
+            : Navigator.pop(context);
       },
       child: Card(
         elevation: 6,
@@ -477,9 +486,9 @@ class CashOption extends StatelessWidget {
                   Spacer(),
                   IconButton(
                       onPressed: () {
-                        cardBloc.changeCardSelectToPay(cardCash);
-
-                        Navigator.pop(context);
+                        (orderPage)
+                            ? Navigator.push(context, orderDetailRoute())
+                            : Navigator.pop(context);
                       },
                       icon: Icon(
                         Icons.chevron_right,

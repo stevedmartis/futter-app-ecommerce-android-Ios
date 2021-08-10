@@ -687,3 +687,183 @@ showMaterialCupertinoBottomSheetLocation(BuildContext context,
     );
   }
 }
+
+showMaterialCupertinoBottomSheetBanks(
+  BuildContext context,
+  VoidCallback onPress,
+  VoidCallback onCancel,
+) {
+  final currentTheme = Provider.of<ThemeChanger>(context, listen: false);
+  final size = MediaQuery.of(context).size;
+
+  if (UniversalPlatform.isIOS) {
+    return showModalBottomSheet(
+        enableDrag: true,
+        isDismissible: true,
+        backgroundColor: Colors.transparent,
+        context: context,
+        isScrollControlled: true,
+        builder: (context) => ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30.0),
+              topRight: Radius.circular(30.0),
+            ),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: 9.0,
+                sigmaY: 9.0,
+              ),
+              child: Container(
+                  height: size.height / 1.40,
+                  padding: EdgeInsets.symmetric(horizontal: 18),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        flex: -2,
+                        child: Container(
+                          padding: EdgeInsets.only(top: 50),
+                          child: TextField(
+                            autofocus: true,
+                            style: TextStyle(
+                              color: (currentTheme.currentTheme.accentColor),
+                            ),
+                            decoration: InputDecoration(
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: (currentTheme.customTheme)
+                                      ? Colors.white54
+                                      : Colors.black54,
+                                ),
+                              ),
+                              border: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white),
+                              ),
+                              labelStyle: TextStyle(
+                                color: (currentTheme.customTheme)
+                                    ? Colors.white54
+                                    : Colors.black54,
+                              ),
+                              prefixIcon: Icon(
+                                Icons.location_on_outlined,
+                                color: currentTheme.currentTheme.accentColor,
+                              ),
+                              //  fillColor: currentTheme.accentColor,
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color:
+                                        currentTheme.currentTheme.accentColor,
+                                    width: 2.0),
+                              ),
+                              hintText: '',
+                              labelText: 'Ingrese Banco de la cuenta',
+
+                              //counterText: snapshot.data,
+                            ),
+                            onChanged: (value) =>
+                                myLocationBloc.searchPlaces(value),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Expanded(
+                        flex: -2,
+                        child: StreamBuilder<List<PlaceSearch>>(
+                          stream: myLocationBloc.searchResults.stream,
+                          builder: (context,
+                              AsyncSnapshot<List<PlaceSearch>> snapshot) {
+                            if (snapshot.hasData) {
+                              final places = snapshot.data;
+
+                              if (places.length > 0)
+                                return Column(
+                                  children: [
+                                    Container(
+                                      child: ListView.builder(
+                                          scrollDirection: Axis.vertical,
+                                          itemCount: places.length,
+                                          shrinkWrap: true,
+                                          itemBuilder: (context, index) {
+                                            final place = places[index];
+                                            return ListTile(
+                                              onTap: () => {
+                                                HapticFeedback.lightImpact(),
+                                                Navigator.push(
+                                                    context,
+                                                    confirmLocationRoute(
+                                                        place)),
+                                                FocusScope.of(context)
+                                                    .requestFocus(
+                                                        new FocusNode()),
+                                              },
+                                              title: Text(
+                                                place.structuredFormatting
+                                                    .mainText,
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                              subtitle: Row(
+                                                children: [
+                                                  Text(
+                                                    place.structuredFormatting
+                                                        .secondaryText,
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          }),
+                                    ),
+                                    Container(
+                                      child: Divider(
+                                        height: 10,
+                                      ),
+                                    ),
+                                  ],
+                                );
+
+                              return Container();
+                            } else if (snapshot.hasError) {
+                              return Container();
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),
+                      ),
+
+                      /* Expanded(
+                          flex: 1,
+                          child: elevatedButtonCustom(
+                              context: context,
+                              title: 'Continuar',
+                              onPress: () {})), */
+                    ],
+                  )),
+            )));
+  } else if (UniversalPlatform.isAndroid) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: const Text('Title'),
+        message: const Text('Message'),
+        actions: [
+          CupertinoActionSheetAction(
+            child: const Text('Action One'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: const Text('Action Two'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          )
+        ],
+      ),
+    );
+  }
+}

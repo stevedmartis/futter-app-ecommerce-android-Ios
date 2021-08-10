@@ -35,6 +35,7 @@ import 'package:intl/intl.dart';
 import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
+
 import '../../global/extension.dart';
 
 class OrderPage extends StatefulWidget {
@@ -393,7 +394,6 @@ Widget _buildProductsList(
   final authBloc = Provider.of<AuthenticationBLoC>(context);
   final cardBloc = Provider.of<CreditCardServices>(context);
 
-  final cardSelected = cardBloc.cardselectedToPay.value;
   final totalFormat =
       NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
           .format(totalPriceElements(order));
@@ -778,193 +778,208 @@ Widget _buildProductsList(
             height: 10,
           ),
           Divider(),
-          StreamBuilder<CreditCard>(
-              stream: cardBloc.cardselectedToPay.stream,
-              builder: (context, AsyncSnapshot<CreditCard> snapshot) {
-                if (snapshot.connectionState == ConnectionState.active) {
-                  CreditCard cardSelected = snapshot.data;
-                  return (cardSelected != null)
-                      ? (cardSelected.id == order.creditCardClient
-                          ? Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    child: getCardTypeIcon(
-                                        (cardSelected.cardNumber != null)
-                                            ? cardSelected.cardNumber
-                                            : ''),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Container(
-                                            child: Text(
-                                              '${cardSelected.brand.toUpperCase()}',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 15),
-                                            ),
-                                          ),
-                                          Container(
-                                            child: Text(
-                                                ' *${cardSelected.cardNumberHidden}',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 14)),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Container(
-                                        child: Text(
-                                            '${cardSelected.cardHolderName}',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 13,
-                                                color: Colors.grey)),
-                                      ),
-                                    ],
-                                  ),
-                                  Spacer(),
-                                  GestureDetector(
-                                    onTap: () => {
-                                      Navigator.push(
-                                          context, paymentMethodsOptionsRoute())
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.only(top: 10),
-                                      child: Text('Cambiar',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 14,
-                                              color:
-                                                  currentTheme.primaryColor)),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )
-                          : Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              child: Row(
-                                children: [
-                                  Align(
-                                      alignment: Alignment.bottomLeft,
-                                      child: Container(
-                                        margin: EdgeInsets.only(right: 20),
-                                        padding: EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(100),
-                                            border: Border.all(
-                                                width: 2, color: Colors.grey)),
-                                        child: Icon(
-                                          Icons.attach_money,
-                                          size: 30,
-                                          color: currentTheme.accentColor,
-                                        ),
-                                      )),
-                                  Column(
+          (!isStore)
+              ? StreamBuilder<CreditCard>(
+                  stream: cardBloc.cardselectedToPay.stream,
+                  builder: (context, AsyncSnapshot<CreditCard> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.active) {
+                      CreditCard cardSelected = snapshot.data;
+                      return (cardSelected != null)
+                          ? (cardSelected.id != '0' ||
+                                  order.creditCardClient != '0')
+                              ? Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Container(
-                                        child: Text(
-                                          'Pagar con efectivo',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                              color: Colors.white),
-                                        ),
+                                        child: getCardTypeIcon(
+                                            (cardSelected.cardNumber != null)
+                                                ? cardSelected.cardNumber
+                                                : ''),
                                       ),
                                       SizedBox(
-                                        height: 5,
+                                        width: 10,
                                       ),
-                                      Container(
-                                        width: size.width / 2.1,
-                                        child: Text(
-                                          'Efectivo al momento de recibir el pedido.',
-                                          maxLines: 2,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.normal,
-                                              fontSize: 14,
-                                              color: Colors.grey),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  if (!order.isCancelByClient &&
-                                      !order.isCancelByStore &&
-                                      !order.isPreparation)
-                                    Container(
-                                      alignment: Alignment.centerRight,
-                                      width: 40,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        color: currentTheme
-                                            .scaffoldBackgroundColor,
-                                      ),
-                                      child: Row(
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          Material(
-                                            color: currentTheme
-                                                .scaffoldBackgroundColor,
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            child: InkWell(
-                                              splashColor: Colors.grey,
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                              radius: 40,
-                                              onTap: () {
-                                                HapticFeedback.lightImpact();
-
-                                                Navigator.push(context,
-                                                    paymentMethodsOptionsRoute());
-                                              },
-                                              highlightColor: Colors.grey,
-                                              child: Container(
-                                                margin:
-                                                    EdgeInsets.only(left: 5.0),
-                                                alignment: Alignment.center,
-                                                width: 34,
-                                                height: 34,
-                                                child: Icon(
-                                                  Icons.edit_outlined,
-                                                  color:
-                                                      currentTheme.primaryColor,
-                                                  size: 25,
+                                          Row(
+                                            children: [
+                                              Container(
+                                                child: Text(
+                                                  '${cardSelected.brand.toUpperCase()}',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 15),
                                                 ),
                                               ),
+                                              Container(
+                                                child: Text(
+                                                    ' *${cardSelected.cardNumberHidden}',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14)),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Container(
+                                            child: Text(
+                                                '${cardSelected.cardHolderName}',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    fontSize: 13,
+                                                    color: Colors.grey)),
+                                          ),
+                                        ],
+                                      ),
+                                      Spacer(),
+                                      GestureDetector(
+                                        onTap: () => {
+                                          Navigator.push(context,
+                                              paymentMethodsOptionsRoute(true))
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.only(top: 10),
+                                          child: Text('Cambiar',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 14,
+                                                  color: currentTheme
+                                                      .primaryColor)),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                )
+                              : Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  child: Row(
+                                    children: [
+                                      Align(
+                                          alignment: Alignment.bottomLeft,
+                                          child: Container(
+                                            margin: EdgeInsets.only(right: 20),
+                                            padding: EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(100),
+                                                border: Border.all(
+                                                    width: 2,
+                                                    color: Colors.grey)),
+                                            child: Icon(
+                                              Icons.attach_money,
+                                              size: 30,
+                                              color: currentTheme.accentColor,
+                                            ),
+                                          )),
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            child: Text(
+                                              'Pagar con efectivo',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Container(
+                                            width: size.width / 2.1,
+                                            child: Text(
+                                              'Efectivo al momento de recibir el pedido.',
+                                              maxLines: 2,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.normal,
+                                                  fontSize: 14,
+                                                  color: Colors.grey),
                                             ),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                ],
-                              ),
-                            ))
-                      : Container();
-                } else {
-                  return Container();
-                }
-              }),
+                                      Spacer(),
+                                      if (!order.isCancelByClient &&
+                                          !order.isCancelByStore &&
+                                          !order.isPreparation)
+                                        Container(
+                                          alignment: Alignment.centerRight,
+                                          width: 40,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            color: currentTheme
+                                                .scaffoldBackgroundColor,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Material(
+                                                color: currentTheme
+                                                    .scaffoldBackgroundColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                child: InkWell(
+                                                  splashColor: Colors.grey,
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                  radius: 40,
+                                                  onTap: () {
+                                                    HapticFeedback
+                                                        .lightImpact();
+
+                                                    Navigator.push(
+                                                        context,
+                                                        paymentMethodsOptionsRoute(
+                                                            true));
+                                                  },
+                                                  highlightColor: Colors.grey,
+                                                  child: Container(
+                                                    margin: EdgeInsets.only(
+                                                        left: 5.0),
+                                                    alignment: Alignment.center,
+                                                    width: 34,
+                                                    height: 34,
+                                                    child: Icon(
+                                                      Icons.edit_outlined,
+                                                      color: currentTheme
+                                                          .primaryColor,
+                                                      size: 25,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                )
+                          : Container();
+                    } else {
+                      return Container();
+                    }
+                  })
+              : Container(),
           if (order.isCancelByClient ||
               order.isCancelByStore ||
               order.isPreparation)

@@ -183,7 +183,7 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
                                     ),
                                   ),
                                 ),
-
+                                SizedBox(height: 40),
                                 _createEmail(),
                                 _createNumber(),
                               ]),

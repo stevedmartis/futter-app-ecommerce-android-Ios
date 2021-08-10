@@ -517,7 +517,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                             if (!store.user.first && store.service != 0)
                               Container(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 5.0, vertical: 5.0),
+                                    horizontal: 5.0, vertical: 10.0),
                                 child: Column(
                                   children: [
                                     InkWell(
@@ -633,6 +633,29 @@ class EditProfilePageState extends State<EditProfilePage> {
                                       },
                                       child: ListTile(
                                         leading: Text('Dirección',
+                                            style: TextStyle(fontSize: 18)),
+                                        title: Container(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                              prefs.addressSearchSave.mainText,
+                                              style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 15)),
+                                        ),
+                                        trailing: Icon(Icons.chevron_right,
+                                            color: Colors.grey),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        HapticFeedback.lightImpact();
+                                        FocusScope.of(context)
+                                            .requestFocus(new FocusNode());
+                                        Navigator.push(
+                                            context, bankAccountStoreRoute());
+                                      },
+                                      child: ListTile(
+                                        leading: Text('Cuenta bancaria (pagos)',
                                             style: TextStyle(fontSize: 18)),
                                         title: Container(
                                           alignment: Alignment.centerRight,

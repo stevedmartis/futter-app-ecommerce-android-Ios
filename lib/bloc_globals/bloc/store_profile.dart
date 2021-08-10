@@ -14,6 +14,10 @@ class StoreProfileBloc with Validators {
 
   final _numberController = BehaviorSubject<String>();
 
+  final _nameBankController = BehaviorSubject<String>();
+  final _numberBankController = BehaviorSubject<String>();
+  final _rutBankController = BehaviorSubject<String>();
+  final _emailBankController = BehaviorSubject<String>();
   final _timeController = BehaviorSubject<String>();
   final _offController = BehaviorSubject<String>();
 
@@ -44,6 +48,18 @@ class StoreProfileBloc with Validators {
   Stream<bool> get formValidStream => CombineLatestStream.combine3(
       emailStream, nameStream, usernameSteam, (e, n, u) => true);
 
+  Stream<String> get nameBankStream =>
+      _nameBankController.stream.transform(validationNameRequired);
+
+  Stream<String> get numberBankStream =>
+      _numberBankController.stream.transform(validationNumberBank);
+
+  Stream<String> get rutBankStream =>
+      _rutBankController.stream.transform(validationRutRequired);
+
+  Stream<String> get emailBankStream =>
+      _emailBankController.stream.transform(validarEmail);
+
   // Insertar valores al Stream
   Function(String) get changeEmail => _emailController.sink.add;
   Function(String) get changeUsername => _usernameController.sink.add;
@@ -54,6 +70,11 @@ class StoreProfileBloc with Validators {
   Function(String) get changeNumber => _numberController.sink.add;
   Function(String) get changeCategory => _categoryController.sink.add;
 
+  Function(String) get changeNameBank => _nameBankController.sink.add;
+  Function(String) get changeNumberBank => _numberBankController.sink.add;
+  Function(String) get changeRutBank => _rutBankController.sink.add;
+
+  Function(String) get changeEmailBank => _emailBankController.sink.add;
   // Obtener el último valor ingresado a los streams
   String get email => _emailController.value;
   String get password => _passwordController.value;
@@ -77,6 +98,11 @@ class StoreProfileBloc with Validators {
     _aboutController?.close();
     _offController?.close();
     _timeController?.close();
+
+    _nameBankController?.close();
+    _numberBankController?.close();
+    _rutBankController?.close();
+    _emailBankController?.close();
   }
 }
 
