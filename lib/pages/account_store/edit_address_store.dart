@@ -314,7 +314,7 @@ class _LocationStorePageState extends State<LocationStorePage> {
         showSnackBar(context, 'Categoria guardada');
 
         (authService.isChangeToSale)
-            ? Navigator.push(context, profileEditRoute())
+            ? Navigator.push(context, bankAccountStoreRoute())
             : Navigator.pop(context);
       } else {
         showAlertError(context, 'Error', 'Intente más tarde.');

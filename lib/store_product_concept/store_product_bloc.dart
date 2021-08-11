@@ -319,18 +319,20 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
   void _onScrollListener() {
     if (_listen) {
-      for (int i = 0; i < tabs.length; i++) {
-        final tab = tabs[i];
-        if (scrollController.offset >= tab.offsetFrom &&
-            scrollController.offset <= tab.offsetTo &&
-            !tab.selected) {
-          onCategorySelected(i, animationRequired: false);
+      if (tabs.length > 0)
+        for (int i = 0; i < tabs.length; i++) {
+          final tab = tabs[i];
 
-          tabController.animateTo(i);
+          if (scrollController.offset >= tab.offsetFrom &&
+              scrollController.offset <= tab.offsetTo &&
+              !tab.selected) {
+            onCategorySelected(i, animationRequired: false);
 
-          break;
+            tabController.animateTo(i);
+
+            break;
+          }
         }
-      }
     }
   }
 

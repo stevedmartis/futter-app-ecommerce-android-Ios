@@ -442,9 +442,8 @@ class CashOption extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         cardBloc.changeCardSelectToPay(cardCash);
-        (orderPage)
-            ? Navigator.push(context, orderDetailRoute())
-            : Navigator.pop(context);
+        Navigator.pop(context);
+           
       },
       child: Card(
         elevation: 6,
@@ -486,9 +485,7 @@ class CashOption extends StatelessWidget {
                   Spacer(),
                   IconButton(
                       onPressed: () {
-                        (orderPage)
-                            ? Navigator.push(context, orderDetailRoute())
-                            : Navigator.pop(context);
+                        Navigator.pop(context);
                       },
                       icon: Icon(
                         Icons.chevron_right,

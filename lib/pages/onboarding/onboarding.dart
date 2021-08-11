@@ -226,7 +226,7 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
     HapticFeedback.lightImpact();
     await _rippleAnimationController.forward();
 
-    Navigator.of(context).push(selectCategoryStoreRoute());
+    Navigator.of(context).push(selectCategoryObBoardStoreRoute());
   }
 
   @override

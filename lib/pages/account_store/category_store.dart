@@ -74,7 +74,12 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
                   ),
                   onPressed: () {
                     HapticFeedback.lightImpact();
-                    Navigator.pop(context);
+                    if (authService.isChangeToSale) {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    } else {
+                      Navigator.pop(context);
+                    }
                   }),
               actions: [
                 (!loading)

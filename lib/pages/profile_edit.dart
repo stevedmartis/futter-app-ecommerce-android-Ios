@@ -296,10 +296,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                     parent: AlwaysScrollableScrollPhysics()),
                 slivers: <Widget>[
                   SliverFixedExtentList(
-                      itemExtent: 20,
-                      delegate: SliverChildListDelegate([Container()])),
-                  SliverFixedExtentList(
-                      itemExtent: size.height,
+                      itemExtent: size.height * 1.1,
                       delegate: SliverChildListDelegate([
                         Column(
                           children: [
@@ -551,7 +548,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                                             displayProfileStoreRoute());
                                       },
                                       child: ListTile(
-                                        leading: Text('Visualización de perfi',
+                                        leading: Text('Visualización',
                                             style: TextStyle(fontSize: 18)),
                                         title: Container(
                                           alignment: Alignment.centerRight,
@@ -659,8 +656,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                                             style: TextStyle(fontSize: 18)),
                                         title: Container(
                                           alignment: Alignment.centerRight,
-                                          child: Text(
-                                              prefs.addressSearchSave.mainText,
+                                          child: Text('',
                                               style: TextStyle(
                                                   color: Colors.grey,
                                                   fontSize: 15)),

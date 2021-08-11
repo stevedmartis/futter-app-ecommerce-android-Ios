@@ -10,6 +10,6 @@ Widget buildLoadingWidget(context) {
       padding: EdgeInsets.all(10),
       child: Center(
           child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(currentTheme.accentColor),
+        valueColor: AlwaysStoppedAnimation<Color>(currentTheme.primaryColor),
       )));
 }

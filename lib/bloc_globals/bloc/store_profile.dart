@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:australti_ecommerce_app/bloc_globals/bloc/validators.dart';
+import 'package:australti_ecommerce_app/models/bank_account.dart';
+import 'package:australti_ecommerce_app/services/bank_Service.dart';
 import 'package:rxdart/rxdart.dart';
 
 class StoreProfileBloc with Validators {
@@ -20,7 +22,7 @@ class StoreProfileBloc with Validators {
   final _emailBankController = BehaviorSubject<String>();
   final _timeController = BehaviorSubject<String>();
   final _offController = BehaviorSubject<String>();
-
+  final bankService = BankService();
   // Recuperar los datos del Stream
   Stream<String> get emailStream =>
       _emailController.stream.transform(validarEmail);
@@ -86,6 +88,19 @@ class StoreProfileBloc with Validators {
 
   String get about => _aboutController.value;
 
+  final BehaviorSubject<List<Bank>> _banksResult =
+      BehaviorSubject<List<Bank>>();
+
+  BehaviorSubject<List<Bank>> get banksResults => _banksResult;
+
+  searchBanks(String searchTerm) async {
+    final resp = await bankService.getBanks(searchTerm);
+
+    // final resp2 = await placeService.getAutocompleteDetails(searchTerm);
+
+    _banksResult.sink.add(resp);
+  }
+
   dispose() {
     _imageUpdateCtrl?.close();
     _emailController?.close();
@@ -98,7 +113,7 @@ class StoreProfileBloc with Validators {
     _aboutController?.close();
     _offController?.close();
     _timeController?.close();
-
+    _banksResult?.close();
     _nameBankController?.close();
     _numberBankController?.close();
     _rutBankController?.close();

@@ -1,8 +1,10 @@
 import 'dart:ui';
 
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
+import 'package:australti_ecommerce_app/bloc_globals/bloc/store_profile.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_cart.dart';
+import 'package:australti_ecommerce_app/models/bank_account.dart';
 
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
@@ -693,9 +695,140 @@ showMaterialCupertinoBottomSheetBanks(
   VoidCallback onPress,
   VoidCallback onCancel,
 ) {
+  final currentTheme =
+      Provider.of<ThemeChanger>(context, listen: false).currentTheme;
+  final size = MediaQuery.of(context).size;
+  storeProfileBloc.searchBanks('');
+  if (UniversalPlatform.isIOS) {
+    return showModalBottomSheet(
+        enableDrag: true,
+        isDismissible: true,
+        backgroundColor: Colors.transparent,
+        context: context,
+        isScrollControlled: true,
+        builder: (context) => DraggableScrollableSheet(
+              initialChildSize: 0.4,
+              minChildSize: 0.2,
+              maxChildSize: 0.75,
+              builder: (_, controller) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: currentTheme.cardColor,
+                    borderRadius: BorderRadius.only(
+                      topLeft: const Radius.circular(25.0),
+                      topRight: const Radius.circular(25.0),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(top: 20, left: 125, right: 125),
+                        padding: EdgeInsets.all(3.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.20),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(30.0),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: StreamBuilder<List<Bank>>(
+                          stream: storeProfileBloc.banksResults.stream,
+                          builder:
+                              (context, AsyncSnapshot<List<Bank>> snapshot) {
+                            if (snapshot.hasData) {
+                              final banks = snapshot.data;
+                              if (banks != null) if (banks.length > 0)
+                                return Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 20),
+                                  child: ListView.builder(
+                                      controller: controller,
+                                      scrollDirection: Axis.vertical,
+                                      itemCount: banks.length,
+                                      shrinkWrap: true,
+                                      itemBuilder: (context, index) {
+                                        final bank = banks[index];
+                                        return Material(
+                                          color: currentTheme.cardColor,
+                                          child: InkWell(
+                                            splashColor: Colors.white,
+                                            child: ListTile(
+                                              onTap: () => {
+                                                HapticFeedback.lightImpact(),
+                                                FocusScope.of(context)
+                                                    .requestFocus(
+                                                        new FocusNode()),
+                                              },
+                                              title: Text(
+                                                bank.nameBank,
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              subtitle: Row(
+                                                children: [
+                                                  Text(
+                                                    '',
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                );
+
+                              return Container();
+                            } else if (snapshot.hasError) {
+                              return Container();
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ));
+  } else if (UniversalPlatform.isAndroid) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: const Text('Title'),
+        message: const Text('Message'),
+        actions: [
+          CupertinoActionSheetAction(
+            child: const Text('Action One'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: const Text('Action Two'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          )
+        ],
+      ),
+    );
+  }
+}
+
+showMaterialCupertinoBottomSheetBanks2(
+  BuildContext context,
+  VoidCallback onPress,
+  VoidCallback onCancel,
+) {
   final currentTheme = Provider.of<ThemeChanger>(context, listen: false);
   final size = MediaQuery.of(context).size;
-
+  storeProfileBloc.searchBanks('');
   if (UniversalPlatform.isIOS) {
     return showModalBottomSheet(
         enableDrag: true,
@@ -709,140 +842,135 @@ showMaterialCupertinoBottomSheetBanks(
               topRight: Radius.circular(30.0),
             ),
             child: BackdropFilter(
-              filter: ImageFilter.blur(
-                sigmaX: 9.0,
-                sigmaY: 9.0,
-              ),
-              child: Container(
-                  height: size.height / 1.40,
-                  padding: EdgeInsets.symmetric(horizontal: 18),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        flex: -2,
-                        child: Container(
-                          padding: EdgeInsets.only(top: 50),
-                          child: TextField(
-                            autofocus: true,
-                            style: TextStyle(
-                              color: (currentTheme.currentTheme.accentColor),
-                            ),
-                            decoration: InputDecoration(
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: (currentTheme.customTheme)
-                                      ? Colors.white54
-                                      : Colors.black54,
+                filter: ImageFilter.blur(
+                  sigmaX: 9.0,
+                  sigmaY: 9.0,
+                ),
+                child: DraggableScrollableSheet(
+                    initialChildSize: 0.4,
+                    minChildSize: 0.2,
+                    maxChildSize: 0.75,
+                    builder: (_, controller) {
+                      return Container(
+                          height: size.height * 1.1,
+                          padding: EdgeInsets.symmetric(horizontal: 18),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                flex: -2,
+                                child: Container(
+                                  padding: EdgeInsets.only(top: 50),
+                                  child: TextField(
+                                    autofocus: true,
+                                    style: TextStyle(
+                                      color: (currentTheme
+                                          .currentTheme.accentColor),
+                                    ),
+                                    decoration: InputDecoration(
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: (currentTheme.customTheme)
+                                              ? Colors.white54
+                                              : Colors.black54,
+                                        ),
+                                      ),
+                                      border: UnderlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.white),
+                                      ),
+                                      labelStyle: TextStyle(
+                                        color: (currentTheme.customTheme)
+                                            ? Colors.white54
+                                            : Colors.black54,
+                                      ),
+                                      prefixIcon: Icon(
+                                        Icons.account_balance,
+                                        color: currentTheme
+                                            .currentTheme.accentColor,
+                                      ),
+                                      //  fillColor: currentTheme.accentColor,
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: currentTheme
+                                                .currentTheme.accentColor,
+                                            width: 2.0),
+                                      ),
+                                      hintText: '',
+                                      labelText: 'Ingrese Banco de la cuenta',
+
+                                      //counterText: snapshot.data,
+                                    ),
+                                    onChanged: (value) =>
+                                        storeProfileBloc.searchBanks(value),
+                                  ),
                                 ),
                               ),
-                              border: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white),
+                              SizedBox(
+                                height: 20,
                               ),
-                              labelStyle: TextStyle(
-                                color: (currentTheme.customTheme)
-                                    ? Colors.white54
-                                    : Colors.black54,
-                              ),
-                              prefixIcon: Icon(
-                                Icons.location_on_outlined,
-                                color: currentTheme.currentTheme.accentColor,
-                              ),
-                              //  fillColor: currentTheme.accentColor,
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color:
-                                        currentTheme.currentTheme.accentColor,
-                                    width: 2.0),
-                              ),
-                              hintText: '',
-                              labelText: 'Ingrese Banco de la cuenta',
-
-                              //counterText: snapshot.data,
-                            ),
-                            onChanged: (value) =>
-                                myLocationBloc.searchPlaces(value),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Expanded(
-                        flex: -2,
-                        child: StreamBuilder<List<PlaceSearch>>(
-                          stream: myLocationBloc.searchResults.stream,
-                          builder: (context,
-                              AsyncSnapshot<List<PlaceSearch>> snapshot) {
-                            if (snapshot.hasData) {
-                              final places = snapshot.data;
-
-                              if (places.length > 0)
-                                return Column(
-                                  children: [
-                                    Container(
-                                      child: ListView.builder(
-                                          scrollDirection: Axis.vertical,
-                                          itemCount: places.length,
-                                          shrinkWrap: true,
-                                          itemBuilder: (context, index) {
-                                            final place = places[index];
-                                            return ListTile(
-                                              onTap: () => {
-                                                HapticFeedback.lightImpact(),
-                                                Navigator.push(
-                                                    context,
-                                                    confirmLocationRoute(
-                                                        place)),
-                                                FocusScope.of(context)
-                                                    .requestFocus(
-                                                        new FocusNode()),
-                                              },
-                                              title: Text(
-                                                place.structuredFormatting
-                                                    .mainText,
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                              ),
-                                              subtitle: Row(
-                                                children: [
-                                                  Text(
-                                                    place.structuredFormatting
-                                                        .secondaryText,
+                              Expanded(
+                                flex: -2,
+                                child: StreamBuilder<List<Bank>>(
+                                  stream: storeProfileBloc.banksResults.stream,
+                                  builder: (context,
+                                      AsyncSnapshot<List<Bank>> snapshot) {
+                                    if (snapshot.hasData) {
+                                      final banks = snapshot.data;
+                                      if (banks != null) if (banks.length > 0)
+                                        return Container(
+                                          child: ListView.builder(
+                                              controller: controller,
+                                              scrollDirection: Axis.vertical,
+                                              itemCount: banks.length,
+                                              shrinkWrap: true,
+                                              itemBuilder: (context, index) {
+                                                final bank = banks[index];
+                                                return ListTile(
+                                                  onTap: () => {
+                                                    HapticFeedback
+                                                        .lightImpact(),
+                                                    FocusScope.of(context)
+                                                        .requestFocus(
+                                                            new FocusNode()),
+                                                  },
+                                                  title: Text(
+                                                    bank.nameBank,
                                                     style: TextStyle(
                                                         color: Colors.white),
                                                   ),
-                                                ],
-                                              ),
-                                            );
-                                          }),
-                                    ),
-                                    Container(
-                                      child: Divider(
-                                        height: 10,
-                                      ),
-                                    ),
-                                  ],
-                                );
+                                                  subtitle: Row(
+                                                    children: [
+                                                      Text(
+                                                        '',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              }),
+                                        );
 
-                              return Container();
-                            } else if (snapshot.hasError) {
-                              return Container();
-                            } else {
-                              return Container();
-                            }
-                          },
-                        ),
-                      ),
+                                      return Container();
+                                    } else if (snapshot.hasError) {
+                                      return Container();
+                                    } else {
+                                      return Container();
+                                    }
+                                  },
+                                ),
+                              ),
 
-                      /* Expanded(
-                          flex: 1,
-                          child: elevatedButtonCustom(
-                              context: context,
-                              title: 'Continuar',
-                              onPress: () {})), */
-                    ],
-                  )),
-            )));
+                              /* Expanded(
+                            flex: 1,
+                            child: elevatedButtonCustom(
+                                context: context,
+                                title: 'Continuar',
+                                onPress: () {})), */
+                            ],
+                          ));
+                    }))));
   } else if (UniversalPlatform.isAndroid) {
     showCupertinoModalPopup(
       context: context,

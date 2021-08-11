@@ -135,7 +135,7 @@ class _BankAccountStoreState extends State<BankAccountStore> {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final size = MediaQuery.of(context).size;
     final isControllerChange = isNameChange && isRutChange && isNumberChange;
-
+    final authService = Provider.of<AuthenticationBLoC>(context);
     return SafeArea(
         child: GestureDetector(
             onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
@@ -175,7 +175,7 @@ class _BankAccountStoreState extends State<BankAccountStore> {
                         parent: AlwaysScrollableScrollPhysics()),
                     slivers: <Widget>[
                       SliverFixedExtentList(
-                          itemExtent: size.height,
+                          itemExtent: size.height * 1.1,
                           delegate: SliverChildListDelegate([
                             Container(
                               padding: EdgeInsets.symmetric(
@@ -272,6 +272,38 @@ class _BankAccountStoreState extends State<BankAccountStore> {
                                 _createNumber(),
                                 SizedBox(height: 10),
                                 _createEmail(),
+
+                                SizedBox(height: 10),
+                                GestureDetector(
+                                  onTap: () {
+                                    (authService.isChangeToSale)
+                                        ? Navigator.push(
+                                            context, profileEditRoute())
+                                        : Navigator.pop(context);
+                                  },
+                                  child: Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      'Omitir este paso',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                Container(
+                                  child: Text(
+                                    '* Si omites este paso, el metodo de pago para tus clientes sera solo en efectivo.',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
                               ]),
                             )
                           ]))
