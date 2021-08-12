@@ -7,6 +7,7 @@ import 'package:australti_ecommerce_app/pages/get_phone/providers/phone_auth.dar
 import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:australti_ecommerce_app/services/bank_Service.dart';
 import 'package:australti_ecommerce_app/services/catalogo.dart';
 import 'package:australti_ecommerce_app/services/follow_service.dart';
 import 'package:australti_ecommerce_app/services/order_service.dart';
@@ -63,6 +64,7 @@ void main() async {
     ),
     ChangeNotifierProvider(create: (_) => FavoritesBLoC()),
     ChangeNotifierProvider(create: (_) => OrderService()),
+    ChangeNotifierProvider(create: (_) => BankService()),
   ], child: FreeilyApp()));
 }
 

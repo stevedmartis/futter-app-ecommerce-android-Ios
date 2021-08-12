@@ -76,6 +76,7 @@ flutter:
   assets:
     - assets/
     - assets/logos/
+    - assets/logos/logos_banks/
     - assets/icons/
     - assets/empty/
     - assets/on_board/

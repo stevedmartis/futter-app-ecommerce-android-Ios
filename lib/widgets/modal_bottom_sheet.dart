@@ -11,6 +11,7 @@ import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile_store_user.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
+
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -697,12 +698,9 @@ showMaterialCupertinoBottomSheetBanks(
 ) {
   final currentTheme =
       Provider.of<ThemeChanger>(context, listen: false).currentTheme;
-  final size = MediaQuery.of(context).size;
-  storeProfileBloc.searchBanks('');
+
   if (UniversalPlatform.isIOS) {
     return showModalBottomSheet(
-        enableDrag: true,
-        isDismissible: true,
         backgroundColor: Colors.transparent,
         context: context,
         isScrollControlled: true,
@@ -756,16 +754,41 @@ showMaterialCupertinoBottomSheetBanks(
                                             child: ListTile(
                                               onTap: () => {
                                                 HapticFeedback.lightImpact(),
+                                                storeProfileBloc
+                                                    .setBankSelected = bank,
+                                                Navigator.pop(context),
                                                 FocusScope.of(context)
                                                     .requestFocus(
                                                         new FocusNode()),
                                               },
-                                              title: Text(
-                                                bank.nameBank,
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                              leading: (bank.image != '')
+                                                  ? ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  50.0)),
+                                                      child: Container(
+                                                          color: Colors.white,
+                                                          child: Image.asset(
+                                                            bank.image,
+                                                            height: 50,
+                                                            width: 50,
+                                                            fit: BoxFit.cover,
+                                                          )),
+                                                    )
+                                                  : Container(
+                                                      width: 0,
+                                                      height: 0,
+                                                    ),
+                                              title: Container(
+                                                alignment: Alignment.bottomLeft,
+                                                child: Text(
+                                                  bank.nameBank,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
                                               ),
                                               subtitle: Row(
                                                 children: [
@@ -796,181 +819,6 @@ showMaterialCupertinoBottomSheetBanks(
                 );
               },
             ));
-  } else if (UniversalPlatform.isAndroid) {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (BuildContext context) => CupertinoActionSheet(
-        title: const Text('Title'),
-        message: const Text('Message'),
-        actions: [
-          CupertinoActionSheetAction(
-            child: const Text('Action One'),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: const Text('Action Two'),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          )
-        ],
-      ),
-    );
-  }
-}
-
-showMaterialCupertinoBottomSheetBanks2(
-  BuildContext context,
-  VoidCallback onPress,
-  VoidCallback onCancel,
-) {
-  final currentTheme = Provider.of<ThemeChanger>(context, listen: false);
-  final size = MediaQuery.of(context).size;
-  storeProfileBloc.searchBanks('');
-  if (UniversalPlatform.isIOS) {
-    return showModalBottomSheet(
-        enableDrag: true,
-        isDismissible: true,
-        backgroundColor: Colors.transparent,
-        context: context,
-        isScrollControlled: true,
-        builder: (context) => ClipRRect(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30.0),
-              topRight: Radius.circular(30.0),
-            ),
-            child: BackdropFilter(
-                filter: ImageFilter.blur(
-                  sigmaX: 9.0,
-                  sigmaY: 9.0,
-                ),
-                child: DraggableScrollableSheet(
-                    initialChildSize: 0.4,
-                    minChildSize: 0.2,
-                    maxChildSize: 0.75,
-                    builder: (_, controller) {
-                      return Container(
-                          height: size.height * 1.1,
-                          padding: EdgeInsets.symmetric(horizontal: 18),
-                          child: Column(
-                            children: [
-                              Expanded(
-                                flex: -2,
-                                child: Container(
-                                  padding: EdgeInsets.only(top: 50),
-                                  child: TextField(
-                                    autofocus: true,
-                                    style: TextStyle(
-                                      color: (currentTheme
-                                          .currentTheme.accentColor),
-                                    ),
-                                    decoration: InputDecoration(
-                                      enabledBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: (currentTheme.customTheme)
-                                              ? Colors.white54
-                                              : Colors.black54,
-                                        ),
-                                      ),
-                                      border: UnderlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.white),
-                                      ),
-                                      labelStyle: TextStyle(
-                                        color: (currentTheme.customTheme)
-                                            ? Colors.white54
-                                            : Colors.black54,
-                                      ),
-                                      prefixIcon: Icon(
-                                        Icons.account_balance,
-                                        color: currentTheme
-                                            .currentTheme.accentColor,
-                                      ),
-                                      //  fillColor: currentTheme.accentColor,
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: currentTheme
-                                                .currentTheme.accentColor,
-                                            width: 2.0),
-                                      ),
-                                      hintText: '',
-                                      labelText: 'Ingrese Banco de la cuenta',
-
-                                      //counterText: snapshot.data,
-                                    ),
-                                    onChanged: (value) =>
-                                        storeProfileBloc.searchBanks(value),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Expanded(
-                                flex: -2,
-                                child: StreamBuilder<List<Bank>>(
-                                  stream: storeProfileBloc.banksResults.stream,
-                                  builder: (context,
-                                      AsyncSnapshot<List<Bank>> snapshot) {
-                                    if (snapshot.hasData) {
-                                      final banks = snapshot.data;
-                                      if (banks != null) if (banks.length > 0)
-                                        return Container(
-                                          child: ListView.builder(
-                                              controller: controller,
-                                              scrollDirection: Axis.vertical,
-                                              itemCount: banks.length,
-                                              shrinkWrap: true,
-                                              itemBuilder: (context, index) {
-                                                final bank = banks[index];
-                                                return ListTile(
-                                                  onTap: () => {
-                                                    HapticFeedback
-                                                        .lightImpact(),
-                                                    FocusScope.of(context)
-                                                        .requestFocus(
-                                                            new FocusNode()),
-                                                  },
-                                                  title: Text(
-                                                    bank.nameBank,
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                  subtitle: Row(
-                                                    children: [
-                                                      Text(
-                                                        '',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              }),
-                                        );
-
-                                      return Container();
-                                    } else if (snapshot.hasError) {
-                                      return Container();
-                                    } else {
-                                      return Container();
-                                    }
-                                  },
-                                ),
-                              ),
-
-                              /* Expanded(
-                            flex: 1,
-                            child: elevatedButtonCustom(
-                                context: context,
-                                title: 'Continuar',
-                                onPress: () {})), */
-                            ],
-                          ));
-                    }))));
   } else if (UniversalPlatform.isAndroid) {
     showCupertinoModalPopup(
       context: context,

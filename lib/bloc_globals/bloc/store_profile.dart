@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:australti_ecommerce_app/bloc_globals/bloc/validators.dart';
 import 'package:australti_ecommerce_app/models/bank_account.dart';
+import 'package:australti_ecommerce_app/responses/bank_account.dart';
 import 'package:australti_ecommerce_app/services/bank_Service.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -93,12 +94,26 @@ class StoreProfileBloc with Validators {
 
   BehaviorSubject<List<Bank>> get banksResults => _banksResult;
 
+  final BehaviorSubject<Bank> _banksSelected = BehaviorSubject<Bank>();
+
+  final BehaviorSubject<BankAccount> _bankAccount =
+      BehaviorSubject<BankAccount>();
+
+  set setBankSelected(Bank bank) {
+    _banksSelected.sink.add(bank);
+  }
+
+  set setBankAccount(BankAccount bank) {
+    _bankAccount.sink.add(bank);
+  }
+
+  BehaviorSubject<BankAccount> get bankAccount => _bankAccount;
+
+  BehaviorSubject<Bank> get bankSelected => _banksSelected;
   searchBanks(String searchTerm) async {
     final resp = await bankService.getBanks(searchTerm);
 
-    // final resp2 = await placeService.getAutocompleteDetails(searchTerm);
-
-    _banksResult.sink.add(resp);
+    if (!_banksResult.isClosed) _banksResult.sink.add(resp);
   }
 
   dispose() {
@@ -113,11 +128,17 @@ class StoreProfileBloc with Validators {
     _aboutController?.close();
     _offController?.close();
     _timeController?.close();
+
     _banksResult?.close();
     _nameBankController?.close();
     _numberBankController?.close();
     _rutBankController?.close();
     _emailBankController?.close();
+  }
+
+  disposeBankSelected() {
+    _banksSelected?.close();
+    _bankAccount?.close();
   }
 }
 

@@ -1,8 +1,10 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc/store_profile.dart';
+import 'package:australti_ecommerce_app/models/bank_account.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:australti_ecommerce_app/services/bank_Service.dart';
 
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
@@ -21,8 +23,6 @@ class BankAccountStore extends StatefulWidget {
 }
 
 class _BankAccountStoreState extends State<BankAccountStore> {
-  final storeProfileBloc = StoreProfileBloc();
-
   final bankCtrl = TextEditingController();
   final nameCtrl = TextEditingController();
   final rutCtrl = TextEditingController();
@@ -38,7 +38,7 @@ class _BankAccountStoreState extends State<BankAccountStore> {
   bool isBankChange = false;
   bool isEmailChange = false;
   bool errorRequired = false;
-
+  bool isEdit = false;
   bool loading = false;
   Store store;
   @override
@@ -47,17 +47,29 @@ class _BankAccountStoreState extends State<BankAccountStore> {
 
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
     store = authService.storeAuth;
+    final bankFind = storeProfileBloc.banksResults.value.firstWhere(
+        (item) => item.id == storeProfileBloc.bankAccount.value.bankOfAccount,
+        orElse: () => null);
 
+    if (bankFind != null) {
+      nameCtrl.text = storeProfileBloc.bankAccount.value.nameAccount;
+      rutCtrl.text = storeProfileBloc.bankAccount.value.rutAccount;
+      numberCtrl.text = storeProfileBloc.bankAccount.value.numberAccount;
+      emailCtl.text = storeProfileBloc.bankAccount.value.emailAccount;
+
+      setState(() {
+        isEdit = true;
+      });
+    } else {
+      emailCtl.text = store.user.email;
+    }
     SchedulerBinding.instance.addPostFrameCallback((_) {
       if (store.user.first) openSheetBottom();
     });
 
-    emailCtl.text = store.user.email;
-    numberCtrl.text = (store.user.phone == '0') ? '' : store.user.phone;
-
     nameCtrl.addListener(() {
       setState(() {
-        if (store.user.email != nameCtrl.text)
+        if (storeProfileBloc.bankAccount.value.nameAccount != nameCtrl.text)
           this.isNameChange = true;
         else
           this.isNameChange = false;
@@ -71,7 +83,7 @@ class _BankAccountStoreState extends State<BankAccountStore> {
 
     rutCtrl.addListener(() {
       setState(() {
-        if (store.user.email != rutCtrl.text)
+        if (storeProfileBloc.bankAccount.value.rutAccount != rutCtrl.text)
           this.isRutChange = true;
         else
           this.isRutChange = false;
@@ -85,7 +97,7 @@ class _BankAccountStoreState extends State<BankAccountStore> {
 
     numberCtrl.addListener(() {
       setState(() {
-        if (store.address != numberCtrl.text)
+        if (storeProfileBloc.bankAccount.value.numberAccount != numberCtrl.text)
           this.isNumberChange = true;
         else
           this.isNumberChange = false;
@@ -99,7 +111,7 @@ class _BankAccountStoreState extends State<BankAccountStore> {
 
     emailCtl.addListener(() {
       setState(() {
-        if (store.user.email != emailCtl.text)
+        if (storeProfileBloc.bankAccount.value.emailAccount != emailCtl.text)
           this.isEmailChange = true;
         else
           this.isEmailChange = false;
@@ -116,7 +128,6 @@ class _BankAccountStoreState extends State<BankAccountStore> {
 
   @override
   void dispose() {
-    storeProfileBloc.dispose();
     super.dispose();
   }
 
@@ -135,7 +146,12 @@ class _BankAccountStoreState extends State<BankAccountStore> {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final size = MediaQuery.of(context).size;
     final isControllerChange = isNameChange && isRutChange && isNumberChange;
+
     final authService = Provider.of<AuthenticationBLoC>(context);
+
+    final isControllerChangeEdit =
+        isNameChange || isRutChange || isNumberChange || isEmailChange;
+
     return SafeArea(
         child: GestureDetector(
             onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
@@ -154,7 +170,9 @@ class _BankAccountStoreState extends State<BankAccountStore> {
                   actions: [
                     (!loading)
                         ? IconButton(
-                            color: (isControllerChange && !errorRequired)
+                            color: ((isEdit)
+                                    ? isControllerChangeEdit && !errorRequired
+                                    : isControllerChange && !errorRequired)
                                 ? currentTheme.primaryColor
                                 : Colors.grey,
                             icon: Icon(
@@ -163,7 +181,10 @@ class _BankAccountStoreState extends State<BankAccountStore> {
                             ),
                             onPressed: () {
                               HapticFeedback.lightImpact();
-                              _editProfile();
+
+                              (isEdit)
+                                  ? _editAccountBank()
+                                  : _createAccountBank();
                             })
                         : buildLoadingWidget(context),
                   ],
@@ -185,7 +206,7 @@ class _BankAccountStoreState extends State<BankAccountStore> {
                                 Container(
                                   width: size.width,
                                   child: Text(
-                                    'Ingresa la cuenta bancaria de pagos.',
+                                    'Ingresa cuenta bancaria de pagos.',
                                     maxLines: 2,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -198,7 +219,7 @@ class _BankAccountStoreState extends State<BankAccountStore> {
                                 Container(
                                   width: size.width,
                                   child: Text(
-                                    'Esta opcion se mostrarán en el pedido para que las personas puedan depositar con los medio de pago. Puedes editarlas o eliminarlas cuando quieras.',
+                                    'Esta opción se mostrará en medios de pago para que las personas puedan pagarte y/o recibir depositos. Puedes editarla o eliminarla cuando quieras.',
                                     style: TextStyle(
                                       color: Colors.grey,
                                       fontWeight: FontWeight.normal,
@@ -224,46 +245,9 @@ class _BankAccountStoreState extends State<BankAccountStore> {
                                   ),
                                 ),
                                 SizedBox(height: 40),
-                                Container(
-                                  child: TextField(
-                                    style: TextStyle(
-                                      color: (currentTheme.accentColor),
-                                    ),
-                                    onTap: () {
-                                      showMaterialCupertinoBottomSheetBanks(
-                                        context,
-                                        () {},
-                                        () {},
-                                      );
-                                      FocusScope.of(context)
-                                          .requestFocus(new FocusNode());
-                                    },
-                                    decoration: InputDecoration(
-                                      enabledBorder: UnderlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.white54),
-                                      ),
-                                      border: UnderlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.white),
-                                      ),
-                                      labelStyle:
-                                          TextStyle(color: Colors.white54),
-                                      prefixIcon: Icon(Icons.account_balance,
-                                          color: Colors.white),
-                                      //  fillColor: currentTheme.accentColor,
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: currentTheme.accentColor,
-                                            width: 2.0),
-                                      ),
-                                      hintText: '',
-                                      labelText: 'Banco de la cuenta',
 
-                                      //counterText: snapshot.data,
-                                    ),
-                                  ),
-                                ),
+                                _createBank(),
+
                                 SizedBox(height: 10),
                                 _createName(),
                                 SizedBox(height: 10),
@@ -273,7 +257,8 @@ class _BankAccountStoreState extends State<BankAccountStore> {
                                 SizedBox(height: 10),
                                 _createEmail(),
 
-                                SizedBox(height: 10),
+                                SizedBox(height: 30),
+
                                 GestureDetector(
                                   onTap: () {
                                     (authService.isChangeToSale)
@@ -308,6 +293,58 @@ class _BankAccountStoreState extends State<BankAccountStore> {
                             )
                           ]))
                     ]))));
+  }
+
+  Widget _createBank() {
+    return StreamBuilder(
+      stream: storeProfileBloc.bankSelected,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
+        Bank bank = snapshot.data;
+
+        bankCtrl.text = (bank != null) ? bank.nameBank : '';
+
+        return Container(
+          child: TextField(
+            controller: bankCtrl,
+            style: TextStyle(
+              color: (currentTheme.accentColor),
+            ),
+            onTap: () {
+              showMaterialCupertinoBottomSheetBanks(
+                context,
+                () {},
+                () {},
+              );
+              FocusScope.of(context).requestFocus(new FocusNode());
+            },
+            decoration: InputDecoration(
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white54),
+              ),
+              border: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white),
+              ),
+              labelStyle: TextStyle(color: Colors.white54),
+              prefixIcon: Icon(Icons.account_balance,
+                  color: (bankCtrl.text != '')
+                      ? currentTheme.accentColor
+                      : Colors.white),
+              //  fillColor: currentTheme.accentColor,
+              focusedBorder: OutlineInputBorder(
+                borderSide:
+                    BorderSide(color: currentTheme.accentColor, width: 2.0),
+              ),
+              hintText: '',
+              labelText: 'Banco de la cuenta',
+
+              //counterText: snapshot.data,
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Widget _createName() {
@@ -449,7 +486,9 @@ class _BankAccountStoreState extends State<BankAccountStore> {
         final currentTheme = Provider.of<ThemeChanger>(context);
 
         return Container(
-          padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
+          padding: EdgeInsets.symmetric(
+            horizontal: 10.0,
+          ),
           child: TextField(
               style: TextStyle(
                 color: (currentTheme.customTheme) ? Colors.white : Colors.black,
@@ -490,27 +529,41 @@ class _BankAccountStoreState extends State<BankAccountStore> {
     );
   }
 
-  _editProfile() async {
+  _createAccountBank() async {
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+
+    final bankService = Provider.of<BankService>(context, listen: false);
     setState(() {
       loading = true;
     });
 
     final storeProfile = store;
 
+    final bankId = storeProfileBloc.bankSelected.value.id.trim();
+    final name = nameCtrl.text.trim();
+    final rut = rutCtrl.text.trim();
+    final typeAccount = typeAccountCtrl.text.trim();
+    final numberAccount = numberCtrl.text.trim();
     final email = emailCtl.text.trim();
-    final phone = numberCtrl.text.trim();
 
-    final editProfileOk = await authService.editInfoContactStoreProfile(
-        storeProfile.user.uid, email, phone);
+    final createAccountBank = await bankService.createAccountBank(
+        storeProfile.user.uid,
+        bankId,
+        name,
+        rut,
+        typeAccount,
+        numberAccount,
+        email);
 
-    if (editProfileOk != null) {
-      if (editProfileOk == true) {
+    if (createAccountBank != null) {
+      if (createAccountBank.ok) {
         setState(() {
           loading = false;
         });
 
-        showSnackBar(context, 'Información de contacto guardada');
+        storeProfileBloc.setBankAccount = createAccountBank.bankAccount;
+
+        showSnackBar(context, 'Cuenta bancaria guardada');
 
         (authService.isChangeToSale)
             ? Navigator.push(context, displayProfileStoreRoute())
@@ -519,7 +572,59 @@ class _BankAccountStoreState extends State<BankAccountStore> {
         setState(() {
           loading = false;
         });
-        showAlertError(context, 'Error', editProfileOk);
+        showAlertError(context, 'Error', createAccountBank);
+      }
+    } else {
+      setState(() {
+        loading = false;
+      });
+      showAlertError(
+          context, 'Error del servidor', 'lo sentimos, Intentelo mas tarde');
+    }
+  }
+
+  _editAccountBank() async {
+    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+
+    final bankService = Provider.of<BankService>(context, listen: false);
+    setState(() {
+      loading = true;
+    });
+
+    final bankId = storeProfileBloc.bankSelected.value.id.trim();
+    final name = nameCtrl.text.trim();
+    final rut = rutCtrl.text.trim();
+    final typeAccount = typeAccountCtrl.text.trim();
+    final numberAccount = numberCtrl.text.trim();
+    final email = emailCtl.text.trim();
+
+    final editAccountBank = await bankService.editAccountBank(
+        storeProfileBloc.bankAccount.value.id,
+        bankId,
+        name,
+        rut,
+        typeAccount,
+        numberAccount,
+        email);
+
+    if (editAccountBank != null) {
+      if (editAccountBank.ok) {
+        setState(() {
+          loading = false;
+        });
+
+        storeProfileBloc.setBankAccount = editAccountBank.bankAccount;
+
+        showSnackBar(context, 'Cuenta bancaria editada');
+
+        (authService.isChangeToSale)
+            ? Navigator.push(context, displayProfileStoreRoute())
+            : Navigator.pop(context);
+      } else {
+        setState(() {
+          loading = false;
+        });
+        showAlertError(context, 'Error', editAccountBank);
       }
     } else {
       setState(() {

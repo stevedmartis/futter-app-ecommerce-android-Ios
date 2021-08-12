@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc/store_profile.dart';
+import 'package:australti_ecommerce_app/models/bank_account.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/pages/single_image_upload.dart';
@@ -39,7 +40,6 @@ class EditProfilePage extends StatefulWidget {
 
 class EditProfilePageState extends State<EditProfilePage> {
   Store store;
-  final storeProfileBloc = StoreProfileBloc();
 
   final picker = ImagePicker();
 
@@ -249,6 +249,10 @@ class EditProfilePageState extends State<EditProfilePage> {
       categoryCtrl.text = 'Frutería/Verdulería';
     if (authService.storeAuth.service == 3)
       categoryCtrl.text = 'Licorería/Botillería';
+
+    final bankFind = storeProfileBloc.banksResults.value.firstWhere(
+        (item) => item.id == storeProfileBloc.bankAccount.value.bankOfAccount,
+        orElse: () => null);
 
     return SafeArea(
       child: Scaffold(
@@ -652,14 +656,19 @@ class EditProfilePageState extends State<EditProfilePage> {
                                             context, bankAccountStoreRoute());
                                       },
                                       child: ListTile(
-                                        leading: Text('Cuenta bancaria (pagos)',
+                                        leading: Text('Cuenta de pagos',
                                             style: TextStyle(fontSize: 18)),
                                         title: Container(
                                           alignment: Alignment.centerRight,
-                                          child: Text('',
-                                              style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 15)),
+                                          child: Container(
+                                            child: Text(
+                                                (bankFind != null)
+                                                    ? '${bankFind.nameBank}'
+                                                    : '',
+                                                style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 15)),
+                                          ),
                                         ),
                                         trailing: Icon(Icons.chevron_right,
                                             color: Colors.grey),

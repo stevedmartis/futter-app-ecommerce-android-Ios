@@ -1,14 +1,12 @@
 class Bank {
   final String id;
   final String nameBank;
+  final String image;
 
-  Bank({
-    this.id,
-    this.nameBank,
-  });
+  Bank({this.id, this.nameBank, this.image});
 
   factory Bank.fromJson(Map<String, dynamic> json) =>
-      Bank(id: json['id'], nameBank: json['nameBank']);
+      Bank(id: json['id'], nameBank: json['nameBank'], image: json['image']);
 }
 
 /* class BankAccount {

@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc/cards_services_bloc.dart';
+import 'package:australti_ecommerce_app/bloc_globals/bloc/store_profile.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/models/credit_Card.dart';
@@ -11,6 +12,7 @@ import 'package:australti_ecommerce_app/pages/order_progress.dart/orden_detail_p
 import 'package:australti_ecommerce_app/pages/order_progress.dart/progressBar.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
+import 'package:australti_ecommerce_app/responses/bank_account.dart';
 import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 
 import 'package:australti_ecommerce_app/routes/routes.dart';
@@ -777,7 +779,10 @@ Widget _buildProductsList(
           SizedBox(
             height: 10,
           ),
-          Divider(),
+          Padding(
+            padding: EdgeInsets.only(left: 20.0, right: 20.0),
+            child: Divider(),
+          ),
           (!isStore)
               ? StreamBuilder<CreditCard>(
                   stream: cardBloc.cardselectedToPay.stream,
@@ -979,7 +984,194 @@ Widget _buildProductsList(
                       return Container();
                     }
                   })
-              : Container(),
+              : StreamBuilder<BankAccount>(
+                  stream: storeProfileBloc.bankAccount.stream,
+                  builder: (context, AsyncSnapshot<BankAccount> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.active) {
+                      BankAccount bankAccount = snapshot.data;
+
+                      final bankFind = storeProfileBloc.banksResults.value
+                          .firstWhere(
+                              (item) => item.id == bankAccount.bankOfAccount,
+                              orElse: () => null);
+
+                      return (bankAccount != null)
+                          ? (bankAccount.id != '0' &&
+                                  order.creditCardClient != 'cash')
+                              ? Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10.0)),
+                                            child: Container(
+                                                child: Image.asset(
+                                              bankFind.image,
+                                              height: 70,
+                                              width: 70,
+                                            )),
+                                          ),
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                width: size.width / 1.9,
+                                                child: Text(
+                                                  '${bankFind.nameBank.toUpperCase()}',
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 15),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Container(
+                                                child: Text(
+                                                    '*${bankAccount.numberAccount}',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14)),
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    child: Text(
+                                                        '${bankAccount.nameAccount.capitalize()}',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal,
+                                                            fontSize: 13,
+                                                            color:
+                                                                Colors.grey)),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  Container(
+                                                    child: Text(
+                                                        '${bankAccount.rutAccount}',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal,
+                                                            fontSize: 13,
+                                                            color:
+                                                                Colors.grey)),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Container(
+                                        child: Text(
+                                            '* Confirma el deposito en tu cuenta bancaria antes de preparar el pedido.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.normal,
+                                                fontSize: 13,
+                                                color: Colors.grey)),
+                                      ),
+                                    ],
+                                  ))
+                              : (order.creditCardClient == 'cash')
+                                  ? Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 10),
+                                      child: Row(
+                                        children: [
+                                          Align(
+                                              alignment: Alignment.bottomLeft,
+                                              child: Container(
+                                                margin:
+                                                    EdgeInsets.only(right: 20),
+                                                padding: EdgeInsets.all(10),
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            100),
+                                                    border: Border.all(
+                                                        width: 2,
+                                                        color: Colors.grey)),
+                                                child: Icon(
+                                                  Icons.attach_money,
+                                                  size: 30,
+                                                  color:
+                                                      currentTheme.accentColor,
+                                                ),
+                                              )),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                child: Text(
+                                                  'Te Paga con efectivo',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16,
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Container(
+                                                width: size.width / 2.1,
+                                                child: Text(
+                                                  'Efectivo al momento de entregar el pedido.',
+                                                  maxLines: 2,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                      fontSize: 14,
+                                                      color: Colors.grey),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : Container()
+                          : Container();
+                    } else {
+                      return Container();
+                    }
+                  }),
           if (order.isCancelByClient ||
               order.isCancelByStore ||
               order.isPreparation)

@@ -6,6 +6,7 @@ import 'package:animations/animations.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc/favorites_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc/cards_services_bloc.dart';
+import 'package:australti_ecommerce_app/bloc_globals/bloc/store_profile.dart';
 
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
@@ -13,10 +14,12 @@ import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
+import 'package:australti_ecommerce_app/responses/bank_account.dart';
 import 'package:australti_ecommerce_app/responses/my_favorites_products_response.dart';
 import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 import 'package:australti_ecommerce_app/responses/stores_list_principal_response.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:australti_ecommerce_app/services/bank_Service.dart';
 import 'package:australti_ecommerce_app/services/catalogo.dart';
 import 'package:australti_ecommerce_app/services/order_service.dart';
 import 'package:australti_ecommerce_app/services/product.dart';
@@ -77,6 +80,7 @@ class _PrincipalPageState extends State<PrincipalPage>
       Timer(new Duration(milliseconds: 0), () {
         if (storeAuth.service != 0) {
           _myOrdersStore();
+          getbankAccountByUser(storeAuth.user.uid);
         }
       });
 
@@ -102,6 +106,18 @@ class _PrincipalPageState extends State<PrincipalPage>
         ?.on('orders-notification-store', _listenNotification);
 
     super.initState();
+  }
+
+  void getbankAccountByUser(String uid) async {
+    final bankService = Provider.of<BankService>(context, listen: false);
+    storeProfileBloc.searchBanks('');
+    final resp = await bankService.getAccountBankByUser(uid);
+
+    if (resp.ok) {
+      storeProfileBloc.setBankAccount = resp.bankAccount;
+    } else {
+      storeProfileBloc.setBankAccount = BankAccount(id: '0');
+    }
   }
 
   void _listenNotificationClient(dynamic payload) {
