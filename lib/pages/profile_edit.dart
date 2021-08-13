@@ -6,7 +6,7 @@ import 'dart:typed_data';
 import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc/store_profile.dart';
-import 'package:australti_ecommerce_app/models/bank_account.dart';
+
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/pages/single_image_upload.dart';

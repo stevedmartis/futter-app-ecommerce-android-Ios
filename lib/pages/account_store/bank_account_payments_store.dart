@@ -244,7 +244,7 @@ class _BankAccountStoreState extends State<BankAccountStore> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 40),
+                                SizedBox(height: 30),
 
                                 _createBank(),
 

@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc/cards_services_bloc.dart';
+
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/models/credit_Card.dart';
 
@@ -9,6 +10,7 @@ import 'package:australti_ecommerce_app/pages/add_edit_product.dart';
 
 import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
+
 import 'package:australti_ecommerce_app/services/stripe_service.dart';
 
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
@@ -229,6 +231,16 @@ class _OptionsListState extends State<OptionsList> {
               ),
             ),
           ),
+          SizedBox(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: FadeIn(
+                child: BankAccountOption(
+                  orderPage: widget.orderPage,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -443,7 +455,6 @@ class CashOption extends StatelessWidget {
       onTap: () {
         cardBloc.changeCardSelectToPay(cardCash);
         Navigator.pop(context);
-           
       },
       child: Card(
         elevation: 6,
@@ -550,6 +561,84 @@ class SearchContent extends StatelessWidget {
                         fontWeight: FontWeight.w500))),
           ],
         ));
+  }
+}
+
+class BankAccountOption extends StatelessWidget {
+  BankAccountOption({this.orderPage});
+  final bool orderPage;
+  final stripeService = new StripeService();
+
+  @override
+  Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+    final cardBloc = Provider.of<CreditCardServices>(context);
+
+    final cardCash = CreditCard(
+        id: '1',
+        cardNumber: '1',
+        cardHolderName: 'Deposito',
+        brand: 'bank',
+        cardNumberHidden: '1');
+    return GestureDetector(
+      onTap: () {
+        cardBloc.changeCardSelectToPay(cardCash);
+        Navigator.push(context, bankAccountStorePayment(false));
+      },
+      child: Card(
+        elevation: 6,
+        shadowColor: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        color: currentTheme.cardColor,
+        child: GestureDetector(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: SizedBox(
+              height: 60,
+              child: Row(
+                children: <Widget>[
+                  new Align(
+                      alignment: Alignment.topCenter,
+                      child: Container(
+                        margin: EdgeInsets.only(right: 20),
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            border: Border.all(width: 2, color: Colors.grey)),
+                        child: Icon(
+                          Icons.account_balance,
+                          size: 30,
+                          color: currentTheme.accentColor,
+                        ),
+                      )),
+                  Container(
+                    child: Text(
+                      'Deposito bancario',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Colors.white),
+                    ),
+                  ),
+                  Spacer(),
+                  IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(
+                        Icons.chevron_right,
+                        size: 30,
+                        color: currentTheme.primaryColor,
+                      ))
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 

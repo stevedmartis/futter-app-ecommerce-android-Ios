@@ -1,5 +1,6 @@
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
+import 'package:australti_ecommerce_app/responses/bank_account.dart';
 import 'package:australti_ecommerce_app/responses/search_stores_products_response.dart';
 import 'package:australti_ecommerce_app/services/stores_Services.dart';
 
@@ -18,6 +19,9 @@ class StoreBLoC with ChangeNotifier {
   List<Store> storesListInitial = [];
 
   List<Store> storesSearch = [];
+  List<BankAccount> bankAccountsByStore = [];
+
+  BankAccount currentBankAccount;
 
   StoreServices selected;
 
@@ -224,6 +228,16 @@ class StoreBLoC with ChangeNotifier {
     if (item != null) item.isLike = like;
 
     notifyListeners();
+  }
+
+  void addBanksAccountStoresOrder(BankAccount bankAccount) {
+    bankAccountsByStore.add(bankAccount);
+    notifyListeners();
+  }
+
+  void currentBankAccountStorePaymentMethod(BankAccount bankAccount) {
+    currentBankAccount = bankAccount;
+    //notifyListeners();
   }
 }
 

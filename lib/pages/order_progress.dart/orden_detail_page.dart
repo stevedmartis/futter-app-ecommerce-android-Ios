@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc/cards_services_bloc.dart';
+import 'package:australti_ecommerce_app/bloc_globals/bloc/store_profile.dart';
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/models/credit_Card.dart';
 import 'package:australti_ecommerce_app/models/place_Search.dart';
@@ -9,9 +10,11 @@ import 'package:australti_ecommerce_app/pages/add_edit_product.dart';
 
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
+import 'package:australti_ecommerce_app/responses/bank_account.dart';
 import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 import 'package:australti_ecommerce_app/responses/stores_products_order.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:australti_ecommerce_app/services/bank_Service.dart';
 import 'package:australti_ecommerce_app/services/order_service.dart';
 
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
@@ -102,6 +105,21 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
 
       return previousValue + maxInt;
     });
+
+    storesByProduct.forEach((item) {
+      getbankAccountByUser(item.user.uid);
+    });
+  }
+
+  void getbankAccountByUser(String uid) async {
+    final bankService = Provider.of<BankService>(context, listen: false);
+    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
+
+    final resp = await bankService.getAccountBankByUser(uid);
+
+    if (resp.ok) {
+      storeBloc.addBanksAccountStoresOrder(resp.bankAccount);
+    } else {}
   }
 
   @override
@@ -119,19 +137,6 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
     maxTimes = 0;
 
     super.dispose();
-  }
-
-  void _snapAppbar() {
-    final scrollDistance = maxHeight - minHeight;
-
-    if (_scrollController.offset > 0 &&
-        _scrollController.offset < scrollDistance) {
-      final double snapOffset =
-          _scrollController.offset / scrollDistance > 0.5 ? scrollDistance : 0;
-
-      Future.microtask(() => _scrollController.animateTo(snapOffset,
-          duration: Duration(milliseconds: 200), curve: Curves.easeIn));
-    }
   }
 
   TabController controller;
@@ -170,24 +175,19 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
         backgroundColor: currentTheme.scaffoldBackgroundColor,
 
         // tab bar view
-        body: NotificationListener<ScrollEndNotification>(
-          onNotification: (_) {
-            _snapAppbar();
-
-            return false;
-          },
-          child: CustomScrollView(
-              physics: const BouncingScrollPhysics(
-                  parent: AlwaysScrollableScrollPhysics()),
-              controller: _scrollController,
-              slivers: <Widget>[
-                makeHeaderCustom('Tu pedido'),
-                titleBox(context),
-                addressDeliveryInfo(context, minTimes, maxTimes),
-                makeListProducts(context),
-                orderDetailInfo(context),
-              ]),
-        ),
+        body: CustomScrollView(
+            physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics()),
+            controller: _scrollController,
+            slivers: <Widget>[
+              makeHeaderCustom('Tu pedido'),
+              titleBox(context),
+              addressDeliveryInfo(context, minTimes, maxTimes),
+              makeListProducts(
+                context,
+              ),
+              orderDetailInfo(context),
+            ]),
 
         bottomNavigationBar: GestureDetector(
           onTap: () {
@@ -324,6 +324,7 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
 }
 
 List<Store> storesByProduct = [];
+List<BankAccount> bankAccountsByStore = [];
 
 SliverToBoxAdapter addressDeliveryInfo(context, minTimes, maxTimes) {
   final currentTheme = Provider.of<ThemeChanger>(context);
@@ -373,7 +374,7 @@ SliverToBoxAdapter addressDeliveryInfo(context, minTimes, maxTimes) {
                             child: Text(
                               'DIRECCIÓN DE ENTREGA',
                               style: TextStyle(
-                                  fontWeight: FontWeight.normal,
+                                  fontWeight: FontWeight.w500,
                                   fontSize: 15,
                                   color: Colors.grey),
                             ),
@@ -549,6 +550,7 @@ SliverToBoxAdapter addressDeliveryInfo(context, minTimes, maxTimes) {
           SizedBox(
             height: 10,
           ),
+          Divider(),
         ],
       ),
     ),
@@ -617,7 +619,7 @@ Widget _buildProductsList(context) {
   }); */
 
   return Container(
-    padding: EdgeInsets.only(left: 20, right: 20),
+//    padding: EdgeInsets.only(left: 20, right: 20),
     child: ListView.builder(
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
@@ -652,6 +654,19 @@ Widget _buildProductsList(context) {
             (previousValue, element) => previousValue + element.quantity,
           );
         }
+
+        final bankAccountStoreCurrent =
+            (storeBloc.bankAccountsByStore.length < 0)
+                ? storeBloc.bankAccountsByStore.firstWhere(
+                    (item) => item.user == store.user.uid,
+                    orElse: () => null)
+                : BankAccount(id: '0', bankOfAccount: 'NONE');
+
+        final bankFind = storeProfileBloc.banksResults.value.firstWhere(
+            (item) => item.id == bankAccountStoreCurrent.bankOfAccount,
+            orElse: () => null);
+
+        storeBloc.currentBankAccountStorePaymentMethod(bankAccountStoreCurrent);
 
         return FadeInLeft(
           delay: Duration(milliseconds: 100 * index),
@@ -712,182 +727,186 @@ Widget _buildProductsList(context) {
                             ],
                           ),
                         ]),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 70,
-                        height: 70,
-                        child: AspectRatio(
-                          aspectRatio: 1,
-                          child: ClipRRect(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
-                            child: (store.imageAvatar != "")
-                                ? Container(
-                                    child: (!store.notLocation)
-                                        ? cachedProductNetworkImage(
-                                            store.imageAvatar,
-                                          )
-                                        : cachedNetworkImage(
-                                            store.imageAvatar,
-                                          ),
-                                  )
-                                : Image.asset(currentProfile.imageAvatar),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 70,
+                          height: 70,
+                          child: AspectRatio(
+                            aspectRatio: 1,
+                            child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              child: (store.imageAvatar != "")
+                                  ? Container(
+                                      child: (!store.notLocation)
+                                          ? cachedProductNetworkImage(
+                                              store.imageAvatar,
+                                            )
+                                          : cachedNetworkImage(
+                                              store.imageAvatar,
+                                            ),
+                                    )
+                                  : Image.asset(currentProfile.imageAvatar),
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Center(
-                            child: Container(
-                              margin: EdgeInsets.only(top: 5.0),
-                              child: Text(
-                                '${store.name.capitalize()}',
-                                style: TextStyle(
-                                    color: (!store.notLocation)
-                                        ? Colors.grey
-                                        : Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(top: 0.0),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Container(
+                                margin: EdgeInsets.only(top: 5.0),
                                 child: Text(
-                                  '$totalQuantity',
+                                  '${store.name.capitalize()}',
                                   style: TextStyle(
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 15),
+                                      color: (!store.notLocation)
+                                          ? Colors.grey
+                                          : Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18),
                                 ),
                               ),
-                              SizedBox(
-                                width: 5.0,
-                              ),
-                              Container(
-                                child: Text(
-                                  bloc.cart.length == 1
-                                      ? 'Producto'
-                                      : 'Productos',
-                                  style: TextStyle(
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 15),
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                      Spacer(),
-                      Stack(
-                        fit: StackFit.loose,
-                        clipBehavior: Clip.hardEdge,
-                        children: [
-                          Container(
-                            height: 50,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              scrollDirection: Axis.horizontal,
-                              itemCount:
-                                  (products.length >= 3) ? 2 : products.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                final item = products[index];
-                                return Stack(
-                                  children: [
-                                    Container(
-                                        margin: EdgeInsets.only(left: 5.0),
-                                        alignment: Alignment.topRight,
-                                        child: FadeInLeft(
-                                          delay: Duration(
-                                              milliseconds: 200 * index),
-                                          child: Container(
-                                              width: 50,
-                                              height: 50,
-                                              child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              100.0)),
-                                                  child: (!store.notLocation)
-                                                      ? cachedProductNetworkImage(
-                                                          item.product.images[0]
-                                                              .url)
-                                                      : cachedNetworkImage(item
-                                                          .product
-                                                          .images[0]
-                                                          .url))),
-                                        )),
-                                    Container(
-                                      decoration: new BoxDecoration(
-                                        color: (!store.notLocation)
-                                            ? Colors.grey
-                                            : currentTheme.accentColor,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      alignment: Alignment.bottomCenter,
-                                      width: 20.0,
-                                      height: 20.0,
-                                      child: Center(
-                                          child: Text('${item.quantity}',
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  color: Colors.black,
-                                                  fontWeight:
-                                                      FontWeight.w500))),
-                                    ),
-                                  ],
-                                );
-                              },
                             ),
-                          ),
-                          if (products.length >= 3)
-                            Container(
-                              margin: EdgeInsets.only(left: size.width / 4),
-                              child: FadeInRight(
-                                duration: Duration(milliseconds: 400),
-                                delay: Duration(milliseconds: 500),
-                                child: Container(
-                                  decoration: new BoxDecoration(
-                                    color: currentTheme.primaryColor,
-                                    shape: BoxShape.circle,
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(top: 0.0),
+                                  child: Text(
+                                    '$totalQuantity',
+                                    style: TextStyle(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 15),
                                   ),
-                                  width: 30.0,
-                                  height: 30.0,
-                                  child: Center(
-                                      child: Text('+${products.length - 2}',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold))),
                                 ),
-                              ),
+                                SizedBox(
+                                  width: 5.0,
+                                ),
+                                Container(
+                                  child: Text(
+                                    bloc.cart.length == 1
+                                        ? 'Producto'
+                                        : 'Productos',
+                                    style: TextStyle(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 15),
+                                  ),
+                                ),
+                              ],
                             )
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                        Spacer(),
+                        Stack(
+                          fit: StackFit.loose,
+                          clipBehavior: Clip.hardEdge,
+                          children: [
+                            Container(
+                              height: 50,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: (products.length >= 3)
+                                    ? 2
+                                    : products.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  final item = products[index];
+                                  return Stack(
+                                    children: [
+                                      Container(
+                                          margin: EdgeInsets.only(left: 5.0),
+                                          alignment: Alignment.topRight,
+                                          child: FadeInLeft(
+                                            delay: Duration(
+                                                milliseconds: 200 * index),
+                                            child: Container(
+                                                width: 50,
+                                                height: 50,
+                                                child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                100.0)),
+                                                    child: (!store.notLocation)
+                                                        ? cachedProductNetworkImage(
+                                                            item.product
+                                                                .images[0].url)
+                                                        : cachedNetworkImage(
+                                                            item
+                                                                .product
+                                                                .images[0]
+                                                                .url))),
+                                          )),
+                                      Container(
+                                        decoration: new BoxDecoration(
+                                          color: (!store.notLocation)
+                                              ? Colors.grey
+                                              : currentTheme.accentColor,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        alignment: Alignment.bottomCenter,
+                                        width: 20.0,
+                                        height: 20.0,
+                                        child: Center(
+                                            child: Text('${item.quantity}',
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.w500))),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                            if (products.length >= 3)
+                              Container(
+                                margin: EdgeInsets.only(left: size.width / 4),
+                                child: FadeInRight(
+                                  duration: Duration(milliseconds: 400),
+                                  delay: Duration(milliseconds: 500),
+                                  child: Container(
+                                    decoration: new BoxDecoration(
+                                      color: currentTheme.primaryColor,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    width: 30.0,
+                                    height: 30.0,
+                                    child: Center(
+                                        child: Text('+${products.length - 2}',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold))),
+                                  ),
+                                ),
+                              )
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(
                     height: 10,
                   ),
-                  Divider(),
+                  Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Divider()),
                   SizedBox(
                     height: 10,
                   ),
@@ -898,160 +917,404 @@ Widget _buildProductsList(context) {
                             ConnectionState.active) {
                           CreditCard cardSelected = snapshot.data;
                           return (cardSelected != null)
-                              ? (cardSelected.id != '0')
-                                  ? Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          child: getCardTypeIcon(
-                                              (cardSelected.cardNumber != null)
-                                                  ? cardSelected.cardNumber
-                                                  : ''),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Container(
-                                                  child: Text(
-                                                    '${cardSelected.brand.toUpperCase()}',
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 15),
+                              ? (cardSelected.id != '0' &&
+                                      cardSelected.id != '1' &&
+                                      (bankAccountStoreCurrent.id != '0'))
+                                  ? Container(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            child: Text(
+                                              'METODO DE PAGO',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 15,
+                                                  color: Colors.grey),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                child: getCardTypeIcon(
+                                                    (cardSelected.cardNumber !=
+                                                            null)
+                                                        ? cardSelected
+                                                            .cardNumber
+                                                        : ''),
+                                              ),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Container(
+                                                        child: Text(
+                                                          '${cardSelected.brand.toUpperCase()}',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 15),
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        child: Text(
+                                                            ' *${cardSelected.cardNumberHidden}',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 14)),
+                                                      ),
+                                                    ],
                                                   ),
-                                                ),
-                                                Container(
-                                                  child: Text(
-                                                      ' *${cardSelected.cardNumberHidden}',
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Container(
+                                                    child: Text(
+                                                        '${cardSelected.cardHolderName}',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal,
+                                                            fontSize: 13,
+                                                            color:
+                                                                Colors.grey)),
+                                                  ),
+                                                ],
+                                              ),
+                                              Spacer(),
+                                              GestureDetector(
+                                                onTap: () => {
+                                                  Navigator.push(
+                                                      context,
+                                                      paymentMethodsOptionsRoute(
+                                                          false))
+                                                },
+                                                child: Container(
+                                                  padding:
+                                                      EdgeInsets.only(top: 10),
+                                                  child: Text('Cambiar',
                                                       style: TextStyle(
                                                           fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 14)),
+                                                              FontWeight.w700,
+                                                          fontSize: 14,
+                                                          color: currentTheme
+                                                              .primaryColor)),
                                                 ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Container(
-                                              child: Text(
-                                                  '${cardSelected.cardHolderName}',
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  : (cardSelected.id == '0' ||
+                                          bankAccountStoreCurrent.id == '0')
+                                      ? Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 20),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                child: Text(
+                                                  'METODO DE PAGO',
                                                   style: TextStyle(
                                                       fontWeight:
-                                                          FontWeight.normal,
-                                                      fontSize: 13,
-                                                      color: Colors.grey)),
-                                            ),
-                                          ],
-                                        ),
-                                        Spacer(),
-                                        GestureDetector(
-                                          onTap: () => {
-                                            Navigator.push(
-                                                context,
-                                                paymentMethodsOptionsRoute(
-                                                    false))
-                                          },
-                                          child: Container(
-                                            padding: EdgeInsets.only(top: 10),
-                                            child: Text('Cambiar',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w700,
-                                                    fontSize: 14,
-                                                    color: currentTheme
-                                                        .primaryColor)),
+                                                          FontWeight.w500,
+                                                      fontSize: 15,
+                                                      color: Colors.grey),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Align(
+                                                      alignment:
+                                                          Alignment.bottomLeft,
+                                                      child: Container(
+                                                        margin: EdgeInsets.only(
+                                                            right: 20),
+                                                        padding:
+                                                            EdgeInsets.all(10),
+                                                        decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        100),
+                                                            border: Border.all(
+                                                                width: 2,
+                                                                color: Colors
+                                                                    .grey)),
+                                                        child: Icon(
+                                                          Icons.attach_money,
+                                                          size: 30,
+                                                          color: currentTheme
+                                                              .accentColor,
+                                                        ),
+                                                      )),
+                                                  Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Container(
+                                                        child: Text(
+                                                          'Pagar con efectivo',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 16,
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      Container(
+                                                        width: size.width / 2,
+                                                        child: Text(
+                                                          'Efectivo al momento de recibir el pedido.',
+                                                          maxLines: 2,
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                              fontSize: 14,
+                                                              color:
+                                                                  Colors.grey),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  if (bankAccountStoreCurrent
+                                                          .id !=
+                                                      '0')
+                                                    GestureDetector(
+                                                      onTap: () => {
+                                                        Navigator.push(
+                                                            context,
+                                                            paymentMethodsOptionsRoute(
+                                                                false))
+                                                      },
+                                                      child: Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 10),
+                                                        child: Text('Cambiar',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                fontSize: 14,
+                                                                color: currentTheme
+                                                                    .primaryColor)),
+                                                      ),
+                                                    )
+                                                ],
+                                              )
+                                            ],
                                           ),
                                         )
-                                      ],
-                                    )
-                                  : Row(
-                                      children: [
-                                        Align(
-                                            alignment: Alignment.bottomLeft,
-                                            child: Container(
-                                              margin:
-                                                  EdgeInsets.only(right: 20),
-                                              padding: EdgeInsets.all(10),
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          100),
-                                                  border: Border.all(
-                                                      width: 2,
-                                                      color: Colors.grey)),
-                                              child: Icon(
-                                                Icons.attach_money,
-                                                size: 30,
-                                                color: currentTheme.accentColor,
-                                              ),
-                                            )),
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              child: Text(
-                                                'Pagar con efectivo',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 16,
-                                                    color: Colors.white),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Container(
-                                              width: size.width / 2,
-                                              child: Text(
-                                                'Efectivo al momento de recibir el pedido.',
-                                                maxLines: 2,
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                    fontSize: 14,
-                                                    color: Colors.grey),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        GestureDetector(
-                                          onTap: () => {
-                                            Navigator.push(
-                                                context,
-                                                paymentMethodsOptionsRoute(
-                                                    false))
-                                          },
-                                          child: Container(
-                                            padding: EdgeInsets.only(top: 10),
-                                            child: Text('Cambiar',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w700,
-                                                    fontSize: 14,
-                                                    color: currentTheme
-                                                        .primaryColor)),
-                                          ),
-                                        )
-                                      ],
-                                    )
+                                      : (cardSelected.id == '1')
+                                          ? Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 20),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    child: Text(
+                                                      'METODO DE PAGO',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 15,
+                                                          color: Colors.grey),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    10.0)),
+                                                        child: Container(
+                                                            child: Image.asset(
+                                                          bankFind.image,
+                                                          height: 70,
+                                                          width: 70,
+                                                        )),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            width:
+                                                                size.width / 2,
+                                                            child: Text(
+                                                              '${bankFind.nameBank.toUpperCase()}',
+                                                              maxLines: 1,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 15),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 5,
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              Container(
+                                                                child: Text(
+                                                                    '${bankAccountStoreCurrent.nameAccount.capitalize()}',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .normal,
+                                                                        fontSize:
+                                                                            13,
+                                                                        color: Colors
+                                                                            .grey)),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          SizedBox(
+                                                            height: 5,
+                                                          ),
+                                                          MaterialButton(
+                                                              materialTapTargetSize:
+                                                                  MaterialTapTargetSize
+                                                                      .shrinkWrap,
+                                                              shape:
+                                                                  StadiumBorder(),
+                                                              child: Text(
+                                                                'Ver datos',
+                                                                style: TextStyle(
+                                                                    color: currentTheme
+                                                                        .primaryColor,
+                                                                    fontSize:
+                                                                        15),
+                                                              ),
+                                                              onPressed: () {
+                                                                FocusScope.of(
+                                                                        context)
+                                                                    .requestFocus(
+                                                                        new FocusNode());
+
+                                                                Navigator.push(
+                                                                    context,
+                                                                    bankAccountStorePayment(
+                                                                        true));
+                                                              }),
+                                                        ],
+                                                      ),
+                                                      Spacer(),
+                                                      GestureDetector(
+                                                        onTap: () => {
+                                                          Navigator.push(
+                                                              context,
+                                                              paymentMethodsOptionsRoute(
+                                                                  false))
+                                                        },
+                                                        child: Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 10),
+                                                          child: Text('Cambiar',
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                  fontSize: 14,
+                                                                  color: currentTheme
+                                                                      .primaryColor)),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Container(
+                                                    child: Text(
+                                                        '* Deposita a esta cuenta el total para que confirmen y preparen tu pedido.',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal,
+                                                            fontSize: 13,
+                                                            color:
+                                                                Colors.grey)),
+                                                  ),
+                                                ],
+                                              ))
+                                          : Container()
                               : Container();
                         } else {
                           return Container();
                         }
-                      })
+                      }),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    child: Divider(),
+                  )
                 ],
               )),
         );
@@ -1198,7 +1461,6 @@ SliverToBoxAdapter orderDetailInfo(context) {
     child: Container(
       child: Column(
         children: [
-          Divider(),
           FadeIn(
             child: Container(
                 padding: EdgeInsets.only(top: 10.0),

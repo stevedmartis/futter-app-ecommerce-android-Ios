@@ -5,6 +5,7 @@ import 'package:australti_ecommerce_app/models/credit_Card.dart';
 
 import 'package:australti_ecommerce_app/models/place_Search.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:australti_ecommerce_app/pages/account_store/bank_accoun_payment.dart';
 import 'package:australti_ecommerce_app/pages/account_store/bank_account_payments_store.dart';
 
 import 'package:australti_ecommerce_app/pages/account_store/category_store.dart';
@@ -488,6 +489,27 @@ Route selectCategoryStoreRoute() {
   );
 }
 
+Route bankAccountStorePayment(fromOrder) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return BankAccountStorePayment(
+        fromOrder: fromOrder,
+      );
+    },
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(0.0, 0.5);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
 
 Route selectCategoryObBoardStoreRoute() {
   return PageRouteBuilder(
@@ -502,14 +524,12 @@ Route selectCategoryObBoardStoreRoute() {
       var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
       return SlideTransition(
-        
         position: animation.drive(tween),
         child: child,
       );
     },
   );
 }
-
 
 Route contactoInfoStoreRoute() {
   return PageRouteBuilder(

@@ -73,7 +73,7 @@ class _PrincipalPageState extends State<PrincipalPage>
 
     categoriesStoreProducts();
     storeslistServices();
-
+    storeProfileBloc.searchBanks('');
     if (storeAuth.user.uid != '0') {
       storesByLocationlistServices(storeAuth.city, storeAuth.user.uid);
 
@@ -110,7 +110,7 @@ class _PrincipalPageState extends State<PrincipalPage>
 
   void getbankAccountByUser(String uid) async {
     final bankService = Provider.of<BankService>(context, listen: false);
-    storeProfileBloc.searchBanks('');
+
     final resp = await bankService.getAccountBankByUser(uid);
 
     if (resp.ok) {
@@ -302,6 +302,7 @@ class _PrincipalPageState extends State<PrincipalPage>
 
     if (state == AppLifecycleState.inactive) {}
   }
+
   /*   void _listenMessage(dynamic payload) {
       final notifiModel = Provider.of<NotificationModel>(context, listen: false);
       int numberMessages = notifiModel.number;
