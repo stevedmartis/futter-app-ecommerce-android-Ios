@@ -44,7 +44,7 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
   void initStoreSelect(
       TickerProvider ticker, BuildContext context, Store store) {
-    initialOffset = 220.0;
+    initialOffset = 200.0;
     scrollController2 = ScrollController(initialScrollOffset: initialOffset);
 
     final categoriesByStoreUserId = storeCategoriesProducts
@@ -93,8 +93,6 @@ class TabsViewScrollBLoC with ChangeNotifier {
     }
 
     scrollController.addListener(_onScrollListener);
-
-    scrollController2 = ScrollController()..addListener(() => {});
   }
 
   void init(TickerProvider ticker, BuildContext context) {
@@ -357,7 +355,7 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
     if (animationRequired && scrollController2.offset >= 0.0) {
       await scrollController2.animateTo(
-        initialOffset,
+        410,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeIn,
       );
@@ -369,22 +367,15 @@ class TabsViewScrollBLoC with ChangeNotifier {
         curve: Curves.linear,
       );
       _listen = true;
-    } else if (animationRequired && scrollController2.offset > 400.0) {
-      _listen = false;
-      await scrollController.animateTo(
-        selected.offsetFrom - 80,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.linear,
-      );
-      _listen = true;
     }
+  }
 
-    if (scrollController2.offset >= 0.0 && scrollController.offset > 400)
-      await scrollController2.animateTo(
-        initialOffset,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeIn,
-      );
+  void hiddenHeader() async {
+    await scrollController2.animateTo(
+      410,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeIn,
+    );
   }
 
   @override

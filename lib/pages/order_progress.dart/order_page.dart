@@ -16,12 +16,14 @@ import 'package:australti_ecommerce_app/responses/bank_account.dart';
 import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 
 import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:australti_ecommerce_app/services/bank_Service.dart';
 import 'package:australti_ecommerce_app/services/order_service.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
 
 import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
@@ -62,6 +64,10 @@ class _OrderPageState extends State<OrderPage> {
 
   int minTimes = 0;
   int maxTimes = 0;
+
+  bool loadingPaymentMethod = true;
+  BankAccount currentBankAccount = BankAccount(id: '0', bankOfAccount: 'NONE');
+
   Order order;
   @override
   void initState() {
@@ -81,11 +87,33 @@ class _OrderPageState extends State<OrderPage> {
     //final getTimeMax =order.store.timeDelivery.toString().split("-").last.trim();
 
     //final maxInt = int.parse(getTimeMax);
+
+    getbankAccountByUser(order.store.user.uid);
   }
 
   @override
   void didUpdateWidget(Widget old) {
     super.didUpdateWidget(old);
+  }
+
+  void getbankAccountByUser(String uid) async {
+    final bankService = Provider.of<BankService>(context, listen: false);
+
+    final resp = await bankService.getAccountBankByUser(uid);
+
+    if (resp.ok) {
+      setState(() {
+        currentBankAccount = resp.bankAccount;
+
+        loadingPaymentMethod = false;
+      });
+    } else {
+      setState(() {
+        currentBankAccount = BankAccount(id: '0', bankOfAccount: 'NONE');
+
+        loadingPaymentMethod = false;
+      });
+    }
   }
 
   void updateNotifiOrderStore() async {
@@ -316,8 +344,8 @@ class _OrderPageState extends State<OrderPage> {
               slivers: <Widget>[
                 makeHeaderCustom('Pedido#$orderId', widget.goToPrincipal),
                 progressOrderExpanded(context, order, widget.isStore),
-                makeListProducts(
-                    context, order, minTimes, maxTimes, widget.isStore),
+                makeListProducts(context, order, minTimes, maxTimes,
+                    widget.isStore, currentBankAccount, loadingPaymentMethod),
               ]),
         ),
       ),
@@ -368,11 +396,12 @@ SliverToBoxAdapter progressOrderExpanded(context, Order order, bool isStore) {
   );
 }
 
-SliverList makeListProducts(
-    context, Order order, minTimes, maxTimes, bool isStore) {
+SliverList makeListProducts(context, Order order, minTimes, maxTimes,
+    bool isStore, BankAccount currentBankAccount, bool loadingPaymentMethod) {
   return SliverList(
       delegate: SliverChildListDelegate([
-    _buildProductsList(context, order, minTimes, maxTimes, isStore),
+    _buildProductsList(context, order, minTimes, maxTimes, isStore,
+        currentBankAccount, loadingPaymentMethod),
   ]));
 }
 
@@ -382,8 +411,8 @@ int totalPriceElements(Order order) => order.products.fold<int>(
           previousValue + (element.quantity * element.product.price),
     );
 
-Widget _buildProductsList(
-    context, Order order, minTimes, maxTimes, bool isStore) {
+Widget _buildProductsList(context, Order order, minTimes, maxTimes,
+    bool isStore, BankAccount currentBankAccount, bool loadingPaymentMethod) {
   final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
   final size = MediaQuery.of(context).size;
@@ -444,6 +473,9 @@ Widget _buildProductsList(
 
   final List<ProductElement> products = order.products;
 
+  final bankFind = storeProfileBloc.banksResults.value.firstWhere(
+      (item) => item.id == currentBankAccount.bankOfAccount,
+      orElse: () => null);
   return Padding(
     padding: const EdgeInsets.all(15.0),
     child: Card(
@@ -783,395 +815,571 @@ Widget _buildProductsList(
             padding: EdgeInsets.only(left: 20.0, right: 20.0),
             child: Divider(),
           ),
-          (!isStore)
-              ? StreamBuilder<CreditCard>(
-                  stream: cardBloc.cardselectedToPay.stream,
-                  builder: (context, AsyncSnapshot<CreditCard> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.active) {
-                      CreditCard cardSelected = snapshot.data;
-                      return (cardSelected != null)
-                          ? (cardSelected.id != '0' ||
-                                  order.creditCardClient != '0')
-                              ? Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 10),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        child: getCardTypeIcon(
-                                            (cardSelected.cardNumber != null)
-                                                ? cardSelected.cardNumber
-                                                : ''),
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Container(
-                                                child: Text(
-                                                  '${cardSelected.brand.toUpperCase()}',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 15),
-                                                ),
-                                              ),
-                                              Container(
-                                                child: Text(
-                                                    ' *${cardSelected.cardNumberHidden}',
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 14)),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Container(
-                                            child: Text(
-                                                '${cardSelected.cardHolderName}',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                    fontSize: 13,
-                                                    color: Colors.grey)),
-                                          ),
-                                        ],
-                                      ),
-                                      Spacer(),
-                                      GestureDetector(
-                                        onTap: () => {
-                                          Navigator.push(context,
-                                              paymentMethodsOptionsRoute(true))
-                                        },
-                                        child: Container(
-                                          padding: EdgeInsets.only(top: 10),
-                                          child: Text('Cambiar',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w700,
-                                                  fontSize: 14,
-                                                  color: currentTheme
-                                                      .primaryColor)),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )
-                              : Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 10),
-                                  child: Row(
-                                    children: [
-                                      Align(
-                                          alignment: Alignment.bottomLeft,
-                                          child: Container(
-                                            margin: EdgeInsets.only(right: 20),
-                                            padding: EdgeInsets.all(10),
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(100),
-                                                border: Border.all(
-                                                    width: 2,
-                                                    color: Colors.grey)),
-                                            child: Icon(
-                                              Icons.attach_money,
-                                              size: 30,
-                                              color: currentTheme.accentColor,
-                                            ),
-                                          )),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            child: Text(
-                                              'Pagar con efectivo',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                  color: Colors.white),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Container(
-                                            width: size.width / 2.1,
-                                            child: Text(
-                                              'Efectivo al momento de recibir el pedido.',
-                                              maxLines: 2,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.normal,
-                                                  fontSize: 14,
-                                                  color: Colors.grey),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Spacer(),
-                                      if (!order.isCancelByClient &&
-                                          !order.isCancelByStore &&
-                                          !order.isPreparation)
+          if (loadingPaymentMethod) buildLoadingWidget(context),
+          if (!loadingPaymentMethod)
+            (!isStore)
+                ? StreamBuilder<CreditCard>(
+                    stream: cardBloc.cardselectedToPay.stream,
+                    builder: (context, AsyncSnapshot<CreditCard> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.active) {
+                        CreditCard cardSelected = snapshot.data;
+                        return (cardSelected != null)
+                            ? (cardSelected.id != '0' &&
+                                    cardSelected.id != '1' &&
+                                    (currentBankAccount.id != '0'))
+                                ? Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
                                         Container(
-                                          alignment: Alignment.centerRight,
-                                          width: 40,
-                                          height: 40,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            color: currentTheme
-                                                .scaffoldBackgroundColor,
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Material(
-                                                color: currentTheme
-                                                    .scaffoldBackgroundColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                                child: InkWell(
-                                                  splashColor: Colors.grey,
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                  radius: 40,
-                                                  onTap: () {
-                                                    HapticFeedback
-                                                        .lightImpact();
-
-                                                    Navigator.push(
-                                                        context,
-                                                        paymentMethodsOptionsRoute(
-                                                            true));
-                                                  },
-                                                  highlightColor: Colors.grey,
-                                                  child: Container(
-                                                    margin: EdgeInsets.only(
-                                                        left: 5.0),
-                                                    alignment: Alignment.center,
-                                                    width: 34,
-                                                    height: 34,
-                                                    child: Icon(
-                                                      Icons.edit_outlined,
-                                                      color: currentTheme
-                                                          .primaryColor,
-                                                      size: 25,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                          child: getCardTypeIcon(
+                                              (cardSelected.cardNumber != null)
+                                                  ? cardSelected.cardNumber
+                                                  : ''),
                                         ),
-                                    ],
-                                  ),
-                                )
-                          : Container();
-                    } else {
-                      return Container();
-                    }
-                  })
-              : StreamBuilder<BankAccount>(
-                  stream: storeProfileBloc.bankAccount.stream,
-                  builder: (context, AsyncSnapshot<BankAccount> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.active) {
-                      BankAccount bankAccount = snapshot.data;
-
-                      final bankFind = storeProfileBloc.banksResults.value
-                          .firstWhere(
-                              (item) => item.id == bankAccount.bankOfAccount,
-                              orElse: () => null);
-
-                      return (bankAccount != null)
-                          ? (bankAccount.id != '0' &&
-                                  order.creditCardClient != 'cash')
-                              ? Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 10),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10.0)),
-                                            child: Container(
-                                                child: Image.asset(
-                                              bankFind.image,
-                                              height: 70,
-                                              width: 70,
-                                            )),
-                                          ),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                width: size.width / 1.9,
-                                                child: Text(
-                                                  '${bankFind.nameBank.toUpperCase()}',
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 15),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              Container(
-                                                child: Text(
-                                                    '*${bankAccount.numberAccount}',
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  child: Text(
+                                                    '${cardSelected.brand.toUpperCase()}',
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        fontSize: 14)),
-                                              ),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Container(
-                                                    child: Text(
-                                                        '${bankAccount.nameAccount.capitalize()}',
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            fontSize: 13,
-                                                            color:
-                                                                Colors.grey)),
+                                                        fontSize: 15),
                                                   ),
-                                                  SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  Container(
-                                                    child: Text(
-                                                        '${bankAccount.rutAccount}',
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            fontSize: 13,
-                                                            color:
-                                                                Colors.grey)),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Container(
-                                        child: Text(
-                                            '* Confirma el deposito en tu cuenta bancaria antes de preparar el pedido.',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 13,
-                                                color: Colors.grey)),
-                                      ),
-                                    ],
-                                  ))
-                              : (order.creditCardClient == 'cash')
-                                  ? Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 20, vertical: 10),
-                                      child: Row(
-                                        children: [
-                                          Align(
-                                              alignment: Alignment.bottomLeft,
-                                              child: Container(
-                                                margin:
-                                                    EdgeInsets.only(right: 20),
-                                                padding: EdgeInsets.all(10),
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            100),
-                                                    border: Border.all(
-                                                        width: 2,
-                                                        color: Colors.grey)),
-                                                child: Icon(
-                                                  Icons.attach_money,
-                                                  size: 30,
-                                                  color:
-                                                      currentTheme.accentColor,
                                                 ),
-                                              )),
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                child: Text(
-                                                  'Te Paga con efectivo',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 16,
-                                                      color: Colors.white),
+                                                Container(
+                                                  child: Text(
+                                                      ' *${cardSelected.cardNumberHidden}',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 14)),
                                                 ),
-                                              ),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              Container(
-                                                width: size.width / 2.1,
-                                                child: Text(
-                                                  'Efectivo al momento de entregar el pedido.',
-                                                  maxLines: 2,
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Container(
+                                              child: Text(
+                                                  '${cardSelected.cardHolderName}',
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.normal,
-                                                      fontSize: 14,
-                                                      color: Colors.grey),
+                                                      fontSize: 13,
+                                                      color: Colors.grey)),
+                                            ),
+                                          ],
+                                        ),
+                                        Spacer(),
+                                        GestureDetector(
+                                          onTap: () => {
+                                            Navigator.push(
+                                                context,
+                                                paymentMethodsOptionsRoute(
+                                                    true))
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.only(top: 10),
+                                            child: Text('Cambiar',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w700,
+                                                    fontSize: 14,
+                                                    color: currentTheme
+                                                        .primaryColor)),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                : (cardSelected.id == '0' ||
+                                        currentBankAccount.id == '0')
+                                    ? Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 10),
+                                        child: Row(
+                                          children: [
+                                            Align(
+                                                alignment: Alignment.bottomLeft,
+                                                child: Container(
+                                                  margin: EdgeInsets.only(
+                                                      right: 20),
+                                                  padding: EdgeInsets.all(10),
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              100),
+                                                      border: Border.all(
+                                                          width: 2,
+                                                          color: Colors.grey)),
+                                                  child: Icon(
+                                                    Icons.attach_money,
+                                                    size: 30,
+                                                    color: currentTheme
+                                                        .accentColor,
+                                                  ),
+                                                )),
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  child: Text(
+                                                    'Pagar con efectivo',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16,
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Container(
+                                                  width: size.width / 2.1,
+                                                  child: Text(
+                                                    'Efectivo al momento de recibir el pedido.',
+                                                    maxLines: 2,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        fontSize: 14,
+                                                        color: Colors.grey),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Spacer(),
+                                            if (!order.isCancelByClient &&
+                                                !order.isCancelByStore &&
+                                                !order.isPreparation &&
+                                                cardSelected.id != '0' &&
+                                                currentBankAccount.id != '0')
+                                              Container(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                width: 40,
+                                                height: 40,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                  color: currentTheme
+                                                      .scaffoldBackgroundColor,
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Material(
+                                                      color: currentTheme
+                                                          .scaffoldBackgroundColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                      child: InkWell(
+                                                        splashColor:
+                                                            Colors.grey,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20),
+                                                        radius: 40,
+                                                        onTap: () {
+                                                          HapticFeedback
+                                                              .lightImpact();
+
+                                                          Navigator.push(
+                                                              context,
+                                                              paymentMethodsOptionsRoute(
+                                                                  true));
+                                                        },
+                                                        highlightColor:
+                                                            Colors.grey,
+                                                        child: Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  left: 5.0),
+                                                          alignment:
+                                                              Alignment.center,
+                                                          width: 34,
+                                                          height: 34,
+                                                          child: Icon(
+                                                            Icons.edit_outlined,
+                                                            color: currentTheme
+                                                                .primaryColor,
+                                                            size: 25,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : Container()
-                          : Container();
-                    } else {
-                      return Container();
-                    }
-                  }),
+                                          ],
+                                        ),
+                                      )
+                                    : (cardSelected.id == '1')
+                                        ? Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 20),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  10.0)),
+                                                      child: Container(
+                                                          child: Image.asset(
+                                                        bankFind.image,
+                                                        height: 70,
+                                                        width: 70,
+                                                      )),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                          child: Text(
+                                                            'METODO DE PAGO',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                fontSize: 15,
+                                                                color: Colors
+                                                                    .grey),
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          width: size.width / 2,
+                                                          child: Text(
+                                                            '${bankFind.nameBank.toUpperCase()}',
+                                                            maxLines: 1,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal,
+                                                                fontSize: 15),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 5,
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            Container(
+                                                              child: Text(
+                                                                  '${currentBankAccount.nameAccount.capitalize()}',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .normal,
+                                                                      fontSize:
+                                                                          13,
+                                                                      color: Colors
+                                                                          .grey)),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 5,
+                                                        ),
+                                                        MaterialButton(
+                                                            materialTapTargetSize:
+                                                                MaterialTapTargetSize
+                                                                    .shrinkWrap,
+                                                            shape:
+                                                                StadiumBorder(),
+                                                            child: Text(
+                                                              'Ver datos',
+                                                              style: TextStyle(
+                                                                  color: currentTheme
+                                                                      .primaryColor,
+                                                                  fontSize: 15),
+                                                            ),
+                                                            onPressed: () {
+                                                              FocusScope.of(
+                                                                      context)
+                                                                  .requestFocus(
+                                                                      new FocusNode());
+
+                                                              Navigator.push(
+                                                                  context,
+                                                                  bankAccountStorePayment(
+                                                                      true));
+                                                            }),
+                                                      ],
+                                                    ),
+                                                    Spacer(),
+                                                    GestureDetector(
+                                                      onTap: () => {
+                                                        Navigator.push(
+                                                            context,
+                                                            paymentMethodsOptionsRoute(
+                                                                false))
+                                                      },
+                                                      child: Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 10),
+                                                        child: Text('Cambiar',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                fontSize: 14,
+                                                                color: currentTheme
+                                                                    .primaryColor)),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Container(
+                                                  child: Text(
+                                                      '* Deposita a esta cuenta el total para que la tienda confirme y preparen tu pedido.',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                          fontSize: 13,
+                                                          color: Colors.grey)),
+                                                ),
+                                              ],
+                                            ))
+                                        : Container()
+                            : Container();
+                      } else {
+                        return Container();
+                      }
+                    })
+                : StreamBuilder<BankAccount>(
+                    stream: storeProfileBloc.bankAccount.stream,
+                    builder: (context, AsyncSnapshot<BankAccount> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.active) {
+                        BankAccount bankAccount = snapshot.data;
+
+                        final bankFind = storeProfileBloc.banksResults.value
+                            .firstWhere(
+                                (item) => item.id == bankAccount.bankOfAccount,
+                                orElse: () => null);
+
+                        return (bankAccount != null)
+                            ? (bankAccount.id != '0' &&
+                                    order.creditCardClient != 'cash')
+                                ? Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 10),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10.0)),
+                                              child: Container(
+                                                  child: Image.asset(
+                                                bankFind.image,
+                                                height: 70,
+                                                width: 70,
+                                              )),
+                                            ),
+                                            SizedBox(
+                                              width: 20,
+                                            ),
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  width: size.width / 1.9,
+                                                  child: Text(
+                                                    '${bankFind.nameBank.toUpperCase()}',
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 15),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Container(
+                                                  child: Text(
+                                                      '*${bankAccount.numberAccount}',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 14)),
+                                                ),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      child: Text(
+                                                          '${bankAccount.nameAccount.capitalize()}',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                              fontSize: 13,
+                                                              color:
+                                                                  Colors.grey)),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 5,
+                                                    ),
+                                                    Container(
+                                                      child: Text(
+                                                          '${bankAccount.rutAccount}',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                              fontSize: 13,
+                                                              color:
+                                                                  Colors.grey)),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Container(
+                                          child: Text(
+                                              '* Confirma el deposito en tu cuenta bancaria antes de preparar el pedido.',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.normal,
+                                                  fontSize: 13,
+                                                  color: Colors.grey)),
+                                        ),
+                                      ],
+                                    ))
+                                : (order.creditCardClient == 'cash')
+                                    ? Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 10),
+                                        child: Row(
+                                          children: [
+                                            Align(
+                                                alignment: Alignment.bottomLeft,
+                                                child: Container(
+                                                  margin: EdgeInsets.only(
+                                                      right: 20),
+                                                  padding: EdgeInsets.all(10),
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              100),
+                                                      border: Border.all(
+                                                          width: 2,
+                                                          color: Colors.grey)),
+                                                  child: Icon(
+                                                    Icons.attach_money,
+                                                    size: 30,
+                                                    color: currentTheme
+                                                        .accentColor,
+                                                  ),
+                                                )),
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  child: Text(
+                                                    'Te Paga con efectivo',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16,
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Container(
+                                                  width: size.width / 2.1,
+                                                  child: Text(
+                                                    'Efectivo al momento de entregar el pedido.',
+                                                    maxLines: 2,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        fontSize: 14,
+                                                        color: Colors.grey),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : Container()
+                            : Container();
+                      } else {
+                        return Container();
+                      }
+                    }),
           if (order.isCancelByClient ||
               order.isCancelByStore ||
               order.isPreparation)

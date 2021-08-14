@@ -237,7 +237,7 @@ class StoreBLoC with ChangeNotifier {
 
   void currentBankAccountStorePaymentMethod(BankAccount bankAccount) {
     currentBankAccount = bankAccount;
-    //notifyListeners();
+    notifyListeners();
   }
 }
 

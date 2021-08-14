@@ -119,19 +119,6 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     _scrollController?.dispose();
   }
 
-  void _snapAppbar() {
-    final scrollDistance = maxHeight - minHeight;
-
-    if (_scrollController.offset > 0 &&
-        _scrollController.offset < scrollDistance) {
-      final double snapOffset =
-          _scrollController.offset / scrollDistance > 0.5 ? scrollDistance : 0;
-
-      Future.microtask(() => _scrollController.animateTo(snapOffset,
-          duration: Duration(milliseconds: 200), curve: Curves.easeIn));
-    }
-  }
-
   getCartSave() async {
     final bloc = Provider.of<GroceryStoreBLoC>(context, listen: false);
 
@@ -320,270 +307,258 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     return SafeArea(
       child: Scaffold(
           backgroundColor: currentTheme.scaffoldBackgroundColor,
-          body: NotificationListener<ScrollEndNotification>(
-            onNotification: (_) {
-              if (_scrollController.offset < 70 ||
-                  _scrollController.offset > 100) _snapAppbar();
-
-              return false;
-            },
-            child: RefreshIndicator(
-              color: currentTheme.accentColor,
-              onRefresh: () => pullToRefreshData(),
-              child: CustomScrollView(
-                physics: const BouncingScrollPhysics(
-                    parent: AlwaysScrollableScrollPhysics()),
-                controller: _scrollController,
-                slivers: [
-                  SliverAppBar(
-                    leadingWidth: 70,
-                    backgroundColor: currentTheme.scaffoldBackgroundColor,
-                    leading: Container(
-                        width: 100,
-                        height: 100,
-                        margin: EdgeInsets.only(left: 20, top: 10),
-                        child: GestureDetector(
-                          onTap: () {
-                            HapticFeedback.mediumImpact();
-                            if (storeAuth.user.uid == '0') {
-                              authService.redirect = 'profile';
-                              Navigator.push(context, loginRoute());
-                            } else {
-                              authService.redirect = 'home';
-                              Navigator.push(context, profileAuthRoute(true));
-                            }
-                          },
-                          child: Container(
-                              width: 100,
-                              height: 100,
-                              child: Hero(
-                                tag: 'user_auth_avatar',
-                                child: ClipRRect(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(100.0)),
-                                  child: (authService.storeAuth.imageAvatar !=
-                                          "")
-                                      ? Container(
-                                          width: 150,
-                                          height: 150,
-                                          child: cachedNetworkImage(
-                                            authService.storeAuth.imageAvatar,
-                                          ),
-                                        )
-                                      : Image.asset(currentProfile.imageAvatar),
-                                ),
-                              )),
-                        )),
-                    actions: [
-                      GestureDetector(
+          body: RefreshIndicator(
+            color: currentTheme.accentColor,
+            onRefresh: () => pullToRefreshData(),
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics()),
+              controller: _scrollController,
+              slivers: [
+                SliverAppBar(
+                  leadingWidth: 70,
+                  backgroundColor: currentTheme.scaffoldBackgroundColor,
+                  leading: Container(
+                      width: 100,
+                      height: 100,
+                      margin: EdgeInsets.only(left: 20, top: 10),
+                      child: GestureDetector(
                         onTap: () {
-                          HapticFeedback.lightImpact();
-                          Navigator.push(context, notificationsRoute());
+                          HapticFeedback.mediumImpact();
+                          if (storeAuth.user.uid == '0') {
+                            authService.redirect = 'profile';
+                            Navigator.push(context, loginRoute());
+                          } else {
+                            authService.redirect = 'home';
+                            Navigator.push(context, profileAuthRoute(true));
+                          }
                         },
                         child: Container(
-                          padding: EdgeInsets.only(right: 10, top: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              StreamBuilder(
-                                stream: notifiBloc.numberSteamNotifiBell,
-                                builder: (BuildContext context,
-                                    AsyncSnapshot snapshot) {
-                                  int number = (snapshot.data != null)
-                                      ? snapshot.data
-                                      : 0;
+                            width: 100,
+                            height: 100,
+                            child: Hero(
+                              tag: 'user_auth_avatar',
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(100.0)),
+                                child: (authService.storeAuth.imageAvatar != "")
+                                    ? Container(
+                                        width: 150,
+                                        height: 150,
+                                        child: cachedNetworkImage(
+                                          authService.storeAuth.imageAvatar,
+                                        ),
+                                      )
+                                    : Image.asset(currentProfile.imageAvatar),
+                              ),
+                            )),
+                      )),
+                  actions: [
+                    GestureDetector(
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.push(context, notificationsRoute());
+                      },
+                      child: Container(
+                        padding: EdgeInsets.only(right: 10, top: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            StreamBuilder(
+                              stream: notifiBloc.numberSteamNotifiBell,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot snapshot) {
+                                int number =
+                                    (snapshot.data != null) ? snapshot.data : 0;
 
-                                  return Container(
-                                    child: Swing(
-                                      animate: number > 0,
-                                      delay: Duration(seconds: 1),
-                                      controller: (controller) => Provider.of<
-                                              NotificationModel>(context)
-                                          .bounceControllerBell = controller,
-                                      child: Stack(
-                                        children: [
+                                return Container(
+                                  child: Swing(
+                                    animate: number > 0,
+                                    delay: Duration(seconds: 1),
+                                    controller: (controller) =>
+                                        Provider.of<NotificationModel>(context)
+                                            .bounceControllerBell = controller,
+                                    child: Stack(
+                                      children: [
+                                        Container(
+                                            padding: EdgeInsets.only(right: 8),
+                                            child: FaIcon(
+                                              FontAwesomeIcons.bell,
+                                              color: Colors.white,
+                                              size: 25,
+                                            )),
+                                        if (number > 0)
                                           Container(
-                                              padding:
-                                                  EdgeInsets.only(right: 8),
-                                              child: FaIcon(
-                                                FontAwesomeIcons.bell,
-                                                color: Colors.white,
-                                                size: 25,
-                                              )),
-                                          if (number > 0)
-                                            Container(
-                                              child: Container(
-                                                child: Text(
-                                                  '$number',
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 10,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                alignment: Alignment.center,
-                                                width: 15,
-                                                height: 15,
-                                                decoration: BoxDecoration(
-                                                    color: currentTheme
-                                                        .primaryColor,
-                                                    shape: BoxShape.circle),
+                                            child: Container(
+                                              child: Text(
+                                                '$number',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 10,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               ),
+                                              alignment: Alignment.center,
+                                              width: 15,
+                                              height: 15,
+                                              decoration: BoxDecoration(
+                                                  color:
+                                                      currentTheme.primaryColor,
+                                                  shape: BoxShape.circle),
                                             ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                              Swing(
-                                animate: isItems,
-                                delay: Duration(seconds: 1),
-                                controller: (controller) =>
-                                    Provider.of<NotificationModel>(context)
-                                        .bounceControllerBell = controller,
-                                child: GestureDetector(
-                                    onTap: () {
-                                      HapticFeedback.lightImpact();
-                                      showMaterialCupertinoBottomSheet(
-                                          context, 'hello', 'hello2');
-                                    },
-                                    child: Container(
-                                      padding:
-                                          EdgeInsets.only(top: isItems ? 0 : 5),
-                                      child: Stack(
-                                        children: [
-                                          Container(
-                                              child: Icon(
-                                            Icons.shopping_bag_outlined,
-                                            color: Colors.white,
-                                            size: 30,
-                                          )),
-                                          Container(
-                                            child: (groceryBloc
-                                                        .totalCartElements() >
-                                                    0)
-                                                ? Container(
-                                                    child: Text(
-                                                      groceryBloc.cart.length
-                                                          .toString(),
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                    alignment: Alignment.center,
-                                                    width: 15,
-                                                    height: 15,
-                                                    decoration: BoxDecoration(
-                                                        color:
-                                                            Color(0xff32D73F),
-                                                        shape: BoxShape.circle),
-                                                  )
-                                                : Container(),
                                           ),
-                                        ],
-                                      ),
-                                    )),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    ],
-                    stretch: true,
-                    expandedHeight: 180.0,
-                    collapsedHeight: 70,
-                    floating: false,
-                    pinned: true,
-                    flexibleSpace: FlexibleSpaceBar(
-                      stretchModes: [
-                        StretchMode.zoomBackground,
-                        StretchMode.fadeTitle,
-                        // StretchMode.blurBackground
-                      ],
-                      background: Material(
-                        type: MaterialType.transparency,
-                        child: Stack(
-                          children: <Widget>[
-                            Positioned.fill(
-                              child: AnimatedSwitcher(
-                                duration: Duration(milliseconds: 700),
-                                child: StoreServiceDetails(
-                                  key: Key(bloc.selected.name),
-                                  storeService: bloc.selected,
-                                ),
-                              ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            Swing(
+                              animate: isItems,
+                              delay: Duration(seconds: 1),
+                              controller: (controller) =>
+                                  Provider.of<NotificationModel>(context)
+                                      .bounceControllerBell = controller,
+                              child: GestureDetector(
+                                  onTap: () {
+                                    HapticFeedback.lightImpact();
+                                    showMaterialCupertinoBottomSheet(
+                                        context, 'hello', 'hello2');
+                                  },
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.only(top: isItems ? 0 : 5),
+                                    child: Stack(
+                                      children: [
+                                        Container(
+                                            child: Icon(
+                                          Icons.shopping_bag_outlined,
+                                          color: Colors.white,
+                                          size: 30,
+                                        )),
+                                        Container(
+                                          child: (groceryBloc
+                                                      .totalCartElements() >
+                                                  0)
+                                              ? Container(
+                                                  child: Text(
+                                                    groceryBloc.cart.length
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  alignment: Alignment.center,
+                                                  width: 15,
+                                                  height: 15,
+                                                  decoration: BoxDecoration(
+                                                      color: Color(0xff32D73F),
+                                                      shape: BoxShape.circle),
+                                                )
+                                              : Container(),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
                             ),
                           ],
                         ),
                       ),
-                      centerTitle: true,
-                      title: OpenContainer(
-                          closedElevation: 5,
-                          openElevation: 5,
-                          closedColor: (_showTitle)
-                              ? currentTheme.cardColor
-                              : Colors.black.withOpacity(0.20),
-                          openColor: (_showTitle)
-                              ? currentTheme.cardColor
-                              : Colors.black.withOpacity(0.20),
-                          transitionType: ContainerTransitionType.fade,
-                          openShape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          closedShape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          openBuilder: (_, closeContainer) {
-                            return SearchPrincipalPage();
-                          },
-                          closedBuilder: (_, openContainer) {
-                            return Container(child: MyTextField(_showTitle));
-                          }),
-                    ),
-                  ),
-                  if (orderClientActive.length > 0)
-                    makeListHorizontalCarouselOrdersProgress(
-                        context, orderClientActive),
-                  if (ordersStoreActive.length > 0)
-                    makeListHorizontalCarouselOrdersStoreProgress(
-                        context, ordersStoreActive),
-                  if (orderService.loading)
-                    SliverAppBar(
-                      automaticallyImplyLeading: false,
-                      expandedHeight: 150.0,
-                      collapsedHeight: 150.0,
-                      pinned: false,
-                      actionsIconTheme: IconThemeData(opacity: 0.0),
-                      flexibleSpace: Stack(
+                    )
+                  ],
+                  stretch: true,
+                  expandedHeight: 180.0,
+                  collapsedHeight: 70,
+                  floating: false,
+                  pinned: true,
+                  flexibleSpace: FlexibleSpaceBar(
+                    stretchModes: [
+                      StretchMode.zoomBackground,
+                      StretchMode.fadeTitle,
+                      // StretchMode.blurBackground
+                    ],
+                    background: Material(
+                      type: MaterialType.transparency,
+                      child: Stack(
                         children: <Widget>[
                           Positioned.fill(
-                            child: Material(
-                                type: MaterialType.transparency,
-                                child: Container(
-                                    color: currentTheme.scaffoldBackgroundColor,
-                                    child: FadeIn(
-                                      delay: Duration(milliseconds: 300),
-                                      child: StoreServicesList(
-                                        onPhotoSelected: (item) => {
-                                          _changeService(bloc, item.id),
-                                          setState(() {
-                                            HapticFeedback.lightImpact();
-                                            bloc.selected = item;
-                                          })
-                                        },
-                                      ),
-                                    ))),
-                          )
+                            child: AnimatedSwitcher(
+                              duration: Duration(milliseconds: 700),
+                              child: StoreServiceDetails(
+                                key: Key(bloc.selected.name),
+                                storeService: bloc.selected,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                  if (orderService.loading)
-                    makeHeaderTitle(context, bloc.selected.name),
-                  if (orderService.loading) makeListRecomendations(loading),
-                ],
-              ),
+                    centerTitle: true,
+                    title: OpenContainer(
+                        closedElevation: 5,
+                        openElevation: 5,
+                        closedColor: (_showTitle)
+                            ? currentTheme.cardColor
+                            : Colors.black.withOpacity(0.20),
+                        openColor: (_showTitle)
+                            ? currentTheme.cardColor
+                            : Colors.black.withOpacity(0.20),
+                        transitionType: ContainerTransitionType.fade,
+                        openShape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        closedShape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        openBuilder: (_, closeContainer) {
+                          return SearchPrincipalPage();
+                        },
+                        closedBuilder: (_, openContainer) {
+                          return Container(child: MyTextField(_showTitle));
+                        }),
+                  ),
+                ),
+                if (orderClientActive.length > 0)
+                  makeListHorizontalCarouselOrdersProgress(
+                      context, orderClientActive),
+                if (ordersStoreActive.length > 0)
+                  makeListHorizontalCarouselOrdersStoreProgress(
+                      context, ordersStoreActive),
+                if (orderService.loading)
+                  SliverAppBar(
+                    automaticallyImplyLeading: false,
+                    expandedHeight: 150.0,
+                    collapsedHeight: 150.0,
+                    pinned: false,
+                    actionsIconTheme: IconThemeData(opacity: 0.0),
+                    flexibleSpace: Stack(
+                      children: <Widget>[
+                        Positioned.fill(
+                          child: Material(
+                              type: MaterialType.transparency,
+                              child: Container(
+                                  color: currentTheme.scaffoldBackgroundColor,
+                                  child: FadeIn(
+                                    delay: Duration(milliseconds: 300),
+                                    child: StoreServicesList(
+                                      onPhotoSelected: (item) => {
+                                        _changeService(bloc, item.id),
+                                        setState(() {
+                                          HapticFeedback.lightImpact();
+                                          bloc.selected = item;
+                                        })
+                                      },
+                                    ),
+                                  ))),
+                        )
+                      ],
+                    ),
+                  ),
+                if (orderService.loading)
+                  makeHeaderTitle(context, bloc.selected.name),
+                if (orderService.loading) makeListRecomendations(loading),
+              ],
             ),
           )),
     );

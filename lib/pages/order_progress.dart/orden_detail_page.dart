@@ -29,6 +29,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+
 import 'package:flutter/services.dart';
 
 import 'package:intl/intl.dart';
@@ -656,17 +657,15 @@ Widget _buildProductsList(context) {
         }
 
         final bankAccountStoreCurrent =
-            (storeBloc.bankAccountsByStore.length < 0)
+            (storeBloc.bankAccountsByStore.length > 0)
                 ? storeBloc.bankAccountsByStore.firstWhere(
                     (item) => item.user == store.user.uid,
-                    orElse: () => null)
+                    orElse: () => BankAccount(id: '0', bankOfAccount: 'NONE'))
                 : BankAccount(id: '0', bankOfAccount: 'NONE');
 
         final bankFind = storeProfileBloc.banksResults.value.firstWhere(
             (item) => item.id == bankAccountStoreCurrent.bankOfAccount,
             orElse: () => null);
-
-        storeBloc.currentBankAccountStorePaymentMethod(bankAccountStoreCurrent);
 
         return FadeInLeft(
           delay: Duration(milliseconds: 100 * index),
@@ -929,18 +928,6 @@ Widget _buildProductsList(context) {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Container(
-                                            child: Text(
-                                              'METODO DE PAGO',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 15,
-                                                  color: Colors.grey),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
@@ -964,6 +951,16 @@ Widget _buildProductsList(context) {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
+                                                  Container(
+                                                    child: Text(
+                                                      'METODO DE PAGO',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 15,
+                                                          color: Colors.grey),
+                                                    ),
+                                                  ),
                                                   Row(
                                                     children: [
                                                       Container(
@@ -1006,6 +1003,9 @@ Widget _buildProductsList(context) {
                                               Spacer(),
                                               GestureDetector(
                                                 onTap: () => {
+                                                  storeBloc
+                                                      .currentBankAccountStorePaymentMethod(
+                                                          bankAccountStoreCurrent),
                                                   Navigator.push(
                                                       context,
                                                       paymentMethodsOptionsRoute(
@@ -1039,19 +1039,6 @@ Widget _buildProductsList(context) {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Container(
-                                                child: Text(
-                                                  'METODO DE PAGO',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      fontSize: 15,
-                                                      color: Colors.grey),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
                                               Row(
                                                 children: [
                                                   Align(
@@ -1087,11 +1074,23 @@ Widget _buildProductsList(context) {
                                                     children: [
                                                       Container(
                                                         child: Text(
-                                                          'Pagar con efectivo',
+                                                          'METODO DE PAGO',
                                                           style: TextStyle(
                                                               fontWeight:
                                                                   FontWeight
-                                                                      .bold,
+                                                                      .w500,
+                                                              fontSize: 15,
+                                                              color:
+                                                                  Colors.grey),
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        child: Text(
+                                                          'Pago en efectivo',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
                                                               fontSize: 16,
                                                               color:
                                                                   Colors.white),
@@ -1121,6 +1120,9 @@ Widget _buildProductsList(context) {
                                                       '0')
                                                     GestureDetector(
                                                       onTap: () => {
+                                                        storeBloc
+                                                            .currentBankAccountStorePaymentMethod(
+                                                                bankAccountStoreCurrent),
                                                         Navigator.push(
                                                             context,
                                                             paymentMethodsOptionsRoute(
@@ -1129,7 +1131,7 @@ Widget _buildProductsList(context) {
                                                       child: Container(
                                                         padding:
                                                             EdgeInsets.only(
-                                                                top: 10),
+                                                                top: 0),
                                                         child: Text('Cambiar',
                                                             style: TextStyle(
                                                                 fontWeight:
@@ -1155,19 +1157,6 @@ Widget _buildProductsList(context) {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Container(
-                                                    child: Text(
-                                                      'METODO DE PAGO',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          fontSize: 15,
-                                                          color: Colors.grey),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
                                                   Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment.start,
@@ -1199,6 +1188,18 @@ Widget _buildProductsList(context) {
                                                                 .start,
                                                         children: [
                                                           Container(
+                                                            child: Text(
+                                                              'METODO DE PAGO',
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  fontSize: 15,
+                                                                  color: Colors
+                                                                      .grey),
+                                                            ),
+                                                          ),
+                                                          Container(
                                                             width:
                                                                 size.width / 2,
                                                             child: Text(
@@ -1210,7 +1211,7 @@ Widget _buildProductsList(context) {
                                                               style: TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
-                                                                          .bold,
+                                                                          .normal,
                                                                   fontSize: 15),
                                                             ),
                                                           ),
@@ -1266,6 +1267,9 @@ Widget _buildProductsList(context) {
                                                       Spacer(),
                                                       GestureDetector(
                                                         onTap: () => {
+                                                          storeBloc
+                                                              .currentBankAccountStorePaymentMethod(
+                                                                  bankAccountStoreCurrent),
                                                           Navigator.push(
                                                               context,
                                                               paymentMethodsOptionsRoute(
@@ -1292,7 +1296,7 @@ Widget _buildProductsList(context) {
                                                   ),
                                                   Container(
                                                     child: Text(
-                                                        '* Deposita a esta cuenta el total para que confirmen y preparen tu pedido.',
+                                                        '* Deposita a esta cuenta el total para que la tienda confirme y preparen tu pedido.',
                                                         style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight

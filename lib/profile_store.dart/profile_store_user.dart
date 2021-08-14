@@ -109,7 +109,9 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
   void dispose() {
     textCtrl.text = "";
     textCtrl.clear();
-    // _animationController.dispose();
+    _animationController.dispose();
+
+    _bloc.scrollController.dispose();
 
     super.dispose();
   }
@@ -143,12 +145,18 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
               headerSliverBuilder: (context, value) {
                 return [
                   SliverPersistentHeader(
+                    delegate: _SearchMenuStoreHeader(
+                      bloc: _bloc,
+                    ),
+                    pinned: true,
+                  ),
+                  SliverPersistentHeader(
                     delegate: _ProfileStoreHeader(
                         bloc: _bloc,
                         animationController: _animationController,
                         isAuthUser: widget.isAuthUser,
                         store: widget.store),
-                    pinned: true,
+                    pinned: false,
                   ),
                   SliverPersistentHeader(
                     pinned: true,
@@ -185,6 +193,7 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
               body: (!loading)
                   ? Container(
                       child: ListView.builder(
+                        primary: false,
                         controller: _bloc.scrollController,
                         itemCount: _bloc.items.length,
                         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -281,10 +290,6 @@ class __ProfileStoreProductItemState extends State<_ProfileStoreProductItem> {
     final priceformat =
         NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
             .format(widget.product.price);
-
-    /*  final itemInCart = groceryBloc.cart.firstWhere(
-        (item) => item.product.id == widget.product.id,
-        orElse: () => null); */
 
     return GestureDetector(
       onTap: () async {
@@ -391,125 +396,6 @@ class __ProfileStoreProductItemState extends State<_ProfileStoreProductItem> {
                               fontWeight: FontWeight.bold,
                             ),
                           )
-
-                          /*
-                          Spacer(),
-                          (itemInCart == null)
-                              ? SizedBox(
-                                  height: 30,
-                                  child: Container(
-                                    child: ElevatedButton(
-                                        onPressed: () {
-                                          
-                                          
-                                          
-
-                                          groceryBloc.addProduct(
-                                              widget.product,
-                                              (itemInCart != null)
-                                                  ? itemInCart.quantity
-                                                  : 1);
-                                          HapticFeedback.lightImpact();
-                                          _listenNotification(context);
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          elevation: 5.0,
-                                          fixedSize:
-                                              Size.fromWidth(size.width / 4),
-                                          primary: currentTheme
-                                              .currentTheme.primaryColor,
-                                          shape: new RoundedRectangleBorder(
-                                            borderRadius:
-                                                new BorderRadius.circular(30.0),
-                                          ),
-                                        ),
-                                        child: Text('Agregar',
-                                            style: TextStyle(fontSize: 15))),
-                                  ),
-                                )
-                              : Container(
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(25),
-                                    color: Colors.grey[200],
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      (itemInCart.quantity == 1)
-                                          ? Container(
-                                              padding:
-                                                  EdgeInsets.only(right: 0),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  HapticFeedback.lightImpact();
-                                                  groceryBloc.deleteProduct(
-                                                      itemInCart);
-                                                },
-                                                child: Icon(
-                                                  Icons.delete_outline,
-                                                  color: Colors.black,
-                                                  size: 20,
-                                                ),
-                                              ),
-                                            )
-                                          : Container(
-                                              padding:
-                                                  EdgeInsets.only(right: 0),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  HapticFeedback.lightImpact();
-                                                  if (itemInCart.quantity > 0) {
-                                                    groceryBloc.addProduct(
-                                                        widget.product, -1);
-                                                  }
-                                                },
-                                                child: Icon(
-                                                  Icons.remove,
-                                                  color: Colors.black,
-                                                  size: 25,
-                                                ),
-                                              ),
-                                            ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(right: 10),
-                                        child: Text(
-                                          itemInCart.quantity.toString(),
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 16,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          HapticFeedback.lightImpact();
-
-                                          groceryBloc.addProduct(
-                                              widget.product, 1);
-                                        },
-                                        child: Container(
-                                          child: Icon(
-                                            Icons.add,
-                                            color: Colors.black,
-                                            size: 20,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                */
                         ],
                       )
                     ],
@@ -534,7 +420,7 @@ const List<Color> gradients = [
   Color(0xffFEB42C),
 ];
 
-const _maxHeaderExtent = 410.0;
+const _maxHeaderExtent = 340.0;
 const _minHeaderExtent = 200.0;
 
 const _maxImageSize = 160.0;
@@ -544,7 +430,7 @@ const _leftMarginDisc = 100.0;
 
 const _bottomMarginDisc = 150.0;
 
-const _bottomMarginName = 270.0;
+const _bottomMarginName = 210.0;
 
 const _maxTitleSize = 25.0;
 const _maxSubTitleSize = 18.0;
@@ -552,52 +438,24 @@ const _maxSubTitleSize = 18.0;
 const _minTitleSize = 16.0;
 const _minSubTitleSize = 12.0;
 
-class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
-  _ProfileStoreHeader(
-      {this.bloc,
-      this.animationController,
-      this.isAuthUser,
-      @required this.store});
-  final AnimationController animationController;
+class _SearchMenuStoreHeader extends SliverPersistentHeaderDelegate {
+  _SearchMenuStoreHeader({
+    this.bloc,
+  });
 
   final TabsViewScrollBLoC bloc;
-
-  final bool isAuthUser;
-  final Store store;
 
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     final currentTheme = Provider.of<ThemeChanger>(context);
 
-    final followService = Provider.of<FollowService>(context);
-
-    final percent = 1 -
-        ((maxExtent - shrinkOffset - minExtent) / (maxExtent - minExtent))
-            .clamp(0.0, 1.0);
     final size = MediaQuery.of(context).size;
-    final currentImageSize = (_maxImageSize * (1 - percent)).clamp(
-      _minImageSize,
-      _maxImageSize,
-    );
-    final titleSize = (_maxTitleSize * (1.75 - percent)).clamp(
-      _minTitleSize,
-      _maxTitleSize,
-    );
-
-    final subTitleSize = (_maxSubTitleSize * (1.80 - percent)).clamp(
-      _minSubTitleSize,
-      _maxSubTitleSize,
-    );
-
-    final maxMargin = size.width / 4;
-    final textMovement = 5.0;
-    final leftTextMargin = maxMargin + (textMovement * percent);
-
-    final username = store.user.username;
 
     return GestureDetector(
-      onTap: () => bloc.snapAppbar(),
+      onTap: () => {
+        bloc.snapAppbar(),
+      },
       child: Container(
         color: currentTheme.currentTheme.scaffoldBackgroundColor,
         child: Stack(
@@ -622,6 +480,7 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
               height: 40,
               child: GestureDetector(
                 onTap: () => {
+                  bloc.hiddenHeader(),
                   FocusScope.of(context).requestFocus(_focusNode),
                 },
                 child: Container(
@@ -634,8 +493,11 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                         Expanded(
                           child: Container(
                             width: size.width,
-                            padding: EdgeInsets.only(top: 20, left: 10),
+                            padding: EdgeInsets.only(top: 20, left: 20),
                             child: TextField(
+                              onTap: () {
+                                bloc.hiddenHeader();
+                              },
                               style: TextStyle(color: Colors.white),
                               inputFormatters: [
                                 new LengthLimitingTextInputFormatter(20),
@@ -707,6 +569,72 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                     )),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  double get maxExtent => 70;
+
+  @override
+  double get minExtent => 70;
+
+  @override
+  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => false;
+}
+
+class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
+  _ProfileStoreHeader(
+      {this.bloc,
+      this.animationController,
+      this.isAuthUser,
+      @required this.store});
+  final AnimationController animationController;
+
+  final TabsViewScrollBLoC bloc;
+
+  final bool isAuthUser;
+  final Store store;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    final currentTheme = Provider.of<ThemeChanger>(context);
+
+    final followService = Provider.of<FollowService>(context);
+
+    final percent = 1 -
+        ((maxExtent - shrinkOffset - minExtent) / (maxExtent - minExtent))
+            .clamp(0.0, 1.0);
+    final size = MediaQuery.of(context).size;
+    final currentImageSize = (_maxImageSize * (1 - percent)).clamp(
+      _minImageSize,
+      _maxImageSize,
+    );
+    final titleSize = (_maxTitleSize * (1.75 - percent)).clamp(
+      _minTitleSize,
+      _maxTitleSize,
+    );
+
+    final subTitleSize = (_maxSubTitleSize * (1.80 - percent)).clamp(
+      _minSubTitleSize,
+      _maxSubTitleSize,
+    );
+
+    final maxMargin = size.width / 4;
+    final textMovement = 5.0;
+    final leftTextMargin = maxMargin + (textMovement * percent);
+
+    final username = store.user.username;
+
+    return GestureDetector(
+      onTap: () => bloc.snapAppbar(),
+      child: Container(
+        color: currentTheme.currentTheme.scaffoldBackgroundColor,
+        child: Stack(
+          children: <Widget>[
             Positioned(
               top: (_bottomMarginName * (1 - percent))
                   .clamp(75.0, _bottomMarginName),
@@ -790,30 +718,6 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                         : Image.asset(currentProfile.imageAvatar),
                   ),
                 )),
-            /*  Positioned(
-              right: 40,
-              top: 18.0,
-              child: IconButton(
-                icon: Icon(Icons.share,
-                    color: currentTheme.currentTheme.primaryColor),
-                iconSize: 25,
-                onPressed: () => Navigator.pop(context),
-                color: Colors.blueAccent,
-              ),
-            ), */
-            Positioned(
-              right: 0,
-              top: 18.0,
-              child: IconButton(
-                icon: Icon(Icons.menu,
-                    color: currentTheme.currentTheme.primaryColor),
-                iconSize: 30,
-                onPressed: () =>
-                    //  Navigator.pushReplacement(context, createRouteProfile()),
-                    Navigator.pop(context),
-                color: Colors.blueAccent,
-              ),
-            ),
           ],
         ),
       ),
