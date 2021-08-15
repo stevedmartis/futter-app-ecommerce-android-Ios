@@ -29,9 +29,9 @@ elevatedButtonCustom(
       side: MaterialStateProperty.resolveWith<BorderSide>(
           (Set<MaterialState> states) {
         final Color color = states.contains(MaterialState.pressed)
-            ? currentTheme.accentColor
+            ? currentTheme.primaryColor
             : (isAccent)
-                ? currentTheme.accentColor
+                ? currentTheme.primaryColor
                 : (isEdit)
                     ? Colors.grey
                     : isDelete || isCancel

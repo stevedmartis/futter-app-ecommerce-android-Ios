@@ -66,6 +66,7 @@ class _PrincipalPageState extends State<PrincipalPage>
 
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
     final cardBloc = Provider.of<CreditCardServices>(context, listen: false);
+    final orderService = Provider.of<OrderService>(context, listen: false);
 
     storeAuth = authService.storeAuth;
 
@@ -91,6 +92,10 @@ class _PrincipalPageState extends State<PrincipalPage>
     } else if (prefs.addressSearchSave != '') {
       storesByLocationlistServices(
           prefs.addressSearchSave.secondaryText, storeAuth.user.uid);
+
+      Timer(new Duration(milliseconds: 0), () {
+        orderService.loading = true;
+      });
     } else {}
 
     if (!isWeb) locationStatus();
