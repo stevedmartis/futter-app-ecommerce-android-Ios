@@ -29,6 +29,8 @@ import 'package:provider/provider.dart';
 import '../../global/extension.dart';
 
 class OrderListPage extends StatefulWidget {
+  OrderListPage({this.fromOrderPage = false});
+  final bool fromOrderPage;
   @override
   _OrderListPageState createState() => _OrderListPageState();
 }
@@ -132,6 +134,7 @@ class _OrderListPageState extends State<OrderListPage> {
               showTitle: _showTitle,
               title: title,
               leading: true,
+              goToPrinipal: widget.fromOrderPage,
               action: Container(),
               onPress: () => {
 /*                         Navigator.of(context).push(createRouteAddEditProduct(

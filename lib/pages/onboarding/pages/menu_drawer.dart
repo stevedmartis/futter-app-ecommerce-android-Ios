@@ -48,7 +48,7 @@ class PrincipalMenu extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     HapticFeedback.lightImpact();
-                    Navigator.push(context, ordersListRoute());
+                    Navigator.push(context, ordersListRoute(false));
                   },
                   child: ListTile(
                     leading: Icon(Icons.history,
