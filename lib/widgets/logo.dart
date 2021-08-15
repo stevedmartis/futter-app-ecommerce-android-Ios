@@ -1,25 +1,27 @@
 import 'dart:math';
 
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 
-class Logo extends StatelessWidget {
+class LogoFreeily extends StatelessWidget {
   final Color color;
   final double size;
 
-  const Logo({
+  const LogoFreeily({
     @required this.color,
     @required this.size,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Transform.rotate(
-      angle: -pi / 4,
-      child: Icon(
-        Icons.storefront,
-        color: color,
-        size: size,
-      ),
+    return SlideInUp(
+      child: Container(
+          width: 60,
+          height: 60,
+          child: Image.asset(
+            'assets/icons/freeily-short.png',
+            fit: BoxFit.cover,
+          )),
     );
   }
 }

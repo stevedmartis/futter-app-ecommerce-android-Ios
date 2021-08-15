@@ -80,8 +80,9 @@ class _PrincipalPageState extends State<PrincipalPage>
       Timer(new Duration(milliseconds: 0), () {
         if (storeAuth.service != 0) {
           _myOrdersStore();
-          getbankAccountByUser(storeAuth.user.uid);
         }
+
+        getbankAccountByUser(storeAuth.user.uid);
       });
 
       _myOrdersClient();
@@ -116,7 +117,8 @@ class _PrincipalPageState extends State<PrincipalPage>
     if (resp.ok) {
       storeProfileBloc.setBankAccount = resp.bankAccount;
     } else {
-      storeProfileBloc.setBankAccount = BankAccount(id: '0');
+      storeProfileBloc.setBankAccount =
+          BankAccount(id: '0', bankOfAccount: 'NONE');
     }
   }
 

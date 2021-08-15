@@ -16,25 +16,30 @@ class Header extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: kPaddingL),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          const Logo(
-            color: kBlue,
-            size: 48.0,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              const LogoFreeily(
+                color: kBlue,
+                size: 50.0,
+              ),
+              const SizedBox(height: kSpaceM),
+              FadeSlideTransition(
+                animation: animation,
+                additionalOffset: 0.0,
+                child: Text(
+                  'Crear cuenta Freeily',
+                  style: Theme.of(context).textTheme.headline5.copyWith(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: kSpaceM),
-          FadeSlideTransition(
-            animation: animation,
-            additionalOffset: 0.0,
-            child: Text(
-              'Crea tu cuenta en Freeily!',
-              style: Theme.of(context)
-                  .textTheme
-                  .headline5
-                  .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
+          const SizedBox(
+            height: kSpaceS,
           ),
-          const SizedBox(height: kSpaceS),
           FadeSlideTransition(
             animation: animation,
             additionalOffset: 16.0,

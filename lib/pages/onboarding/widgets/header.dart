@@ -36,7 +36,7 @@ class Header extends StatelessWidget {
         GestureDetector(
           onTap: onSkip,
           child: Text(
-            'Skip',
+            'Saltar',
             style: Theme.of(context).textTheme.subtitle1.copyWith(
                   color: Colors.black,
                 ),

@@ -101,8 +101,8 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
     final size = MediaQuery.of(context).size;
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
-    Color gradientStart = Color(0xffFF8236); //Change start gradient color here
-    Color gradientEnd = currentTheme.accentColor;
+    Color gradientStart = Color(0xFF00FF00); //Change start gradient color here
+    Color gradientEnd = currentTheme.primaryColor;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: currentTheme.scaffoldBackgroundColor,
@@ -120,7 +120,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                 );
               },
               child:
-                  Container(color: currentTheme.accentColor.withOpacity(0.10)),
+                  Container(color: currentTheme.primaryColor.withOpacity(0.10)),
             ),
             AnimatedBuilder(
                 animation: _greyTopClipperAnimation,
@@ -156,12 +156,12 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
             ),
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: kPaddingL),
+                padding: EdgeInsets.symmetric(vertical: kPaddingL),
                 child: Column(
                   children: <Widget>[
                     Header(animation: _headerTextAnimation),
                     SizedBox(
-                      height: size.height / 4.1,
+                      height: size.height / 3.5,
                     ),
                     LoginForm(animation: _formElementAnimation),
                   ],

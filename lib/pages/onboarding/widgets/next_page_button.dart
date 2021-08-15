@@ -16,17 +16,11 @@ class NextPageButton extends StatelessWidget {
       shape: const CircleBorder(),
       fillColor: Color(0xFF131313),
       onPressed: onPressed,
-      child: (currentPage == 3)
-          ? Icon(
-              Icons.play_arrow,
-              color: Colors.orange,
-              size: 32.0,
-            )
-          : Icon(
-              Icons.chevron_right,
-              color: Colors.orange,
-              size: 32.0,
-            ),
+      child: Icon(
+        Icons.chevron_right,
+        color: Colors.orange,
+        size: 32.0,
+      ),
     );
   }
 }

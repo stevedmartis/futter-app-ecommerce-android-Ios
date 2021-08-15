@@ -466,19 +466,15 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                         Expanded(
                           child: Container(
                             width: size.width,
-                            padding: EdgeInsets.only(top: 20, left: 10),
+                            padding: EdgeInsets.only(top: 20, left: 20),
                             child: TextField(
                               style: TextStyle(color: Colors.white),
                               inputFormatters: [
                                 new LengthLimitingTextInputFormatter(20),
                               ],
                               focusNode: _focusNode,
-
                               controller: textCtrl,
-                              //  keyboardType: TextInputType.emailAddress,
-
                               maxLines: 1,
-
                               decoration: InputDecoration(
                                 fillColor: Colors.white,
                                 enabledBorder: UnderlineInputBorder(

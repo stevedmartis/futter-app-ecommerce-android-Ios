@@ -101,8 +101,8 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
             backgroundColor: currentTheme.scaffoldBackgroundColor,
             body: Container(
               padding: EdgeInsets.only(
-                left: 10,
-                right: 10,
+                left: 20,
+                right: 20,
               ),
               child: GestureDetector(
                   onTap: () =>
@@ -304,7 +304,6 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
         final currentTheme = Provider.of<ThemeChanger>(context);
 
         return Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
           child: TextField(
             enabled: false,
             style: TextStyle(

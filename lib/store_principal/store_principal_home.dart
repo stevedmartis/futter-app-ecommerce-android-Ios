@@ -423,8 +423,10 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                               child: GestureDetector(
                                   onTap: () {
                                     HapticFeedback.lightImpact();
-                                    showMaterialCupertinoBottomSheet(
-                                        context, 'hello', 'hello2');
+
+                                    if (bloc.loadingStores)
+                                      showMaterialCupertinoBottomSheet(
+                                          context, 'hello', 'hello2');
                                   },
                                   child: Container(
                                     padding:
