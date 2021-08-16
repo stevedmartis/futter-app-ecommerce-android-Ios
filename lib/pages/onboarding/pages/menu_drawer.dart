@@ -1,23 +1,21 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
-import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
+
 import 'package:australti_ecommerce_app/routes/routes.dart';
-import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
+
 import 'package:australti_ecommerce_app/theme/theme.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:universal_platform/universal_platform.dart';
+
 import '../../../global/extension.dart';
 
 class PrincipalMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final prefs = new AuthUserPreferences();
-
     final size = MediaQuery.of(context).size;
 
-    final socketService = Provider.of<SocketService>(context);
+    // final socketService = Provider.of<SocketService>(context);
     final authService = Provider.of<AuthenticationBLoC>(context);
     final currentTheme = Provider.of<ThemeChanger>(context);
     final profile = authService.storeAuth;
@@ -39,9 +37,7 @@ class PrincipalMenu extends StatelessWidget {
                         : 'Hola,  ${profile.name.capitalize()}',
                     style: TextStyle(
                       fontSize: 20,
-                      color: (currentTheme.customTheme)
-                          ? Colors.white
-                          : Colors.black,
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -52,18 +48,16 @@ class PrincipalMenu extends StatelessWidget {
                   },
                   child: ListTile(
                     leading: Icon(Icons.history,
-                        color: currentTheme.currentTheme.accentColor),
+                        color: currentTheme.currentTheme.primaryColor),
                     title: Text(
                       'Mis pedidos',
                       style: TextStyle(
-                        color: (currentTheme.customTheme)
-                            ? Colors.white
-                            : Colors.black,
+                        color: Colors.white,
                       ),
                     ),
                   ),
                 ),
-                GestureDetector(
+                /* GestureDetector(
                   onTap: () {
                     HapticFeedback.lightImpact();
                     Navigator.push(context, myCardsRoute());
@@ -80,12 +74,12 @@ class PrincipalMenu extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
+                ), */
                 SizedBox(
                   height: size.height / 1.7,
                 ),
                 Divider(),
-                GestureDetector(
+                /* GestureDetector(
                   onTap: () {
                     HapticFeedback.heavyImpact();
                     socketService.disconnect();
@@ -109,7 +103,7 @@ class PrincipalMenu extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
+                ), */
               ],
             ),
           ),

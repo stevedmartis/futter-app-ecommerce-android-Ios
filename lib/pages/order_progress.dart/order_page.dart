@@ -473,9 +473,6 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
 
   final List<ProductElement> products = order.products;
 
-  final bankFind = storeProfileBloc.banksResults.value.firstWhere(
-      (item) => item.id == currentBankAccount.bankOfAccount,
-      orElse: () => null);
   return Padding(
     padding: const EdgeInsets.all(15.0),
     child: Card(
@@ -969,10 +966,10 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                                             ),
                                             Spacer(),
                                             if (!order.isCancelByClient &&
-                                                !order.isCancelByStore &&
-                                                !order.isPreparation &&
-                                                cardSelected.id != '0' &&
-                                                currentBankAccount.id != '0')
+                                                    !order.isCancelByStore &&
+                                                    !order.isPreparation &&
+                                                    cardSelected.id == '0' ||
+                                                currentBankAccount.id == '0')
                                               Container(
                                                 alignment:
                                                     Alignment.centerRight,
@@ -1006,7 +1003,7 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                                                           Navigator.push(
                                                               context,
                                                               paymentMethodsOptionsRoute(
-                                                                  true));
+                                                                  false));
                                                         },
                                                         highlightColor:
                                                             Colors.grey,
@@ -1033,10 +1030,11 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                                           ],
                                         ),
                                       )
-                                    : (cardSelected.id == '1')
+                                    : (cardSelected.id == '1' ||
+                                            currentBankAccount.id != '0')
                                         ? Container(
                                             padding: EdgeInsets.symmetric(
-                                                horizontal: 20),
+                                                horizontal: 10, vertical: 10),
                                             child: Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.start,
@@ -1049,20 +1047,35 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  10.0)),
-                                                      child: Container(
-                                                          child: Image.asset(
-                                                        bankFind.image,
-                                                        height: 70,
-                                                        width: 70,
-                                                      )),
-                                                    ),
+                                                    Align(
+                                                        alignment: Alignment
+                                                            .bottomLeft,
+                                                        child: Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  right: 20),
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  10),
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          100),
+                                                              border: Border.all(
+                                                                  width: 2,
+                                                                  color: Colors
+                                                                      .grey)),
+                                                          child: Icon(
+                                                            Icons
+                                                                .account_balance,
+                                                            size: 30,
+                                                            color: currentTheme
+                                                                .accentColor,
+                                                          ),
+                                                        )),
                                                     SizedBox(
-                                                      width: 10,
+                                                      width: 5,
                                                     ),
                                                     Column(
                                                       mainAxisAlignment:
@@ -1087,7 +1100,7 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                                                         Container(
                                                           width: size.width / 2,
                                                           child: Text(
-                                                            '${bankFind.nameBank.toUpperCase()}',
+                                                            'Deposito bancario',
                                                             maxLines: 1,
                                                             overflow:
                                                                 TextOverflow
@@ -1098,25 +1111,6 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                                                                         .normal,
                                                                 fontSize: 15),
                                                           ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 5,
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            Container(
-                                                              child: Text(
-                                                                  '${currentBankAccount.nameAccount.capitalize()}',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .normal,
-                                                                      fontSize:
-                                                                          13,
-                                                                      color: Colors
-                                                                          .grey)),
-                                                            ),
-                                                          ],
                                                         ),
                                                         SizedBox(
                                                           height: 5,
@@ -1143,45 +1137,85 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                                                               Navigator.push(
                                                                   context,
                                                                   bankAccountStorePayment(
-                                                                      true));
+                                                                      false));
                                                             }),
                                                       ],
                                                     ),
                                                     Spacer(),
-                                                    GestureDetector(
-                                                      onTap: () => {
-                                                        Navigator.push(
-                                                            context,
-                                                            paymentMethodsOptionsRoute(
-                                                                false))
-                                                      },
-                                                      child: Container(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                top: 10),
-                                                        child: Text('Cambiar',
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700,
-                                                                fontSize: 14,
-                                                                color: currentTheme
-                                                                    .primaryColor)),
+                                                    if (!order
+                                                            .isCancelByClient &&
+                                                        !order
+                                                            .isCancelByStore &&
+                                                        !order.isPreparation)
+                                                      Container(
+                                                        alignment: Alignment
+                                                            .centerRight,
+                                                        width: 40,
+                                                        height: 40,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(20),
+                                                          color: currentTheme
+                                                              .scaffoldBackgroundColor,
+                                                        ),
+                                                        child: Row(
+                                                          children: [
+                                                            Material(
+                                                              color: currentTheme
+                                                                  .scaffoldBackgroundColor,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20),
+                                                              child: InkWell(
+                                                                splashColor:
+                                                                    Colors.grey,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            20),
+                                                                radius: 40,
+                                                                onTap: () {
+                                                                  HapticFeedback
+                                                                      .lightImpact();
+
+                                                                  storeBloc
+                                                                      .currentBankAccountStorePaymentMethod(
+                                                                          currentBankAccount);
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      paymentMethodsOptionsRoute(
+                                                                          false));
+                                                                },
+                                                                highlightColor:
+                                                                    Colors.grey,
+                                                                child:
+                                                                    Container(
+                                                                  margin: EdgeInsets
+                                                                      .only(
+                                                                          left:
+                                                                              5.0),
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .center,
+                                                                  width: 34,
+                                                                  height: 34,
+                                                                  child: Icon(
+                                                                    Icons
+                                                                        .edit_outlined,
+                                                                    color: currentTheme
+                                                                        .primaryColor,
+                                                                    size: 25,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
-                                                    )
                                                   ],
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Container(
-                                                  child: Text(
-                                                      '* Deposita a esta cuenta el total para que la tienda confirme y preparen tu pedido.',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                          fontSize: 13,
-                                                          color: Colors.grey)),
                                                 ),
                                               ],
                                             ))

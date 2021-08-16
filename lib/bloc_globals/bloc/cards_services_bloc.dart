@@ -44,10 +44,10 @@ class CreditCardServices with ChangeNotifier {
       myCards = cardsResponse.cards;
 
       if (myCards.length > 0) {
-        CreditCard cardSelect =
+        /*  CreditCard cardSelect =
             cardsResponse.cards.firstWhere((item) => item.isSelect);
-
-        changeCardSelectToPay(cardSelect);
+ */
+        changeCardSelectToPay(CreditCard(id: '0'));
         notifyListeners();
       } else {
         changeCardSelectToPay(null);

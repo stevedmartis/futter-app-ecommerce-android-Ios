@@ -1,7 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc/cards_services_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/bloc/store_profile.dart';
+
 import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
 import 'package:australti_ecommerce_app/models/credit_Card.dart';
 import 'package:australti_ecommerce_app/models/place_Search.dart';
@@ -663,10 +663,6 @@ Widget _buildProductsList(context) {
                     orElse: () => BankAccount(id: '0', bankOfAccount: 'NONE'))
                 : BankAccount(id: '0', bankOfAccount: 'NONE');
 
-        final bankFind = storeProfileBloc.banksResults.value.firstWhere(
-            (item) => item.id == bankAccountStoreCurrent.bankOfAccount,
-            orElse: () => null);
-
         return FadeInLeft(
           delay: Duration(milliseconds: 100 * index),
           child: Padding(
@@ -1164,18 +1160,33 @@ Widget _buildProductsList(context) {
                                                         CrossAxisAlignment
                                                             .start,
                                                     children: [
-                                                      ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    10.0)),
-                                                        child: Container(
-                                                            child: Image.asset(
-                                                          bankFind.image,
-                                                          height: 70,
-                                                          width: 70,
-                                                        )),
-                                                      ),
+                                                      Align(
+                                                          alignment: Alignment
+                                                              .bottomLeft,
+                                                          child: Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    right: 20),
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    10),
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            100),
+                                                                border: Border.all(
+                                                                    width: 2,
+                                                                    color: Colors
+                                                                        .grey)),
+                                                            child: Icon(
+                                                              Icons
+                                                                  .account_balance,
+                                                              size: 30,
+                                                              color: currentTheme
+                                                                  .accentColor,
+                                                            ),
+                                                          )),
                                                       SizedBox(
                                                         width: 10,
                                                       ),
@@ -1203,7 +1214,7 @@ Widget _buildProductsList(context) {
                                                             width:
                                                                 size.width / 2,
                                                             child: Text(
-                                                              '${bankFind.nameBank.toUpperCase()}',
+                                                              'Deposito bancario',
                                                               maxLines: 1,
                                                               overflow:
                                                                   TextOverflow
@@ -1217,22 +1228,6 @@ Widget _buildProductsList(context) {
                                                           ),
                                                           SizedBox(
                                                             height: 5,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              Container(
-                                                                child: Text(
-                                                                    '${bankAccountStoreCurrent.nameAccount.capitalize()}',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .normal,
-                                                                        fontSize:
-                                                                            13,
-                                                                        color: Colors
-                                                                            .grey)),
-                                                              ),
-                                                            ],
                                                           ),
                                                           SizedBox(
                                                             height: 5,
@@ -1296,7 +1291,7 @@ Widget _buildProductsList(context) {
                                                   ),
                                                   Container(
                                                     child: Text(
-                                                        '* Deposita a esta cuenta el total para que la tienda confirme y preparen tu pedido.',
+                                                        '* Tansfiere desde tu banco a la cuenta de la tienda el total indicado.',
                                                         style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight
@@ -1452,9 +1447,6 @@ Widget getCardTypeIcon(String cardNumber) {
 }
 
 SliverToBoxAdapter orderDetailInfo(context) {
-  final currentTheme = Provider.of<ThemeChanger>(context);
-
-  final size = MediaQuery.of(context).size;
   final bloc = Provider.of<GroceryStoreBLoC>(context);
 
   final totalFormat =
@@ -1465,7 +1457,7 @@ SliverToBoxAdapter orderDetailInfo(context) {
     child: Container(
       child: Column(
         children: [
-          FadeIn(
+          /*  FadeIn(
             child: Container(
                 padding: EdgeInsets.only(top: 10.0),
                 color: currentTheme.currentTheme.scaffoldBackgroundColor,
@@ -1494,13 +1486,15 @@ SliverToBoxAdapter orderDetailInfo(context) {
                   ),
                 )),
           ),
-          SizedBox(
+          
+            SizedBox(
             height: 10,
           ),
           Padding(
             padding: const EdgeInsets.only(left: 15.0, right: 15),
             child: Divider(),
-          ),
+          ), */
+
           Container(
             padding: EdgeInsets.only(left: 20, bottom: 10, top: 10),
             child: Row(

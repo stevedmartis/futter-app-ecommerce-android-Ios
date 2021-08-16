@@ -205,22 +205,22 @@ class _OptionsListState extends State<OptionsList> {
           SizedBox(
             height: 20,
           ),
-          SizedBox(
+          /*  SizedBox(
             child: Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
               child: FadeIn(
                 child: CreditCardOption(),
               ),
             ),
-          ),
-          SizedBox(
+          ), */
+          /*  SizedBox(
             child: Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
               child: FadeIn(
                 child: MyCreditsCardOption(),
               ),
             ),
-          ),
+          ), */
           SizedBox(
             child: Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
@@ -454,7 +454,11 @@ class CashOption extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         cardBloc.changeCardSelectToPay(cardCash);
-        Navigator.pop(context);
+        if (orderPage) {
+          Navigator.push(context, orderDetailRoute());
+        } else {
+          Navigator.pop(context);
+        }
       },
       child: Card(
         elevation: 6,
@@ -583,7 +587,11 @@ class BankAccountOption extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         cardBloc.changeCardSelectToPay(cardCash);
-        Navigator.push(context, bankAccountStorePayment(false));
+        if (orderPage) {
+          Navigator.push(context, orderDetailRoute());
+        } else {
+          Navigator.push(context, bankAccountStorePayment(false));
+        }
       },
       child: Card(
         elevation: 6,
