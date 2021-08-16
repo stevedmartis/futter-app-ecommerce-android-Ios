@@ -233,8 +233,8 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
-    Color gradientStart = Color(0xffFF8236); //Change start gradient color here
-    Color gradientEnd = currentTheme.accentColor;
+    Color gradientStart = Color(0xFF00FF00); //Change start gradient color here
+    Color gradientEnd = currentTheme.primaryColor;
     return Scaffold(
       body: Container(
         decoration: new BoxDecoration(

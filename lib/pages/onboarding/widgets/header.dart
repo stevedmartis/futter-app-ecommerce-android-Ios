@@ -25,7 +25,7 @@ class Header extends StatelessWidget {
               icon: Icon(
                 Icons.chevron_left,
                 size: 40,
-                color: Colors.black,
+                color: Colors.white,
               )),
         ),
 
@@ -38,7 +38,7 @@ class Header extends StatelessWidget {
           child: Text(
             'Saltar',
             style: Theme.of(context).textTheme.subtitle1.copyWith(
-                  color: Colors.black,
+                  color: Colors.white,
                 ),
           ),
         ),

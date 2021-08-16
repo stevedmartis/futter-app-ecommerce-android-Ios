@@ -402,7 +402,7 @@ class _AddUpdateCatalogoPageState extends State<AddUpdateCategoryPage>
               (widget.isEdit) ? 'Guardar' : 'Crear',
               style: TextStyle(
                   color: (isControllerChange && !errorRequired)
-                      ? currentTheme.accentColor
+                      ? currentTheme.primaryColor
                       : Colors.grey,
                   fontSize: 18),
             ),

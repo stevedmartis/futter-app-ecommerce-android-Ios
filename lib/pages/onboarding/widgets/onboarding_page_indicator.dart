@@ -15,7 +15,7 @@ class OnboardingPageIndicator extends StatelessWidget {
 
   Color _getPageIndicatorColor(int pageIndex) {
     return currentPage > pageIndex
-        ? Color(0xFF131313)
+        ? Colors.black
         : Color(0xFF131313).withOpacity(0.25);
   }
 

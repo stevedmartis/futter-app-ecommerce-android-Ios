@@ -1,4 +1,6 @@
+import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
 
@@ -10,15 +12,17 @@ class NextPageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
     return RawMaterialButton(
       padding: const EdgeInsets.all(kPaddingM),
       elevation: 3.0,
       shape: const CircleBorder(),
-      fillColor: Color(0xFF131313),
+      fillColor: Colors.black,
       onPressed: onPressed,
       child: Icon(
         Icons.chevron_right,
-        color: Colors.orange,
+        color: currentTheme.primaryColor,
         size: 32.0,
       ),
     );

@@ -271,7 +271,7 @@ class EditProfilePageState extends State<EditProfilePage> {
               ? IconButton(
                   icon: Icon(
                     Icons.chevron_left,
-                    color: currentTheme.currentTheme.accentColor,
+                    color: currentTheme.currentTheme.primaryColor,
                   ),
                   iconSize: 30,
                   onPressed: () => Navigator.pop(context),
@@ -406,8 +406,8 @@ class EditProfilePageState extends State<EditProfilePage> {
                                 child: Text(
                                   'Cambiar Foto Perfil',
                                   style: TextStyle(
-                                      color:
-                                          currentTheme.currentTheme.accentColor,
+                                      color: currentTheme
+                                          .currentTheme.primaryColor,
                                       fontSize: 15),
                                 ),
                                 onPressed: () {
@@ -486,10 +486,10 @@ class EditProfilePageState extends State<EditProfilePage> {
                                       MaterialTapTargetSize.shrinkWrap,
                                   shape: StadiumBorder(),
                                   child: Text(
-                                    'Cambiar a Cuenta Vendedor',
+                                    'Cambiar a cuenta vendedor',
                                     style: TextStyle(
                                         color: currentTheme
-                                            .currentTheme.accentColor,
+                                            .currentTheme.primaryColor,
                                         fontSize: 15),
                                   ),
                                   onPressed: () {
@@ -821,7 +821,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                   style: TextStyle(
                       color: (isControllerChange && !errorRequired ||
                               authService.isImageProfileChange)
-                          ? currentTheme.accentColor
+                          ? currentTheme.primaryColor
                           : Colors.grey.withOpacity(0.60),
                       fontSize: 18),
                 ),

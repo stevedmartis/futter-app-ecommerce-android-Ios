@@ -447,95 +447,96 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
                 color: Colors.blueAccent,
               ),
             ),
-            Positioned(
-              top: 20,
-              left: 50,
-              width: size.width / 1.4,
-              height: 40,
-              child: GestureDetector(
-                onTap: () => {
-                  FocusScope.of(context).requestFocus(_focusNode),
-                },
-                child: Container(
-                    width: size.width,
-                    decoration: BoxDecoration(
-                        color: currentTheme.currentTheme.cardColor,
-                        borderRadius: BorderRadius.circular(20)),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            width: size.width,
-                            padding: EdgeInsets.only(top: 20, left: 20),
-                            child: TextField(
-                              style: TextStyle(color: Colors.white),
-                              inputFormatters: [
-                                new LengthLimitingTextInputFormatter(20),
-                              ],
-                              focusNode: _focusNode,
-                              controller: textCtrl,
-                              maxLines: 1,
-                              decoration: InputDecoration(
-                                fillColor: Colors.white,
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color:
-                                          currentTheme.currentTheme.cardColor),
+            if (productsBloc.items.length > 0)
+              Positioned(
+                top: 20,
+                left: 50,
+                width: size.width / 1.4,
+                height: 40,
+                child: GestureDetector(
+                  onTap: () => {
+                    FocusScope.of(context).requestFocus(_focusNode),
+                  },
+                  child: Container(
+                      width: size.width,
+                      decoration: BoxDecoration(
+                          color: currentTheme.currentTheme.cardColor,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              width: size.width,
+                              padding: EdgeInsets.only(top: 20, left: 20),
+                              child: TextField(
+                                style: TextStyle(color: Colors.white),
+                                inputFormatters: [
+                                  new LengthLimitingTextInputFormatter(20),
+                                ],
+                                focusNode: _focusNode,
+                                controller: textCtrl,
+                                maxLines: 1,
+                                decoration: InputDecoration(
+                                  fillColor: Colors.white,
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: currentTheme
+                                            .currentTheme.cardColor),
+                                  ),
+                                  border: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                  ),
+                                  labelStyle: TextStyle(color: Colors.white54),
+                                  // icon: Icon(Icons.perm_identity),
+                                  //  fillColor: currentTheme.accentColor,
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color:
+                                            currentTheme.currentTheme.cardColor,
+                                        width: 0.0),
+                                  ),
+                                  hintText: 'Buscar productos ...',
                                 ),
-                                border: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
-                                ),
-                                labelStyle: TextStyle(color: Colors.white54),
-                                // icon: Icon(Icons.perm_identity),
-                                //  fillColor: currentTheme.accentColor,
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color:
-                                          currentTheme.currentTheme.cardColor,
-                                      width: 0.0),
-                                ),
-                                hintText: 'Buscar productos ...',
+                                onChanged: (value) => productsBloc
+                                    .sharedProductOnStoreCurrent(value),
                               ),
-                              onChanged: (value) => productsBloc
-                                  .sharedProductOnStoreCurrent(value),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          flex: -2,
-                          child: AnimatedContainer(
-                              duration: Duration(milliseconds: 200),
-                              alignment: Alignment.topRight,
-                              child: Container(
-                                width: 40,
-                                height: 40,
-                                decoration: ShapeDecoration(
-                                  shadows: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.50),
-                                      offset: Offset(3.0, 3.0),
-                                      blurRadius: 2.0,
-                                      spreadRadius: 1.0,
-                                    )
-                                  ],
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(30.0)),
-                                  gradient: LinearGradient(
-                                      colors: gradients,
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight),
-                                ),
-                                child: Icon(
-                                  Icons.search,
-                                  color: Colors.white,
-                                ),
-                              )),
-                        )
-                      ],
-                    )),
+                          Expanded(
+                            flex: -2,
+                            child: AnimatedContainer(
+                                duration: Duration(milliseconds: 200),
+                                alignment: Alignment.topRight,
+                                child: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: ShapeDecoration(
+                                    shadows: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.50),
+                                        offset: Offset(3.0, 3.0),
+                                        blurRadius: 2.0,
+                                        spreadRadius: 1.0,
+                                      )
+                                    ],
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(30.0)),
+                                    gradient: LinearGradient(
+                                        colors: gradients,
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight),
+                                  ),
+                                  child: Icon(
+                                    Icons.search,
+                                    color: Colors.white,
+                                  ),
+                                )),
+                          )
+                        ],
+                      )),
+                ),
               ),
-            ),
             Positioned(
               top: (_bottomMarginName * (1 - percent))
                   .clamp(75.0, _bottomMarginName),
