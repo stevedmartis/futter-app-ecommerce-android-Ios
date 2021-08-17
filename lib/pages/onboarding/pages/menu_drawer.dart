@@ -1,12 +1,14 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 
 import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 
 import 'package:australti_ecommerce_app/theme/theme.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 import '../../../global/extension.dart';
 
@@ -15,7 +17,7 @@ class PrincipalMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    // final socketService = Provider.of<SocketService>(context);
+    final socketService = Provider.of<SocketService>(context);
     final authService = Provider.of<AuthenticationBLoC>(context);
     final currentTheme = Provider.of<ThemeChanger>(context);
     final profile = authService.storeAuth;
@@ -79,12 +81,11 @@ class PrincipalMenu extends StatelessWidget {
                   height: size.height / 1.7,
                 ),
                 Divider(),
-                /* GestureDetector(
+                GestureDetector(
                   onTap: () {
                     HapticFeedback.heavyImpact();
                     socketService.disconnect();
 
-                    prefs.setToken = '';
                     (UniversalPlatform.isWeb)
                         ? authService.logoutWeb()
                         : authService.logout();
@@ -103,7 +104,7 @@ class PrincipalMenu extends StatelessWidget {
                       ),
                     ),
                   ),
-                ), */
+                ),
               ],
             ),
           ),

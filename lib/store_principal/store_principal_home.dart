@@ -807,7 +807,7 @@ class _OrderprogressStoreCardState extends State<OrderprogressStoreCard> {
                                               ? 'Pedido en preparación'
                                               : (widget.order.isDelivery &&
                                                       !widget.order.isDelivered)
-                                                  ? 'Entregar'
+                                                  ? 'Pedido en camino'
                                                   : 'Pedido Entregado.'
                                       : 'Pedido cancelado',
                                   style: TextStyle(

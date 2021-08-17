@@ -384,12 +384,17 @@ class AuthenticationBLoC with ChangeNotifier {
   }
 
   Future editInfoContactStoreProfile(
-      String uid, String email, String phone) async {
+      String uid, String email, String phone, String instagram) async {
     // this.authenticated = true;
 
     final urlFinal = ('${Environment.apiUrl}/api/store/edit/contact/info');
 
-    final data = {'uid': uid, 'email': email, 'phone': phone};
+    final data = {
+      'uid': uid,
+      'email': email,
+      'phone': phone,
+      'instagram': instagram
+    };
 
     String token = '';
     (UniversalPlatform.isWeb)

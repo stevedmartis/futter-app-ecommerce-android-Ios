@@ -98,19 +98,21 @@ class _OrderPageState extends State<OrderPage> {
 
   void getbankAccountByUser(String uid) async {
     final bankService = Provider.of<BankService>(context, listen: false);
-
+    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
     final resp = await bankService.getAccountBankByUser(uid);
 
     if (resp.ok) {
       setState(() {
         currentBankAccount = resp.bankAccount;
 
+        storeBloc.currentBankAccountStorePaymentMethod(currentBankAccount);
         loadingPaymentMethod = false;
       });
     } else {
       setState(() {
         currentBankAccount = BankAccount(id: '0', bankOfAccount: 'NONE');
 
+        storeBloc.currentBankAccountStorePaymentMethod(currentBankAccount);
         loadingPaymentMethod = false;
       });
     }
@@ -345,7 +347,7 @@ class _OrderPageState extends State<OrderPage> {
                 makeHeaderCustom('Pedido#$orderId', widget.goToPrincipal),
                 progressOrderExpanded(context, order, widget.isStore),
                 makeListProducts(context, order, minTimes, maxTimes,
-                    widget.isStore, currentBankAccount, loadingPaymentMethod),
+                    widget.isStore, loadingPaymentMethod),
               ]),
         ),
       ),
@@ -397,11 +399,11 @@ SliverToBoxAdapter progressOrderExpanded(context, Order order, bool isStore) {
 }
 
 SliverList makeListProducts(context, Order order, minTimes, maxTimes,
-    bool isStore, BankAccount currentBankAccount, bool loadingPaymentMethod) {
+    bool isStore, bool loadingPaymentMethod) {
   return SliverList(
       delegate: SliverChildListDelegate([
-    _buildProductsList(context, order, minTimes, maxTimes, isStore,
-        currentBankAccount, loadingPaymentMethod),
+    _buildProductsList(
+        context, order, minTimes, maxTimes, isStore, loadingPaymentMethod),
   ]));
 }
 
@@ -412,7 +414,7 @@ int totalPriceElements(Order order) => order.products.fold<int>(
     );
 
 Widget _buildProductsList(context, Order order, minTimes, maxTimes,
-    bool isStore, BankAccount currentBankAccount, bool loadingPaymentMethod) {
+    bool isStore, bool loadingPaymentMethod) {
   final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
   final size = MediaQuery.of(context).size;
@@ -472,6 +474,8 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
   }
 
   final List<ProductElement> products = order.products;
+
+  final currentBankAccount = storeBloc.currentBankAccount;
 
   return Padding(
     padding: const EdgeInsets.all(15.0),

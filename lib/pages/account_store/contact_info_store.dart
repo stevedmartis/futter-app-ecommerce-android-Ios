@@ -12,9 +12,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:provider/provider.dart';
-import 'package:universal_platform/universal_platform.dart';
 
 class ContactInfoStore extends StatefulWidget {
   @override
@@ -27,12 +27,15 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
   final categoryCtrl = TextEditingController();
 
   final emailCtl = TextEditingController();
+
+  final instagramCtl = TextEditingController();
   final numberCtrl = TextEditingController();
 
   final prefs = new AuthUserPreferences();
 
   bool isEmailChange = false;
   bool isNumberChange = false;
+  bool isInstagramChange = false;
   bool loading = false;
   Store store;
   @override
@@ -48,6 +51,7 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
 
     emailCtl.text = store.user.email;
     numberCtrl.text = (store.user.phone == '0') ? '' : store.user.phone;
+    instagramCtl.text = store.instagram;
 
     emailCtl.addListener(() {
       setState(() {
@@ -66,6 +70,16 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
           this.isNumberChange = false;
       });
     });
+
+    instagramCtl.addListener(() {
+      setState(() {
+        if (store.instagram != instagramCtl.text)
+          this.isInstagramChange = true;
+        else
+          this.isInstagramChange = false;
+      });
+    });
+
     super.initState();
   }
 
@@ -186,6 +200,34 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
                                 SizedBox(height: 40),
                                 _createEmail(),
                                 _createNumber(),
+
+                                _createInstagram(),
+                                /* SizedBox(height: 40),
+
+                                Row(
+                                  children: [
+                                    Container(
+                                        child: FaIcon(
+                                      FontAwesomeIcons.whatsapp,
+                                      color: Colors.grey,
+                                      size: 30,
+                                    )),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Container(
+                                      width: size.width / 1.4,
+                                      child: Text(
+                                        'Con el número de telefono las personas podran ponerse en contacto contigo via Whatsapp.',
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ) */
                               ]),
                             )
                           ]))
@@ -209,10 +251,9 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
                 prefixIcon: Container(
-                  child: (UniversalPlatform.isAndroid)
-                      ? Icon(Icons.phone_android, color: Colors.white)
-                      : Icon(Icons.phone_iphone, color: Colors.white),
-                ),
+                    margin: EdgeInsets.only(top: 10, left: 10),
+                    child:
+                        FaIcon(FontAwesomeIcons.whatsapp, color: Colors.white)),
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
                     color: Colors.white54,
@@ -233,7 +274,7 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
                 hintText: '',
                 prefix: Text('+56 ',
                     style: TextStyle(color: currentTheme.accentColor)),
-                labelText: 'Número de teléfono de la tienda',
+                labelText: 'Número empresa de la tienda',
                 //counterText: snapshot.data,
                 errorText: snapshot.error),
             onChanged: storeProfileBloc.changeNumber,
@@ -258,7 +299,9 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
             controller: emailCtl,
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
-                prefixIcon: Icon(Icons.email_outlined, color: Colors.white),
+                prefixIcon: Container(
+                    margin: EdgeInsets.only(right: 10),
+                    child: Icon(Icons.email_outlined, color: Colors.white)),
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
                     color: (currentTheme.customTheme)
@@ -292,6 +335,58 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
     );
   }
 
+  Widget _createInstagram() {
+    return StreamBuilder(
+      stream: storeProfileBloc.instagramStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        final currentTheme = Provider.of<ThemeChanger>(context);
+
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
+          child: TextField(
+            style: TextStyle(
+              color: (currentTheme.customTheme) ? Colors.white : Colors.black,
+            ),
+            controller: instagramCtl,
+            keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+                prefixIcon: Container(
+                    margin: EdgeInsets.only(top: 10, left: 10),
+                    child: FaIcon(FontAwesomeIcons.instagram,
+                        color: Colors.white)),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: (currentTheme.customTheme)
+                        ? Colors.white54
+                        : Colors.black54,
+                  ),
+                ),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                labelStyle: TextStyle(
+                  color: (currentTheme.customTheme)
+                      ? Colors.white54
+                      : Colors.black54,
+                ),
+                // icon: Icon(Icons.perm_identity),
+                //  fillColor: currentTheme.accentColor,
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: currentTheme.currentTheme.accentColor,
+                  ),
+                ),
+                hintText: '',
+                labelText: 'Usuario de instagram',
+                //counterText: snapshot.data,
+                errorText: snapshot.error),
+            onChanged: storeProfileBloc.changeInstagram,
+          ),
+        );
+      },
+    );
+  }
+
   _editProfile() async {
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
     setState(() {
@@ -302,9 +397,9 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
 
     final email = emailCtl.text.trim();
     final phone = numberCtrl.text.trim();
-
+    final instagram = instagramCtl.text.trim();
     final editProfileOk = await authService.editInfoContactStoreProfile(
-        storeProfile.user.uid, email, phone);
+        storeProfile.user.uid, email, phone, instagram);
 
     if (editProfileOk != null) {
       if (editProfileOk == true) {

@@ -6,6 +6,7 @@ import 'package:australti_ecommerce_app/services/bank_Service.dart';
 import 'package:rxdart/rxdart.dart';
 
 class StoreProfileBloc with Validators {
+  final _instagramController = BehaviorSubject<String>();
   final _emailController = BehaviorSubject<String>();
   final _passwordController = BehaviorSubject<String>();
   final _usernameController = BehaviorSubject<String>();
@@ -37,7 +38,8 @@ class StoreProfileBloc with Validators {
   Stream<String> get lastNameStream => _lastNameController.stream;
 
   Stream<String> get categoryStream => _categoryController.stream;
-
+  Stream<String> get instagramStream =>
+      _instagramController.stream.transform(validationNameRequired);
   Stream<String> get numberStream =>
       _numberController.stream.transform(validationNumberPhoneRequired);
 
@@ -64,6 +66,7 @@ class StoreProfileBloc with Validators {
       _emailBankController.stream.transform(validarEmail);
 
   // Insertar valores al Stream
+  Function(String) get changeInstagram => _instagramController.sink.add;
   Function(String) get changeEmail => _emailController.sink.add;
   Function(String) get changeUsername => _usernameController.sink.add;
   Function(String) get changePassword => _passwordController.sink.add;
@@ -128,7 +131,7 @@ class StoreProfileBloc with Validators {
     _aboutController?.close();
     _offController?.close();
     _timeController?.close();
-
+    _instagramController?.close();
     _banksResult?.close();
     _nameBankController?.close();
     _numberBankController?.close();

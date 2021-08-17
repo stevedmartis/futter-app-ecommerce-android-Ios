@@ -9,19 +9,21 @@ User usuarioFromJson(String str) => User.fromJson(json.decode(str));
 String usuarioToJson(User data) => json.encode(data.toJson());
 
 class User {
-  User(
-      {this.online,
-      this.username,
-      this.email,
-      this.uid,
-      this.first = false,
-      this.phone});
+  User({
+    this.online,
+    this.username,
+    this.email,
+    this.uid,
+    this.first = false,
+    this.phone,
+  });
 
   final bool online;
   final String username;
   final String email;
   final String uid;
   final String phone;
+
   bool first;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -39,6 +41,6 @@ class User {
         "email": email,
         "uid": uid,
         "phone": phone,
-        "first": first
+        "first": first,
       };
 }

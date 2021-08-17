@@ -241,6 +241,8 @@ class EditProfilePageState extends State<EditProfilePage> {
 
     final isEmail = (authService.storeAuth.user.email != "");
     final isPhone = (authService.storeAuth.user.email != "0");
+
+    final isInstagram = (authService.storeAuth.user.email != "");
     final isOff = (authService.storeAuth.percentOff != 0);
     final visibility = authService.storeAuth.visibility;
     if (authService.storeAuth.service == 1) categoryCtrl.text = 'Restaurante';
@@ -613,10 +615,16 @@ class EditProfilePageState extends State<EditProfilePage> {
                                                 ),
                                               if (isPhone)
                                                 Text(
-                                                  'Celular',
+                                                  'Celular,',
                                                   style: TextStyle(
                                                       color: Colors.grey),
-                                                )
+                                                ),
+                                              if (isInstagram)
+                                                Text(
+                                                  'Instagram',
+                                                  style: TextStyle(
+                                                      color: Colors.grey),
+                                                ),
                                             ],
                                           ),
                                         ),

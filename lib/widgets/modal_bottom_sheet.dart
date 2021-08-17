@@ -19,6 +19,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_platform/universal_platform.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 showMaterialCupertinoBottomSheet(
     BuildContext context, String titulo, String subtitulo) {
@@ -842,4 +843,169 @@ showMaterialCupertinoBottomSheetBanks(
       ),
     );
   }
+}
+
+showContactOptionsStoreMCBottomSheet(context, Store store) {
+  final currentTheme = Provider.of<ThemeChanger>(context, listen: false);
+
+  final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+
+  final instagramStore = store.instagram.toString();
+  final emailStore = store.user.email.toString();
+
+  _launchInstagramProfile(String instagram) async {
+    final url = Uri.encodeFull('https://www.instagram.com/$instagram/?hl=es');
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  _launchMessageEmail(String email) async {
+    final url = Uri.encodeFull('mailto:$email?subject=Hola&body=Mensage');
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  return showModalBottomSheet(
+    // enableDrag: false,
+    //isDismissible: false,
+    backgroundColor: Colors.transparent,
+    context: context,
+    isScrollControlled: true,
+    builder: (context) => Container(
+      decoration: BoxDecoration(
+        color: (currentTheme.customTheme)
+            ? currentTheme.currentTheme.cardColor
+            : Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30.0),
+          topRight: Radius.circular(30.0),
+        ),
+      ),
+      child: Padding(
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.50,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              /*  Container(
+                margin: EdgeInsets.only(top: 20, left: 125, right: 125),
+                padding: EdgeInsets.all(3.0),
+                decoration: BoxDecoration(
+                  color: (currentTheme.customTheme)
+                      ? Colors.white54
+                      : Colors.black54.withOpacity(0.20),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(30.0),
+                  ),
+                ),
+              ), */
+              Container(
+                padding: EdgeInsets.only(top: 20, bottom: 10),
+                child: Text(
+                  "Contacto",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+              ),
+              Divider(),
+              if (instagramStore != "")
+                Material(
+                  color: currentTheme.currentTheme.scaffoldBackgroundColor,
+                  child: InkWell(
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      _launchInstagramProfile(store.instagram);
+                    },
+                    child: ListTile(
+                        tileColor: (currentTheme.customTheme)
+                            ? currentTheme.currentTheme.cardColor
+                            : Colors.white,
+                        leading: FaIcon(FontAwesomeIcons.instagram,
+                            size: 25, color: Colors.white),
+                        title: Text(
+                          'Instagram',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.white,
+                          ),
+                        ),
+                        subtitle: Text(
+                          '@${store.instagram}',
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: (currentTheme.customTheme)
+                                  ? Colors.white54
+                                  : Colors.black54),
+                        ),
+                        trailing: AnimatedOpacity(
+                          duration: Duration(milliseconds: 200),
+                          opacity: (authService.serviceSelect == 1) ? 1.0 : 0.0,
+                          child: Container(
+                            child: Icon(Icons.check_circle,
+                                color: currentTheme.currentTheme.primaryColor,
+                                size: 30.0),
+                          ),
+                        )
+
+                        //trailing:
+                        ),
+                  ),
+                ),
+              Divider(),
+              if (emailStore != "")
+                Material(
+                  color: currentTheme.currentTheme.scaffoldBackgroundColor,
+                  child: InkWell(
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      _launchMessageEmail(store.user.email);
+                    },
+                    child: ListTile(
+                        tileColor: (currentTheme.customTheme)
+                            ? currentTheme.currentTheme.cardColor
+                            : Colors.white,
+                        leading: Icon(Icons.email_outlined,
+                            size: 25, color: Colors.white),
+                        title: Text(
+                          'Correo electrónico',
+                          style: TextStyle(fontSize: 15, color: Colors.white),
+                        ),
+                        subtitle: Text(
+                          '$emailStore',
+                          style: TextStyle(fontSize: 15, color: Colors.grey),
+                        ),
+                        trailing: AnimatedOpacity(
+                          duration: Duration(milliseconds: 200),
+                          opacity: (authService.serviceSelect == 3) ? 1.0 : 0.0,
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.chevron_right,
+                              color: Colors.white,
+                            ),
+                            iconSize: 30.0,
+                            onPressed: () => {
+                              Navigator.of(context).pop(),
+                            },
+                          ),
+                        )),
+                  ),
+                ),
+              if (emailStore != "") Divider(),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 }

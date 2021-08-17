@@ -29,6 +29,7 @@ class Store {
       this.city = "",
       this.number = "",
       this.latitude = 0,
+      this.instagram = "",
       this.longitude = 0,
       this.createdAt,
       this.updatedAt,
@@ -55,7 +56,7 @@ class Store {
   bool isFollowing;
 
   int followers;
-
+  final String instagram;
   final int service;
   String timeDelivery;
   int percentOff;
@@ -77,6 +78,7 @@ class Store {
         trophys: json["trophys"],
         isEco: json["isEco"],
         address: json["address"],
+        instagram: json["instagram"],
         city: json["city"],
         isFollowing: json["isFollowing"],
         followers: json["followers"],
@@ -107,6 +109,7 @@ class Store {
         "followers": followers,
         "visibility": visibility,
         "number": number,
+        "instagram": instagram,
         "notLocation": notLocation,
         "latitude": latitude,
         "longitude": longitude,

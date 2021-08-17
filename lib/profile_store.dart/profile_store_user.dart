@@ -16,6 +16,7 @@ import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
 import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
 import 'package:australti_ecommerce_app/widgets/image_cached.dart';
+import 'package:australti_ecommerce_app/widgets/modal_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -146,8 +147,7 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                 return [
                   SliverPersistentHeader(
                     delegate: _SearchMenuStoreHeader(
-                      bloc: _bloc,
-                    ),
+                        bloc: _bloc, store: widget.store),
                     pinned: true,
                   ),
                   SliverPersistentHeader(
@@ -439,11 +439,10 @@ const _minTitleSize = 16.0;
 const _minSubTitleSize = 12.0;
 
 class _SearchMenuStoreHeader extends SliverPersistentHeaderDelegate {
-  _SearchMenuStoreHeader({
-    this.bloc,
-  });
+  _SearchMenuStoreHeader({this.bloc, this.store});
 
   final TabsViewScrollBLoC bloc;
+  final Store store;
 
   @override
   Widget build(
@@ -451,6 +450,11 @@ class _SearchMenuStoreHeader extends SliverPersistentHeaderDelegate {
     final currentTheme = Provider.of<ThemeChanger>(context);
 
     final size = MediaQuery.of(context).size;
+    void messageToWhatsapp(String number) async {
+      await launch("https://wa.me/56$number?text=Hola!");
+    }
+
+    final phoneStore = store.user.phone.toString();
 
     return GestureDetector(
       onTap: () => {
@@ -564,11 +568,26 @@ class _SearchMenuStoreHeader extends SliverPersistentHeaderDelegate {
                                   color: Colors.white,
                                 ),
                               )),
-                        )
+                        ),
                       ],
                     )),
               ),
             ),
+            if (phoneStore != "")
+              Positioned(
+                right: 0,
+                top: 18.0,
+                child: IconButton(
+                  icon: FaIcon(FontAwesomeIcons.whatsapp,
+                      color: currentTheme.currentTheme.primaryColor),
+                  iconSize: 30,
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    messageToWhatsapp(store.user.phone.toString());
+                  },
+                  color: Colors.blueAccent,
+                ),
+              ),
           ],
         ),
       ),
@@ -789,10 +808,6 @@ class _ButtonFollowState extends State<ButtonFollow> {
     }
   }
 
-  void messageToWhatsapp(String number) async {
-    await launch("https://wa.me/56$number?text=Hola!");
-  }
-
   _launchMessageEmail(String email) async {
     final url = Uri.encodeFull('mailto:$email?subject=Hola&body=Mensage');
     if (await canLaunch(url)) {
@@ -804,11 +819,12 @@ class _ButtonFollowState extends State<ButtonFollow> {
 
   @override
   Widget build(BuildContext context) {
-    final phoneStore = widget.store.user.phone.toString();
+    final instagramStore = widget.store.instagram.toString();
 
-    final emailStore = widget.store.user.phone.toString();
+    final emailStore = widget.store.user.email.toString();
 
     final authService = Provider.of<AuthenticationBLoC>(context);
+    //  final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
     return Row(
       children: [
@@ -831,21 +847,6 @@ class _ButtonFollowState extends State<ButtonFollow> {
                   isDelete: false,
                   isAccent: (!widget.store.isFollowing))),
         ),
-        if (phoneStore != "")
-          Container(
-              padding: EdgeInsets.only(left: 10),
-              width: 120,
-              height: 35,
-              child: elevatedButtonCustom(
-                  context: context,
-                  title: 'Whatsapp',
-                  onPress: () {
-                    HapticFeedback.lightImpact();
-                    messageToWhatsapp(widget.store.user.phone.toString());
-                  },
-                  isEdit: true,
-                  isDelete: false,
-                  isAccent: false)),
         if (emailStore != "")
           Container(
               padding: EdgeInsets.only(left: 10),
@@ -856,24 +857,27 @@ class _ButtonFollowState extends State<ButtonFollow> {
                   title: 'Email',
                   onPress: () {
                     HapticFeedback.lightImpact();
-                    _launchMessageEmail(widget.store.user.email);
+                    _launchMessageEmail(widget.store.instagram);
                   },
                   isEdit: true,
                   isDelete: false,
                   isAccent: false)),
-/*         Container(
-            padding: EdgeInsets.only(left: 10),
-            width: 100,
-            height: 35,
-            child: elevatedButtonCustom(
-                context: context,
-                title: (!widget.store.isFollowing) ? 'Seguir' : 'Siguiendo',
-                onPress: () {
-                  this.changeFollow();
-                },
-                isEdit: true,
-                isDelete: false,
-                isAccent: (!widget.store.isFollowing))), */
+        if (instagramStore != "")
+          Container(
+              padding: EdgeInsets.only(left: 10),
+              width: 120,
+              height: 35,
+              child: elevatedButtonCustom(
+                  context: context,
+                  title: 'Contacto',
+                  onPress: () {
+                    HapticFeedback.lightImpact();
+
+                    showContactOptionsStoreMCBottomSheet(context, widget.store);
+                  },
+                  isEdit: true,
+                  isDelete: false,
+                  isAccent: false)),
       ],
     );
   }
