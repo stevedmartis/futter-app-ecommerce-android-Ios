@@ -272,10 +272,28 @@ class TabsViewScrollBLoC with ChangeNotifier {
     final item = productsByCategoryList
         .firstWhere((item) => item.id == product.id, orElse: () => null);
 
+    print(item);
     item.name = product.name;
     item.description = product.description;
     item.price = product.price;
     item.images = product.images;
+
+    final itemCategoy = items.firstWhere(
+        (itemProduct) => itemProduct.category.id == product.category,
+        orElse: () => null);
+
+    if (itemCategoy != null) {
+      final itemProduct = itemCategoy.category.products
+          .firstWhere((item) => item.id == product.id, orElse: () => null);
+
+      print(itemProduct);
+      if (itemProduct != null) {
+        itemProduct.name = product.name;
+        itemProduct.description = product.description;
+        itemProduct.price = product.price;
+        itemProduct.images = product.images;
+      }
+    }
 
     notifyListeners();
   }

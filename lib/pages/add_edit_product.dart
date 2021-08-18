@@ -80,6 +80,8 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
 
   List<Object> images = [];
 
+  int priceProduct;
+
   final picker = ImagePicker();
 
   int selectedValue;
@@ -92,7 +94,15 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
     errorRequired = (widget.isEdit) ? false : true;
     nameCtrl.text = widget.product.name;
     descriptionCtrl.text = widget.product.description;
-    priceCtrl.text = widget.product.price.toString();
+
+    double value = double.parse(widget.product.price.toString());
+
+    final price =
+        NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
+            .format(value);
+
+    priceCtrl.text = price;
+
     setState(() {
       if (widget.isEdit) images.addAll(widget.product.images);
       images.add("Add Image");

@@ -285,8 +285,8 @@ class _OrderPageState extends State<OrderPage> {
                                     )
                                   : (order.isDelivery && !order.isDelivered)
                                       ? FaIcon(
-                                          FontAwesomeIcons.home,
-                                          size: 15,
+                                          FontAwesomeIcons.checkCircle,
+                                          size: 20,
                                           color: Colors.white,
                                         )
                                       : FaIcon(

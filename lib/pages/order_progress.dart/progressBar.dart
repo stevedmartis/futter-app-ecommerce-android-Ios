@@ -287,7 +287,7 @@ class _AnimatedBarState extends State<AnimatedBar>
 
       String textThree = (widget.isStore)
           ? "Estas entregando el pedido ..."
-          : "Tu pedido va en camino ...";
+          : "Tu pedido viene en camino ...";
 
       String textFour = (widget.isStore)
           ? "Entregado, evalua la experiencia!"

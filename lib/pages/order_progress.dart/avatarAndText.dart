@@ -30,7 +30,7 @@ class _AvatarAndTextState extends State<AvatarAndText>
   final imageTwo = "assets/images/Pan.png";
   final textTwo = "Estan preparando tu pedido ...";
   final imageThree = "assets/images/FoodPackage.png";
-  final textThree = "Tu pedido va en camino ...";
+  final textThree = "Tu pedido viene en camino ...";
 
   final imageFour = "assets/images/FoodPackage.png";
   final textFour = "El pedido llego a tu dirección!";
