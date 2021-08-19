@@ -1,6 +1,7 @@
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:australti_ecommerce_app/models/place_Search.dart';
+import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/responses/stores_list_principal_response.dart';
 import 'package:australti_ecommerce_app/services/stores_Services.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
@@ -28,6 +29,8 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
   final addressSelectCtrl = TextEditingController();
   final citySelectCtrl = TextEditingController();
   final numberCtrl = TextEditingController();
+
+  final prefs = new AuthUserPreferences();
 
   @override
   void initState() {
@@ -124,12 +127,18 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                   .split(",")
                                   .first;
 
-                              storesByLocationlistServices(
-                                  location, authBloc.storeAuth.user.uid);
+                              final address = addressSelectCtrl.text
+                                  .toString()
+                                  .split(",")
+                                  .first;
+
+                              storesByLocationlistServices(address, location,
+                                  authBloc.storeAuth.user.uid);
 
                               FocusScope.of(context)
                                   .requestFocus(new FocusNode());
 
+                              Navigator.pop(context);
                               Navigator.pop(context);
                             }
                           },
@@ -317,12 +326,13 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                     ]))));
   }
 
-  void storesByLocationlistServices(String location, String uid) async {
+  void storesByLocationlistServices(
+      String address, String location, String uid) async {
     final storeService = Provider.of<StoreService>(context, listen: false);
     final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 
-    final StoresListResponse resp =
-        await storeService.getStoresLocationListServices(location, uid);
+    final StoresListResponse resp = await storeService
+        .getStoresLocationListServices(address, location, uid);
 
     if (resp.ok) {
       storeBloc.storesListInitial = resp.storeListServices;

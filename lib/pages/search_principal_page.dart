@@ -6,6 +6,7 @@ import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -69,8 +70,35 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
               slivers: <Widget>[
                 makeHeaderCustom('Mis Catalogos'),
 
-                if (storeBLoC.storesSearch.length > 0) makeListStores(context),
-                if (storeBLoC.productsSearch.length > 0)
+                if (storeBLoC.loadingSearch)
+                  SliverToBoxAdapter(
+                    child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        child: buildLoadingWidget(context)),
+                  ),
+
+                if (!storeBLoC.loadingSearch &&
+                    !storeBLoC.initialSearch &&
+                    storeBLoC.storesSearch.length == 0 &&
+                    storeBLoC.productsSearch.length == 0)
+                  SliverToBoxAdapter(
+                    child: FadeIn(
+                      child: Center(
+                        child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 20),
+                            child: Text(
+                              'No se encontraron resultados',
+                              style: TextStyle(color: Colors.grey),
+                            )),
+                      ),
+                    ),
+                  ),
+
+                if (!storeBLoC.loadingSearch &&
+                    storeBLoC.storesSearch.length > 0)
+                  makeListStores(context),
+                if (!storeBLoC.loadingSearch &&
+                    storeBLoC.productsSearch.length > 0)
                   makeListProducts(context)
 
                 //makeListProducts(context)
@@ -333,12 +361,13 @@ class _SearchProductsResultListState extends State<SearchProductsResultList>
     final storeBLoC = Provider.of<StoreBLoC>(context);
     return Stack(
       children: [
-        if (storeBLoC.productsSearch.length > 0)
+        if (storeBLoC.storesSearch.length > 0)
           Container(
               padding: EdgeInsets.only(top: 20, left: 20, right: 20),
               child: Divider()),
         Container(
-          padding: EdgeInsets.only(top: 40),
+          padding: EdgeInsets.only(
+              top: (storeBLoC.storesSearch.length > 0) ? 40 : 20),
           child: ListView.builder(
             shrinkWrap: true,
             controller: _scrollController,

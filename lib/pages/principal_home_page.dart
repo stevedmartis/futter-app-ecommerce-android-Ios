@@ -76,7 +76,8 @@ class _PrincipalPageState extends State<PrincipalPage>
     storeslistServices();
     storeProfileBloc.searchBanks('');
     if (storeAuth.user.uid != '0') {
-      storesByLocationlistServices(storeAuth.city, storeAuth.user.uid);
+      final address = storeAuth.address.toString().split(",").first;
+      storesByLocationlistServices(address, storeAuth.city, storeAuth.user.uid);
 
       Timer(new Duration(milliseconds: 0), () {
         if (storeAuth.service != 0) {
@@ -90,8 +91,10 @@ class _PrincipalPageState extends State<PrincipalPage>
 
       myFavoritesProducts();
     } else if (prefs.addressSearchSave != '') {
+      final address =
+          prefs.addressSearchSave.mainText.toString().split(",").first;
       storesByLocationlistServices(
-          prefs.addressSearchSave.secondaryText, storeAuth.user.uid);
+          address, prefs.addressSearchSave.secondaryText, storeAuth.user.uid);
 
       Timer(new Duration(milliseconds: 0), () {
         orderService.loading = true;
@@ -400,7 +403,9 @@ class _PrincipalPageState extends State<PrincipalPage>
             myLocationBloc.initPositionLocation();
 
             storesByLocationlistServices(
-                prefs.addressSearchSave.secondaryText, storeAuth.user.uid);
+                prefs.addressSearchSave.prefs.addressSearchSave.secondaryText,
+                prefs.addressSearchSave.secondaryText,
+                storeAuth.user.uid);
 
             Navigator.pop(context);
           }, () {
@@ -440,12 +445,13 @@ class _PrincipalPageState extends State<PrincipalPage>
     }
   }
 
-  void storesByLocationlistServices(String location, String uid) async {
+  void storesByLocationlistServices(
+      String address, String location, String uid) async {
     final storeService =
         Provider.of<storeServiceApi.StoreService>(context, listen: false);
 
-    final StoresListResponse resp =
-        await storeService.getStoresLocationListServices(location, uid);
+    final StoresListResponse resp = await storeService
+        .getStoresLocationListServices(address, location, uid);
 
     final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 

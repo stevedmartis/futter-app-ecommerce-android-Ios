@@ -56,14 +56,14 @@ class Store {
   bool isFollowing;
 
   int followers;
-  final String instagram;
-  final int service;
+  String instagram;
+  int service;
   String timeDelivery;
   int percentOff;
   int trophys;
   bool isEco;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  DateTime createdAt;
+  DateTime updatedAt;
 
   factory Store.fromJson(Map<String, dynamic> json) => Store(
         id: json["id"],

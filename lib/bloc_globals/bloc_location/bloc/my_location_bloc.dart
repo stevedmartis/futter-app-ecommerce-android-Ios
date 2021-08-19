@@ -130,7 +130,7 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
 
     prefs.setSearchAddreses = value;
 
-    if (place.placeId != '0') {
+    if (place.placeId != '0' && uid != '0') {
       final editProfileOk = await authBloc.editAddressStoreProfile(
           uid,
           value.structuredFormatting.secondaryText.split(",").first,
@@ -141,11 +141,17 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
           final resp = await placeService.getAutocompleteDetails(value.placeId);
           prefs.setLatSearch = resp.first;
           prefs.setLongSearch = resp.last;
+
+          notifyListeners();
         }
       }
-    }
+    } else {
+      final resp = await placeService.getAutocompleteDetails(value.placeId);
+      prefs.setLatSearch = resp.first;
+      prefs.setLongSearch = resp.last;
 
-    notifyListeners();
+      notifyListeners();
+    }
   }
 
   @override

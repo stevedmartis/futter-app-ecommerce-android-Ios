@@ -89,6 +89,7 @@ class AuthenticationBLoC with ChangeNotifier {
       showModalLoading(context);
 
       String address = '';
+      String email = '';
       String city = '';
       int number = 0;
       double long = 0;
@@ -101,10 +102,12 @@ class AuthenticationBLoC with ChangeNotifier {
           : 0;
       long = prefs.longSearch;
       lat = prefs.latSearch;
+      email = (credential.email != null) ? credential.email : prefs.emailApple;
 
+      if (credential.email != null) prefs.setEmailApple = credential.email;
       final res = await this.siginWithApple(
           credential.authorizationCode,
-          credential.email,
+          email,
           credential.givenName,
           useBundleId,
           credential.state,
@@ -144,10 +147,12 @@ class AuthenticationBLoC with ChangeNotifier {
       long = prefs.longSearch;
       lat = prefs.latSearch;
 
-      final authBack = await siginWithGoogleBack(
+      await siginWithGoogleBack(
           googleKey.idToken, address, city, number, long, lat);
 
-      return authBack;
+      Navigator.pop(context);
+
+      return true;
     } catch (e) {
       print('error signin google');
       print(e);
@@ -190,8 +195,8 @@ class AuthenticationBLoC with ChangeNotifier {
           'address': address,
           'city': city,
           'numberAddress': number,
-          'long': long,
-          'lat': lat
+          'long': (long == 1.1) ? 0 : long,
+          'lat': (long == 1.1) ? 0 : long
         }),
         headers: {'Content-Type': 'application/json'});
 

@@ -31,6 +31,9 @@ class StoreBLoC with ChangeNotifier {
 
   final storeService = StoreService();
 
+  bool loadingSearch = false;
+  bool initialSearch = true;
+
   List<StoreServices> servicesStores = [
     StoreServices(
         id: 0,
@@ -68,6 +71,7 @@ class StoreBLoC with ChangeNotifier {
 
   void searchStoresOrProductsByQuery(String value, String uid) async {
     if (value.length >= 3) {
+      loadingSearch = true;
       final SearchStoresProductsListResponse resp =
           await storeService.getStoreAndProductsByValue(value, uid);
 
@@ -75,8 +79,15 @@ class StoreBLoC with ChangeNotifier {
         storesSearch = resp.storesSearch;
         productsSearch = resp.productsSearch;
 
+        loadingSearch = false;
+
+        initialSearch = false;
+
         notifyListeners();
       }
+    } else {
+      initialSearch = true;
+      notifyListeners();
     }
   }
 

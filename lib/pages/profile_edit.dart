@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
 import 'package:australti_ecommerce_app/bloc_globals/bloc/store_profile.dart';
+import 'package:australti_ecommerce_app/models/bank_account.dart';
 
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
@@ -252,9 +253,12 @@ class EditProfilePageState extends State<EditProfilePage> {
     if (authService.storeAuth.service == 3)
       categoryCtrl.text = 'Licorería/Botillería';
 
-    final bankFind = storeProfileBloc.banksResults.value.firstWhere(
-        (item) => item.id == storeProfileBloc.bankAccount.value.bankOfAccount,
-        orElse: () => null);
+    final bankFind = (!store.user.first && store.service != 0)
+        ? storeProfileBloc.banksResults.value.firstWhere(
+            (item) =>
+                item.id == storeProfileBloc.bankAccount.value.bankOfAccount,
+            orElse: () => null)
+        : Bank(id: '00', nameBank: 'NONE');
 
     return SafeArea(
       child: Scaffold(
@@ -276,7 +280,14 @@ class EditProfilePageState extends State<EditProfilePage> {
                     color: currentTheme.currentTheme.primaryColor,
                   ),
                   iconSize: 30,
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    if (authService.redirect == 'profile') {
+                      Provider.of<MenuModel>(context, listen: false)
+                          .currentPage = 0;
+                      Navigator.push(context, principalHomeRoute());
+                    } else
+                      Navigator.pop(context);
+                  },
                   color: Colors.white,
                 )
               : Container(),

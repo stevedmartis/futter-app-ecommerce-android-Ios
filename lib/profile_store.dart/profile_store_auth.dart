@@ -545,19 +545,23 @@ class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    store.name,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: titleSize,
-                      letterSpacing: -0.5,
-                      color: (currentTheme.customTheme)
-                          ? Colors.white
-                          : _textHighColor,
+                  Container(
+                    width:
+                        (percent <= 0.9) ? size.width / 2.1 : size.width / 2.8,
+                    child: Text(
+                      store.name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: titleSize,
+                        letterSpacing: -0.5,
+                        color: (currentTheme.customTheme)
+                            ? Colors.white
+                            : _textHighColor,
+                      ),
                     ),
                   ),
                   AnimatedContainer(
-                    width: (percent <= 0.9) ? size.width : size.width / 3,
+                    width: (percent <= 0.9) ? size.width / 1.3 : size.width / 3,
                     duration: Duration(milliseconds: 100),
                     child: Text(
                       '@$username',

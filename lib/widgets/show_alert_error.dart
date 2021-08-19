@@ -24,7 +24,7 @@ showAlertError(BuildContext context, String titulo, String subtitulo) {
                 MaterialButton(
                     child: Text('Ok'),
                     elevation: 5,
-                    textColor: currentTheme.accentColor,
+                    textColor: currentTheme.primaryColor,
                     onPressed: () => Navigator.pop(context))
               ],
             ));
@@ -39,7 +39,7 @@ showAlertError(BuildContext context, String titulo, String subtitulo) {
                   isDefaultAction: true,
                   child: Text(
                     'Aceptar',
-                    style: TextStyle(color: currentTheme.accentColor),
+                    style: TextStyle(color: currentTheme.primaryColor),
                   ),
                   onPressed: () => Navigator.pop(context),
                 )

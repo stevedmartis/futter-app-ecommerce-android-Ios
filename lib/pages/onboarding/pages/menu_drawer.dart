@@ -77,7 +77,7 @@ class PrincipalMenu extends StatelessWidget {
                     ),
                   ),
                 ), */
-                /* SizedBox(
+                SizedBox(
                   height: size.height / 1.7,
                 ),
                 Divider(),
@@ -104,7 +104,7 @@ class PrincipalMenu extends StatelessWidget {
                       ),
                     ),
                   ),
-                ), */
+                ),
               ],
             ),
           ),

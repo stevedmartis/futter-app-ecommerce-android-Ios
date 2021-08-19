@@ -300,12 +300,13 @@ class _ConfirmLocationPagetate extends State<FormCurrentLocationPage> {
                     ]))));
   }
 
-  void storesByLocationlistServices(String location, String uid) async {
+  void storesByLocationlistServices(
+      String address, String location, String uid) async {
     final storeService = Provider.of<StoreService>(context, listen: false);
     final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 
-    final StoresListResponse resp =
-        await storeService.getStoresLocationListServices(location, uid);
+    final StoresListResponse resp = await storeService
+        .getStoresLocationListServices(address, location, uid);
 
     if (resp.ok) {
       storeBloc.storesListInitial = resp.storeListServices;

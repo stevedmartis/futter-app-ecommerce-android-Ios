@@ -77,6 +77,14 @@ class AuthUserPreferences {
     return _prefs.getDouble('latitude') ?? 0.0;
   }
 
+  set setEmailApple(String email) {
+    _prefs.setString('emailApple', email);
+  }
+
+  get emailApple {
+    return _prefs.getString('emailApple') ?? '';
+  }
+
   set setSearchAddreses(PlaceSearch place) {
     final location =
         place.structuredFormatting.secondaryText.toString().split(",").first;

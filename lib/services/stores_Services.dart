@@ -75,9 +75,10 @@ class StoreService with ChangeNotifier {
     }
   }
 
-  Future getStoresLocationListServices(String location, String uid) async {
+  Future getStoresLocationListServices(
+      String address, String location, String uid) async {
     final urlFinal =
-        ('${Environment.apiUrl}/api/store/stores/location/list/principal/$location/$uid');
+        ('${Environment.apiUrl}/api/store/stores/location/list/principal/$address/$location/$uid');
 
     final resp = await http.get(Uri.parse(urlFinal), headers: {
       'Content-Type': 'application/json',

@@ -138,8 +138,10 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
   pullToRefreshData() async {
     final cardBloc = Provider.of<CreditCardServices>(context, listen: false);
     HapticFeedback.heavyImpact();
+
     if (storeAuth.user.uid != '0') {
-      storesByLocationlistServices(storeAuth.city, storeAuth.user.uid);
+      final address = storeAuth.address.split(',').first;
+      storesByLocationlistServices(address, storeAuth.city, storeAuth.user.uid);
       _myOrdersClient();
 
       cardBloc.getMyCreditCards(storeAuth.user.uid);
@@ -147,8 +149,10 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
         _myOrdersStore();
       }
     } else if (prefs.addressSearchSave != '') {
+      final address =
+          prefs.addressSearchSave.mainText.toString().split(",").first;
       storesByLocationlistServices(
-          prefs.addressSearchSave.secondaryText, storeAuth.user.uid);
+          address, prefs.addressSearchSave.secondaryText, storeAuth.user.uid);
     } else {
       storeslistServices();
     }
@@ -223,12 +227,13 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     }
   }
 
-  void storesByLocationlistServices(String location, String uid) async {
+  void storesByLocationlistServices(
+      String address, String location, String uid) async {
     final storeService =
         Provider.of<storeServices.StoreService>(context, listen: false);
 
-    final StoresListResponse resp =
-        await storeService.getStoresLocationListServices(location, uid);
+    final StoresListResponse resp = await storeService
+        .getStoresLocationListServices(address, location, uid);
 
     final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 
@@ -1412,10 +1417,11 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
   }
 }
 
-void storesByLocationlistServices(context, String location, String uid) async {
+void storesByLocationlistServices(
+    context, String address, String location, String uid) async {
   final storeService = Provider.of<StoreService>(context, listen: false);
   final StoresListResponse resp =
-      await storeService.getStoresLocationListServices(location, uid);
+      await storeService.getStoresLocationListServices(address, location, uid);
   final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
   if (resp.ok) {
     storeBloc.storesListInitial = [];
@@ -1516,14 +1522,14 @@ class MyTextField extends StatelessWidget {
 void showModalLocation(context, selectedGender, String uid, String location) {
   final currentTheme =
       Provider.of<ThemeChanger>(context, listen: false).currentTheme;
-
+  final address = prefs.addressSearchSave.secondaryText.split(',').first;
   showLocationMaterialCupertinoBottomSheet(
     context,
     () {
       HapticFeedback.lightImpact();
       myLocationBloc.initPositionLocation();
       storesByLocationlistServices(
-          context, prefs.addressSearchSave.secondaryText, uid);
+          context, address, prefs.addressSearchSave.secondaryText, uid);
       Navigator.pop(context);
     },
     () {
