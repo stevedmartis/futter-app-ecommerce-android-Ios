@@ -9,6 +9,7 @@ import 'package:australti_ecommerce_app/bloc_globals/bloc/store_profile.dart';
 import 'package:australti_ecommerce_app/models/bank_account.dart';
 
 import 'package:australti_ecommerce_app/models/store.dart';
+
 import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
 import 'package:australti_ecommerce_app/pages/single_image_upload.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
@@ -232,6 +233,7 @@ class EditProfilePageState extends State<EditProfilePage> {
 
     final authService = Provider.of<AuthenticationBLoC>(context);
 
+    final store = authService.storeAuth;
     final stripped = (uploadedImage != '')
         ? uploadedImage.replaceFirst(RegExp(r'data:image/[^;]+;base64,'), '')
         : '';
@@ -240,18 +242,16 @@ class EditProfilePageState extends State<EditProfilePage> {
 
     final PlacesSearch address = prefs.addressSearchSave;
 
-    final isEmail = (authService.storeAuth.user.email != "");
-    final isPhone = (authService.storeAuth.user.email != "0");
+    final isEmail = (store.user.email != "");
+    final isPhone = (store.user.email != "0");
 
-    final isInstagram = (authService.storeAuth.user.email != "");
-    final isOff = (authService.storeAuth.percentOff != 0);
-    final visibility = authService.storeAuth.visibility;
-    if (authService.storeAuth.service == 1) categoryCtrl.text = 'Restaurante';
+    final isInstagram = (store.user.email != "");
+    final isOff = (store.percentOff != 0);
+    final visibility = store.visibility;
+    if (store.service == 1) categoryCtrl.text = 'Restaurante';
 
-    if (authService.storeAuth.service == 2)
-      categoryCtrl.text = 'Frutería/Verdulería';
-    if (authService.storeAuth.service == 3)
-      categoryCtrl.text = 'Licorería/Botillería';
+    if (store.service == 2) categoryCtrl.text = 'Frutería/Verdulería';
+    if (store.service == 3) categoryCtrl.text = 'Licorería/Botillería';
 
     final bankFind = (!store.user.first && store.service != 0)
         ? storeProfileBloc.banksResults.value.firstWhere(
@@ -292,7 +292,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                 )
               : Container(),
           title: Text(
-            'Editar perfil',
+            (store.user.first) ? 'Confirmar perfil' : 'Editar perfil',
             style: TextStyle(
                 color:
                     (currentTheme.customTheme) ? Colors.white : Colors.black),
@@ -514,7 +514,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                                     Navigator.push(
                                         context, onBoardCreateStoreRoute());
                                   }),
-                            if (!store.user.first && store.service != 0)
+                            if (store.service != 0)
                               Container(
                                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                                 width: size.width,
@@ -528,7 +528,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                                   ),
                                 ),
                               ),
-                            if (!store.user.first && store.service != 0)
+                            if (store.service != 0)
                               Container(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 5.0, vertical: 10.0),
@@ -828,25 +828,20 @@ class EditProfilePageState extends State<EditProfilePage> {
             isAboutChange ||
             isAddressChange ||
             isCityChange ||
-            isNameChange;
+            isNameChange ||
+            store.user.first;
         //  authService.serviceSelect != store.service;
 
-        return GestureDetector(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Center(
-                child: Text(
-                  'Guardar',
-                  style: TextStyle(
-                      color: (isControllerChange && !errorRequired ||
-                              authService.isImageProfileChange)
-                          ? currentTheme.primaryColor
-                          : Colors.grey.withOpacity(0.60),
-                      fontSize: 18),
-                ),
-              ),
+        return IconButton(
+            color: (isControllerChange && !errorRequired ||
+                    authService.isImageProfileChange)
+                ? currentTheme.primaryColor
+                : Colors.grey.withOpacity(0.60),
+            icon: Icon(
+              Icons.check,
+              size: 32,
             ),
-            onTap: (isControllerChange && !errorRequired ||
+            onPressed: (isControllerChange && !errorRequired ||
                     authService.isImageProfileChange)
                 ? () => {
                       HapticFeedback.heavyImpact(),
@@ -1046,7 +1041,8 @@ class EditProfilePageState extends State<EditProfilePage> {
 
             showSnackBar(context, 'Perfil editado con exito!');
             if (storeProfile.user.first && authService.redirect == 'profile') {
-              Navigator.push(context, profileAuthRoute(true));
+              Provider.of<MenuModel>(context, listen: false).currentPage = 0;
+              Navigator.push(context, principalHomeRoute());
             } else if (storeProfile.user.first &&
                 authService.redirect == 'vender') {
               Provider.of<MenuModel>(context, listen: false).currentPage = 2;

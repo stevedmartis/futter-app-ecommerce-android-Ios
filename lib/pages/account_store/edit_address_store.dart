@@ -65,13 +65,17 @@ class _LocationStorePageState extends State<LocationStorePage> {
     // final roomsModel = Provider.of<Room>(context);
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final size = MediaQuery.of(context).size;
-
+    final authBloc = Provider.of<AuthenticationBLoC>(context);
     return SafeArea(
         child: GestureDetector(
             onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
             child: Scaffold(
                 appBar: AppBar(
-                  title: _showTitle ? Text('Editar dirección') : Text(''),
+                  title: _showTitle
+                      ? Text((authBloc.storeAuth.user.first)
+                          ? 'Confirmar dirección'
+                          : 'Editar dirección')
+                      : Text(''),
                   backgroundColor: Colors.black,
                   leading: IconButton(
                       color: currentTheme.primaryColor,
@@ -134,7 +138,9 @@ class _LocationStorePageState extends State<LocationStorePage> {
                                 Container(
                                   width: size.width,
                                   child: Text(
-                                    'Editar dirección',
+                                    (authBloc.storeAuth.user.first)
+                                        ? 'Confirmar dirección'
+                                        : 'Editar dirección',
                                     maxLines: 2,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,

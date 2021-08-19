@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:australti_ecommerce_app/routes/routes.dart';
@@ -226,20 +227,22 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
     HapticFeedback.lightImpact();
     await _rippleAnimationController.forward();
 
-    Navigator.of(context).push(selectCategoryObBoardStoreRoute());
+    Timer(new Duration(milliseconds: 100), () {
+      Navigator.of(context).push(selectCategoryObBoardStoreRoute());
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
-    Color gradientStart = Color(0xffFF8236); //Change start gradient color here
-    Color gradientEnd = currentTheme.accentColor;
+/*     Color gradientStart = Color(0xffFF8236); //Change start gradient color here
+    Color gradientEnd = currentTheme.accentColor; */
     return Scaffold(
       body: Container(
         decoration: new BoxDecoration(
           gradient: new LinearGradient(
-              colors: [gradientStart, gradientEnd],
+              colors: [currentTheme.primaryColor, Color(0xff3CFF50)],
               begin: const FractionalOffset(0.5, 0.0),
               end: const FractionalOffset(0.0, 0.5),
               stops: [0.0, 1.0],

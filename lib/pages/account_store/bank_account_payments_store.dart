@@ -3,6 +3,7 @@ import 'package:australti_ecommerce_app/bloc_globals/bloc/store_profile.dart';
 import 'package:australti_ecommerce_app/models/bank_account.dart';
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
+
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/services/bank_Service.dart';
 
@@ -12,7 +13,7 @@ import 'package:australti_ecommerce_app/widgets/modal_bottom_sheet.dart';
 import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+
 import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
@@ -47,9 +48,12 @@ class _BankAccountStoreState extends State<BankAccountStore> {
 
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
     store = authService.storeAuth;
-    final bankFind = storeProfileBloc.banksResults.value.firstWhere(
-        (item) => item.id == storeProfileBloc.bankAccount.value.bankOfAccount,
-        orElse: () => null);
+    final bankFind = (storeProfileBloc.bankAccount.valueOrNull != null)
+        ? storeProfileBloc.banksResults.value.firstWhere(
+            (item) =>
+                item.id == storeProfileBloc.bankAccount.value.bankOfAccount,
+            orElse: () => null)
+        : null;
 
     if (bankFind != null) {
       nameCtrl.text = storeProfileBloc.bankAccount.value.nameAccount;
@@ -63,13 +67,14 @@ class _BankAccountStoreState extends State<BankAccountStore> {
     } else {
       emailCtl.text = store.user.email;
     }
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (store.user.first) openSheetBottom();
-    });
 
     nameCtrl.addListener(() {
       setState(() {
-        if (storeProfileBloc.bankAccount.value.nameAccount != nameCtrl.text)
+        if (isEdit &&
+            storeProfileBloc.bankAccount.value.nameAccount != nameCtrl.text)
+          this.isNameChange = true;
+
+        if (!isEdit && nameCtrl.text != '')
           this.isNameChange = true;
         else
           this.isNameChange = false;
@@ -83,7 +88,11 @@ class _BankAccountStoreState extends State<BankAccountStore> {
 
     rutCtrl.addListener(() {
       setState(() {
-        if (storeProfileBloc.bankAccount.value.rutAccount != rutCtrl.text)
+        if (isEdit &&
+            storeProfileBloc.bankAccount.value.rutAccount != rutCtrl.text)
+          this.isRutChange = true;
+
+        if (!isEdit && rutCtrl.text != '')
           this.isRutChange = true;
         else
           this.isRutChange = false;
@@ -97,7 +106,11 @@ class _BankAccountStoreState extends State<BankAccountStore> {
 
     numberCtrl.addListener(() {
       setState(() {
-        if (storeProfileBloc.bankAccount.value.numberAccount != numberCtrl.text)
+        if (isEdit &&
+            storeProfileBloc.bankAccount.value.numberAccount != numberCtrl.text)
+          this.isNumberChange = true;
+
+        if (!isEdit && numberCtrl.text != '')
           this.isNumberChange = true;
         else
           this.isNumberChange = false;
@@ -111,7 +124,11 @@ class _BankAccountStoreState extends State<BankAccountStore> {
 
     emailCtl.addListener(() {
       setState(() {
-        if (storeProfileBloc.bankAccount.value.emailAccount != emailCtl.text)
+        if (isEdit &&
+            storeProfileBloc.bankAccount.value.emailAccount != emailCtl.text)
+          this.isEmailChange = true;
+
+        if (!isEdit && emailCtl.text != '')
           this.isEmailChange = true;
         else
           this.isEmailChange = false;
@@ -160,21 +177,33 @@ class _BankAccountStoreState extends State<BankAccountStore> {
                   title: _showTitle ? Text('Cuenta bancaria') : Text(''),
                   backgroundColor: currentTheme.scaffoldBackgroundColor,
                   leading: IconButton(
-                    color: currentTheme.primaryColor,
-                    icon: Icon(
-                      Icons.chevron_left,
-                      size: 40,
-                    ),
-                    onPressed: () => Navigator.pop(context),
-                  ),
+                      color: currentTheme.primaryColor,
+                      icon: Icon(
+                        Icons.chevron_left,
+                        size: 40,
+                      ),
+                      onPressed: () {
+                        if (!isEdit &&
+                            authService.isChangeToSale &&
+                            store.user.first) {
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        } else {
+                          Navigator.pop(context);
+                        }
+                      }),
                   actions: [
                     (!loading)
                         ? IconButton(
-                            color: ((isEdit)
-                                    ? isControllerChangeEdit && !errorRequired
-                                    : isControllerChange && !errorRequired)
-                                ? currentTheme.primaryColor
-                                : Colors.grey,
+                            color: (isEdit)
+                                ? isControllerChangeEdit && !errorRequired
+                                : isControllerChange && !errorRequired
+                                    ? currentTheme.primaryColor
+                                    : Colors.grey,
                             icon: Icon(
                               Icons.check,
                               size: 35,
@@ -182,9 +211,13 @@ class _BankAccountStoreState extends State<BankAccountStore> {
                             onPressed: () {
                               HapticFeedback.lightImpact();
 
-                              (isEdit)
-                                  ? _editAccountBank()
-                                  : _createAccountBank();
+                              if (isEdit) if (isControllerChangeEdit &&
+                                  !errorRequired) _editAccountBank();
+
+                              if (!isEdit) if (isControllerChange &&
+                                  !errorRequired) {
+                                _createAccountBank();
+                              }
                             })
                         : buildLoadingWidget(context),
                   ],
@@ -539,7 +572,9 @@ class _BankAccountStoreState extends State<BankAccountStore> {
 
     final storeProfile = store;
 
-    final bankId = storeProfileBloc.bankSelected.value.id.trim();
+    final bankId = (storeProfileBloc.bankSelected.valueOrNull != null)
+        ? storeProfileBloc.bankSelected.value.id.trim()
+        : 'NONE';
     final name = nameCtrl.text.trim();
     final rut = rutCtrl.text.trim();
     final typeAccount = typeAccountCtrl.text.trim();
@@ -565,9 +600,16 @@ class _BankAccountStoreState extends State<BankAccountStore> {
 
         showSnackBar(context, 'Cuenta bancaria guardada');
 
-        (authService.isChangeToSale)
-            ? Navigator.push(context, displayProfileStoreRoute())
-            : Navigator.pop(context);
+        if (authService.isChangeToSale && store.user.first) {
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.pop(context);
+        } else {
+          Navigator.pop(context);
+        }
       } else {
         setState(() {
           loading = false;
@@ -591,7 +633,9 @@ class _BankAccountStoreState extends State<BankAccountStore> {
       loading = true;
     });
 
-    final bankId = storeProfileBloc.bankSelected.value.id.trim();
+    final bankId = (storeProfileBloc.bankSelected.valueOrNull != null)
+        ? storeProfileBloc.bankSelected.value.id.trim()
+        : 'NONE';
     final name = nameCtrl.text.trim();
     final rut = rutCtrl.text.trim();
     final typeAccount = typeAccountCtrl.text.trim();
@@ -617,9 +661,16 @@ class _BankAccountStoreState extends State<BankAccountStore> {
 
         showSnackBar(context, 'Cuenta bancaria editada');
 
-        (authService.isChangeToSale)
-            ? Navigator.push(context, displayProfileStoreRoute())
-            : Navigator.pop(context);
+        if (authService.isChangeToSale && store.user.first) {
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.pop(context);
+        } else {
+          Navigator.pop(context);
+        }
       } else {
         setState(() {
           loading = false;

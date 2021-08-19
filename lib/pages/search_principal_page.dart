@@ -95,6 +95,24 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
                   ),
 
                 if (!storeBLoC.loadingSearch &&
+                    storeBLoC.initialSearch &&
+                    storeBLoC.storesSearch.length == 0 &&
+                    storeBLoC.productsSearch.length == 0 &&
+                    storeBloc.storesListInitial.length == 0)
+                  SliverToBoxAdapter(
+                    child: FadeIn(
+                      child: Center(
+                        child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 20),
+                            child: Text(
+                              'No se encontraron resultados',
+                              style: TextStyle(color: Colors.grey),
+                            )),
+                      ),
+                    ),
+                  ),
+
+                if (!storeBLoC.loadingSearch &&
                     storeBLoC.storesSearch.length > 0)
                   makeListStores(context),
                 if (!storeBLoC.loadingSearch &&

@@ -73,7 +73,12 @@ class _PrincipalPageState extends State<PrincipalPage>
     cardBloc.getMyCreditCards(storeAuth.user.uid);
 
     categoriesStoreProducts();
-    storeslistServices();
+    storeBloc.chargeServicesStores();
+    // storeslistServices();
+    Timer(new Duration(milliseconds: 0), () {
+      orderService.loading = true;
+    });
+
     storeProfileBloc.searchBanks('');
     if (storeAuth.user.uid != '0') {
       final address = storeAuth.address.toString().split(",").first;
@@ -192,10 +197,16 @@ class _PrincipalPageState extends State<PrincipalPage>
 
     final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 
+    final int followed = prefs.followed;
     if (resp.ok) {
-      storeBloc.storesAllDb = resp.storeListServices;
+      storeBloc.storesListInitial = [];
+      storeBloc.storesListInitial = resp.storeListServices;
 
-      //storeBloc.chargeServicesStores();
+      storeBloc.selected = (followed > 0)
+          ? storeBloc.servicesStores.first
+          : storeBloc.servicesStores[1];
+
+      storeBloc.chargeServicesStores();
     }
   }
 
@@ -395,6 +406,9 @@ class _PrincipalPageState extends State<PrincipalPage>
   }
 
   void accessGps(PermissionStatus status) {
+    final address =
+        prefs.addressSearchSave.mainText.toString().split(",").first;
+
     switch (status) {
       case PermissionStatus.granted:
         Timer(new Duration(milliseconds: 300), () {
@@ -402,10 +416,8 @@ class _PrincipalPageState extends State<PrincipalPage>
             HapticFeedback.lightImpact();
             myLocationBloc.initPositionLocation();
 
-            storesByLocationlistServices(
-                prefs.addressSearchSave.prefs.addressSearchSave.secondaryText,
-                prefs.addressSearchSave.secondaryText,
-                storeAuth.user.uid);
+            storesByLocationlistServices(address,
+                prefs.addressSearchSave.secondaryText, storeAuth.user.uid);
 
             Navigator.pop(context);
           }, () {

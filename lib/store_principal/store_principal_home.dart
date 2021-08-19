@@ -309,6 +309,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
     if (groceryBloc.isReload) this.getCartSave();
     groceryBloc.changeReaload();
+
     return SafeArea(
       child: Scaffold(
           backgroundColor: currentTheme.scaffoldBackgroundColor,

@@ -10,7 +10,7 @@ import 'package:australti_ecommerce_app/widgets/modal_bottom_sheet.dart';
 import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -47,10 +47,6 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
 
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
     store = authService.storeAuth;
-
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (store.user.first) openSheetBottom();
-    });
 
     isSwitchChange = store.visibility;
 

@@ -5,7 +5,7 @@ import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
 import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
-import 'package:australti_ecommerce_app/widgets/modal_bottom_sheet.dart';
+
 import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +31,6 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
     store = authService.storeAuth;
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (store.user.first) openSheetBottom();
-
       authService.serviceChange = store.service;
     });
     super.initState();
@@ -42,10 +40,6 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
   void dispose() {
     storeProfileBloc.dispose();
     super.dispose();
-  }
-
-  void openSheetBottom() {
-    showSelectServiceMaterialCupertinoBottomSheet(context);
   }
 
   @override

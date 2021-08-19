@@ -519,6 +519,20 @@ Route selectCategoryObBoardStoreRoute() {
       return CategorySelectStore();
     },
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: animation,
+        child: child,
+      );
+    },
+  );
+}
+/* 
+Route selectCategoryObBoardStoreRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return CategorySelectStore();
+    },
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = Offset(0.0, 0.5);
       var end = Offset.zero;
       var curve = Curves.ease;
@@ -531,7 +545,7 @@ Route selectCategoryObBoardStoreRoute() {
       );
     },
   );
-}
+} */
 
 Route contactoInfoStoreRoute() {
   return PageRouteBuilder(
