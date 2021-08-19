@@ -281,7 +281,8 @@ class EditProfilePageState extends State<EditProfilePage> {
                   ),
                   iconSize: 30,
                   onPressed: () {
-                    if (authService.redirect == 'profile') {
+                    if (authService.redirect == 'profile' ||
+                        authService.isChangeToSale) {
                       Provider.of<MenuModel>(context, listen: false)
                           .currentPage = 0;
                       Navigator.push(context, principalHomeRoute());
@@ -682,7 +683,9 @@ class EditProfilePageState extends State<EditProfilePage> {
                                           child: Container(
                                             child: Text(
                                                 (bankFind != null)
-                                                    ? '${bankFind.nameBank}'
+                                                    ? (bankFind.id != '0')
+                                                        ? '${bankFind.nameBank}'
+                                                        : ''
                                                     : '',
                                                 style: TextStyle(
                                                     color: Colors.grey,

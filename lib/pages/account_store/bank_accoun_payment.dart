@@ -13,7 +13,7 @@ import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+
 import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
@@ -68,9 +68,6 @@ class _BankAccountStoreState extends State<BankAccountStorePayment> {
     } else {
       emailCtl.text = store.user.email;
     }
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (store.user.first) openSheetBottom();
-    });
 
     super.initState();
   }

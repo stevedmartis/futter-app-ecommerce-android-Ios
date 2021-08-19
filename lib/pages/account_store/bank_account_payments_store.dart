@@ -183,18 +183,7 @@ class _BankAccountStoreState extends State<BankAccountStore> {
                         size: 40,
                       ),
                       onPressed: () {
-                        if (!isEdit &&
-                            authService.isChangeToSale &&
-                            store.user.first) {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        } else {
-                          Navigator.pop(context);
-                        }
+                        Navigator.pop(context);
                       }),
                   actions: [
                     (!loading)
@@ -295,8 +284,10 @@ class _BankAccountStoreState extends State<BankAccountStore> {
                                 GestureDetector(
                                   onTap: () {
                                     (authService.isChangeToSale)
-                                        ? Navigator.push(
-                                            context, profileEditRoute())
+                                        ? Navigator.pushAndRemoveUntil(
+                                            context,
+                                            profileAuthRoute(true),
+                                            (Route<dynamic> route) => true)
                                         : Navigator.pop(context);
                                   },
                                   child: Container(
@@ -601,12 +592,8 @@ class _BankAccountStoreState extends State<BankAccountStore> {
         showSnackBar(context, 'Cuenta bancaria guardada');
 
         if (authService.isChangeToSale && store.user.first) {
-          Navigator.pop(context);
-          Navigator.pop(context);
-          Navigator.pop(context);
-          Navigator.pop(context);
-          Navigator.pop(context);
-          Navigator.pop(context);
+          Navigator.pushAndRemoveUntil(
+              context, profileAuthRoute(true), (Route<dynamic> route) => true);
         } else {
           Navigator.pop(context);
         }
@@ -662,12 +649,8 @@ class _BankAccountStoreState extends State<BankAccountStore> {
         showSnackBar(context, 'Cuenta bancaria editada');
 
         if (authService.isChangeToSale && store.user.first) {
-          Navigator.pop(context);
-          Navigator.pop(context);
-          Navigator.pop(context);
-          Navigator.pop(context);
-          Navigator.pop(context);
-          Navigator.pop(context);
+          Navigator.pushAndRemoveUntil(
+              context, profileAuthRoute(true), (Route<dynamic> route) => true);
         } else {
           Navigator.pop(context);
         }

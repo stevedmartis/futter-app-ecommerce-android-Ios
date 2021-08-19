@@ -1,7 +1,7 @@
 import 'package:australti_ecommerce_app/models/store.dart';
 import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
 import 'package:australti_ecommerce_app/responses/bank_account.dart';
-import 'package:australti_ecommerce_app/responses/search_stores_products_response.dart';
+
 import 'package:australti_ecommerce_app/services/stores_Services.dart';
 
 import 'package:australti_ecommerce_app/store_principal/store_Service.dart';
@@ -72,20 +72,27 @@ class StoreBLoC with ChangeNotifier {
   void searchStoresOrProductsByQuery(String value, String uid) async {
     if (value.length >= 3) {
       loadingSearch = true;
-      final SearchStoresProductsListResponse resp =
-          await storeService.getStoreAndProductsByValue(value, uid);
 
-      if (resp.ok) {
-        storesSearch = resp.storesSearch;
-        productsSearch = resp.productsSearch;
+      if (uid != '0') {
+        final resp = await storeService.getStoreAndProductsByValue(value, uid);
 
+        if (resp.ok) {
+          storesSearch = resp.storesSearch;
+          productsSearch = resp.productsSearch;
+
+          loadingSearch = false;
+
+          initialSearch = false;
+
+          notifyListeners();
+        }
+      } else {
         loadingSearch = false;
-
-        initialSearch = false;
-
+        initialSearch = true;
         notifyListeners();
       }
     } else {
+      loadingSearch = false;
       initialSearch = true;
       notifyListeners();
     }

@@ -28,7 +28,8 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
   @override
   void initState() {
     _scrollController = ScrollController()..addListener(() => setState(() {}));
-
+    final storeBLoC = Provider.of<StoreBLoC>(context, listen: false);
+    storeBLoC.loadingSearch = false;
     super.initState();
   }
 
@@ -105,7 +106,7 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
                         child: Container(
                             padding: EdgeInsets.symmetric(vertical: 20),
                             child: Text(
-                              'No se encontraron resultados',
+                              'No hay tiendas en esta ubicación',
                               style: TextStyle(color: Colors.grey),
                             )),
                       ),
