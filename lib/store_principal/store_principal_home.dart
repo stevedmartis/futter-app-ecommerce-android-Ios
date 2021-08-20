@@ -238,9 +238,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 
     if (resp.ok) {
-      storeBloc.storesListInitial = [];
-      storeBloc.storesListInitial = resp.storeListServices;
-      storeBloc.chargeServicesStores();
+      storeBloc.chargeServicesStores(resp.storeListServices);
       changeToCurrentService();
     }
   }
@@ -264,10 +262,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 
     if (resp.ok) {
-      storeBloc.storesListInitial = [];
-      storeBloc.storesListInitial = resp.storeListServices;
-
-      storeBloc.chargeServicesStores();
+      storeBloc.chargeServicesStores(resp.storeListServices);
 
       changeToCurrentService();
 
@@ -520,7 +515,8 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                         closedShape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20)),
                         openBuilder: (_, closeContainer) {
-                          return SearchPrincipalPage();
+                          return SearchPrincipalPage(
+                              storeListServices: bloc.storesListInitial);
                         },
                         closedBuilder: (_, openContainer) {
                           return Container(child: MyTextField(_showTitle));
@@ -1425,9 +1421,7 @@ void storesByLocationlistServices(
       await storeService.getStoresLocationListServices(address, location, uid);
   final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
   if (resp.ok) {
-    storeBloc.storesListInitial = [];
-    storeBloc.storesListInitial = resp.storeListServices;
-    storeBloc.chargeServicesStores();
+    storeBloc.chargeServicesStores(resp.storeListServices);
   }
 }
 

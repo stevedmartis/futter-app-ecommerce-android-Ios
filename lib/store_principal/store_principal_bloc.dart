@@ -70,30 +70,24 @@ class StoreBLoC with ChangeNotifier {
   Store _storeCurrent;
 
   void searchStoresOrProductsByQuery(String value, String uid) async {
-    if (value.length >= 3) {
+    if (value.length >= 2) {
       loadingSearch = true;
 
-      if (uid != '0') {
-        final resp = await storeService.getStoreAndProductsByValue(value, uid);
+      final resp = await storeService.getStoreAndProductsByValue(value, uid);
 
-        if (resp.ok) {
-          storesSearch = resp.storesSearch;
-          productsSearch = resp.productsSearch;
+      if (resp.ok) {
+        storesSearch = resp.storesSearch;
+        productsSearch = resp.productsSearch;
 
-          loadingSearch = false;
-
-          initialSearch = false;
-
-          notifyListeners();
-        }
-      } else {
         loadingSearch = false;
-        initialSearch = true;
+
         notifyListeners();
       }
     } else {
       loadingSearch = false;
-      initialSearch = true;
+
+      storesSearch = storesListInitial;
+      productsSearch = [];
       notifyListeners();
     }
   }
@@ -113,7 +107,8 @@ class StoreBLoC with ChangeNotifier {
     notifyListeners();
   }
 
-  void chargeServicesStores() {
+  void chargeServicesStores(List<Store> storesList) {
+    storesListInitial = storesList;
     final markets = storesListInitial.where((i) => i.service == 1).toList();
 
     final restaurants = storesListInitial.where((i) => i.service == 2).toList();
@@ -139,6 +134,9 @@ class StoreBLoC with ChangeNotifier {
     final liquerService = servicesStores.firstWhere((i) => i.id == 3);
 
     liquerService.stores = liquers.length;
+
+    storesSearch = storesListInitial;
+    initialSearch = false;
 
     if (followed.length > 0) {
       changeToFollowed();

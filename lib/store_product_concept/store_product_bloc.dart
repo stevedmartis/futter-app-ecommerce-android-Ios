@@ -255,9 +255,9 @@ class TabsViewScrollBLoC with ChangeNotifier {
     final item = tabs.firstWhere((item) => item.category.id == product.category,
         orElse: () => null);
 
-    item.category.products.removeWhere((product) => product.id == product.id);
-    productsByCategoryList.removeWhere((product) => product.id == product.id);
+    productsByCategoryList.remove(product);
 
+    item.category.products.remove(product);
     tabs = [];
     items = [];
 

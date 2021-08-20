@@ -335,9 +335,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
         .getStoresLocationListServices(address, location, uid);
 
     if (resp.ok) {
-      storeBloc.storesListInitial = resp.storeListServices;
-
-      storeBloc.chargeServicesStores();
+      storeBloc.chargeServicesStores(resp.storeListServices);
 
       storeBloc.changeToMarket();
     }

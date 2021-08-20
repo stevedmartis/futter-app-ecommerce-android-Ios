@@ -100,311 +100,317 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
         NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
             .format(widget.product.price * quantity);
 
-    return Scaffold(
-        bottomNavigationBar: (!widget.isAuthUser)
-            ? Container(
-                padding:
-                    EdgeInsets.only(top: 5, bottom: 10, right: 0, left: 10),
-                child: Row(children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
-                          color: Colors.grey[200],
-                        ),
-                        child: Row(
-                          children: [
-                            const SizedBox(width: 10),
-                            IconButton(
-                              onPressed: () {
-                                HapticFeedback.lightImpact();
-                                if (quantity > 1) {
-                                  setState(() {
-                                    quantity--;
-                                  });
-                                }
-                              },
-                              icon: Icon(
-                                Icons.remove,
-                                color: Colors.black,
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20.0),
-                              child: Text(
-                                quantity.toString(),
-                                style: TextStyle(
+    return SafeArea(
+      child: Scaffold(
+          bottomNavigationBar: (!widget.isAuthUser)
+              ? Container(
+                  padding:
+                      EdgeInsets.only(top: 5, bottom: 10, right: 0, left: 10),
+                  child: Row(children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(25),
+                            color: Colors.grey[200],
+                          ),
+                          child: Row(
+                            children: [
+                              const SizedBox(width: 10),
+                              IconButton(
+                                onPressed: () {
+                                  HapticFeedback.lightImpact();
+                                  if (quantity > 1) {
+                                    setState(() {
+                                      quantity--;
+                                    });
+                                  }
+                                },
+                                icon: Icon(
+                                  Icons.remove,
                                   color: Colors.black,
                                 ),
                               ),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                HapticFeedback.lightImpact();
-                                setState(() {
-                                  quantity++;
-                                });
-                              },
-                              icon: Icon(
-                                Icons.add,
-                                color: Colors.black,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Spacer(),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 10.0, right: 10, bottom: 0),
-                    child: SizedBox(
-                        height: 50,
-                        width: size.width / 2.2,
-                        child: ElevatedButton(
-                            onPressed: () {
-                              HapticFeedback.lightImpact();
-                              _addToCart(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              elevation: 5.0,
-                              fixedSize: Size.fromWidth(size.width),
-                              primary: currentTheme.primaryColor,
-                              shape: new RoundedRectangleBorder(
-                                borderRadius: new BorderRadius.circular(30.0),
-                              ),
-                            ),
-                            child: Row(children: [
-                              Text('Add', style: TextStyle(fontSize: 15)),
-                              Spacer(),
-                              Text(
-                                '\$$priceformat',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline4
-                                    .copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15),
-                              ),
-                            ]))),
-                  )
-                ]),
-              )
-            : Padding(
-                padding: const EdgeInsets.only(
-                  left: 10.0,
-                  right: 10,
-                  bottom: 20,
-                ),
-                child: SizedBox(
-                    height: 50,
-                    child: Row(
-                      children: [
-                        elevatedButtonCustom(
-                          context: context,
-                          isDelete: true,
-                          title: 'Eliminar',
-                          onPress: () {
-                            HapticFeedback.heavyImpact();
-
-                            final act = CupertinoActionSheet(
-                                title: Text('Eliminar este producto?',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 20)),
-                                message: Text(
-                                    'Se eliminara de tu lista de productos de forma permanente'),
-                                actions: <Widget>[
-                                  CupertinoActionSheetAction(
-                                    child: Text(
-                                      'Eliminar',
-                                      style: TextStyle(color: Colors.red),
-                                    ),
-                                    onPressed: () {
-                                      HapticFeedback.heavyImpact();
-                                      _deleteProduct();
-                                    },
-                                  )
-                                ],
-                                cancelButton: CupertinoActionSheetAction(
-                                  child: Text(
-                                    'Cancelar',
-                                    style: TextStyle(color: Colors.grey),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20.0),
+                                child: Text(
+                                  quantity.toString(),
+                                  style: TextStyle(
+                                    color: Colors.black,
                                   ),
-                                  onPressed: () {},
-                                ));
-                            showCupertinoModalPopup(
-                                context: context,
-                                builder: (BuildContext context) => act);
-                          },
-                        ),
-                        Spacer(),
-                        SizedBox(
-                            height: 100,
-                            width: size.width / 3,
-                            child: ElevatedButton(
+                                ),
+                              ),
+                              IconButton(
                                 onPressed: () {
                                   HapticFeedback.lightImpact();
-                                  Navigator.of(context).push(
-                                      createRouteAddEditProduct(widget.product,
-                                          true, widget.category));
+                                  setState(() {
+                                    quantity++;
+                                  });
                                 },
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 5.0,
-                                  fixedSize: Size.fromWidth(size.width),
-                                  primary: Colors.grey[200],
-                                  shape: new RoundedRectangleBorder(
-                                    borderRadius:
-                                        new BorderRadius.circular(30.0),
-                                  ),
-                                ),
-                                child: Text(
-                                  'Editar',
-                                  style: TextStyle(color: Colors.black),
-                                )))
-                      ],
-                    )),
-              ),
-        backgroundColor: currentTheme.scaffoldBackgroundColor,
-        body: CustomScrollView(
-            physics: const BouncingScrollPhysics(
-                parent: AlwaysScrollableScrollPhysics()),
-            controller: _scrollController,
-            slivers: [
-              SliverAppBar(
-                  leading: Padding(
-                    padding: const EdgeInsets.only(left: 5.0, top: 10),
-                    child: CircleAvatar(
-                      backgroundColor: currentTheme.scaffoldBackgroundColor
-                          .withOpacity(0.70),
-                      radius: 50,
-                      child: InkResponse(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Icon(
-                            Icons.chevron_left,
-                            color: Colors.white,
-                            size: 35,
-                          )),
-                    ),
-                  ),
-                  leadingWidth: 70,
-                  backgroundColor: currentTheme.scaffoldBackgroundColor,
-                  actions: [
-                    (!widget.isAuthUser)
-                        ? Padding(
-                            padding:
-                                const EdgeInsets.only(right: 10.0, top: 10),
-                            child: CircleAvatar(
-                              backgroundColor: currentTheme
-                                  .scaffoldBackgroundColor
-                                  .withOpacity(0.70),
-                              radius: 20,
-                              child: InkResponse(
-                                  onTap: () {
-                                    if (authService.storeAuth.user.uid == '0') {
-                                      authService.redirect = 'favoriteBtn';
-                                      Navigator.push(context, loginRoute());
-                                    } else
-                                      HapticFeedback.lightImpact();
-                                    if (animatedController.status ==
-                                        AnimationStatus.completed) {
-                                      addToFavoriteButtonTapped();
-                                      animatedController.reverse();
-                                      storeBloc.productsFavoritesList
-                                          .removeWhere((item) =>
-                                              item.id == widget.product.id);
-                                      showSnackBar(context,
-                                          'Se elimino de "Mis favoritos"');
-                                    }
-                                    if (animatedController.status ==
-                                        AnimationStatus.dismissed) {
-                                      addToFavoriteButtonTapped();
-                                      animatedController.forward();
-                                      storeBloc.productsFavoritesList
-                                          .insert(0, widget.product);
-                                      showSnackBar(context,
-                                          'Agregado en "Mis favoritos"');
-                                    }
-                                  },
-                                  child: Transform.scale(
-                                    scale: _angle,
-                                    child: Icon(
-                                      (_angle > 0.6)
-                                          ? Icons.favorite
-                                          : Icons.favorite_outline,
-                                      color: (_angle > 0.6)
-                                          ? Colors.red
-                                          : Colors.grey,
-                                      size: 35,
-                                    ),
-                                  )),
-                            ),
-                          )
-                        : Container(),
-                  ],
-                  stretch: true,
-                  expandedHeight: 250.0,
-                  collapsedHeight: 70,
-                  floating: false,
-                  pinned: true,
-                  flexibleSpace: FlexibleSpaceBar(
-                    stretchModes: [
-                      StretchMode.zoomBackground,
-                      StretchMode.fadeTitle,
-                      // StretchMode.blurBackground
-                    ],
-                    background: Material(
-                      type: MaterialType.transparency,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(30.0),
-                          bottomRight: Radius.circular(30.0),
-                        ),
-                        child: (widget.product.images.length > 1)
-                            ? Swiper(
-                                itemCount: widget.product.images.length,
-                                itemBuilder:
-                                    (BuildContext context, int index) => Hero(
-                                  tag: tag + '$index',
-                                  child: Container(
-                                    child: cachedNetworkImageDetail(
-                                      widget.product.images[index].url,
-                                    ),
-                                  ),
-                                ),
-                                pagination: new SwiperPagination(
-                                    margin: new EdgeInsets.fromLTRB(
-                                        0.0, 0.0, 0.0, 20.0),
-                                    builder: new DotSwiperPaginationBuilder(
-                                        color: Colors.grey,
-                                        activeColor: currentTheme.accentColor,
-                                        size: 14.0,
-                                        activeSize: 18.0)),
-                                autoplay: false,
-                              )
-                            : Container(
-                                child: Hero(
-                                  tag: tag + '$index',
-                                  child: Container(
-                                    child: cachedNetworkImageDetail(
-                                      widget.product.images[0].url,
-                                    ),
-                                  ),
+                                icon: Icon(
+                                  Icons.add,
+                                  color: Colors.black,
                                 ),
                               ),
+                              const SizedBox(width: 10),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10.0, right: 10, bottom: 0),
+                      child: SizedBox(
+                          height: 50,
+                          width: size.width / 2.2,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                HapticFeedback.lightImpact();
+                                _addToCart(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                elevation: 5.0,
+                                fixedSize: Size.fromWidth(size.width),
+                                primary: currentTheme.primaryColor,
+                                shape: new RoundedRectangleBorder(
+                                  borderRadius: new BorderRadius.circular(30.0),
+                                ),
+                              ),
+                              child: Row(children: [
+                                Text('Add', style: TextStyle(fontSize: 15)),
+                                Spacer(),
+                                Text(
+                                  '\$$priceformat',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline4
+                                      .copyWith(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15),
+                                ),
+                              ]))),
+                    )
+                  ]),
+                )
+              : Padding(
+                  padding: const EdgeInsets.only(
+                    left: 10.0,
+                    right: 10,
+                    bottom: 20,
+                  ),
+                  child: SizedBox(
+                      height: 50,
+                      child: Row(
+                        children: [
+                          elevatedButtonCustom(
+                            context: context,
+                            isDelete: true,
+                            title: 'Eliminar',
+                            onPress: () {
+                              HapticFeedback.heavyImpact();
+
+                              final act = CupertinoActionSheet(
+                                  title: Text('Eliminar este producto?',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 20)),
+                                  message: Text(
+                                      'Se eliminara de tu lista de productos de forma permanente'),
+                                  actions: <Widget>[
+                                    CupertinoActionSheetAction(
+                                      child: Text(
+                                        'Eliminar',
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                      onPressed: () {
+                                        HapticFeedback.heavyImpact();
+                                        _deleteProduct();
+                                      },
+                                    )
+                                  ],
+                                  cancelButton: CupertinoActionSheetAction(
+                                    child: Text(
+                                      'Cancelar',
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                    onPressed: () {},
+                                  ));
+                              showCupertinoModalPopup(
+                                  context: context,
+                                  builder: (BuildContext context) => act);
+                            },
+                          ),
+                          Spacer(),
+                          SizedBox(
+                              height: 100,
+                              width: size.width / 3,
+                              child: ElevatedButton(
+                                  onPressed: () {
+                                    HapticFeedback.lightImpact();
+                                    Navigator.of(context).push(
+                                        createRouteAddEditProduct(
+                                            widget.product,
+                                            true,
+                                            widget.category));
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 5.0,
+                                    fixedSize: Size.fromWidth(size.width),
+                                    primary: Colors.grey[200],
+                                    shape: new RoundedRectangleBorder(
+                                      borderRadius:
+                                          new BorderRadius.circular(30.0),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Editar',
+                                    style: TextStyle(color: Colors.black),
+                                  )))
+                        ],
+                      )),
+                ),
+          backgroundColor: currentTheme.scaffoldBackgroundColor,
+          body: CustomScrollView(
+              physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics()),
+              controller: _scrollController,
+              slivers: [
+                SliverAppBar(
+                    leading: Padding(
+                      padding: const EdgeInsets.only(left: 5.0, top: 10),
+                      child: CircleAvatar(
+                        backgroundColor: currentTheme.scaffoldBackgroundColor
+                            .withOpacity(0.70),
+                        radius: 50,
+                        child: InkResponse(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Icon(
+                              Icons.chevron_left,
+                              color: Colors.white,
+                              size: 35,
+                            )),
                       ),
                     ),
-                    centerTitle: true,
-                  )),
-              makeInfoProduct(tag)
-            ]));
+                    leadingWidth: 70,
+                    backgroundColor: currentTheme.scaffoldBackgroundColor,
+                    actions: [
+                      (!widget.isAuthUser)
+                          ? Padding(
+                              padding:
+                                  const EdgeInsets.only(right: 10.0, top: 10),
+                              child: CircleAvatar(
+                                backgroundColor: currentTheme
+                                    .scaffoldBackgroundColor
+                                    .withOpacity(0.70),
+                                radius: 20,
+                                child: InkResponse(
+                                    onTap: () {
+                                      if (authService.storeAuth.user.uid ==
+                                          '0') {
+                                        authService.redirect = 'favoriteBtn';
+                                        Navigator.push(context, loginRoute());
+                                      } else
+                                        HapticFeedback.lightImpact();
+                                      if (animatedController.status ==
+                                          AnimationStatus.completed) {
+                                        addToFavoriteButtonTapped();
+                                        animatedController.reverse();
+                                        storeBloc.productsFavoritesList
+                                            .removeWhere((item) =>
+                                                item.id == widget.product.id);
+                                        showSnackBar(context,
+                                            'Se elimino de "Mis favoritos"');
+                                      }
+                                      if (animatedController.status ==
+                                          AnimationStatus.dismissed) {
+                                        addToFavoriteButtonTapped();
+                                        animatedController.forward();
+                                        storeBloc.productsFavoritesList
+                                            .insert(0, widget.product);
+                                        showSnackBar(context,
+                                            'Agregado en "Mis favoritos"');
+                                      }
+                                    },
+                                    child: Transform.scale(
+                                      scale: _angle,
+                                      child: Icon(
+                                        (_angle > 0.6)
+                                            ? Icons.favorite
+                                            : Icons.favorite_outline,
+                                        color: (_angle > 0.6)
+                                            ? Colors.red
+                                            : Colors.grey,
+                                        size: 35,
+                                      ),
+                                    )),
+                              ),
+                            )
+                          : Container(),
+                    ],
+                    stretch: true,
+                    expandedHeight: 250.0,
+                    collapsedHeight: 70,
+                    floating: false,
+                    pinned: true,
+                    flexibleSpace: FlexibleSpaceBar(
+                      stretchModes: [
+                        StretchMode.zoomBackground,
+                        StretchMode.fadeTitle,
+                        // StretchMode.blurBackground
+                      ],
+                      background: Material(
+                        type: MaterialType.transparency,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(30.0),
+                            bottomRight: Radius.circular(30.0),
+                          ),
+                          child: (widget.product.images.length > 1)
+                              ? Swiper(
+                                  itemCount: widget.product.images.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) => Hero(
+                                    tag: tag + '$index',
+                                    child: Container(
+                                      child: cachedNetworkImageDetail(
+                                        widget.product.images[index].url,
+                                      ),
+                                    ),
+                                  ),
+                                  pagination: new SwiperPagination(
+                                      margin: new EdgeInsets.fromLTRB(
+                                          0.0, 0.0, 0.0, 0.0),
+                                      builder: new DotSwiperPaginationBuilder(
+                                          color: Colors.grey,
+                                          activeColor:
+                                              currentTheme.primaryColor,
+                                          size: 14.0,
+                                          activeSize: 18.0)),
+                                  autoplay: false,
+                                )
+                              : Container(
+                                  child: Hero(
+                                    tag: tag + '$index',
+                                    child: Container(
+                                      child: cachedNetworkImageDetail(
+                                        widget.product.images[0].url,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                        ),
+                      ),
+                      centerTitle: true,
+                    )),
+                makeInfoProduct(tag)
+              ])),
+    );
   }
 
   Future<bool> addToFavoriteButtonTapped() async {
@@ -427,10 +433,9 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
     final productProvider =
         Provider.of<TabsViewScrollBLoC>(context, listen: false);
     final res = await this.productService.deleteProduct(widget.product.id);
-
+    productProvider.removeProductById(
+        this, widget.product, widget.product.user, context);
     if (res) {
-      productProvider.removeProductById(
-          this, widget.product, widget.product.user, context);
       setState(() {});
 
       showSnackBar(context, 'Producto eliminado');
@@ -478,6 +483,10 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
   }
 
   Widget infoProduct(String tag) {
+    final priceformat =
+        NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
+            .format(widget.product.price * quantity);
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -498,10 +507,8 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  '100',
-                  style: Theme.of(context).textTheme.subtitle2.copyWith(
-                        color: Colors.grey,
-                      ),
+                  '\$$priceformat',
+                  style: TextStyle(color: Color(0xff32D73F), fontSize: 25),
                 ),
                 const SizedBox(height: 20),
                 Text(

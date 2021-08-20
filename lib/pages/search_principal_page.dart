@@ -1,5 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
+import 'package:australti_ecommerce_app/models/store.dart';
 
 import 'package:australti_ecommerce_app/pages/favorite.dart';
 import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
@@ -16,6 +17,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class SearchPrincipalPage extends StatefulWidget {
+  SearchPrincipalPage({this.storeListServices});
+  final List<Store> storeListServices;
   @override
   _SearchPrincipalPageState createState() => _SearchPrincipalPageState();
 }
@@ -23,13 +26,12 @@ class SearchPrincipalPage extends StatefulWidget {
 class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
   SocketService socketService;
 
-  bool loading = false;
-
   @override
   void initState() {
     _scrollController = ScrollController()..addListener(() => setState(() {}));
-    final storeBLoC = Provider.of<StoreBLoC>(context, listen: false);
-    storeBLoC.loadingSearch = false;
+
+    storeBloc.storesSearch = widget.storeListServices;
+
     super.initState();
   }
 
@@ -79,7 +81,7 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
                   ),
 
                 if (!storeBLoC.loadingSearch &&
-                    !storeBLoC.initialSearch &&
+                    widget.storeListServices.length != 0 &&
                     storeBLoC.storesSearch.length == 0 &&
                     storeBLoC.productsSearch.length == 0)
                   SliverToBoxAdapter(
@@ -96,10 +98,8 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
                   ),
 
                 if (!storeBLoC.loadingSearch &&
-                    storeBLoC.initialSearch &&
-                    storeBLoC.storesSearch.length == 0 &&
-                    storeBLoC.productsSearch.length == 0 &&
-                    storeBloc.storesListInitial.length == 0)
+                    widget.storeListServices.length == 0 &&
+                    storeBLoC.storesSearch.length == 0)
                   SliverToBoxAdapter(
                     child: FadeIn(
                       child: Center(
@@ -113,9 +113,7 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
                     ),
                   ),
 
-                if (!storeBLoC.loadingSearch &&
-                    storeBLoC.storesSearch.length > 0)
-                  makeListStores(context),
+                if (storeBLoC.storesSearch.length > 0) makeListStores(context),
                 if (!storeBLoC.loadingSearch &&
                     storeBLoC.productsSearch.length > 0)
                   makeListProducts(context)
@@ -327,7 +325,7 @@ class _SearchResultListState extends State<SearchStoresResultList>
     return Stack(
       children: [
         Container(
-          padding: EdgeInsets.only(top: 20),
+          padding: EdgeInsets.only(top: 10, left: 20, right: 20),
           child: ListView.builder(
             shrinkWrap: true,
             controller: _scrollController,
@@ -382,11 +380,10 @@ class _SearchProductsResultListState extends State<SearchProductsResultList>
       children: [
         if (storeBLoC.storesSearch.length > 0)
           Container(
-              padding: EdgeInsets.only(top: 20, left: 20, right: 20),
+              padding: EdgeInsets.only(top: 0, left: 20, right: 20),
               child: Divider()),
         Container(
-          padding: EdgeInsets.only(
-              top: (storeBLoC.storesSearch.length > 0) ? 40 : 20),
+          padding: EdgeInsets.only(top: 20),
           child: ListView.builder(
             shrinkWrap: true,
             controller: _scrollController,

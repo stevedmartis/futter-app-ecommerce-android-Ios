@@ -73,7 +73,7 @@ class _PrincipalPageState extends State<PrincipalPage>
     cardBloc.getMyCreditCards(storeAuth.user.uid);
 
     categoriesStoreProducts();
-    storeBloc.chargeServicesStores();
+
     // storeslistServices();
     Timer(new Duration(milliseconds: 0), () {
       orderService.loading = true;
@@ -182,9 +182,7 @@ class _PrincipalPageState extends State<PrincipalPage>
     final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 
     if (resp.ok) {
-      storeBloc.storesListInitial = resp.storeListServices;
-
-      storeBloc.chargeServicesStores();
+      storeBloc.chargeServicesStores(resp.storeListServices);
     }
   }
 
@@ -199,14 +197,11 @@ class _PrincipalPageState extends State<PrincipalPage>
 
     final int followed = prefs.followed;
     if (resp.ok) {
-      storeBloc.storesListInitial = [];
-      storeBloc.storesListInitial = resp.storeListServices;
-
       storeBloc.selected = (followed > 0)
           ? storeBloc.servicesStores.first
           : storeBloc.servicesStores[1];
 
-      storeBloc.chargeServicesStores();
+      storeBloc.chargeServicesStores(resp.storeListServices);
     }
   }
 
@@ -468,10 +463,7 @@ class _PrincipalPageState extends State<PrincipalPage>
     final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 
     if (resp.ok) {
-      storeBloc.storesListInitial = [];
-      storeBloc.storesListInitial = resp.storeListServices;
-
-      storeBloc.chargeServicesStores();
+      storeBloc.chargeServicesStores(resp.storeListServices);
     }
   }
 
