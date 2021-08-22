@@ -104,7 +104,9 @@ class _PrincipalPageState extends State<PrincipalPage>
       Timer(new Duration(milliseconds: 0), () {
         orderService.loading = true;
       });
-    } else {}
+    } else {
+      storeBloc.loadingStores = false;
+    }
 
     if (!isWeb) locationStatus();
     if (!isWeb) WidgetsBinding.instance.addObserver(this);
@@ -232,7 +234,8 @@ class _PrincipalPageState extends State<PrincipalPage>
     if (resp.ok) {
       final List<Order> orderNotificationStore = resp.orders
           .where((i) =>
-              !i.isFinalice ||
+              i.isActive ||
+              i.isFinalice ||
               i.isNotifiCheckClient ||
               i.isCancelByClient ||
               i.isCancelByStore)
@@ -267,7 +270,8 @@ class _PrincipalPageState extends State<PrincipalPage>
     if (resp.ok) {
       final List<Order> orderNotificationStore = resp.orders
           .where((i) =>
-              !i.isFinalice ||
+              i.isActive ||
+              i.isFinalice ||
               i.isNotifiCheckStore ||
               i.isCancelByClient ||
               i.isCancelByStore)
@@ -401,16 +405,14 @@ class _PrincipalPageState extends State<PrincipalPage>
   }
 
   void accessGps(PermissionStatus status) {
-    final address =
-        prefs.addressSearchSave.mainText.toString().split(",").first;
-
     switch (status) {
       case PermissionStatus.granted:
         Timer(new Duration(milliseconds: 300), () {
           showMaterialCupertinoBottomSheetLocation(context, () {
             HapticFeedback.lightImpact();
             myLocationBloc.initPositionLocation();
-
+            final address =
+                prefs.addressSearchSave.mainText.toString().split(",").first;
             storesByLocationlistServices(address,
                 prefs.addressSearchSave.secondaryText, storeAuth.user.uid);
 

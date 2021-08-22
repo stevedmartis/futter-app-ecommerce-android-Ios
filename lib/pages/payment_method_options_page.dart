@@ -12,6 +12,7 @@ import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
 import 'package:australti_ecommerce_app/routes/routes.dart';
 
 import 'package:australti_ecommerce_app/services/stripe_service.dart';
+import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
 
 import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
 import 'package:australti_ecommerce_app/theme/theme.dart';
@@ -174,6 +175,7 @@ class _OptionsListState extends State<OptionsList> {
 
   @override
   Widget build(BuildContext context) {
+    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 20),
       child: Column(
@@ -182,7 +184,7 @@ class _OptionsListState extends State<OptionsList> {
         children: [
           Container(
             child: Text(
-              'Selecciona una opción',
+              'Seleccione una opción',
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 25,
@@ -192,7 +194,7 @@ class _OptionsListState extends State<OptionsList> {
           SizedBox(height: 5),
           Container(
             child: Text(
-              'Eligue con que metodo pagaras el pedido.',
+              'Eliga con que metodo pagara el pedido.',
               style: TextStyle(
                   fontWeight: FontWeight.normal,
                   fontSize: 15,
@@ -231,16 +233,17 @@ class _OptionsListState extends State<OptionsList> {
               ),
             ),
           ),
-          SizedBox(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: FadeIn(
-                child: BankAccountOption(
-                  orderPage: widget.orderPage,
+          if (storeBloc.bankAccountsByStore.length > 0)
+            SizedBox(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: FadeIn(
+                  child: BankAccountOption(
+                    orderPage: widget.orderPage,
+                  ),
                 ),
               ),
             ),
-          ),
         ],
       ),
     );

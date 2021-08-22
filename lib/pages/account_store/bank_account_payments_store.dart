@@ -286,7 +286,7 @@ class _BankAccountStoreState extends State<BankAccountStore> {
                                     (authService.isChangeToSale)
                                         ? Navigator.pushAndRemoveUntil(
                                             context,
-                                            profileAuthRoute(true),
+                                            profileEditRoute(),
                                             (Route<dynamic> route) => true)
                                         : Navigator.pop(context);
                                   },
@@ -593,7 +593,7 @@ class _BankAccountStoreState extends State<BankAccountStore> {
 
         if (authService.isChangeToSale && store.user.first) {
           Navigator.pushAndRemoveUntil(
-              context, profileAuthRoute(true), (Route<dynamic> route) => true);
+              context, profileEditRoute(), (Route<dynamic> route) => true);
         } else {
           Navigator.pop(context);
         }

@@ -198,6 +198,7 @@ class TabsViewScrollBLoC with ChangeNotifier {
     storeCategoriesProducts.add(newCategory);
 
     init(ticket, context);
+    notifyListeners();
   }
 
   void editCategory(TickerProvider ticket, ProfileStoreCategory editCategory,
@@ -398,8 +399,6 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
   @override
   void dispose() {
-    scrollController?.dispose();
-    scrollController2?.dispose();
     tabController.dispose();
     imagesProducts.clear();
     disposeImages();

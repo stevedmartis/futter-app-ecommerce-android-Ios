@@ -34,7 +34,7 @@ class _CarouselWithIndicatorState
               child: Hero(
                 tag: widget.tag + '$index',
                 child: Container(
-                  child: cachedNetworkImageDetail(
+                  child: cachedContainNetworkImage(
                     widget.images[index].url,
                   ),
                 ),

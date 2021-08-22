@@ -37,31 +37,15 @@ Widget cachedProductNetworkImage(String image) {
 }
 
 Widget cachedContainNetworkImage(String image) {
-  return CachedNetworkImage(
-    imageUrl: image,
-    imageBuilder: (context, imageProvider) => Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-            image: imageProvider,
-            fit: BoxFit.cover,
-            colorFilter:
-                ColorFilter.mode(Colors.transparent, BlendMode.colorBurn)),
-      ),
-    ),
-    placeholder: (context, url) =>
-        Container(child: buildLoadingWidget(context)),
-    errorWidget: (context, url, error) => Icon(Icons.error),
-  );
-}
+  var type = image.split(".").last;
 
-Widget cachedNetworkImageDetail(String image) {
   return CachedNetworkImage(
     imageUrl: image,
     imageBuilder: (context, imageProvider) => Container(
       decoration: BoxDecoration(
         image: DecorationImage(
             image: imageProvider,
-            fit: BoxFit.cover,
+            fit: (type.toLowerCase() == 'png') ? BoxFit.contain : BoxFit.cover,
             colorFilter:
                 ColorFilter.mode(Colors.transparent, BlendMode.colorBurn)),
       ),

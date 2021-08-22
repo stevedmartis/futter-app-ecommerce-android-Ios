@@ -186,7 +186,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                           onEditingComplete: _node.nextFocus,
                                           controller: addressSelectCtrl,
                                           style: TextStyle(
-                                            color: (currentTheme.accentColor),
+                                            color: (Colors.white),
                                           ),
                                           inputFormatters: <TextInputFormatter>[
                                             LengthLimitingTextInputFormatter(5),
@@ -207,7 +207,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                               ),
                                               icon: Icon(
                                                 Icons.location_city,
-                                                color: currentTheme.accentColor,
+                                                color: Colors.white,
                                               ),
                                               //  fillColor: currentTheme.accentColor,
                                               focusedBorder: OutlineInputBorder(
@@ -239,7 +239,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                       onEditingComplete: _node.nextFocus,
                                       controller: citySelectCtrl,
                                       style: TextStyle(
-                                        color: (currentTheme.accentColor),
+                                        color: (Colors.white),
                                       ),
                                       decoration: InputDecoration(
                                         enabledBorder: UnderlineInputBorder(
@@ -256,7 +256,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                         ),
                                         icon: Icon(
                                           Icons.location_on,
-                                          color: currentTheme.accentColor,
+                                          color: Colors.white,
                                         ),
                                         //  fillColor: currentTheme.accentColor,
                                         focusedBorder: OutlineInputBorder(
@@ -286,7 +286,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                         controller: numberCtrl,
                                         keyboardType: TextInputType.number,
                                         style: TextStyle(
-                                          color: (currentTheme.accentColor),
+                                          color: (Colors.white),
                                         ),
                                         decoration: InputDecoration(
                                           enabledBorder: UnderlineInputBorder(
@@ -303,7 +303,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                           ),
                                           icon: Icon(
                                             Icons.home,
-                                            color: currentTheme.accentColor,
+                                            color: Colors.white,
                                           ),
                                           //  fillColor: currentTheme.accentColor,
                                           focusedBorder: OutlineInputBorder(

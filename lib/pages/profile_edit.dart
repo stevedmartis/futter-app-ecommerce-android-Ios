@@ -243,9 +243,9 @@ class EditProfilePageState extends State<EditProfilePage> {
     final PlacesSearch address = prefs.addressSearchSave;
 
     final isEmail = (store.user.email != "");
-    final isPhone = (store.user.email != "0");
+    final isPhone = (store.user.phone != "0");
 
-    final isInstagram = (store.user.email != "");
+    final isInstagram = (store.instagram != "");
     final isOff = (store.percentOff != 0);
     final visibility = store.visibility;
     if (store.service == 1) categoryCtrl.text = 'Restaurante';
@@ -1012,7 +1012,8 @@ class EditProfilePageState extends State<EditProfilePage> {
 
     final storeProfile = store;
 
-    final username = usernameCtrl.text.trim();
+    final usernameSpace = usernameCtrl.text.replaceAll(' ', '');
+    final username = usernameSpace.trim();
 
     final name = nameCtrl.text.trim();
 
@@ -1041,6 +1042,8 @@ class EditProfilePageState extends State<EditProfilePage> {
             setState(() {
               loading = false;
             });
+
+            authService.imageProfileChange = false;
 
             showSnackBar(context, 'Perfil editado con exito!');
             if (storeProfile.user.first && authService.redirect == 'profile') {

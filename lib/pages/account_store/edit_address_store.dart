@@ -163,9 +163,7 @@ class _LocationStorePageState extends State<LocationStorePage> {
                                         child: TextField(
                                           onEditingComplete: _node.nextFocus,
                                           controller: addressSelectCtrl,
-                                          style: TextStyle(
-                                            color: (currentTheme.accentColor),
-                                          ),
+                                          style: TextStyle(color: Colors.white),
                                           inputFormatters: <TextInputFormatter>[
                                             LengthLimitingTextInputFormatter(5),
                                           ],
@@ -213,9 +211,7 @@ class _LocationStorePageState extends State<LocationStorePage> {
                                       enabled: false,
                                       onEditingComplete: _node.nextFocus,
                                       controller: citySelectCtrl,
-                                      style: TextStyle(
-                                        color: (currentTheme.accentColor),
-                                      ),
+                                      style: TextStyle(color: Colors.white),
                                       decoration: InputDecoration(
                                         enabledBorder: UnderlineInputBorder(
                                           borderSide: BorderSide(
@@ -257,9 +253,7 @@ class _LocationStorePageState extends State<LocationStorePage> {
                                         onEditingComplete: _node.nextFocus,
                                         controller: numberCtrl,
                                         keyboardType: TextInputType.number,
-                                        style: TextStyle(
-                                          color: (currentTheme.accentColor),
-                                        ),
+                                        style: TextStyle(color: Colors.white),
                                         decoration: InputDecoration(
                                           enabledBorder: UnderlineInputBorder(
                                             borderSide: BorderSide(

@@ -238,6 +238,10 @@ class _ProfileStoreProductItem extends StatelessWidget {
             .format(product.price);
 
     final size = MediaQuery.of(context).size;
+
+    var type = product.images[0].url.split(".").last;
+
+    bool isPng = (type.toLowerCase() == 'png');
     return GestureDetector(
       onTap: () async {
         FocusScope.of(context).requestFocus(new FocusNode());
@@ -283,6 +287,8 @@ class _ProfileStoreProductItem extends StatelessWidget {
                       child: Material(
                           type: MaterialType.transparency,
                           child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: (isPng) ? 10 : 0),
                               width: 100,
                               child: ClipRRect(
                                   borderRadius: BorderRadius.circular(12),

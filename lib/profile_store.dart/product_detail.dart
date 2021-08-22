@@ -100,6 +100,9 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
         NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
             .format(widget.product.price * quantity);
 
+    var type = widget.product.images[0].url.split(".").last;
+
+    bool isPng = (type.toLowerCase() == 'png');
     return SafeArea(
       child: Scaffold(
           bottomNavigationBar: (!widget.isAuthUser)
@@ -375,14 +378,18 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                               ? Swiper(
                                   itemCount: widget.product.images.length,
                                   itemBuilder:
-                                      (BuildContext context, int index) => Hero(
-                                    tag: tag + '$index',
-                                    child: Container(
-                                      child: cachedNetworkImageDetail(
-                                        widget.product.images[index].url,
+                                      (BuildContext context, int index) {
+                                    return Hero(
+                                      tag: tag + '$index',
+                                      child: Container(
+                                        padding:
+                                            EdgeInsets.all((isPng) ? 20 : 0),
+                                        child: cachedContainNetworkImage(
+                                          widget.product.images[index].url,
+                                        ),
                                       ),
-                                    ),
-                                  ),
+                                    );
+                                  },
                                   pagination: new SwiperPagination(
                                       margin: new EdgeInsets.fromLTRB(
                                           0.0, 0.0, 0.0, 0.0),
@@ -398,7 +405,8 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                                   child: Hero(
                                     tag: tag + '$index',
                                     child: Container(
-                                      child: cachedNetworkImageDetail(
+                                      padding: EdgeInsets.all((isPng) ? 20 : 0),
+                                      child: cachedContainNetworkImage(
                                         widget.product.images[0].url,
                                       ),
                                     ),
@@ -485,7 +493,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
   Widget infoProduct(String tag) {
     final priceformat =
         NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
-            .format(widget.product.price * quantity);
+            .format(widget.product.price);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -506,9 +514,18 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                       ),
                 ),
                 const SizedBox(height: 10),
-                Text(
-                  '\$$priceformat',
-                  style: TextStyle(color: Color(0xff32D73F), fontSize: 25),
+                Row(
+                  children: [
+                    Text(
+                      '\$$priceformat',
+                      style: TextStyle(color: Color(0xff32D73F), fontSize: 25),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      'c/u',
+                      style: TextStyle(color: Colors.grey, fontSize: 20),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 20),
                 Text(

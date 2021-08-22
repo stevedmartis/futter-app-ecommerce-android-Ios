@@ -175,7 +175,7 @@ class _NotificationListState extends State<NotificationList>
             ),
           ),
           Container(
-            padding: EdgeInsets.only(top: 20),
+            padding: EdgeInsets.only(top: 20, bottom: 20),
             child: ListView.builder(
               shrinkWrap: true,
               controller: scrollController,
@@ -184,7 +184,8 @@ class _NotificationListState extends State<NotificationList>
                 if (odersNotificationsClient.length > 0) {
                   final order = odersNotificationsClient[index];
                   return Container(
-                    height: _size.height / 5.1,
+                    padding: EdgeInsets.only(bottom: 10),
+                    height: _size.height / 4.4,
                     child: OrderNotificationStoreCard(
                       order: order,
                       isStore: false,
@@ -208,7 +209,8 @@ class _NotificationListState extends State<NotificationList>
               itemBuilder: (context, index) {
                 final order = odersNotificationsStore[index];
                 return Container(
-                  height: _size.height / 5.1,
+                  padding: EdgeInsets.only(bottom: 10),
+                  height: _size.height / 4.4,
                   child: OrderNotificationStoreCard(
                     order: order,
                     isStore: true,
@@ -402,9 +404,11 @@ class OrderNotificationStoreCard extends StatelessWidget {
                           ],
                         ),
                         Container(
-                          padding: EdgeInsets.only(top: 0),
+                          padding: EdgeInsets.only(top: 5.0),
                           child: Text(
-                            'Entrega estimada: 4 de Agosto',
+                            (store.timeDelivery != "")
+                                ? 'Entrega estimada: ${store.timeDelivery}'
+                                : 'Entrega estimada: 24 - 48 hrs.',
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.normal,

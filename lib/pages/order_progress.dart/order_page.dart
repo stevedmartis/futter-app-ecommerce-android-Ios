@@ -99,6 +99,9 @@ class _OrderPageState extends State<OrderPage> {
   void getbankAccountByUser(String uid) async {
     final bankService = Provider.of<BankService>(context, listen: false);
     final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
+
+    final cardBloc = Provider.of<CreditCardServices>(context, listen: false);
+
     final resp = await bankService.getAccountBankByUser(uid);
 
     if (resp.ok) {
@@ -111,6 +114,17 @@ class _OrderPageState extends State<OrderPage> {
     } else {
       setState(() {
         currentBankAccount = BankAccount(id: '0', bankOfAccount: 'NONE');
+
+        if (order.creditCardClient == '0') {
+          final cardCash = CreditCard(
+              id: '0',
+              cardNumber: '0',
+              cardHolderName: 'cash',
+              brand: 'cash',
+              cardNumberHidden: '0');
+
+          cardBloc.changeCardSelectToPay(cardCash);
+        }
 
         storeBloc.currentBankAccountStorePaymentMethod(currentBankAccount);
         loadingPaymentMethod = false;

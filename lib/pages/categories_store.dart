@@ -369,7 +369,7 @@ class _CatalogsListState extends State<CatalogsList>
                                     caption: 'Editar',
                                     color: renderingMode ==
                                             SlidableRenderingMode.slide
-                                        ? currentTheme.currentTheme.accentColor
+                                        ? Colors.amberAccent
                                             .withOpacity(animation.value)
                                         : (renderingMode ==
                                                 SlidableRenderingMode.dismiss

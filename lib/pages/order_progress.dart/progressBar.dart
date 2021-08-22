@@ -315,6 +315,9 @@ class _AnimatedBarState extends State<AnimatedBar>
 
       if (!widget.isStore && widget.order.isCancelByStore)
         actualText = 'Pedido cancelado.';
+
+      if (!widget.isStore && widget.order.isCancelByClient)
+        actualText = 'Pedido cancelado.';
       return Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,

@@ -138,14 +138,9 @@ class StoreBLoC with ChangeNotifier {
     storesSearch = storesListInitial;
     initialSearch = false;
 
-    if (followed.length > 0) {
-      changeToFollowed();
+    changeToFollowed();
 
-      selected = followedService;
-    } else {
-      changeToMarket();
-      selected = marketService;
-    }
+    selected = followedService;
 
     loadingStores = true;
 

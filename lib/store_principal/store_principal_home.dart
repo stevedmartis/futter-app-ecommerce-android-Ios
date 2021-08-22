@@ -75,11 +75,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
     final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 
-    final int followed = prefs.followed;
-
-    storeBloc.selected = (followed > 0)
-        ? storeBloc.servicesStores.first
-        : storeBloc.servicesStores[1];
+    storeBloc.selected = storeBloc.servicesStores[0];
 
     super.initState();
   }
@@ -297,10 +293,11 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     storeAuth = authService.storeAuth;
 
     List<Order> orderClientActive =
-        orderService.orders.where((i) => i.isActive).toList();
+        orderService.orders.where((i) => i.isActive && !i.isFinalice).toList();
 
-    List<Order> ordersStoreActive =
-        orderService.ordersStore.where((i) => i.isActive).toList();
+    List<Order> ordersStoreActive = orderService.ordersStore
+        .where((i) => i.isActive && !i.isFinalice)
+        .toList();
 
     if (groceryBloc.isReload) this.getCartSave();
     groceryBloc.changeReaload();
@@ -937,7 +934,11 @@ class _OrderprogressStoreCardState extends State<OrderprogressStoreCard> {
                       ),
                       Container(
                         child: Text(
-                          'Entrega estimada: ${authService.storeAuth.timeDelivery} mins',
+                          (!widget.isStore)
+                              ? (store.timeDelivery != "")
+                                  ? 'Entrega estimada: ${store.timeDelivery}'
+                                  : 'Entrega estimada: 24 - 48 hrs.'
+                              : 'Entrega estimada: ${authService.storeAuth.timeDelivery}',
                           style: TextStyle(
                               color: Colors.grey,
                               fontWeight: FontWeight.normal,

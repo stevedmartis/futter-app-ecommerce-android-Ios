@@ -86,25 +86,41 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
         storesByProduct.add(store);
       } else {
         final store = storeBloc.getStoreAllDbByProducts(item.product.user);
-        store.notLocation = false;
-        storesByProduct.add(store);
+
+        if (store != null) {
+          store.notLocation = false;
+          storesByProduct.add(store);
+        }
       }
     });
 
     minTimes = storesByProduct.fold<int>(0, (previousValue, store) {
-      final getTimeMin = store.timeDelivery.toString().split("-").first.trim();
+      if (store.timeDelivery != "") {
+        final replaced = store.timeDelivery.replaceFirst(RegExp('min'), '');
 
-      final minInt = int.parse(getTimeMin);
+        final getTimeMin = replaced.toString().split("-").first.trim();
 
-      return previousValue + minInt;
+        final minInt = int.parse(getTimeMin);
+
+        return previousValue + minInt;
+      } else {
+        return 24;
+      }
     });
 
     maxTimes = storesByProduct.fold<int>(0, (previousValue, store) {
-      final getTimeMax = store.timeDelivery.toString().split("-").last.trim();
+      if (store.timeDelivery != "") {
+        final replaced =
+            store.timeDelivery.replaceFirst(RegExp('min'), ''); // h*llo hello
 
-      final maxInt = int.parse(getTimeMax);
+        final getTimeMax = replaced.toString().split("-").last.trim();
 
-      return previousValue + maxInt;
+        final maxInt = int.parse(getTimeMax.split("mins").first);
+
+        return previousValue + maxInt;
+      } else {
+        return 48;
+      }
     });
 
     storesByProduct.forEach((item) {
@@ -539,7 +555,9 @@ SliverToBoxAdapter addressDeliveryInfo(context, minTimes, maxTimes) {
                 padding: EdgeInsets.only(right: 20),
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  '$minTimes - $maxTimes mins',
+                  (minTimes == 24 && maxTimes == 48)
+                      ? '$minTimes - $maxTimes hrs.'
+                      : '$minTimes - $maxTimes mins.',
                   style: TextStyle(
                       fontWeight: FontWeight.normal,
                       fontSize: 18,
@@ -759,9 +777,11 @@ Widget _buildProductsList(context) {
                           children: [
                             Center(
                               child: Container(
+                                width: size.width / 2.5,
                                 margin: EdgeInsets.only(top: 5.0),
                                 child: Text(
                                   '${store.name.capitalize()}',
+                                  maxLines: 2,
                                   style: TextStyle(
                                       color: (!store.notLocation)
                                           ? Colors.grey

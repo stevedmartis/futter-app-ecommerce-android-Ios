@@ -36,7 +36,7 @@ class ThemeChanger with ChangeNotifier {
         _darkTheme = false;
         _customTheme = true;
         _currentTheme = ThemeData.dark().copyWith(
-          accentColor: Color(0xffFEB42C),
+          accentColor: Color(0xff32D73F),
           primaryColor: Color(0xff32D73F),
           brightness: Brightness.dark,
           scaffoldBackgroundColor: Color(0xFF0F0F0F),
@@ -83,10 +83,11 @@ class ThemeChanger with ChangeNotifier {
       );
     } else {
       _currentTheme = ThemeData.light().copyWith(
-          accentColor: Color(0xffF78C39),
+          accentColor: Color(0xff32D73F), //0xffF78C39
           brightness: Brightness.light,
           scaffoldBackgroundColor: Color(0xFFEFEEF6),
           primaryColor: Color(0xFFCBC3C5),
+          secondaryHeaderColor: Color(0xffF78C39),
           cardColor: Colors.white);
     }
 
