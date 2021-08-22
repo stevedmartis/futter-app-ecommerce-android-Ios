@@ -157,9 +157,11 @@ showLocationMaterialCupertinoBottomSheet(BuildContext context,
                     padding: EdgeInsets.only(top: 10),
                     child: TextField(
                       style: TextStyle(
-                        color: (currentTheme.currentTheme.accentColor),
+                        color: (Colors.white),
                       ),
                       onTap: () {
+                        FocusScope.of(context).requestFocus(new FocusNode());
+
                         showMaterialCupertinoBottomSheetLocation(
                             context, onPress, onCancel, true);
                       },
@@ -521,7 +523,7 @@ showMaterialCupertinoBottomSheetLocation(BuildContext context,
                           child: TextField(
                             autofocus: true,
                             style: TextStyle(
-                              color: (currentTheme.currentTheme.accentColor),
+                              color: (Colors.white),
                             ),
                             decoration: InputDecoration(
                               enabledBorder: UnderlineInputBorder(

@@ -165,9 +165,9 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                     'Confirmar dirección',
                                     maxLines: 2,
                                     style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 30,
-                                    ),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 30,
+                                        color: currentTheme.accentColor),
                                   ),
                                 ),
 
@@ -207,7 +207,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                               ),
                                               icon: Icon(
                                                 Icons.location_city,
-                                                color: Colors.white,
+                                                color: Colors.grey,
                                               ),
                                               //  fillColor: currentTheme.accentColor,
                                               focusedBorder: OutlineInputBorder(
@@ -256,7 +256,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                         ),
                                         icon: Icon(
                                           Icons.location_on,
-                                          color: Colors.white,
+                                          color: Colors.grey,
                                         ),
                                         //  fillColor: currentTheme.accentColor,
                                         focusedBorder: OutlineInputBorder(
@@ -303,7 +303,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                           ),
                                           icon: Icon(
                                             Icons.home,
-                                            color: Colors.white,
+                                            color: Colors.grey,
                                           ),
                                           //  fillColor: currentTheme.accentColor,
                                           focusedBorder: OutlineInputBorder(
@@ -312,7 +312,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                                 width: 2.0),
                                           ),
                                           hintText: '',
-                                          labelText: 'Piso/Apartamento',
+                                          labelText: 'Piso/Apartamento *',
 
                                           //counterText: snapshot.data,
                                         ),
