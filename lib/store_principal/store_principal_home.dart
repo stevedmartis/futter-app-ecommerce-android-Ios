@@ -288,6 +288,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     final orderService = Provider.of<OrderService>(context);
 
     final notifiBloc = Provider.of<NotificationModel>(context);
+    final size = MediaQuery.of(context).size;
 
     isItems = groceryBloc.totalCartElements() > 0 ? true : false;
     storeAuth = authService.storeAuth;
@@ -470,7 +471,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                     )
                   ],
                   stretch: true,
-                  expandedHeight: 180.0,
+                  expandedHeight: size.height / 4,
                   collapsedHeight: 70,
                   floating: false,
                   pinned: true,
@@ -529,8 +530,8 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                 if (orderService.loading)
                   SliverAppBar(
                     automaticallyImplyLeading: false,
-                    expandedHeight: 150.0,
-                    collapsedHeight: 150.0,
+                    expandedHeight: size.height / 5.5,
+                    collapsedHeight: size.height / 5.5,
                     pinned: false,
                     actionsIconTheme: IconThemeData(opacity: 0.0),
                     flexibleSpace: Stack(
@@ -640,7 +641,7 @@ SliverList makeListRecomendations(bool loading) {
 SliverList makeListHorizontalCarouselOrdersProgress(
     context, List<Order> orderNotificationClient) {
   final orderService = Provider.of<OrderService>(context);
-
+  final size = MediaQuery.of(context).size;
   return SliverList(
     delegate: SliverChildListDelegate([
       FadeInRight(
@@ -660,7 +661,7 @@ SliverList makeListHorizontalCarouselOrdersProgress(
                     options: CarouselOptions(
                         viewportFraction:
                             (orderNotificationClient.length > 1) ? 0.8 : 0.9,
-                        aspectRatio: 16 / 5.5,
+                        aspectRatio: size.height / 40 / 5.5,
                         initialPage: 0,
                         enableInfiniteScroll: false,
                         reverse: false,
@@ -680,7 +681,7 @@ SliverList makeListHorizontalCarouselOrdersProgress(
 SliverList makeListHorizontalCarouselOrdersStoreProgress(
     context, List<Order> orderNotificationStore) {
   final orderService = Provider.of<OrderService>(context);
-
+  final size = MediaQuery.of(context).size;
   return SliverList(
     delegate: SliverChildListDelegate([
       FadeInRight(
@@ -700,7 +701,7 @@ SliverList makeListHorizontalCarouselOrdersStoreProgress(
                     options: CarouselOptions(
                         viewportFraction:
                             (orderNotificationStore.length > 1) ? 0.8 : 0.9,
-                        aspectRatio: 16 / 5.5,
+                        aspectRatio: size.height / 40 / 5.5,
                         initialPage: 0,
                         enableInfiniteScroll: false,
                         reverse: false,
@@ -1114,7 +1115,7 @@ class StoreCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-
+    final size = MediaQuery.of(context).size;
     final id = store.id;
     return GestureDetector(
       onTap: () {
@@ -1124,7 +1125,7 @@ class StoreCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SizedBox(
-          height: 90,
+          height: size.height / 8,
           child: Row(
             children: <Widget>[
               Hero(
@@ -1638,12 +1639,13 @@ class TravelPhotoListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Center(
         child: Container(
-          width: 120,
-          height: 120,
+          width: size.width / 3,
+          height: size.height / 3,
           child: Stack(
             fit: StackFit.expand,
             children: <Widget>[

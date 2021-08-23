@@ -289,7 +289,8 @@ class _ProfileStoreProductItem extends StatelessWidget {
                           child: Container(
                               padding: EdgeInsets.symmetric(
                                   horizontal: (isPng) ? 10 : 0),
-                              width: 100,
+                              width: size.width / 5,
+                              height: size.height / 5,
                               child: ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
                                   child: cachedContainNetworkImage(

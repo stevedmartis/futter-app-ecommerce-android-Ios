@@ -340,7 +340,7 @@ class __ProfileStoreProductItemState extends State<_ProfileStoreProductItem> {
                       child: Material(
                           type: MaterialType.transparency,
                           child: Container(
-                              width: 100,
+                              width: size.width / 5,
                               height: size.height / 5,
                               child: ClipRRect(
                                 borderRadius:

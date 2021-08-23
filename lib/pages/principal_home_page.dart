@@ -75,9 +75,6 @@ class _PrincipalPageState extends State<PrincipalPage>
     categoriesStoreProducts();
 
     // storeslistServices();
-    Timer(new Duration(milliseconds: 0), () {
-      orderService.loading = true;
-    });
 
     storeProfileBloc.searchBanks('');
     if (storeAuth.user.uid != '0') {
@@ -93,7 +90,6 @@ class _PrincipalPageState extends State<PrincipalPage>
       });
 
       _myOrdersClient();
-
       myFavoritesProducts();
     } else if (prefs.addressSearchSave != '') {
       final address =
@@ -105,6 +101,9 @@ class _PrincipalPageState extends State<PrincipalPage>
         orderService.loading = true;
       });
     } else {
+      Timer(new Duration(milliseconds: 0), () {
+        orderService.loading = true;
+      });
       storeBloc.loadingStores = false;
     }
 
@@ -535,6 +534,7 @@ class __PositionedMenuState extends State<_PositionedMenu> {
         child: IgnorePointer(
           ignoring: !bloc.isVisible,
           child: Container(
+            alignment: Alignment.center,
             height: 100,
             width: widthView,
             child: Row(

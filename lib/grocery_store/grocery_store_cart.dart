@@ -51,9 +51,8 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20,
-                      ),
+                      padding: EdgeInsets.only(
+                          left: 20, right: 20, bottom: size.height / 20),
                       child: Text(
                         'Mi Bolsa',
                         style: Theme.of(context).textTheme.headline4.copyWith(
@@ -64,7 +63,6 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                     ),
                     Expanded(
                       child: Container(
-                        padding: EdgeInsets.only(left: 0, top: 10),
                         child: ListView.builder(
                           itemCount: bloc.cart.length,
                           itemBuilder: (context, index) {
@@ -74,126 +72,122 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                     locale: 'id', symbol: '', decimalDigits: 0)
                                 .format(item.product.price);
                             return Container(
-                              padding: EdgeInsets.only(top: 20),
-                              child: FadeInUp(
-                                delay: Duration(milliseconds: 100 * index),
-                                child: Slidable.builder(
-                                  key: Key(item.product.id),
-                                  controller: slidableController,
-                                  direction: Axis.horizontal,
-                                  actionPane: _getActionPane(index),
-                                  actionExtentRatio: 0.25,
-                                  dismissal: SlidableDismissal(
-                                    child: SlidableDrawerDismissal(),
-                                    closeOnCanceled: true,
-                                  ),
-                                  secondaryActionDelegate:
-                                      SlideActionBuilderDelegate(
-                                          actionCount: 1,
-                                          builder: (context, index, animation,
-                                              renderingMode) {
-                                            return IconSlideAction(
-                                              color: renderingMode ==
-                                                      SlidableRenderingMode
-                                                          .slide
-                                                  ? Colors.red.withOpacity(
-                                                      animation.value)
-                                                  : Colors.red,
-                                              icon: Icons.delete,
-                                              onTap: () async {
-                                                var state =
-                                                    Slidable.of(context);
+                                child: FadeInUp(
+                                    delay: Duration(milliseconds: 100 * index),
+                                    child: Slidable.builder(
+                                        key: Key(item.product.id),
+                                        controller: slidableController,
+                                        direction: Axis.horizontal,
+                                        actionPane: _getActionPane(index),
+                                        actionExtentRatio: 0.0,
+                                        dismissal: SlidableDismissal(
+                                          child: SlidableDrawerDismissal(),
+                                          closeOnCanceled: true,
+                                        ),
+                                        secondaryActionDelegate:
+                                            SlideActionBuilderDelegate(
+                                                actionCount: 1,
+                                                builder: (context, index,
+                                                    animation, renderingMode) {
+                                                  return IconSlideAction(
+                                                    color: renderingMode ==
+                                                            SlidableRenderingMode
+                                                                .slide
+                                                        ? Colors.red
+                                                            .withOpacity(
+                                                                animation.value)
+                                                        : Colors.red,
+                                                    icon: Icons.delete,
+                                                    onTap: () async {
+                                                      var state =
+                                                          Slidable.of(context);
 
-                                                state.dismiss();
-                                                setState(() {
-                                                  bloc.deleteProduct(item);
-                                                });
-                                              },
-                                            );
-                                          }),
-                                  child: SizedBox(
-                                    height: size.height / 7.2,
-                                    child: ListTile(
-                                      leading: Container(
-                                          width: 60,
-                                          height: 120,
-                                          child: ClipRRect(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(100.0)),
-                                              child: cachedNetworkImage(bloc
-                                                  .cart[index]
-                                                  .product
-                                                  .images[0]
-                                                  .url))),
-                                      title: Container(
-                                        width: size.width / 2,
-                                        child: Row(
-                                          children: [
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Container(
-                                                  width: size.width / 2.2,
-                                                  child: Text(
-                                                    '${item.product.name.capitalize()}',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 15),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 5,
-                                                ),
-                                                Container(
-                                                  width: size.width / 2.5,
-                                                  child: Text(
-                                                    (item.product.description !=
-                                                            "")
-                                                        ? '${item.product.description.capitalize()}'
-                                                        : '',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 2,
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.normal,
-                                                        color: Colors.grey,
-                                                        fontSize: 12),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Text(
-                                                  '\$$priceformat',
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 14),
-                                                ),
-                                              ],
-                                            ),
-                                            Container(
-                                              alignment: Alignment.centerRight,
-                                              margin: EdgeInsets.only(
-                                                  left: size.width / 8.5),
+                                                      state.dismiss();
+                                                      setState(() {
+                                                        bloc.deleteProduct(
+                                                            item);
+                                                      });
+                                                    },
+                                                  );
+                                                }),
+                                        child: SizedBox(
+                                          height: size.height / 6.0,
+                                          child: ListTile(
+                                            leading: Container(
+                                                width: 60,
+                                                height: 120,
+                                                child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                100.0)),
+                                                    child: cachedNetworkImage(
+                                                        bloc.cart[index].product
+                                                            .images[0].url))),
+                                            title: Container(
                                               child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
                                                 children: [
+                                                  Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Container(
+                                                        //  width: size.width / 2.2,
+                                                        child: Text(
+                                                          '${item.product.name.capitalize()}',
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 1,
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 15),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      Container(
+                                                        width: size.width / 2.5,
+                                                        child: Text(
+                                                          (item.product
+                                                                      .description !=
+                                                                  "")
+                                                              ? '${item.product.description.capitalize()}'
+                                                              : '',
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 2,
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                              color:
+                                                                  Colors.grey,
+                                                              fontSize: 12),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      Text(
+                                                        '\$$priceformat',
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 14),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Spacer(),
                                                   Container(
-                                                    color: Colors.black,
-                                                    alignment: Alignment.center,
+                                                    alignment:
+                                                        Alignment.centerRight,
                                                     child: Column(
                                                       children: [
                                                         (item.quantity == 1)
@@ -211,9 +205,9 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                                                         item);
 
                                                                     /*     Slidable.of(context).open(
-                                                                        actionType:
-                                                                            SlideActionType
-                                                                                .secondary) */
+                                                                          actionType:
+                                                                              SlideActionType
+                                                                                  .secondary) */
                                                                   },
                                                                   child: Icon(
                                                                     Icons
@@ -296,18 +290,12 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                                         ),
                                                       ],
                                                     ),
-                                                  )
+                                                  ),
                                                 ],
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
+                                          ),
+                                        ))));
                           },
                         ),
                       ),

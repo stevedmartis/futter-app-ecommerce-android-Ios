@@ -27,10 +27,12 @@ class LoginForm extends StatelessWidget {
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
     final space = height > 650 ? kSpaceM : kSpaceS;
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-
+    final size = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: kPaddingL),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           FadeSlideTransition(
             animation: animation,
@@ -105,16 +107,19 @@ class LoginForm extends StatelessWidget {
           FadeSlideTransition(
             animation: animation,
             additionalOffset: 4 * space,
-            child: Container(
-              padding: EdgeInsets.only(left: 30),
-              child: CustomButton(
-                color: currentTheme.scaffoldBackgroundColor,
-                textColor: Colors.white.withOpacity(0.5),
-                text: 'Volver atras',
-                onPressed: () {
-                  HapticFeedback.lightImpact();
-                  Navigator.pop(context);
-                },
+            child: Center(
+              child: Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.only(left: size.width / 3),
+                child: CustomButton(
+                  color: currentTheme.scaffoldBackgroundColor,
+                  textColor: Colors.white.withOpacity(0.5),
+                  text: 'Volver atras',
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    Navigator.pop(context);
+                  },
+                ),
               ),
             ),
           ),

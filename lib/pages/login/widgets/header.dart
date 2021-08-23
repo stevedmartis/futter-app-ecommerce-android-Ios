@@ -20,6 +20,7 @@ class Header extends StatelessWidget {
         children: <Widget>[
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const LogoFreeily(
                 color: kBlue,
@@ -30,7 +31,7 @@ class Header extends StatelessWidget {
                 animation: animation,
                 additionalOffset: 0.0,
                 child: Text(
-                  'Crear cuenta Freeily',
+                  'Crea tu cuenta Freeily',
                   style: Theme.of(context).textTheme.headline5.copyWith(
                       color: Colors.white, fontWeight: FontWeight.bold),
                 ),

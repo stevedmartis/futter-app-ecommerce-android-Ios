@@ -522,8 +522,8 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                         Hero(
                           tag: 'order/${order.id}',
                           child: Container(
-                            width: 70,
-                            height: 70,
+                            width: size.width / 10,
+                            height: size.height / 10,
                             child: AspectRatio(
                               aspectRatio: 1,
                               child: ClipRRect(
@@ -720,7 +720,7 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                 Container(
                   padding: EdgeInsets.only(right: size.width / 5, bottom: 10),
                   alignment: Alignment.centerRight,
-                  height: 60,
+                  height: size.height / 10,
                   child: ListView.builder(
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
@@ -734,8 +734,8 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                                 margin: EdgeInsets.only(left: 5.0),
                                 alignment: Alignment.topRight,
                                 child: Container(
-                                    width: 50,
-                                    height: 50,
+                                    width: size.width / 15,
+                                    height: size.height / 15,
                                     child: ClipRRect(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(100.0)),

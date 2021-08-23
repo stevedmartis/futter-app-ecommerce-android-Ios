@@ -357,7 +357,7 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                           : Container(),
                     ],
                     stretch: true,
-                    expandedHeight: 250.0,
+                    expandedHeight: size.height / 2,
                     collapsedHeight: 70,
                     floating: false,
                     pinned: true,

@@ -747,8 +747,8 @@ Widget _buildProductsList(context) {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Container(
-                          width: 70,
-                          height: 70,
+                          width: size.width / 10,
+                          height: size.height / 10,
                           child: AspectRatio(
                             aspectRatio: 1,
                             child: ClipRRect(
@@ -832,7 +832,7 @@ Widget _buildProductsList(context) {
                           clipBehavior: Clip.hardEdge,
                           children: [
                             Container(
-                              height: 50,
+                              height: size.height / 10,
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 scrollDirection: Axis.horizontal,
@@ -850,8 +850,8 @@ Widget _buildProductsList(context) {
                                             delay: Duration(
                                                 milliseconds: 200 * index),
                                             child: Container(
-                                                width: 50,
-                                                height: 50,
+                                                width: size.width / 15,
+                                                height: size.height / 15,
                                                 child: ClipRRect(
                                                     borderRadius:
                                                         BorderRadius.all(
