@@ -156,7 +156,7 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                         animationController: _animationController,
                         isAuthUser: widget.isAuthUser,
                         store: widget.store),
-                    pinned: true,
+                    pinned: false,
                   ),
                   SliverPersistentHeader(
                     pinned: true,

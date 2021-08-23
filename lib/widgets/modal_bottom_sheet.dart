@@ -853,14 +853,19 @@ showContactOptionsStoreMCBottomSheet(context, Store store) {
   final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
 
   final instagramStore = store.instagram.toString();
+
   final emailStore = store.user.email.toString();
 
   _launchInstagramProfile(String instagram) async {
-    final url = Uri.encodeFull('https://www.instagram.com/$instagram/?hl=es');
+    var url = 'https://www.instagram.com/$instagram/?hl=es';
+
     if (await canLaunch(url)) {
-      await launch(url);
+      await launch(
+        url,
+        universalLinksOnly: true,
+      );
     } else {
-      throw 'Could not launch $url';
+      throw 'There was a problem to open the url: $url';
     }
   }
 

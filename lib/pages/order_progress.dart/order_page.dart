@@ -242,7 +242,9 @@ class _OrderPageState extends State<OrderPage> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: currentTheme.scaffoldBackgroundColor,
-        bottomNavigationBar: (widget.isStore)
+        bottomNavigationBar: (widget.isStore &&
+                !order.isCancelByClient &&
+                !order.isCancelByStore)
             ? Padding(
                 padding: const EdgeInsets.all(20),
                 child: Container(
@@ -1364,7 +1366,7 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                                         ),
                                       ],
                                     ))
-                                : (order.creditCardClient == 'cash')
+                                : (order.creditCardClient == '0')
                                     ? Container(
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 20, vertical: 10),
