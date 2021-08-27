@@ -76,7 +76,10 @@ class GroceryStoreBLoC with ChangeNotifier {
       }
     }
 
-    cart.add(GroceryProductItem(product: product, quantity: quantity));
+    cart.add(GroceryProductItem(
+      product: product,
+      quantity: quantity,
+    ));
 
     prefs.setCart = cart;
     notifyListeners();

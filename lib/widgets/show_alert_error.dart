@@ -22,7 +22,9 @@ showAlertError(BuildContext context, String titulo, String subtitulo) {
               content: Text(subtitulo, style: TextStyle(color: Colors.grey)),
               actions: <Widget>[
                 MaterialButton(
-                    child: Text('Ok'),
+                    child: Text(
+                      'Aceptar',
+                    ),
                     elevation: 5,
                     textColor: currentTheme.primaryColor,
                     onPressed: () => Navigator.pop(context))

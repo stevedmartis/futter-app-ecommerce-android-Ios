@@ -79,7 +79,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                         controller: slidableController,
                                         direction: Axis.horizontal,
                                         actionPane: _getActionPane(index),
-                                        actionExtentRatio: 0.0,
+                                        actionExtentRatio: 0.25,
                                         dismissal: SlidableDismissal(
                                           child: SlidableDrawerDismissal(),
                                           closeOnCanceled: true,
@@ -103,15 +103,13 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                                           Slidable.of(context);
 
                                                       state.dismiss();
-                                                      setState(() {
-                                                        bloc.deleteProduct(
-                                                            item);
-                                                      });
+
+                                                      bloc.deleteProduct(item);
                                                     },
                                                   );
                                                 }),
                                         child: SizedBox(
-                                          height: size.height / 6.0,
+                                          height: size.height / 5.5,
                                           child: ListTile(
                                             leading: Container(
                                                 width: 60,

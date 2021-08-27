@@ -237,9 +237,7 @@ class _CatalogsListState extends State<CatalogsList>
           child: Text(
             'Mis Catalogos',
             style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 30,
-                color: currentTheme.currentTheme.accentColor),
+                fontWeight: FontWeight.bold, fontSize: 30, color: Colors.white),
           ),
         ),
         (catalogos.length > 0)

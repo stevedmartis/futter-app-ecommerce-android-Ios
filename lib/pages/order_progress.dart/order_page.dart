@@ -522,8 +522,8 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                         Hero(
                           tag: 'order/${order.id}',
                           child: Container(
-                            width: size.width / 10,
-                            height: size.height / 10,
+                            width: size.width / 4.5,
+                            height: size.height / 8.5,
                             child: AspectRatio(
                               aspectRatio: 1,
                               child: ClipRRect(
@@ -734,8 +734,8 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                                 margin: EdgeInsets.only(left: 5.0),
                                 alignment: Alignment.topRight,
                                 child: Container(
-                                    width: size.width / 15,
-                                    height: size.height / 15,
+                                    width: size.width / 6,
+                                    height: size.height / 6,
                                     child: ClipRRect(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(100.0)),
@@ -755,7 +755,7 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                                   child: Text('${item.quantity}',
                                       style: TextStyle(
                                           fontSize: 13,
-                                          color: Colors.black,
+                                          color: Colors.white,
                                           fontWeight: FontWeight.w500))),
                             ),
                           ],

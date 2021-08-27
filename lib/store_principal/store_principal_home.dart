@@ -424,8 +424,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                                     HapticFeedback.lightImpact();
 
                                     if (bloc.loadingStores)
-                                      showMaterialCupertinoBottomSheet(
-                                          context, 'hello', 'hello2');
+                                      showMaterialCupertinoBottomSheet(context);
                                   },
                                   child: Container(
                                     padding:

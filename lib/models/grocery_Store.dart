@@ -11,20 +11,21 @@ String cartProductsToJson(List<GroceryProductItem> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class GroceryProductItem {
-  GroceryProductItem({this.quantity = 1, @required this.product});
+  GroceryProductItem(
+      {this.quantity = 1, @required this.product, this.show = false});
   int quantity;
+  bool show;
   final ProfileStoreProduct product;
 
   factory GroceryProductItem.fromJson(Map<String, dynamic> json) =>
       GroceryProductItem(
         product: ProfileStoreProduct.fromJson(json["product"]),
         quantity: json["quantity"],
+        show: json["show"],
       );
 
-  Map<String, dynamic> toJson() => {
-        "product": product.toJson(),
-        "quantity": quantity,
-      };
+  Map<String, dynamic> toJson() =>
+      {"product": product.toJson(), "quantity": quantity, "show": show};
 
   void increment(int newQuantity) {
     quantity += newQuantity;

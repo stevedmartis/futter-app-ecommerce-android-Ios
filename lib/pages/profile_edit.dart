@@ -205,6 +205,21 @@ class EditProfilePageState extends State<EditProfilePage> {
     });
   }
 
+  Future _onImageCameraClick() async {
+    final pickedFile = await picker.getImage(
+      source: ImageSource.camera,
+      imageQuality: 50,
+      maxHeight: 680,
+      maxWidth: 1800,
+    );
+
+    final File file = File(pickedFile.path);
+
+    setState(() {
+      getFileImage(0, file);
+    });
+  }
+
   void getFileImage(int index, File file) async {
 //    var dir = await path_provider.getTemporaryDirectory();
 
@@ -425,9 +440,6 @@ class EditProfilePageState extends State<EditProfilePage> {
                                       fontSize: 15),
                                 ),
                                 onPressed: () {
-                                  FocusScope.of(context)
-                                      .requestFocus(new FocusNode());
-
                                   final act = CupertinoActionSheet(
                                       title: Text('Cambiar Foto Perfil',
                                           style: TextStyle(
@@ -443,7 +455,11 @@ class EditProfilePageState extends State<EditProfilePage> {
                                                   fontSize: 15),
                                             ),
                                             onPressed: () {
-                                              // _deleteProduct();
+                                              FocusScope.of(context)
+                                                  .requestFocus(
+                                                      new FocusNode());
+
+                                              _onImageCameraClick();
                                             },
                                           ),
                                         CupertinoActionSheetAction(

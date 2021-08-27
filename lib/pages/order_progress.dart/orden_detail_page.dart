@@ -741,14 +741,14 @@ Widget _buildProductsList(context) {
                           ),
                         ]),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.only(left: 20),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Container(
-                          width: size.width / 10,
-                          height: size.height / 10,
+                          width: size.width / 5,
+                          height: size.height / 9,
                           child: AspectRatio(
                             aspectRatio: 1,
                             child: ClipRRect(
@@ -826,92 +826,100 @@ Widget _buildProductsList(context) {
                             )
                           ],
                         ),
-                        Spacer(),
-                        Stack(
-                          fit: StackFit.loose,
-                          clipBehavior: Clip.hardEdge,
-                          children: [
-                            Container(
-                              height: size.height / 10,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                scrollDirection: Axis.horizontal,
-                                itemCount: (products.length >= 3)
-                                    ? 2
-                                    : products.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  final item = products[index];
-                                  return Stack(
-                                    children: [
-                                      Container(
-                                          margin: EdgeInsets.only(left: 5.0),
-                                          alignment: Alignment.topRight,
-                                          child: FadeInLeft(
-                                            delay: Duration(
-                                                milliseconds: 200 * index),
-                                            child: Container(
-                                                width: size.width / 15,
-                                                height: size.height / 15,
-                                                child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                100.0)),
-                                                    child: (!store.notLocation)
-                                                        ? cachedProductNetworkImage(
-                                                            item.product
-                                                                .images[0].url)
-                                                        : cachedNetworkImage(
-                                                            item
-                                                                .product
-                                                                .images[0]
-                                                                .url))),
-                                          )),
-                                      Container(
-                                        decoration: new BoxDecoration(
-                                          color: (!store.notLocation)
-                                              ? Colors.grey
-                                              : currentTheme.accentColor,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        alignment: Alignment.bottomCenter,
-                                        width: 20.0,
-                                        height: 20.0,
-                                        child: Center(
-                                            child: Text('${item.quantity}',
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    color: Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.w500))),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ),
-                            if (products.length >= 3)
+                        Container(
+                          height: size.height / 10,
+                          child: Stack(
+                            fit: StackFit.loose,
+                            clipBehavior: Clip.hardEdge,
+                            children: [
                               Container(
-                                margin: EdgeInsets.only(left: size.width / 4),
-                                child: FadeInRight(
-                                  duration: Duration(milliseconds: 400),
-                                  delay: Duration(milliseconds: 500),
-                                  child: Container(
-                                    decoration: new BoxDecoration(
-                                      color: currentTheme.primaryColor,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    width: 30.0,
-                                    height: 30.0,
-                                    child: Center(
-                                        child: Text('+${products.length - 2}',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold))),
-                                  ),
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: (products.length >= 3)
+                                      ? 2
+                                      : products.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    final item = products[index];
+                                    return Stack(
+                                      children: [
+                                        Container(
+                                            margin: EdgeInsets.only(
+                                              left: 5.0,
+                                            ),
+                                            alignment: Alignment.topRight,
+                                            child: FadeInLeft(
+                                              delay: Duration(
+                                                  milliseconds: 200 * index),
+                                              child: Container(
+                                                  width: size.width / 8,
+                                                  height: size.height / 15,
+                                                  child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  100.0)),
+                                                      child: (!store
+                                                              .notLocation)
+                                                          ? cachedProductNetworkImage(
+                                                              item
+                                                                  .product
+                                                                  .images[0]
+                                                                  .url)
+                                                          : cachedNetworkImage(
+                                                              item
+                                                                  .product
+                                                                  .images[0]
+                                                                  .url))),
+                                            )),
+                                        Container(
+                                          decoration: new BoxDecoration(
+                                            color: (!store.notLocation)
+                                                ? Colors.grey
+                                                : currentTheme.accentColor,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          alignment: Alignment.bottomCenter,
+                                          width: 20.0,
+                                          height: 20.0,
+                                          child: Center(
+                                              child: Text('${item.quantity}',
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.w500))),
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 ),
-                              )
-                          ],
+                              ),
+                              if (products.length >= 3)
+                                Container(
+                                  margin: EdgeInsets.only(left: size.width / 5),
+                                  child: FadeInRight(
+                                    duration: Duration(milliseconds: 400),
+                                    delay: Duration(milliseconds: 500),
+                                    child: Container(
+                                      decoration: new BoxDecoration(
+                                        color: currentTheme.primaryColor,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      width: 30.0,
+                                      height: 30.0,
+                                      child: Center(
+                                          child: Text('+${products.length - 2}',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight:
+                                                      FontWeight.bold))),
+                                    ),
+                                  ),
+                                )
+                            ],
+                          ),
                         ),
                       ],
                     ),

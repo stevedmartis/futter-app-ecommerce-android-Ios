@@ -169,8 +169,6 @@ class _CatalogsListState extends State<CatalogsList>
 
   @override
   Widget build(BuildContext context) {
-    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-
     final _bloc = Provider.of<FavoritesBLoC>(context);
     return Stack(
       children: [
@@ -179,9 +177,7 @@ class _CatalogsListState extends State<CatalogsList>
           child: Text(
             'Mis Favoritos',
             style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 30,
-                color: currentTheme.accentColor),
+                fontWeight: FontWeight.bold, fontSize: 30, color: Colors.white),
           ),
         ),
         Container(

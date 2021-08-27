@@ -165,9 +165,7 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                     style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: (currentTheme.customTheme)
-                            ? Colors.white
-                            : Colors.black),
+                        color: Colors.white),
                   ),
                 ),
               ),
