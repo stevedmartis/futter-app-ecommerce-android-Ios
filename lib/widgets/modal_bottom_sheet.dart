@@ -1,18 +1,18 @@
 import 'dart:ui';
 
-import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/bloc/store_profile.dart';
-import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
-import 'package:australti_ecommerce_app/grocery_store/grocery_store_cart.dart';
-import 'package:australti_ecommerce_app/models/bank_account.dart';
+import 'package:freeily/authentication/auth_bloc.dart';
+import 'package:freeily/bloc_globals/bloc/store_profile.dart';
+import 'package:freeily/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
+import 'package:freeily/grocery_store/grocery_store_cart.dart';
+import 'package:freeily/models/bank_account.dart';
 
-import 'package:australti_ecommerce_app/models/place_Search.dart';
-import 'package:australti_ecommerce_app/models/store.dart';
-import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
-import 'package:australti_ecommerce_app/profile_store.dart/profile_store_user.dart';
-import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:freeily/models/place_Search.dart';
+import 'package:freeily/models/store.dart';
+import 'package:freeily/preferences/user_preferences.dart';
+import 'package:freeily/profile_store.dart/profile_store_user.dart';
+import 'package:freeily/routes/routes.dart';
 
-import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:freeily/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';

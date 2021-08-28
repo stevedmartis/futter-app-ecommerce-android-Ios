@@ -1,5 +1,5 @@
-import 'package:australti_ecommerce_app/models/store.dart';
-import 'package:australti_ecommerce_app/models/user.dart';
+import 'package:freeily/models/store.dart';
+import 'package:freeily/models/user.dart';
 import 'package:meta/meta.dart' show required;
 
 class ProfileStoreCategory {

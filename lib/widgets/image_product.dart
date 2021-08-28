@@ -1,4 +1,4 @@
-import 'package:australti_ecommerce_app/widgets/image_cached.dart';
+import 'package:freeily/widgets/image_cached.dart';
 import 'package:flutter/material.dart';
 
 class OnboardingMessages extends StatelessWidget {

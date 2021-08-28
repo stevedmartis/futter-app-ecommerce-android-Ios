@@ -1,6 +1,6 @@
 import 'dart:convert' show json;
 
-import 'package:australti_ecommerce_app/pages/get_phone/data_models/country.dart';
+import 'package:freeily/pages/get_phone/data_models/country.dart';
 import 'package:flutter/foundation.dart' show ChangeNotifier;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/widgets.dart' show TextEditingController, debugPrint;

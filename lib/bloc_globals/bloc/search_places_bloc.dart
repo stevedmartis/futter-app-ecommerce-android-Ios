@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:australti_ecommerce_app/models/place_Search.dart';
-import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
-import 'package:australti_ecommerce_app/services/places_service.dart';
+import 'package:freeily/models/place_Search.dart';
+import 'package:freeily/preferences/user_preferences.dart';
+import 'package:freeily/services/places_service.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 

@@ -1,7 +1,7 @@
-import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
-import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
-import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
-import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
+import 'package:freeily/authentication/auth_bloc.dart';
+import 'package:freeily/pages/principal_home_page.dart';
+import 'package:freeily/sockets/socket_connection.dart';
+import 'package:freeily/widgets/circular_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

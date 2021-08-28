@@ -1,8 +1,8 @@
-import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/validators.dart';
-import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:freeily/authentication/auth_bloc.dart';
+import 'package:freeily/bloc_globals/validators.dart';
+import 'package:freeily/models/store.dart';
 import 'package:flutter/material.dart';
-import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:freeily/store_product_concept/store_product_data.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';

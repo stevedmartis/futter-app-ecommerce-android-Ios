@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/bloc/validators.dart';
-import 'package:australti_ecommerce_app/models/Address.dart';
-import 'package:australti_ecommerce_app/models/place_Current.dart';
-import 'package:australti_ecommerce_app/models/place_Search.dart';
-import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
-import 'package:australti_ecommerce_app/services/places_service.dart';
+import 'package:freeily/authentication/auth_bloc.dart';
+import 'package:freeily/bloc_globals/bloc/validators.dart';
+import 'package:freeily/models/Address.dart';
+import 'package:freeily/models/place_Current.dart';
+import 'package:freeily/models/place_Search.dart';
+import 'package:freeily/preferences/user_preferences.dart';
+import 'package:freeily/services/places_service.dart';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';

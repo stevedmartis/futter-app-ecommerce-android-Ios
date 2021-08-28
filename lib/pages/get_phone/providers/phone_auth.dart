@@ -1,4 +1,4 @@
-import 'package:australti_ecommerce_app/pages/get_phone/firebase/auth/auth.dart';
+import 'package:freeily/pages/get_phone/firebase/auth/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart' show ChangeNotifier, VoidCallback;
 import 'package:flutter/widgets.dart' show TextEditingController;

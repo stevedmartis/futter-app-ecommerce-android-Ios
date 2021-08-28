@@ -4,8 +4,8 @@
 
 import 'dart:convert';
 
-import 'package:australti_ecommerce_app/models/store.dart';
-import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:freeily/models/store.dart';
+import 'package:freeily/store_product_concept/store_product_data.dart';
 
 SearchStoresProductsListResponse storesProductsListResponseFromJson(
         String str) =>

@@ -1,5 +1,5 @@
-import 'package:australti_ecommerce_app/models/place_Current.dart';
-import 'package:australti_ecommerce_app/models/place_Search.dart';
+import 'package:freeily/models/place_Current.dart';
+import 'package:freeily/models/place_Search.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;

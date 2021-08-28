@@ -1,13 +1,13 @@
 import 'dart:ui';
 
-import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
-import 'package:australti_ecommerce_app/models/store.dart';
-import 'package:australti_ecommerce_app/profile_store.dart/profile_store_auth.dart';
-import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/widgets/image_cached.dart';
+import 'package:freeily/authentication/auth_bloc.dart';
+import 'package:freeily/models/store.dart';
+import 'package:freeily/profile_store.dart/profile_store_auth.dart';
+import 'package:freeily/theme/theme.dart';
+import 'package:freeily/widgets/image_cached.dart';
 import 'package:flutter/material.dart';
-import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
-import 'package:australti_ecommerce_app/profile_store.dart/profile_store_user.dart';
+import 'package:freeily/grocery_store/grocery_store_bloc.dart';
+import 'package:freeily/profile_store.dart/profile_store_user.dart';
 import 'package:provider/provider.dart';
 
 import 'grocery_store_cart.dart';
@@ -136,7 +136,7 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
+                                horizontal: 20, vertical: 0),
                             child: AnimatedSwitcher(
                               duration: _panelTransition,
                               child: SizedBox(

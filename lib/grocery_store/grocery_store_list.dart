@@ -1,6 +1,6 @@
-import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
+import 'package:freeily/grocery_store/grocery_store_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:australti_ecommerce_app/layouts/staggered_dual_view.dart';
+import 'package:freeily/layouts/staggered_dual_view.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 

@@ -1,8 +1,8 @@
-import 'package:australti_ecommerce_app/global/enviroments.dart';
-import 'package:australti_ecommerce_app/responses/category_store_response.dart';
-import 'package:australti_ecommerce_app/responses/message_error_response.dart';
-import 'package:australti_ecommerce_app/responses/store_categories_response.dart';
-import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:freeily/global/enviroments.dart';
+import 'package:freeily/responses/category_store_response.dart';
+import 'package:freeily/responses/message_error_response.dart';
+import 'package:freeily/responses/store_categories_response.dart';
+import 'package:freeily/store_product_concept/store_product_data.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;

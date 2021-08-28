@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'package:australti_ecommerce_app/bloc_globals/bloc/validators.dart';
-import 'package:australti_ecommerce_app/models/bank_account.dart';
-import 'package:australti_ecommerce_app/responses/bank_account.dart';
-import 'package:australti_ecommerce_app/services/bank_Service.dart';
+import 'package:freeily/bloc_globals/bloc/validators.dart';
+import 'package:freeily/models/bank_account.dart';
+import 'package:freeily/responses/bank_account.dart';
+import 'package:freeily/services/bank_Service.dart';
 import 'package:rxdart/rxdart.dart';
 
 class StoreProfileBloc with Validators {

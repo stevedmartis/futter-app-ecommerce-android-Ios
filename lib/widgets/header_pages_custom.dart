@@ -1,13 +1,13 @@
-import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
-import 'package:australti_ecommerce_app/models/store.dart';
-import 'package:australti_ecommerce_app/models/user.dart';
-import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
-import 'package:australti_ecommerce_app/pages/search_home_page.dart';
-import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
-import 'package:australti_ecommerce_app/routes/routes.dart';
-import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
-import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/widgets/image_cached.dart';
+import 'package:freeily/authentication/auth_bloc.dart';
+import 'package:freeily/models/store.dart';
+import 'package:freeily/models/user.dart';
+import 'package:freeily/pages/principal_home_page.dart';
+import 'package:freeily/pages/search_home_page.dart';
+import 'package:freeily/profile_store.dart/profile.dart';
+import 'package:freeily/routes/routes.dart';
+import 'package:freeily/store_principal/store_principal_home.dart';
+import 'package:freeily/theme/theme.dart';
+import 'package:freeily/widgets/image_cached.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 
 import 'package:flutter/material.dart';

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:freeily/models/store.dart';
 
 LoginResponse loginResponseFromJson(String str) =>
     LoginResponse.fromJson(json.decode(str));

@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:australti_ecommerce_app/pages/get_phone/firebase/auth/phone_auth/verify.dart';
-import 'package:australti_ecommerce_app/pages/get_phone/providers/countries.dart';
-import 'package:australti_ecommerce_app/pages/get_phone/providers/phone_auth.dart';
-import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
-import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
+import 'package:freeily/pages/get_phone/firebase/auth/phone_auth/verify.dart';
+import 'package:freeily/pages/get_phone/providers/countries.dart';
+import 'package:freeily/pages/get_phone/providers/phone_auth.dart';
+import 'package:freeily/theme/theme.dart';
+import 'package:freeily/widgets/elevated_button_style.dart';
+import 'package:freeily/widgets/show_alert_error.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

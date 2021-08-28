@@ -1,5 +1,5 @@
-import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
+import 'package:freeily/theme/theme.dart';
+import 'package:freeily/widgets/circular_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';

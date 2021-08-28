@@ -1,8 +1,8 @@
-import 'package:australti_ecommerce_app/models/grocery_Store.dart';
-import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
-import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:freeily/models/grocery_Store.dart';
+import 'package:freeily/preferences/user_preferences.dart';
+import 'package:freeily/store_product_concept/store_product_data.dart';
 import 'package:flutter/material.dart';
-import 'package:australti_ecommerce_app/grocery_store/grocery_product.dart';
+import 'package:freeily/grocery_store/grocery_product.dart';
 
 enum GroceryState {
   normal,

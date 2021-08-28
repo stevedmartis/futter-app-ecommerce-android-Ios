@@ -1,6 +1,6 @@
-import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
-import 'package:australti_ecommerce_app/global/enviroments.dart';
-import 'package:australti_ecommerce_app/responses/store_response.dart';
+import 'package:freeily/authentication/auth_bloc.dart';
+import 'package:freeily/global/enviroments.dart';
+import 'package:freeily/responses/store_response.dart';
 
 import 'package:http/http.dart' as http;
 

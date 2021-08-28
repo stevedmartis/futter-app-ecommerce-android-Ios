@@ -1,4 +1,4 @@
-import 'package:australti_ecommerce_app/models/credit_Card.dart';
+import 'package:freeily/models/credit_Card.dart';
 
 final List<CreditCard> tarjetas = <CreditCard>[
   CreditCard(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:australti_ecommerce_app/multiple_card_flow/place.dart';
+import 'package:freeily/multiple_card_flow/place.dart';
 
 import 'multiple_card_flow.dart';
 

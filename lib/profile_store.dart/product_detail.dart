@@ -1,18 +1,18 @@
-import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/bloc/favorites_bloc.dart';
-import 'package:australti_ecommerce_app/pages/products_list.dart';
-import 'package:australti_ecommerce_app/routes/routes.dart';
-import 'package:australti_ecommerce_app/services/product.dart';
-import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
-import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
-import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/utils.dart';
-import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
-import 'package:australti_ecommerce_app/widgets/image_cached.dart';
-import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
+import 'package:freeily/authentication/auth_bloc.dart';
+import 'package:freeily/bloc_globals/bloc/favorites_bloc.dart';
+import 'package:freeily/pages/products_list.dart';
+import 'package:freeily/routes/routes.dart';
+import 'package:freeily/services/product.dart';
+import 'package:freeily/store_principal/store_principal_bloc.dart';
+import 'package:freeily/store_product_concept/store_product_bloc.dart';
+import 'package:freeily/theme/theme.dart';
+import 'package:freeily/utils.dart';
+import 'package:freeily/widgets/elevated_button_style.dart';
+import 'package:freeily/widgets/image_cached.dart';
+import 'package:freeily/widgets/show_alert_error.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:freeily/store_product_concept/store_product_data.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:intl/intl.dart';
@@ -236,12 +236,13 @@ class _GroceryStoreDetailsState extends State<ProductStoreDetails>
                                     )
                                   ],
                                   cancelButton: CupertinoActionSheetAction(
-                                    child: Text(
-                                      'Cancelar',
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                    onPressed: () {},
-                                  ));
+                                      child: Text(
+                                        'Cancelar',
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      }));
                               showCupertinoModalPopup(
                                   context: context,
                                   builder: (BuildContext context) => act);

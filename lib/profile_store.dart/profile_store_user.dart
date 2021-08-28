@@ -1,30 +1,30 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
-import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
-import 'package:australti_ecommerce_app/models/store.dart';
-import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
-import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
-import 'package:australti_ecommerce_app/profile_store.dart/profile_store_auth.dart';
-import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:freeily/authentication/auth_bloc.dart';
+import 'package:freeily/bloc_globals/notitification.dart';
+import 'package:freeily/grocery_store/grocery_store_bloc.dart';
+import 'package:freeily/models/store.dart';
+import 'package:freeily/preferences/user_preferences.dart';
+import 'package:freeily/profile_store.dart/profile.dart';
+import 'package:freeily/profile_store.dart/profile_store_auth.dart';
+import 'package:freeily/routes/routes.dart';
 
-import 'package:australti_ecommerce_app/services/catalogo.dart';
-import 'package:australti_ecommerce_app/services/follow_service.dart';
+import 'package:freeily/services/catalogo.dart';
+import 'package:freeily/services/follow_service.dart';
 
-import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
-import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
-import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
-import 'package:australti_ecommerce_app/widgets/image_cached.dart';
-import 'package:australti_ecommerce_app/widgets/modal_bottom_sheet.dart';
+import 'package:freeily/store_principal/store_principal_bloc.dart';
+import 'package:freeily/theme/theme.dart';
+import 'package:freeily/widgets/circular_progress.dart';
+import 'package:freeily/widgets/elevated_button_style.dart';
+import 'package:freeily/widgets/image_cached.dart';
+import 'package:freeily/widgets/modal_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:australti_ecommerce_app/profile_store.dart/product_detail.dart';
-import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
-import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:freeily/profile_store.dart/product_detail.dart';
+import 'package:freeily/store_product_concept/store_product_bloc.dart';
+import 'package:freeily/store_product_concept/store_product_data.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
 
@@ -340,8 +340,8 @@ class __ProfileStoreProductItemState extends State<_ProfileStoreProductItem> {
                       child: Material(
                           type: MaterialType.transparency,
                           child: Container(
-                              width: size.width / 5,
-                              height: size.height / 5,
+                              width: size.width / 4,
+                              height: size.height / 4,
                               child: ClipRRect(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(12)),

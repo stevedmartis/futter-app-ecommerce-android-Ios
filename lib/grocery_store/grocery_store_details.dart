@@ -1,6 +1,6 @@
-import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:freeily/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:australti_ecommerce_app/grocery_store/grocery_product.dart';
+import 'package:freeily/grocery_store/grocery_product.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../global/extension.dart';

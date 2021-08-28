@@ -1,4 +1,4 @@
-import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
+import 'package:freeily/store_principal/store_principal_home.dart';
 import 'package:flutter/material.dart';
 
 class MainStoreServicesApp extends StatelessWidget {

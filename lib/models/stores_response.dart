@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:freeily/models/store.dart';
 
 StoreResponse plantsResponseFromJson(String str) =>
     StoreResponse.fromJson(json.decode(str));

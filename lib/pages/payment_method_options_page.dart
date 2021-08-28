@@ -1,29 +1,29 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/bloc/cards_services_bloc.dart';
+import 'package:freeily/authentication/auth_bloc.dart';
+import 'package:freeily/bloc_globals/bloc/cards_services_bloc.dart';
 
-import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
-import 'package:australti_ecommerce_app/models/credit_Card.dart';
+import 'package:freeily/grocery_store/grocery_store_bloc.dart';
+import 'package:freeily/models/credit_Card.dart';
 
-import 'package:australti_ecommerce_app/models/store.dart';
-import 'package:australti_ecommerce_app/pages/add_edit_product.dart';
+import 'package:freeily/models/store.dart';
+import 'package:freeily/pages/add_edit_product.dart';
 
-import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
-import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:freeily/responses/orderStoresProduct.dart';
+import 'package:freeily/routes/routes.dart';
 
-import 'package:australti_ecommerce_app/services/stripe_service.dart';
-import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
+import 'package:freeily/services/stripe_service.dart';
+import 'package:freeily/store_principal/store_principal_bloc.dart';
 
-import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
-import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:freeily/store_principal/store_principal_home.dart';
+import 'package:freeily/theme/theme.dart';
 
-import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
-import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
+import 'package:freeily/widgets/header_pages_custom.dart';
+import 'package:freeily/widgets/show_alert_error.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:freeily/store_product_concept/store_product_data.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
@@ -503,7 +503,12 @@ class CashOption extends StatelessWidget {
                   Spacer(),
                   IconButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        cardBloc.changeCardSelectToPay(cardCash);
+                        if (orderPage) {
+                          Navigator.push(context, orderDetailRoute());
+                        } else {
+                          Navigator.pop(context);
+                        }
                       },
                       icon: Icon(
                         Icons.chevron_right,

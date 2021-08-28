@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:freeily/store_product_concept/store_product_data.dart';
 
 CategoryResponse categoryResponseFromJson(String str) =>
     CategoryResponse.fromJson(json.decode(str));

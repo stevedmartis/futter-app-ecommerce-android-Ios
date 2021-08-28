@@ -1,10 +1,10 @@
-import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
-import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
-import 'package:australti_ecommerce_app/routes/routes.dart';
+import 'package:freeily/authentication/auth_bloc.dart';
+import 'package:freeily/pages/principal_home_page.dart';
+import 'package:freeily/routes/routes.dart';
 
-import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
-import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
+import 'package:freeily/sockets/socket_connection.dart';
+import 'package:freeily/theme/theme.dart';
+import 'package:freeily/widgets/show_alert_error.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';

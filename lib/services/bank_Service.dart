@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:australti_ecommerce_app/global/enviroments.dart';
-import 'package:australti_ecommerce_app/models/bank_account.dart';
-import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
-import 'package:australti_ecommerce_app/responses/bank_account.dart';
-import 'package:australti_ecommerce_app/responses/message_error_response.dart';
+import 'package:freeily/global/enviroments.dart';
+import 'package:freeily/models/bank_account.dart';
+import 'package:freeily/preferences/user_preferences.dart';
+import 'package:freeily/responses/bank_account.dart';
+import 'package:freeily/responses/message_error_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:universal_platform/universal_platform.dart';

@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:australti_ecommerce_app/routes/routes.dart';
-import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:freeily/routes/routes.dart';
+import 'package:freeily/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';

@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:australti_ecommerce_app/models/user.dart';
+import 'package:freeily/models/user.dart';
 import 'package:flutter/material.dart';
 
 Store storeFromJson(String str) => Store.fromJson(json.decode(str));

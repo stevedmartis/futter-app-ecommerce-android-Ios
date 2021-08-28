@@ -1,4 +1,4 @@
-import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
+import 'package:freeily/responses/orderStoresProduct.dart';
 import 'package:flutter/material.dart';
 
 class NotificationsBLoC with ChangeNotifier {

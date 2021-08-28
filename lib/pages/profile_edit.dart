@@ -4,25 +4,25 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:animate_do/animate_do.dart';
-import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/bloc/store_profile.dart';
-import 'package:australti_ecommerce_app/models/bank_account.dart';
+import 'package:freeily/authentication/auth_bloc.dart';
+import 'package:freeily/bloc_globals/bloc/store_profile.dart';
+import 'package:freeily/models/bank_account.dart';
 
-import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:freeily/models/store.dart';
 
-import 'package:australti_ecommerce_app/pages/principal_home_page.dart';
-import 'package:australti_ecommerce_app/pages/single_image_upload.dart';
-import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
-import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
-import 'package:australti_ecommerce_app/responses/place_search_response.dart';
-import 'package:australti_ecommerce_app/routes/routes.dart';
-import 'package:australti_ecommerce_app/services/product.dart';
-import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/utils.dart';
-import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
-import 'package:australti_ecommerce_app/widgets/image_cached.dart';
-import 'package:australti_ecommerce_app/widgets/modal_bottom_sheet.dart';
-import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
+import 'package:freeily/pages/principal_home_page.dart';
+import 'package:freeily/pages/single_image_upload.dart';
+import 'package:freeily/preferences/user_preferences.dart';
+import 'package:freeily/profile_store.dart/profile.dart';
+import 'package:freeily/responses/place_search_response.dart';
+import 'package:freeily/routes/routes.dart';
+import 'package:freeily/services/product.dart';
+import 'package:freeily/theme/theme.dart';
+import 'package:freeily/utils.dart';
+import 'package:freeily/widgets/circular_progress.dart';
+import 'package:freeily/widgets/image_cached.dart';
+import 'package:freeily/widgets/modal_bottom_sheet.dart';
+import 'package:freeily/widgets/show_alert_error.dart';
 
 import 'package:flutter/material.dart';
 

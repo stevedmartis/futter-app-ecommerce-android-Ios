@@ -1,34 +1,34 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:animations/animations.dart';
-import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/bloc/cards_services_bloc.dart';
+import 'package:freeily/authentication/auth_bloc.dart';
+import 'package:freeily/bloc_globals/bloc/cards_services_bloc.dart';
 
-import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
-import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
-import 'package:australti_ecommerce_app/models/Address.dart';
+import 'package:freeily/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
+import 'package:freeily/bloc_globals/notitification.dart';
+import 'package:freeily/grocery_store/grocery_store_bloc.dart';
+import 'package:freeily/models/Address.dart';
 
-import 'package:australti_ecommerce_app/models/grocery_Store.dart';
-import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:freeily/models/grocery_Store.dart';
+import 'package:freeily/models/store.dart';
 
-import 'package:australti_ecommerce_app/pages/order_progress.dart/progressBar.dart';
+import 'package:freeily/pages/order_progress.dart/progressBar.dart';
 
-import 'package:australti_ecommerce_app/pages/search_principal_page.dart';
-import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
-import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
-import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
-import 'package:australti_ecommerce_app/responses/stores_list_principal_response.dart';
-import 'package:australti_ecommerce_app/routes/routes.dart';
-import 'package:australti_ecommerce_app/services/order_service.dart';
-import 'package:australti_ecommerce_app/services/stores_Services.dart';
+import 'package:freeily/pages/search_principal_page.dart';
+import 'package:freeily/preferences/user_preferences.dart';
+import 'package:freeily/profile_store.dart/profile.dart';
+import 'package:freeily/responses/orderStoresProduct.dart';
+import 'package:freeily/responses/stores_list_principal_response.dart';
+import 'package:freeily/routes/routes.dart';
+import 'package:freeily/services/order_service.dart';
+import 'package:freeily/services/stores_Services.dart';
 
-import 'package:australti_ecommerce_app/store_principal/store_Service.dart';
-import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
-import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
-import 'package:australti_ecommerce_app/widgets/cross_fade.dart';
-import 'package:australti_ecommerce_app/widgets/image_cached.dart';
-import 'package:australti_ecommerce_app/widgets/modal_bottom_sheet.dart';
+import 'package:freeily/store_principal/store_Service.dart';
+import 'package:freeily/store_principal/store_principal_bloc.dart';
+import 'package:freeily/theme/theme.dart';
+import 'package:freeily/widgets/circular_progress.dart';
+import 'package:freeily/widgets/cross_fade.dart';
+import 'package:freeily/widgets/image_cached.dart';
+import 'package:freeily/widgets/modal_bottom_sheet.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
@@ -42,8 +42,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 import '../global/extension.dart';
-import 'package:australti_ecommerce_app/services/stores_Services.dart'
-    as storeServices;
+import 'package:freeily/services/stores_Services.dart' as storeServices;
 
 class StorePrincipalHome extends StatefulWidget {
   @override
@@ -603,7 +602,7 @@ SliverPersistentHeader makeHeaderTitle(context, String titleService) {
             child: Container(
               color: currentTheme.scaffoldBackgroundColor,
               child: Padding(
-                padding: const EdgeInsets.only(top: 0.0, left: 10),
+                padding: const EdgeInsets.only(top: 5.0, left: 10),
                 child: CrossFade<String>(
                   initialData: '',
                   data: titleService,

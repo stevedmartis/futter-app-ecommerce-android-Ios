@@ -1,5 +1,5 @@
-import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
-import 'package:australti_ecommerce_app/widgets/cross_fade.dart';
+import 'package:freeily/responses/orderStoresProduct.dart';
+import 'package:freeily/widgets/cross_fade.dart';
 import 'package:flutter/material.dart';
 
 class AvatarAndText extends StatefulWidget {

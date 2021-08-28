@@ -1,8 +1,8 @@
-import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:freeily/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-import 'package:australti_ecommerce_app/data_backup_animation/data_backup_home.dart';
+import 'package:freeily/data_backup_animation/data_backup_home.dart';
 
 import 'package:provider/provider.dart';
 

@@ -1,4 +1,4 @@
-import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
+import 'package:freeily/profile_store.dart/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 

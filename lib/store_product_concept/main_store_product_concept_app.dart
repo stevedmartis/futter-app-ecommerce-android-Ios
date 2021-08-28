@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
-import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:freeily/store_product_concept/store_product_bloc.dart';
+import 'package:freeily/store_product_concept/store_product_data.dart';
 import 'package:intl/intl.dart';
 import '../global/extension.dart';
 

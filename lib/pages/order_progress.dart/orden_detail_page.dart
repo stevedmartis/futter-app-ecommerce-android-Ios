@@ -1,34 +1,34 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/bloc/cards_services_bloc.dart';
+import 'package:freeily/authentication/auth_bloc.dart';
+import 'package:freeily/bloc_globals/bloc/cards_services_bloc.dart';
 
-import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
-import 'package:australti_ecommerce_app/models/credit_Card.dart';
-import 'package:australti_ecommerce_app/models/place_Search.dart';
-import 'package:australti_ecommerce_app/models/store.dart';
-import 'package:australti_ecommerce_app/pages/add_edit_product.dart';
+import 'package:freeily/grocery_store/grocery_store_bloc.dart';
+import 'package:freeily/models/credit_Card.dart';
+import 'package:freeily/models/place_Search.dart';
+import 'package:freeily/models/store.dart';
+import 'package:freeily/pages/add_edit_product.dart';
 
-import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
-import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
-import 'package:australti_ecommerce_app/responses/bank_account.dart';
-import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
-import 'package:australti_ecommerce_app/responses/stores_products_order.dart';
-import 'package:australti_ecommerce_app/routes/routes.dart';
-import 'package:australti_ecommerce_app/services/bank_Service.dart';
-import 'package:australti_ecommerce_app/services/order_service.dart';
+import 'package:freeily/preferences/user_preferences.dart';
+import 'package:freeily/profile_store.dart/profile.dart';
+import 'package:freeily/responses/bank_account.dart';
+import 'package:freeily/responses/orderStoresProduct.dart';
+import 'package:freeily/responses/stores_products_order.dart';
+import 'package:freeily/routes/routes.dart';
+import 'package:freeily/services/bank_Service.dart';
+import 'package:freeily/services/order_service.dart';
 
-import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
-import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
-import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
-import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
-import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
-import 'package:australti_ecommerce_app/widgets/image_cached.dart';
-import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
+import 'package:freeily/sockets/socket_connection.dart';
+import 'package:freeily/store_principal/store_principal_bloc.dart';
+import 'package:freeily/store_principal/store_principal_home.dart';
+import 'package:freeily/theme/theme.dart';
+import 'package:freeily/widgets/elevated_button_style.dart';
+import 'package:freeily/widgets/header_pages_custom.dart';
+import 'package:freeily/widgets/image_cached.dart';
+import 'package:freeily/widgets/show_alert_error.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:freeily/store_product_concept/store_product_data.dart';
 
 import 'package:flutter/services.dart';
 
@@ -681,6 +681,14 @@ Widget _buildProductsList(context) {
                     orElse: () => BankAccount(id: '0', bankOfAccount: 'NONE'))
                 : BankAccount(id: '0', bankOfAccount: 'NONE');
 
+        int quantityFirstSecond = 0;
+        if (products.length >= 2) {
+          final firstProduct = products[0];
+
+          final secondProduct = products[1];
+
+          quantityFirstSecond = firstProduct.quantity + secondProduct.quantity;
+        }
         return FadeInLeft(
           delay: Duration(milliseconds: 100 * index),
           child: Padding(
@@ -853,8 +861,8 @@ Widget _buildProductsList(context) {
                                               delay: Duration(
                                                   milliseconds: 200 * index),
                                               child: Container(
-                                                  width: size.width / 8,
-                                                  height: size.height / 15,
+                                                  width: size.width / 7,
+                                                  height: size.height / 14,
                                                   child: ClipRRect(
                                                       borderRadius:
                                                           BorderRadius.all(
@@ -898,7 +906,10 @@ Widget _buildProductsList(context) {
                               ),
                               if (products.length >= 3)
                                 Container(
-                                  margin: EdgeInsets.only(left: size.width / 5),
+                                  alignment: Alignment.bottomCenter,
+                                  margin: EdgeInsets.only(
+                                    left: size.width / 5,
+                                  ),
                                   child: FadeInRight(
                                     duration: Duration(milliseconds: 400),
                                     delay: Duration(milliseconds: 500),
@@ -910,8 +921,10 @@ Widget _buildProductsList(context) {
                                       width: 30.0,
                                       height: 30.0,
                                       child: Center(
-                                          child: Text('+${products.length - 2}',
+                                          child: Text(
+                                              '+${totalQuantity - quantityFirstSecond}',
                                               style: TextStyle(
+                                                  fontSize: 13,
                                                   color: Colors.white,
                                                   fontWeight:
                                                       FontWeight.bold))),

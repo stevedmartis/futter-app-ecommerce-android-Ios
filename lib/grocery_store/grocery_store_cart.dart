@@ -1,11 +1,11 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:australti_ecommerce_app/bloc_globals/bloc/cards_services_bloc.dart';
-import 'package:australti_ecommerce_app/routes/routes.dart';
-import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/widgets/elevated_button_style.dart';
-import 'package:australti_ecommerce_app/widgets/image_cached.dart';
+import 'package:freeily/bloc_globals/bloc/cards_services_bloc.dart';
+import 'package:freeily/routes/routes.dart';
+import 'package:freeily/theme/theme.dart';
+import 'package:freeily/widgets/elevated_button_style.dart';
+import 'package:freeily/widgets/image_cached.dart';
 import 'package:flutter/material.dart';
-import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
+import 'package:freeily/grocery_store/grocery_store_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -52,7 +52,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                   children: [
                     Container(
                       padding: EdgeInsets.only(
-                          left: 20, right: 20, bottom: size.height / 20),
+                          left: 20, right: 20, bottom: size.height / 30),
                       child: Text(
                         'Mi Bolsa',
                         style: Theme.of(context).textTheme.headline4.copyWith(
@@ -317,7 +317,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                     : null
               },
               child: Padding(
-                padding: EdgeInsets.only(bottom: 50.0),
+                padding: EdgeInsets.only(bottom: 20.0),
                 child: Container(
                   child: Center(
                     child: goPayCartBtnSubtotal(

@@ -1,12 +1,12 @@
-import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
-import 'package:australti_ecommerce_app/models/place_Search.dart';
-import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
-import 'package:australti_ecommerce_app/responses/stores_list_principal_response.dart';
-import 'package:australti_ecommerce_app/services/stores_Services.dart';
-import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
+import 'package:freeily/authentication/auth_bloc.dart';
+import 'package:freeily/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
+import 'package:freeily/models/place_Search.dart';
+import 'package:freeily/preferences/user_preferences.dart';
+import 'package:freeily/responses/stores_list_principal_response.dart';
+import 'package:freeily/services/stores_Services.dart';
+import 'package:freeily/store_principal/store_principal_bloc.dart';
 
-import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:freeily/theme/theme.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -167,7 +167,7 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 30,
-                                        color: currentTheme.accentColor),
+                                        color: Colors.white),
                                   ),
                                 ),
 

@@ -1,11 +1,11 @@
-import 'package:australti_ecommerce_app/models/store.dart';
-import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
-import 'package:australti_ecommerce_app/responses/bank_account.dart';
+import 'package:freeily/models/store.dart';
+import 'package:freeily/preferences/user_preferences.dart';
+import 'package:freeily/responses/bank_account.dart';
 
-import 'package:australti_ecommerce_app/services/stores_Services.dart';
+import 'package:freeily/services/stores_Services.dart';
 
-import 'package:australti_ecommerce_app/store_principal/store_Service.dart';
-import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:freeily/store_principal/store_Service.dart';
+import 'package:freeily/store_product_concept/store_product_data.dart';
 import 'package:flutter/material.dart';
 
 enum StoreState { restaurant, market, liqueur, followed }

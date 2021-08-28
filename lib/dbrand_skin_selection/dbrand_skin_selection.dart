@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:australti_ecommerce_app/dbrand_skin_selection/dbrand_skin.dart';
+import 'package:freeily/dbrand_skin_selection/dbrand_skin.dart';
 
 class DbrandSkinSelection extends StatefulWidget {
   @override

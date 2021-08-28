@@ -3,37 +3,36 @@ import 'dart:ui';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:animations/animations.dart';
-import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/bloc/favorites_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/bloc/cards_services_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/bloc/store_profile.dart';
+import 'package:freeily/authentication/auth_bloc.dart';
+import 'package:freeily/bloc_globals/bloc/favorites_bloc.dart';
+import 'package:freeily/bloc_globals/bloc/cards_services_bloc.dart';
+import 'package:freeily/bloc_globals/bloc/store_profile.dart';
 
-import 'package:australti_ecommerce_app/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
+import 'package:freeily/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
+import 'package:freeily/bloc_globals/notitification.dart';
 
-import 'package:australti_ecommerce_app/models/store.dart';
+import 'package:freeily/models/store.dart';
 
-import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
-import 'package:australti_ecommerce_app/responses/bank_account.dart';
-import 'package:australti_ecommerce_app/responses/my_favorites_products_response.dart';
-import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
-import 'package:australti_ecommerce_app/responses/stores_list_principal_response.dart';
-import 'package:australti_ecommerce_app/routes/routes.dart';
-import 'package:australti_ecommerce_app/services/bank_Service.dart';
-import 'package:australti_ecommerce_app/services/catalogo.dart';
-import 'package:australti_ecommerce_app/services/order_service.dart';
-import 'package:australti_ecommerce_app/services/product.dart';
-import 'package:australti_ecommerce_app/services/stores_Services.dart'
-    as storeServiceApi;
+import 'package:freeily/preferences/user_preferences.dart';
+import 'package:freeily/responses/bank_account.dart';
+import 'package:freeily/responses/my_favorites_products_response.dart';
+import 'package:freeily/responses/orderStoresProduct.dart';
+import 'package:freeily/responses/stores_list_principal_response.dart';
+import 'package:freeily/routes/routes.dart';
+import 'package:freeily/services/bank_Service.dart';
+import 'package:freeily/services/catalogo.dart';
+import 'package:freeily/services/order_service.dart';
+import 'package:freeily/services/product.dart';
+import 'package:freeily/services/stores_Services.dart' as storeServiceApi;
 
-import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
+import 'package:freeily/sockets/socket_connection.dart';
 
-import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
-import 'package:australti_ecommerce_app/store_product_concept/store_product_bloc.dart';
-import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/widgets/delete_alert_modal.dart';
-import 'package:australti_ecommerce_app/widgets/layout_menu.dart';
-import 'package:australti_ecommerce_app/widgets/modal_bottom_sheet.dart';
+import 'package:freeily/store_principal/store_principal_bloc.dart';
+import 'package:freeily/store_product_concept/store_product_bloc.dart';
+import 'package:freeily/theme/theme.dart';
+import 'package:freeily/widgets/delete_alert_modal.dart';
+import 'package:freeily/widgets/layout_menu.dart';
+import 'package:freeily/widgets/modal_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';

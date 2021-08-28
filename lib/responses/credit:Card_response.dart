@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:australti_ecommerce_app/models/credit_Card.dart';
+import 'package:freeily/models/credit_Card.dart';
 
 CreditCardResponse cardResponseFromJson(String str) =>
     CreditCardResponse.fromJson(json.decode(str));

@@ -1,4 +1,4 @@
-import 'package:australti_ecommerce_app/bloc_globals/bloc/store_profile.dart';
+import 'package:freeily/bloc_globals/bloc/store_profile.dart';
 import 'package:flutter/material.dart';
 
 class CustomProvider extends InheritedWidget {

@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:australti_ecommerce_app/models/favorte.dart';
+import 'package:freeily/models/favorte.dart';
 
 FavoriteResponse favoriteResponseFromJson(String str) =>
     FavoriteResponse.fromJson(json.decode(str));

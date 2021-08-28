@@ -1,37 +1,37 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:australti_ecommerce_app/authentication/auth_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/bloc/cards_services_bloc.dart';
-import 'package:australti_ecommerce_app/bloc_globals/bloc/store_profile.dart';
-import 'package:australti_ecommerce_app/bloc_globals/notitification.dart';
-import 'package:australti_ecommerce_app/grocery_store/grocery_store_bloc.dart';
-import 'package:australti_ecommerce_app/models/credit_Card.dart';
-import 'package:australti_ecommerce_app/models/place_Search.dart';
-import 'package:australti_ecommerce_app/models/store.dart';
-import 'package:australti_ecommerce_app/pages/add_edit_product.dart';
-import 'package:australti_ecommerce_app/pages/order_progress.dart/orden_detail_page.dart';
-import 'package:australti_ecommerce_app/pages/order_progress.dart/progressBar.dart';
-import 'package:australti_ecommerce_app/preferences/user_preferences.dart';
-import 'package:australti_ecommerce_app/profile_store.dart/profile.dart';
-import 'package:australti_ecommerce_app/responses/bank_account.dart';
-import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
+import 'package:freeily/authentication/auth_bloc.dart';
+import 'package:freeily/bloc_globals/bloc/cards_services_bloc.dart';
+import 'package:freeily/bloc_globals/bloc/store_profile.dart';
+import 'package:freeily/bloc_globals/notitification.dart';
+import 'package:freeily/grocery_store/grocery_store_bloc.dart';
+import 'package:freeily/models/credit_Card.dart';
+import 'package:freeily/models/place_Search.dart';
+import 'package:freeily/models/store.dart';
+import 'package:freeily/pages/add_edit_product.dart';
+import 'package:freeily/pages/order_progress.dart/orden_detail_page.dart';
+import 'package:freeily/pages/order_progress.dart/progressBar.dart';
+import 'package:freeily/preferences/user_preferences.dart';
+import 'package:freeily/profile_store.dart/profile.dart';
+import 'package:freeily/responses/bank_account.dart';
+import 'package:freeily/responses/orderStoresProduct.dart';
 
-import 'package:australti_ecommerce_app/routes/routes.dart';
-import 'package:australti_ecommerce_app/services/bank_Service.dart';
-import 'package:australti_ecommerce_app/services/order_service.dart';
-import 'package:australti_ecommerce_app/sockets/socket_connection.dart';
+import 'package:freeily/routes/routes.dart';
+import 'package:freeily/services/bank_Service.dart';
+import 'package:freeily/services/order_service.dart';
+import 'package:freeily/sockets/socket_connection.dart';
 
-import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
-import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
-import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/widgets/circular_progress.dart';
+import 'package:freeily/store_principal/store_principal_bloc.dart';
+import 'package:freeily/store_principal/store_principal_home.dart';
+import 'package:freeily/theme/theme.dart';
+import 'package:freeily/widgets/circular_progress.dart';
 
-import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
-import 'package:australti_ecommerce_app/widgets/image_cached.dart';
+import 'package:freeily/widgets/header_pages_custom.dart';
+import 'package:freeily/widgets/image_cached.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
+import 'package:freeily/store_product_concept/store_product_data.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -450,7 +450,10 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
   final Store store = order.store;
   int totalQuantity = 0;
 
-  totalQuantity = order.products.length;
+  totalQuantity = order.products.fold<int>(
+    0,
+    (previousValue, element) => previousValue + element.quantity,
+  );
 
   final storeFind = storeBloc.getStoreByProducts(store.user.uid);
 
@@ -492,7 +495,14 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
   final List<ProductElement> products = order.products;
 
   final currentBankAccount = storeBloc.currentBankAccount;
+  int quantityFirstSecond = 0;
+  if (order.products.length >= 2) {
+    final firstProduct = order.products[0];
 
+    final secondProduct = order.products[1];
+
+    quantityFirstSecond = firstProduct.quantity + secondProduct.quantity;
+  }
   return Padding(
     padding: const EdgeInsets.all(15.0),
     child: Card(
@@ -698,21 +708,22 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
             child: Stack(
               children: [
                 Container(
-                  padding: EdgeInsets.only(top: 10.0, left: 5),
+                  padding: EdgeInsets.only(top: 10.0, left: 0),
                   child: Text(
                     '$totalQuantity',
                     style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.grey,
                         fontWeight: FontWeight.bold,
                         fontSize: 15),
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.only(top: 10.0, left: 20),
+                  padding: EdgeInsets.only(
+                      top: 10.0, left: (totalQuantity >= 10) ? 25 : 15),
                   child: Text(
                     bloc.cart.length == 1 ? 'producto' : 'productos',
                     style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.grey,
                         fontWeight: FontWeight.bold,
                         fontSize: 15),
                   ),
@@ -766,8 +777,10 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                 ),
                 if (products.length >= 3)
                   Container(
-                    padding: EdgeInsets.only(right: size.width / 9, top: 10),
-                    alignment: Alignment.centerRight,
+                    alignment: Alignment.bottomCenter,
+                    margin: EdgeInsets.only(
+                      left: size.width / 1.8,
+                    ),
                     child: FadeInRight(
                       duration: Duration(milliseconds: 400),
                       delay: Duration(milliseconds: 500),
@@ -779,8 +792,10 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                         width: 30.0,
                         height: 30.0,
                         child: Center(
-                            child: Text('+${products.length - 2}',
+                            child: Text(
+                                '+${totalQuantity - quantityFirstSecond}',
                                 style: TextStyle(
+                                    fontSize: 13,
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold))),
                       ),

@@ -1,5 +1,5 @@
-import 'package:australti_ecommerce_app/responses/payment_intent_response.dart';
-import 'package:australti_ecommerce_app/responses/stripe_custom_response.dart';
+import 'package:freeily/responses/payment_intent_response.dart';
+import 'package:freeily/responses/stripe_custom_response.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 

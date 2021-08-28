@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:australti_ecommerce_app/models/Address.dart';
-import 'package:australti_ecommerce_app/models/grocery_Store.dart';
-import 'package:australti_ecommerce_app/models/place_Search.dart';
-import 'package:australti_ecommerce_app/responses/place_search_response.dart';
+import 'package:freeily/models/Address.dart';
+import 'package:freeily/models/grocery_Store.dart';
+import 'package:freeily/models/place_Search.dart';
+import 'package:freeily/responses/place_search_response.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:australti_ecommerce_app/grocery_store/grocery_product.dart';
+import 'package:freeily/grocery_store/grocery_product.dart';
 
 enum GroceryState {
   normal,

@@ -1,6 +1,6 @@
-import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
-import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/widgets/image_cached.dart';
+import 'package:freeily/store_product_concept/store_product_data.dart';
+import 'package:freeily/theme/theme.dart';
+import 'package:freeily/widgets/image_cached.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';

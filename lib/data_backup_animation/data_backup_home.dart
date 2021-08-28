@@ -1,5 +1,5 @@
-import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
-import 'package:australti_ecommerce_app/theme/theme.dart';
+import 'package:freeily/responses/orderStoresProduct.dart';
+import 'package:freeily/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';

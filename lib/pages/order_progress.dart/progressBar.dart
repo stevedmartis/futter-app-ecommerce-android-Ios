@@ -1,6 +1,6 @@
-import 'package:australti_ecommerce_app/responses/orderStoresProduct.dart';
-import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/widgets/cross_fade.dart';
+import 'package:freeily/responses/orderStoresProduct.dart';
+import 'package:freeily/theme/theme.dart';
+import 'package:freeily/widgets/cross_fade.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';

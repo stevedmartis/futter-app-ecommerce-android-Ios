@@ -1,8 +1,8 @@
-import 'package:australti_ecommerce_app/models/credit_Card.dart';
-import 'package:australti_ecommerce_app/store_principal/store_principal_home.dart';
-import 'package:australti_ecommerce_app/theme/theme.dart';
-import 'package:australti_ecommerce_app/widgets/header_pages_custom.dart';
-import 'package:australti_ecommerce_app/widgets/show_alert_error.dart';
+import 'package:freeily/models/credit_Card.dart';
+import 'package:freeily/store_principal/store_principal_home.dart';
+import 'package:freeily/theme/theme.dart';
+import 'package:freeily/widgets/header_pages_custom.dart';
+import 'package:freeily/widgets/show_alert_error.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

@@ -1,6 +1,6 @@
-import 'package:australti_ecommerce_app/controller/slide_controller.dart';
-import 'package:australti_ecommerce_app/store_product_concept/store_product_data.dart';
-import 'package:australti_ecommerce_app/widgets/image_cached.dart';
+import 'package:freeily/controller/slide_controller.dart';
+import 'package:freeily/store_product_concept/store_product_data.dart';
+import 'package:freeily/widgets/image_cached.dart';
 import 'package:flutter/material.dart';
 
 class CarouselImagesProduct extends StatefulWidget {

@@ -1,4 +1,4 @@
-import 'package:australti_ecommerce_app/store_principal/store_principal_bloc.dart';
+import 'package:freeily/store_principal/store_principal_bloc.dart';
 import 'package:flutter/material.dart';
 
 class StoreProvider extends InheritedWidget {

@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:australti_ecommerce_app/global/enviroments.dart';
-import 'package:australti_ecommerce_app/models/credit_Card.dart';
-import 'package:australti_ecommerce_app/responses/credit:Card_response.dart';
-import 'package:australti_ecommerce_app/responses/credit_cards_response.dart';
+import 'package:freeily/global/enviroments.dart';
+import 'package:freeily/models/credit_Card.dart';
+import 'package:freeily/responses/credit:Card_response.dart';
+import 'package:freeily/responses/credit_cards_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:rxdart/rxdart.dart';
