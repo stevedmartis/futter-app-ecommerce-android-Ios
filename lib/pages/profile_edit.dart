@@ -263,11 +263,11 @@ class EditProfilePageState extends State<EditProfilePage> {
     final isInstagram = (store.instagram != "");
     final isOff = (store.percentOff != 0);
     final visibility = store.visibility;
-    if (store.service == 1) categoryCtrl.text = 'Restaurante';
+    if (authService.serviceSelect == 2) categoryCtrl.text = 'Restaurante';
 
-    if (store.service == 2) categoryCtrl.text = 'Frutería/Verdulería';
-    if (store.service == 3) categoryCtrl.text = 'Licorería/Botillería';
-
+    if (authService.serviceSelect == 1) categoryCtrl.text = 'Mercado';
+    if (authService.serviceSelect == 3) categoryCtrl.text = 'Licorería';
+    if (authService.serviceSelect == 4) categoryCtrl.text = 'Moda';
     final bankFind = (!store.user.first && store.service != 0)
         ? storeProfileBloc.banksResults.value.firstWhere(
             (item) =>

@@ -51,11 +51,9 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
 
     if (authService.serviceSelect == 2) categoryCtrl.text = 'Restaurante';
 
-    if (authService.serviceSelect == 1)
-      categoryCtrl.text = 'Frutería/Verdulería';
-    if (authService.serviceSelect == 3)
-      categoryCtrl.text = 'Licorería/Botillería';
-
+    if (authService.serviceSelect == 1) categoryCtrl.text = 'Mercado';
+    if (authService.serviceSelect == 3) categoryCtrl.text = 'Licorería';
+    if (authService.serviceSelect == 4) categoryCtrl.text = 'Moda';
     return SafeArea(
         child: Scaffold(
             appBar: AppBar(
@@ -171,6 +169,13 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
                                             color: Colors.white,
                                             fontWeight: FontWeight.w500),
                                       ),
+                                      subtitle: Text(
+                                        'Comida/Platillos preparados',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.w500),
+                                      ),
                                       trailing: (authService.serviceSelect == 2)
                                           ? Container(
                                               child: Icon(Icons.check_circle,
@@ -208,10 +213,17 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
                                       tileColor:
                                           currentTheme.scaffoldBackgroundColor,
                                       title: Text(
-                                        'Fruteria/Verduleria',
+                                        'Mercado',
                                         style: TextStyle(
                                             fontSize: 15,
                                             color: Colors.white,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      subtitle: Text(
+                                        'Frutas/Verduras/Orgánicos',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.grey,
                                             fontWeight: FontWeight.w500),
                                       ),
                                       trailing: (authService.serviceSelect == 1)
@@ -248,10 +260,17 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
                                       tileColor:
                                           currentTheme.scaffoldBackgroundColor,
                                       title: Text(
-                                        'Licoreria/Botilleria',
+                                        'Licoreria',
                                         style: TextStyle(
                                             fontSize: 15,
                                             color: Colors.white,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      subtitle: Text(
+                                        'Licores/Bebestibles',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.grey,
                                             fontWeight: FontWeight.w500),
                                       ),
                                       trailing: (authService.serviceSelect == 3)
@@ -266,6 +285,46 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
                                                   color: Colors.grey,
                                                   size: 30.0),
                                             )),
+                                ),
+                              ),
+                              Material(
+                                color: currentTheme.scaffoldBackgroundColor,
+                                child: InkWell(
+                                  onTap: () => {
+                                    authService.serviceChange = 4,
+                                  },
+                                  child: ListTile(
+                                      tileColor:
+                                          currentTheme.scaffoldBackgroundColor,
+                                      title: Text(
+                                        'Moda',
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      subtitle: Text(
+                                        'Vestuario/Calzado/Accesorios',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      trailing: (authService.serviceSelect == 4)
+                                          ? Container(
+                                              child: Icon(Icons.check_circle,
+                                                  color:
+                                                      currentTheme.primaryColor,
+                                                  size: 30.0),
+                                            )
+                                          : Container(
+                                              child: Icon(Icons.circle_outlined,
+                                                  color: Colors.grey,
+                                                  size: 30.0),
+                                            )
+
+                                      //trailing:
+                                      ),
                                 ),
                               ),
                               SizedBox(

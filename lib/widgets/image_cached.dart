@@ -77,3 +77,22 @@ Widget cachedContainNetworkImage(String image) {
     errorWidget: (context, url, error) => Icon(Icons.error),
   );
 }
+
+Widget cachedServiceNetworkImage(
+  String image,
+) {
+  return CachedNetworkImage(
+    imageUrl: image,
+    imageBuilder: (context, imageProvider) => Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+            image: imageProvider,
+            fit: BoxFit.cover,
+            colorFilter:
+                ColorFilter.mode(Colors.transparent, BlendMode.colorBurn)),
+      ),
+    ),
+    placeholder: (context, url) => Container(child: Container()),
+    errorWidget: (context, url, error) => Icon(Icons.error),
+  );
+}

@@ -995,7 +995,9 @@ class StoresListByService extends StatelessWidget {
                   padding: EdgeInsets.only(top: 30),
                   child: Center(
                     child: Text(
-                      'No hay ${bloc.selected.name} en esta ubicación',
+                      (bloc.selected.id == 0)
+                          ? 'No tienes ${bloc.selected.name} en esta ubicación'
+                          : 'No hay ${bloc.selected.name} en esta ubicación',
                       style: TextStyle(color: Colors.grey),
                     ),
                   ),
@@ -1072,6 +1074,8 @@ void _changeService(StoreBLoC bloc, int id) {
     bloc.changeToLiqueur();
   } else if (id == 0) {
     bloc.changeToFollowed();
+  } else if (id == 4) {
+    bloc.changeToModa();
   }
 }
 
@@ -1294,9 +1298,8 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                   left: _movement * _controller.value,
                   right: _movement * (1 - _controller.value),
                   child: ClipRRect(
-                    child: Image.asset(
+                    child: cachedServiceNetworkImage(
                       widget.storeService.backImage,
-                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
@@ -1305,11 +1308,8 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                   right: _movement * (1 - _controller.value),
                   child: ClipRRect(
                     child: Container(
-                      child: Image.asset(
-                        widget.storeService.backImage,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                        child: cachedServiceNetworkImage(
+                            widget.storeService.backImage)),
                   ),
                 ),
                 Positioned.fill(
@@ -1651,9 +1651,8 @@ class TravelPhotoListItem extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   child: Container(
-                    child: Image.asset(
+                    child: cachedServiceNetworkImage(
                       travelPhoto.frontImage,
-                      fit: BoxFit.cover,
                     ),
                   ),
                 ),

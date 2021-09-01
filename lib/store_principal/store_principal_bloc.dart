@@ -37,27 +37,43 @@ class StoreBLoC with ChangeNotifier {
   List<StoreServices> servicesStores = [
     StoreServices(
         id: 0,
-        backImage: 'assets/principal_stores/headers/followed_header.png',
-        frontImage: 'assets/principal_stores/mini/followed_mini.png',
+        backImage:
+            'https://freeily-images.s3.amazonaws.com/principal_stores/headers/followed_header.png',
+        frontImage:
+            'https://freeily-images.s3.amazonaws.com/principal_stores/mini/followed_mini.png',
         name: 'Seguidos',
         stores: 0),
     StoreServices(
         id: 1,
-        backImage: 'assets/principal_stores/headers/market_header.png',
-        frontImage: 'assets/principal_stores/mini/mark_mini.png',
+        backImage:
+            'https://freeily-images.s3.amazonaws.com/principal_stores/headers/market_header.png',
+        frontImage:
+            'https://freeily-images.s3.amazonaws.com/principal_stores/mini/mark_mini.png',
         name: 'Mercados',
         stores: 0),
     StoreServices(
         id: 2,
-        backImage: 'assets/principal_stores/headers/rest_header.png',
-        frontImage: 'assets/principal_stores/mini/rest_mini.png',
+        backImage:
+            'https://freeily-images.s3.amazonaws.com/principal_stores/headers/rest_header.png',
+        frontImage:
+            'https://freeily-images.s3.amazonaws.com/principal_stores/mini/rest_mini.png',
         name: 'Restaurantes',
         stores: 0),
     StoreServices(
         id: 3,
-        backImage: 'assets/principal_stores/headers/licor_header.png',
-        frontImage: 'assets/principal_stores/mini/licor_mini.png',
+        backImage:
+            'https://freeily-images.s3.amazonaws.com/principal_stores/headers/licor_header.png',
+        frontImage:
+            'https://freeily-images.s3.amazonaws.com/principal_stores/mini/licor_mini.png',
         name: 'Licores',
+        stores: 0),
+    StoreServices(
+        id: 4,
+        backImage:
+            'https://freeily-images.s3.amazonaws.com/principal_stores/headers/moda_header-png.png',
+        frontImage:
+            'https://freeily-images.s3.amazonaws.com/principal_stores/mini/moda_mini.png',
+        name: 'Moda',
         stores: 0)
   ];
 
@@ -115,6 +131,8 @@ class StoreBLoC with ChangeNotifier {
 
     final liquers = storesListInitial.where((i) => i.service == 3).toList();
 
+    final modas = storesListInitial.where((i) => i.service == 4).toList();
+
     final followed =
         storesListInitial.where((i) => i.isFollowing == true).toList();
 
@@ -135,6 +153,9 @@ class StoreBLoC with ChangeNotifier {
 
     liquerService.stores = liquers.length;
 
+    final modaService = servicesStores.firstWhere((i) => i.id == 4);
+
+    modaService.stores = modas.length;
     storesSearch = storesListInitial;
     initialSearch = false;
 
@@ -224,6 +245,18 @@ class StoreBLoC with ChangeNotifier {
 
     storesListState = followed;
     notifierTotal.value = 0;
+    notifyListeners();
+  }
+
+  void changeToModa() {
+    storeState = StoreState.market;
+
+    final newList = storesListInitial.where((i) => i.service == 4).toList();
+
+    storesListState = newList;
+
+    notifierTotal.value = 1;
+
     notifyListeners();
   }
 
