@@ -88,14 +88,19 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
 
         final addressFinal = '$address, $addressNumber';
 
-        final city = addressComponent[2].longName;
+        final city = addressComponent[3].longName;
+
+        final commune = addressComponent[2].longName;
+
         final country = addressComponent[6].longName;
+
+        final comuneCity = '$commune, $city';
 
         var placeCurrent = new PlaceSearch(
             description: '$addressFinal, $city, $country',
             placeId: addressFinal,
             structuredFormatting: new StructuredFormatting(
-                mainText: addressFinal, secondaryText: city, number: ''));
+                mainText: addressFinal, secondaryText: comuneCity, number: ''));
 
         addresName = addressFinal;
 

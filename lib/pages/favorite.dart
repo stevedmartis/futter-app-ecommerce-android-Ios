@@ -170,37 +170,52 @@ class _CatalogsListState extends State<CatalogsList>
   @override
   Widget build(BuildContext context) {
     final _bloc = Provider.of<FavoritesBLoC>(context);
-    return Stack(
-      children: [
-        Container(
-          padding: EdgeInsets.only(top: 20, left: 20),
-          child: Text(
-            'Mis Favoritos',
-            style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 30, color: Colors.white),
+    return Container(
+      height: (_bloc.productsFavoritesList.length > 0)
+          ? 160 * (_bloc.productsFavoritesList.length).toDouble()
+          : 160,
+      child: Stack(
+        children: [
+          Container(
+            padding: EdgeInsets.only(top: 20, left: 20),
+            child: Text(
+              'Mis Favoritos',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                  color: Colors.white),
+            ),
           ),
-        ),
-        Container(
-          padding: EdgeInsets.only(top: 70),
-          child: ListView.builder(
-            shrinkWrap: true,
-            controller: scrollController,
-            itemCount: _bloc.productsFavoritesList.length,
-            itemBuilder: (context, index) {
-              if (_bloc.productsFavoritesList.length > 0) {
-                final item = _bloc.productsFavoritesList[index];
-                return FadeIn(
-                    child: ProfileStoreProductItem(item, item.category));
-              } else {
-                return Center(
-                    child: Container(
-                  child: Text('Sin Favoritos'),
-                ));
-              }
-            },
-          ),
-        ),
-      ],
+          (_bloc.productsFavoritesList.length > 0)
+              ? Container(
+                  padding: EdgeInsets.only(top: 70),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    controller: scrollController,
+                    itemCount: _bloc.productsFavoritesList.length,
+                    itemBuilder: (context, index) {
+                      if (_bloc.productsFavoritesList.length > 0) {
+                        final item = _bloc.productsFavoritesList[index];
+                        return FadeIn(
+                            child:
+                                ProfileStoreProductItem(item, item.category));
+                      } else {
+                        return Center(
+                            child: Container(
+                          child: Text('Sin Favoritos'),
+                        ));
+                      }
+                    },
+                  ))
+              : Center(
+                  child: Container(
+                    alignment: Alignment.bottomCenter,
+                    child: Text('Sin favoritos',
+                        style: TextStyle(color: Colors.grey)),
+                  ),
+                ),
+        ],
+      ),
     );
   }
 }

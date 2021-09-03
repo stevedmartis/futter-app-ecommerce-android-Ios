@@ -163,7 +163,8 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                     SizedBox(
                       height: size.height / 3.5,
                     ),
-                    LoginForm(animation: _formElementAnimation),
+                    Expanded(
+                        child: LoginForm(animation: _formElementAnimation)),
                   ],
                 ),
               ),

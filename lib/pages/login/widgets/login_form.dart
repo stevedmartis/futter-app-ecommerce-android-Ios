@@ -8,6 +8,7 @@ import 'package:freeily/widgets/show_alert_error.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 import '../../../constants.dart';
 import 'custom_button.dart';
@@ -27,31 +28,32 @@ class LoginForm extends StatelessWidget {
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
     final space = height > 650 ? kSpaceM : kSpaceS;
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-    final size = MediaQuery.of(context).size;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: kPaddingL),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          FadeSlideTransition(
-            animation: animation,
-            additionalOffset: 4 * space,
-            child: CustomButton(
-              color: Colors.black,
-              textColor: kWhite,
-              text: 'Continuar con  Apple',
-              onPressed: () async {
-                HapticFeedback.mediumImpact();
-                await _signIApple(context);
-              },
-              image: const Image(
-                width: 50,
-                image: AssetImage(kAppleLogoPath),
-                height: 25.0,
+          if (!UniversalPlatform.isAndroid)
+            FadeSlideTransition(
+              animation: animation,
+              additionalOffset: 4 * space,
+              child: CustomButton(
+                color: Colors.black,
+                textColor: kWhite,
+                text: 'Continuar con  Apple',
+                onPressed: () async {
+                  HapticFeedback.mediumImpact();
+                  await _signIApple(context);
+                },
+                image: const Image(
+                  width: 50,
+                  image: AssetImage(kAppleLogoPath),
+                  height: 25.0,
+                ),
               ),
             ),
-          ),
           SizedBox(height: space),
           FadeSlideTransition(
             animation: animation,
@@ -92,34 +94,22 @@ class LoginForm extends StatelessWidget {
             ),
           ),
           SizedBox(height: space),
-          /* FadeSlideTransition(
-            animation: animation,
-            additionalOffset: 2 * space,
-            child: CustomButton(
-              color: kBlue,
-              textColor: kWhite,
-              text: 'Login to continue',
-              onPressed: () {},
-            ),
-          ), */
-          //SizedBox(height: 2 * space),
-
           FadeSlideTransition(
             animation: animation,
             additionalOffset: 4 * space,
-            child: Center(
-              child: Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.only(left: size.width / 3),
-                child: CustomButton(
-                  color: currentTheme.scaffoldBackgroundColor,
-                  textColor: Colors.white.withOpacity(0.5),
-                  text: 'Volver atras',
-                  onPressed: () {
-                    HapticFeedback.lightImpact();
-                    Navigator.pop(context);
-                  },
-                ),
+            child: CustomButton(
+              isPhone: true,
+              color: currentTheme.scaffoldBackgroundColor,
+              textColor: kWhite,
+              text: 'Volver',
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                Navigator.pop(context);
+              },
+              image: const Icon(
+                Icons.chevron_left,
+                color: Colors.white,
+                size: 28,
               ),
             ),
           ),

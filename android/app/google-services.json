@@ -7,14 +7,14 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:639303241258:android:f6744914ce812143abfd53",
+        "mobilesdk_app_id": "1:639303241258:android:540ec9cc7d212538abfd53",
         "android_client_info": {
           "package_name": "com.kiozer"
         }
       },
       "oauth_client": [
         {
-          "client_id": "639303241258-66inubs9vrafm7pkb9bogd93m69l4khn.apps.googleusercontent.com",
+          "client_id": "639303241258-nfs7nj6l83pv4k59th5l5ugsfssat2oj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.kiozer",
@@ -33,6 +33,14 @@
             {
               "client_id": "639303241258-80ht1peb9glatcqnl055qtalmfjh485d.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "639303241258-0euphdjtoulmjevta1haq9ltk6m9qbuo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kiozer",
+                "app_store_id": "1570297542"
+              }
             }
           ]
         }

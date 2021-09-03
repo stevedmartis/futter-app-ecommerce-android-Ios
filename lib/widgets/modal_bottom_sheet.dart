@@ -443,7 +443,6 @@ showSelectServiceMaterialCupertinoBottomSheet(context) {
 showMaterialCupertinoBottomSheetLocation(BuildContext context,
     VoidCallback onPress, VoidCallback onCancel, bool isChange) {
   final currentTheme = Provider.of<ThemeChanger>(context, listen: false);
-  final size = MediaQuery.of(context).size;
 
   return showModalBottomSheet(
       enableDrag: isChange,
@@ -451,171 +450,173 @@ showMaterialCupertinoBottomSheetLocation(BuildContext context,
       backgroundColor: Colors.transparent,
       context: context,
       isScrollControlled: true,
-      builder: (context) => ClipRRect(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30.0),
-            topRight: Radius.circular(30.0),
-          ),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: 9.0,
-              sigmaY: 9.0,
-            ),
-            child: Container(
-                height: (!isChange) ? size.height / 1.0 : size.height / 1.20,
-                padding: EdgeInsets.symmetric(horizontal: 18),
-                child: Column(
-                  children: [
-                    Expanded(
-                      flex: -2,
-                      child: Container(
-                        padding: EdgeInsets.only(top: 50),
-                        child: TextField(
-                          autofocus: true,
-                          style: TextStyle(
-                            color: (Colors.white),
-                          ),
-                          decoration: InputDecoration(
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                color: (currentTheme.customTheme)
-                                    ? Colors.white54
-                                    : Colors.black54,
-                              ),
-                            ),
-                            border: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
-                            ),
-                            labelStyle: TextStyle(
-                              color: (currentTheme.customTheme)
-                                  ? Colors.white54
-                                  : Colors.black54,
-                            ),
-                            prefixIcon: Icon(
-                              Icons.location_on_outlined,
-                              color: currentTheme.currentTheme.accentColor,
-                            ),
-                            //  fillColor: currentTheme.accentColor,
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: currentTheme.currentTheme.accentColor,
-                                  width: 2.0),
-                            ),
-                            hintText: '',
-                            labelText: 'Ingrese Calle y número',
-
-                            //counterText: snapshot.data,
-                          ),
-                          onChanged: (value) =>
-                              myLocationBloc.searchPlaces(value),
-                        ),
+      builder: (context) => SizedBox.expand(
+            child: DraggableScrollableSheet(
+                initialChildSize: isChange ? 0.78 : 0.97,
+                minChildSize: 0.2,
+                maxChildSize: 0.97,
+                builder: (_, controller) {
+                  return ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30.0),
+                        topRight: Radius.circular(30.0),
                       ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Expanded(
-                      flex: -2,
-                      child: StreamBuilder<List<PlaceSearch>>(
-                        stream: myLocationBloc.searchResults.stream,
-                        builder: (context,
-                            AsyncSnapshot<List<PlaceSearch>> snapshot) {
-                          if (snapshot.hasData) {
-                            final places = snapshot.data;
-
-                            if (places.length > 0)
-                              return Column(
-                                children: [
-                                  Container(
-                                    child: ListView.builder(
-                                        scrollDirection: Axis.vertical,
-                                        itemCount: places.length,
-                                        shrinkWrap: true,
-                                        itemBuilder: (context, index) {
-                                          final place = places[index];
-                                          return ListTile(
-                                            onTap: () => {
-                                              HapticFeedback.lightImpact(),
-                                              Navigator.push(context,
-                                                  confirmLocationRoute(place)),
-                                              FocusScope.of(context)
-                                                  .requestFocus(
-                                                      new FocusNode()),
-                                            },
-                                            title: Text(
-                                              place.structuredFormatting
-                                                  .mainText,
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                            subtitle: Row(
-                                              children: [
-                                                Text(
-                                                  place.structuredFormatting
-                                                      .secondaryText,
-                                                  style: TextStyle(
-                                                      color: Colors.white),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        }),
-                                  ),
-                                  Container(
-                                    child: Divider(
-                                      height: 10,
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(
+                          sigmaX: 9.0,
+                          sigmaY: 9.0,
+                        ),
+                        child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 18, vertical: 20),
+                            child: Column(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.only(top: 0),
+                                  child: TextField(
+                                    autofocus: true,
+                                    style: TextStyle(
+                                      color: (Colors.white),
                                     ),
+                                    decoration: InputDecoration(
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: (currentTheme.customTheme)
+                                              ? Colors.white54
+                                              : Colors.black54,
+                                        ),
+                                      ),
+                                      border: UnderlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.white),
+                                      ),
+                                      labelStyle: TextStyle(
+                                        color: (currentTheme.customTheme)
+                                            ? Colors.white54
+                                            : Colors.black54,
+                                      ),
+                                      prefixIcon: Icon(
+                                          Icons.location_on_outlined,
+                                          color: Colors.white),
+                                      //  fillColor: currentTheme.accentColor,
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: currentTheme
+                                                .currentTheme.accentColor,
+                                            width: 2.0),
+                                      ),
+                                      hintText: '',
+                                      labelText: 'Ingrese Calle y número',
+
+                                      //counterText: snapshot.data,
+                                    ),
+                                    onChanged: (value) =>
+                                        myLocationBloc.searchPlaces(value),
                                   ),
-                                ],
-                              );
-
-                            return Container();
-                          } else if (snapshot.hasError) {
-                            return Container();
-                          } else {
-                            return Container();
-                          }
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Expanded(
-                      flex: -2,
-                      child: GestureDetector(
-                        onTap: () {
-                          HapticFeedback.mediumImpact();
-                          onPress();
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              child: Container(
-                                child: Text(
-                                  'Ubicación actual',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 15),
                                 ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    )
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Expanded(
+                                  flex: -4,
+                                  child: StreamBuilder<List<PlaceSearch>>(
+                                    stream: myLocationBloc.searchResults.stream,
+                                    builder: (context,
+                                        AsyncSnapshot<List<PlaceSearch>>
+                                            snapshot) {
+                                      if (snapshot.hasData) {
+                                        final places = snapshot.data;
 
-                    /* Expanded(
-                          flex: 1,
-                          child: elevatedButtonCustom(
-                              context: context,
-                              title: 'Continuar',
-                              onPress: () {})), */
-                  ],
-                )),
-          )));
+                                        if (places.length > 0)
+                                          return Container(
+                                            child: ListView.builder(
+                                                scrollDirection: Axis.vertical,
+                                                itemCount: places.length,
+                                                shrinkWrap: true,
+                                                controller: controller,
+                                                itemBuilder: (context, index) {
+                                                  final place = places[index];
+                                                  return ListTile(
+                                                    onTap: () => {
+                                                      HapticFeedback
+                                                          .lightImpact(),
+                                                      Navigator.push(
+                                                          context,
+                                                          confirmLocationRoute(
+                                                              place)),
+                                                      FocusScope.of(context)
+                                                          .requestFocus(
+                                                              new FocusNode()),
+                                                    },
+                                                    title: Text(
+                                                      place.structuredFormatting
+                                                          .mainText,
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                    subtitle: Row(
+                                                      children: [
+                                                        Text(
+                                                          place
+                                                              .structuredFormatting
+                                                              .secondaryText,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                }),
+                                          );
+
+                                        return Container();
+                                      } else if (snapshot.hasError) {
+                                        return Container();
+                                      } else {
+                                        return Container();
+                                      }
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    HapticFeedback.mediumImpact();
+                                    onPress();
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        child: Container(
+                                          child: Text(
+                                            'Ubicación actual',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 15),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+
+                                /* Expanded(
+                      flex: 1,
+                      child: elevatedButtonCustom(
+                          context: context,
+                          title: 'Continuar',
+                          onPress: () {})), */
+                              ],
+                            )),
+                      ));
+                }),
+          ));
 }
 
 showMaterialCupertinoBottomSheetBanks(

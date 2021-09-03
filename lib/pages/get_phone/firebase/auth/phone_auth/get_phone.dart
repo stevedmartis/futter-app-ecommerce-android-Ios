@@ -172,28 +172,31 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
 
                         return Expanded(
                           flex: 0,
-                          child: GestureDetector(
-                            onTap: () {
-                              if (!isDisabled) {
-                                showModalLoading(context);
+                          child: Container(
+                            height: 50,
+                            child: GestureDetector(
+                              onTap: () {
+                                if (!isDisabled) {
+                                  showModalLoading(context);
 
-                                startPhoneAuth();
-                              } else {
-                                return false;
-                              }
-                            },
-                            child: Container(
-                              child: Center(
-                                child: confirmButton(
-                                    'Continuar',
-                                    [
-                                      currentTheme.primaryColor,
-                                      Color(0xff3AFF3E),
-                                      Color(0xff42FF00),
-                                      currentTheme.primaryColor,
-                                    ],
-                                    loading,
-                                    !isDisabled),
+                                  startPhoneAuth();
+                                } else {
+                                  return false;
+                                }
+                              },
+                              child: Container(
+                                child: Center(
+                                  child: confirmButton(
+                                      'Continuar',
+                                      [
+                                        currentTheme.primaryColor,
+                                        Color(0xff3AFF3E),
+                                        Color(0xff42FF00),
+                                        currentTheme.primaryColor,
+                                      ],
+                                      loading,
+                                      !isDisabled),
+                                ),
                               ),
                             ),
                           ),

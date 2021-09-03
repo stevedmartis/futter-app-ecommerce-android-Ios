@@ -19,8 +19,6 @@ class FireBaseAuthBLoC with ChangeNotifier {
     };
 
     final PhoneVerificationFailed verificationFailed = (exception) {
-      print("${exception.message}");
-
       return exception;
     };
 
@@ -41,9 +39,7 @@ class FireBaseAuthBLoC with ChangeNotifier {
           verificationFailed: verificationFailed,
           codeSent: smsOTPSent,
           codeAutoRetrievalTimeout: retrievalTimeout);
-    } catch (onError) {
-      print("${onError.message}");
-    }
+    } catch (onError) {}
   }
 
   Future<bool> smsOTPDialog(BuildContext context) {

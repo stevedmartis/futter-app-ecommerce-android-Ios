@@ -56,10 +56,9 @@ class AuthenticationBLoC with ChangeNotifier {
       '${Environment.apiUrl}/api/apple/callbacks/sign_in_with_apple';
   static String clientId = 'com.kiozer';
   static GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: <String>[
-      'email',
-    ],
-  );
+      scopes: <String>['email', 'profile'],
+      clientId:
+          '639303241258-80ht1peb9glatcqnl055qtalmfjh485d.apps.googleusercontent.com');
   final _storage = new FlutterSecureStorage();
   ValueNotifier<bool> notifierBottomBarVisible = ValueNotifier(true);
 
@@ -117,9 +116,10 @@ class AuthenticationBLoC with ChangeNotifier {
           long,
           lat);
 
-      Navigator.pop(context);
-
-      return res;
+      if (res) {
+        Navigator.pop(context);
+        return res;
+      }
     } catch (e) {
       print(e);
     }
@@ -147,14 +147,18 @@ class AuthenticationBLoC with ChangeNotifier {
       long = prefs.longSearch;
       lat = prefs.latSearch;
 
-      await siginWithGoogleBack(
+      if (account.email != null) prefs.setEmailApple = account.email;
+      final resp = await siginWithGoogleBack(
           googleKey.idToken, address, city, number, long, lat);
 
-      Navigator.pop(context);
-
-      return true;
+      print(resp);
+      if (resp) {
+        Navigator.pop(context);
+        return resp;
+      }
     } catch (e) {
-      print('error signin google');
+      // Mostara alerta
+      showAlertError(context, 'Login incorrecto', 'El correo ya existe');
       print(e);
     }
   }
@@ -219,7 +223,9 @@ class AuthenticationBLoC with ChangeNotifier {
       prefs.setLocationCurrent = false;
       prefs.setSearchAddreses = placeStore;
 
-      return true;
+      print(loginResponse.ok);
+
+      return loginResponse.ok;
     } else {
       return false;
     }

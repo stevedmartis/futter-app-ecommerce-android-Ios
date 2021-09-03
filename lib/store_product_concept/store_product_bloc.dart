@@ -273,7 +273,6 @@ class TabsViewScrollBLoC with ChangeNotifier {
     final item = productsByCategoryList
         .firstWhere((item) => item.id == product.id, orElse: () => null);
 
-    print(item);
     item.name = product.name;
     item.description = product.description;
     item.price = product.price;
@@ -287,7 +286,6 @@ class TabsViewScrollBLoC with ChangeNotifier {
       final itemProduct = itemCategoy.category.products
           .firstWhere((item) => item.id == product.id, orElse: () => null);
 
-      print(itemProduct);
       if (itemProduct != null) {
         itemProduct.name = product.name;
         itemProduct.description = product.description;

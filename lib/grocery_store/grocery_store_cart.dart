@@ -317,7 +317,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                     : null
               },
               child: Padding(
-                padding: EdgeInsets.only(bottom: 20.0),
+                padding: EdgeInsets.only(bottom: 40.0),
                 child: Container(
                   child: Center(
                     child: goPayCartBtnSubtotal(

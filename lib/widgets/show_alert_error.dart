@@ -62,27 +62,13 @@ showSnackBar(BuildContext context, String text) {
 }
 
 showModalLoading(BuildContext context) {
-  bool isIos = UniversalPlatform.isIOS;
-  bool isAndroid = UniversalPlatform.isAndroid;
-  bool isWeb = UniversalPlatform.isWeb;
-  if (isAndroid) {
-    return showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-                content: Center(
-                    child: Row(children: [
+  showCupertinoDialog(
+      context: context,
+      builder: (_) => CupertinoAlertDialog(
+            content: Center(
+                child: Row(children: [
               buildLoadingWidget(context),
               Text(' Por favor, espere')
-            ]))));
-  } else if (isIos || isWeb) {
-    showCupertinoDialog(
-        context: context,
-        builder: (_) => CupertinoAlertDialog(
-              content: Center(
-                  child: Row(children: [
-                buildLoadingWidget(context),
-                Text(' Por favor, espere')
-              ])),
-            ));
-  }
+            ])),
+          ));
 }

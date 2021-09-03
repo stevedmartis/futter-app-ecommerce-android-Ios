@@ -144,8 +144,6 @@ class _NotificationListState extends State<NotificationList>
 
   @override
   Widget build(BuildContext context) {
-    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-
     final _bloc = Provider.of<OrderService>(context);
 
     final odersNotificationsClient = _bloc.orders;
@@ -154,66 +152,117 @@ class _NotificationListState extends State<NotificationList>
     final _size = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.only(left: 20.0, right: 20),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.only(top: 20, left: 0),
-            child: Text(
-              'Notificaciones',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                  color: currentTheme.accentColor),
+      child: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.only(top: 20, left: 0),
+              child: Text(
+                'Notificaciones',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 30,
+                    color: Colors.white),
+              ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 20, bottom: 20),
-            child: ListView.builder(
-              shrinkWrap: true,
-              controller: scrollController,
-              itemCount: odersNotificationsClient.length,
-              itemBuilder: (context, index) {
-                if (odersNotificationsClient.length > 0) {
-                  final order = odersNotificationsClient[index];
+            if (odersNotificationsClient.length > 0)
+              Container(
+                padding: EdgeInsets.only(top: 20, left: 0),
+                child: Text(
+                  'Pedidos realizados',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25,
+                      color: Colors.white),
+                ),
+              ),
+            Container(
+              padding: EdgeInsets.only(top: 20, bottom: 10),
+              child: ListView.builder(
+                shrinkWrap: true,
+                controller: scrollController,
+                itemCount: odersNotificationsClient.length,
+                itemBuilder: (context, index) {
+                  if (odersNotificationsClient.length > 0) {
+                    final order = odersNotificationsClient[index];
+                    return Container(
+                      padding: EdgeInsets.only(bottom: 10),
+                      height: _size.height / 4.4,
+                      child: OrderprogressStoreCard(
+                        order: order,
+                        isStore: false,
+                      ),
+                    );
+                  } else {
+                    return Center(
+                        child: Container(
+                      child: Text('Aun no tienes notificaciones'),
+                    ));
+                  }
+                },
+              ),
+            ),
+            if (odersNotificationsClient.length == 0 &&
+                odersNotificationsStore.length > 0)
+              Center(
+                child: Container(
+                  alignment: Alignment.bottomCenter,
+                  child: Text('Sin pedidos realizados',
+                      style: TextStyle(color: Colors.grey)),
+                ),
+              ),
+            if (odersNotificationsStore.length > 0)
+              Container(
+                padding: EdgeInsets.only(top: 20, left: 0),
+                child: Text(
+                  'Pedidos recibidos',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25,
+                      color: Colors.white),
+                ),
+              ),
+            Container(
+              padding: EdgeInsets.only(top: 20, bottom: 10),
+              child: ListView.builder(
+                shrinkWrap: true,
+                controller: scrollController,
+                itemCount: odersNotificationsStore.length,
+                itemBuilder: (context, index) {
+                  final order = odersNotificationsStore[index];
                   return Container(
                     padding: EdgeInsets.only(bottom: 10),
                     height: _size.height / 4.4,
                     child: OrderprogressStoreCard(
                       order: order,
-                      isStore: false,
+                      isStore: true,
                     ),
                   );
-                } else {
-                  return Center(
-                      child: Container(
-                    child: Text('Aun no tienes notificaciones'),
-                  ));
-                }
-              },
+                },
+              ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 10),
-            child: ListView.builder(
-              shrinkWrap: true,
-              controller: scrollController,
-              itemCount: odersNotificationsStore.length,
-              itemBuilder: (context, index) {
-                final order = odersNotificationsStore[index];
-                return Container(
-                  padding: EdgeInsets.only(bottom: 10),
-                  height: _size.height / 4.4,
-                  child: OrderprogressStoreCard(
-                    order: order,
-                    isStore: true,
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
+            if (odersNotificationsStore.length == 0 &&
+                odersNotificationsClient.length > 0)
+              Center(
+                child: Container(
+                  alignment: Alignment.bottomCenter,
+                  child: Text('Sin pedidos recibidos',
+                      style: TextStyle(color: Colors.grey)),
+                ),
+              ),
+            if (odersNotificationsStore.length == 0 &&
+                odersNotificationsClient.length == 0)
+              Center(
+                child: Container(
+                  alignment: Alignment.bottomCenter,
+                  child: Text('Sin notificaciones',
+                      style: TextStyle(color: Colors.grey)),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

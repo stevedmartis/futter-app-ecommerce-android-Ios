@@ -525,6 +525,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                 if (ordersStoreActive.length > 0)
                   makeListHorizontalCarouselOrdersStoreProgress(
                       context, ordersStoreActive),
+                makeSpaceTitle(),
                 if (orderService.loading)
                   SliverAppBar(
                     automaticallyImplyLeading: false,
@@ -539,17 +540,14 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                               type: MaterialType.transparency,
                               child: Container(
                                   color: currentTheme.scaffoldBackgroundColor,
-                                  child: FadeIn(
-                                    delay: Duration(milliseconds: 300),
-                                    child: StoreServicesList(
-                                      onPhotoSelected: (item) => {
-                                        _changeService(bloc, item.id),
-                                        setState(() {
-                                          HapticFeedback.lightImpact();
-                                          bloc.selected = item;
-                                        })
-                                      },
-                                    ),
+                                  child: StoreServicesList(
+                                    onPhotoSelected: (item) => {
+                                      _changeService(bloc, item.id),
+                                      setState(() {
+                                        HapticFeedback.lightImpact();
+                                        bloc.selected = item;
+                                      })
+                                    },
                                   ))),
                         )
                       ],
@@ -644,7 +642,7 @@ SliverList makeListHorizontalCarouselOrdersProgress(
     delegate: SliverChildListDelegate([
       FadeInRight(
         child: Padding(
-          padding: const EdgeInsets.only(top: 10.0, bottom: 0),
+          padding: const EdgeInsets.only(top: 0.0, bottom: 0),
           child: SizedBox(
             child: (!orderService.loading)
                 ? buildLoadingWidget(context)
@@ -1587,42 +1585,45 @@ class _StoreServicesListState extends State<StoreServicesList> {
         final travelPhotoItem = storeBloc.servicesStores[index];
         final percent = page - page.floor();
         final factor = percent > 0.5 ? (1 - percent) : percent;
-        return InkWell(
-            onTap: () {
-              HapticFeedback.lightImpact();
-              storeBloc.servicesStores
-                  .insert(storeBloc.servicesStores.length, travelPhotoItem);
-              _animatedListKey.currentState
-                  .insertItem(storeBloc.servicesStores.length - 1);
-              final itemToDelete = travelPhotoItem;
-              widget.onPhotoSelected(travelPhotoItem);
-              storeBloc.servicesStores.removeAt(index);
-              _animatedListKey.currentState.removeItem(
-                index,
-                (context, animation) => FadeTransition(
-                  opacity: animation,
-                  child: SizeTransition(
-                    sizeFactor: animation,
-                    axis: Axis.horizontal,
-                    child: TravelPhotoListItem(
-                      travelPhoto: itemToDelete,
+        return FadeIn(
+          duration: Duration(milliseconds: 300 * index),
+          child: InkWell(
+              onTap: () {
+                HapticFeedback.lightImpact();
+                storeBloc.servicesStores
+                    .insert(storeBloc.servicesStores.length, travelPhotoItem);
+                _animatedListKey.currentState
+                    .insertItem(storeBloc.servicesStores.length - 1);
+                final itemToDelete = travelPhotoItem;
+                widget.onPhotoSelected(travelPhotoItem);
+                storeBloc.servicesStores.removeAt(index);
+                _animatedListKey.currentState.removeItem(
+                  index,
+                  (context, animation) => FadeTransition(
+                    opacity: animation,
+                    child: SizeTransition(
+                      sizeFactor: animation,
+                      axis: Axis.horizontal,
+                      child: TravelPhotoListItem(
+                        travelPhoto: itemToDelete,
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
-            child: Transform(
-              transform: Matrix4.identity()
-                ..setEntry(3, 2, 0.001)
-                ..rotateY(
-                  vector.radians(
-                    90 * factor,
+                );
+              },
+              child: Transform(
+                transform: Matrix4.identity()
+                  ..setEntry(3, 2, 0.001)
+                  ..rotateY(
+                    vector.radians(
+                      90 * factor,
+                    ),
                   ),
+                child: TravelPhotoListItem(
+                  travelPhoto: travelPhotoItem,
                 ),
-              child: TravelPhotoListItem(
-                travelPhoto: travelPhotoItem,
-              ),
-            ));
+              )),
+        );
       },
       scrollDirection: Axis.horizontal,
       initialItemCount: storeBloc.servicesStores.length,
