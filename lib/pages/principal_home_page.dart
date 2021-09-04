@@ -408,11 +408,7 @@ class _PrincipalPageState extends State<PrincipalPage>
         Timer(new Duration(milliseconds: 300), () {
           showMaterialCupertinoBottomSheetLocation(context, () {
             HapticFeedback.lightImpact();
-            myLocationBloc.initPositionLocation();
-            final address =
-                prefs.addressSearchSave.mainText.toString().split(",").first;
-            storesByLocationlistServices(address,
-                prefs.addressSearchSave.secondaryText, storeAuth.user.uid);
+            myLocationBloc.initPositionLocation(context);
 
             Navigator.pop(context);
           }, () {

@@ -54,6 +54,8 @@ class LoginForm extends StatelessWidget {
                 ),
               ),
             ),
+
+              if (!UniversalPlatform.isAndroid)
           SizedBox(height: space),
           FadeSlideTransition(
             animation: animation,
@@ -178,7 +180,7 @@ class LoginForm extends StatelessWidget {
       redirectByAction(context);
     } else {
       // Mostara alerta
-      showAlertError(context, 'Login incorrecto', 'El correo ya existe');
+      showAlertError(context, 'Error', 'Intente mas tarde');
     }
   }
 }

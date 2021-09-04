@@ -584,7 +584,7 @@ SliverPersistentHeader makeSpaceTitle() {
       floating: true,
       pinned: true,
       delegate: SliverCustomHeaderDelegate(
-          minHeight: 10, maxHeight: 10, child: Container()));
+          minHeight: 5.0, maxHeight: 5.0, child: Container()));
 }
 
 SliverPersistentHeader makeHeaderTitle(context, String titleService) {
@@ -1292,15 +1292,6 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
             child: Stack(
               fit: StackFit.expand,
               children: <Widget>[
-                Positioned(
-                  left: _movement * _controller.value,
-                  right: _movement * (1 - _controller.value),
-                  child: ClipRRect(
-                    child: cachedServiceNetworkImage(
-                      widget.storeService.backImage,
-                    ),
-                  ),
-                ),
                 Positioned.fill(
                   left: _movement * _controller.value,
                   right: _movement * (1 - _controller.value),
@@ -1423,21 +1414,6 @@ void storesByLocationlistServices(
   }
 }
 
-Widget createLocation() {
-  if (!myLocationBloc.state.isLocationCurrent)
-    return Text(
-      '...',
-      //'${state.location.latitude}',
-      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-    );
-
-  return Text(
-    '${myLocationBloc.state.isLocationCurrent}',
-    //'${state.location.latitude}',
-    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-  );
-}
-
 const List<Color> gradients = [
   Color(0xffEC4E56),
   Color(0xffF78C39),
@@ -1515,14 +1491,13 @@ class MyTextField extends StatelessWidget {
 void showModalLocation(context, selectedGender, String uid, String location) {
   final currentTheme =
       Provider.of<ThemeChanger>(context, listen: false).currentTheme;
-  final address = prefs.addressSearchSave.secondaryText.split(',').first;
+
   showLocationMaterialCupertinoBottomSheet(
     context,
     () {
       HapticFeedback.lightImpact();
-      myLocationBloc.initPositionLocation();
-      storesByLocationlistServices(
-          context, address, prefs.addressSearchSave.secondaryText, uid);
+      myLocationBloc.initPositionLocation(context);
+
       Navigator.pop(context);
     },
     () {

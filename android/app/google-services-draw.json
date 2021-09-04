@@ -14,14 +14,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "639303241258-85fjhf98ffmocoit05es5r50ssjs0mda.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.kiozer",
-            "certificate_hash": "fc6ab5b85afd3c826dd4d9ed1d25cfb780250dcb"
-          }
-        },
-        {
           "client_id": "639303241258-nfs7nj6l83pv4k59th5l5ugsfssat2oj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

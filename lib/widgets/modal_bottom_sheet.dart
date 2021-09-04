@@ -771,6 +771,7 @@ showContactOptionsStoreMCBottomSheet(context, Store store) {
 
   _launchMessageEmail(String email) async {
     final url = Uri.encodeFull('mailto:$email?subject=Hola&body=Mensage');
+
     if (await canLaunch(url)) {
       await launch(url);
     } else {

@@ -59,6 +59,10 @@ class AuthenticationBLoC with ChangeNotifier {
       scopes: <String>['email', 'profile'],
       clientId:
           '639303241258-80ht1peb9glatcqnl055qtalmfjh485d.apps.googleusercontent.com');
+
+  static GoogleSignIn _googleSignInApple = GoogleSignIn(
+    scopes: <String>['email'],
+  );
   final _storage = new FlutterSecureStorage();
   ValueNotifier<bool> notifierBottomBarVisible = ValueNotifier(true);
 
@@ -126,8 +130,14 @@ class AuthenticationBLoC with ChangeNotifier {
   }
 
   Future signInWitchGoogle(context) async {
+    bool isIos = UniversalPlatform.isIOS;
+
+    bool isAndroid = UniversalPlatform.isAndroid;
+
     try {
-      final account = await _googleSignIn.signIn();
+      final account = (isIos && !isAndroid)
+          ? await _googleSignInApple.signIn()
+          : await _googleSignIn.signIn();
 
       final googleKey = await account.authentication;
 
@@ -147,7 +157,6 @@ class AuthenticationBLoC with ChangeNotifier {
       long = prefs.longSearch;
       lat = prefs.latSearch;
 
-      if (account.email != null) prefs.setEmailApple = account.email;
       final resp = await siginWithGoogleBack(
           googleKey.idToken, address, city, number, long, lat);
 
@@ -155,10 +164,12 @@ class AuthenticationBLoC with ChangeNotifier {
       if (resp) {
         Navigator.pop(context);
         return resp;
+      } else {
+        showAlertError(context, 'Error', '$resp');
       }
     } catch (e) {
       // Mostara alerta
-      showAlertError(context, 'Login incorrecto', 'El correo ya existe');
+      showAlertError(context, 'Error', '$e');
       print(e);
     }
   }
@@ -227,7 +238,7 @@ class AuthenticationBLoC with ChangeNotifier {
 
       return loginResponse.ok;
     } else {
-      return false;
+      return resp;
     }
   }
 
@@ -720,7 +731,7 @@ class AuthenticationBLoC with ChangeNotifier {
 
       return true;
     } else {
-      storeAuth = Store(user: User(uid: '0'));
+      storeAuth = Store(user: User(uid: '0', first: true));
       (UniversalPlatform.isWeb) ? prefs.setToken = '' : this.logout();
       return false;
     }

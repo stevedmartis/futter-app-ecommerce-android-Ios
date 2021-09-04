@@ -12,7 +12,7 @@ PODS:
   - Firebase/Messaging (8.6.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 8.6.0)
-  - firebase_auth (1.4.1):
+  - firebase_auth (3.1.0):
     - Firebase/Auth (= 8.6.0)
     - firebase_core
     - Flutter
@@ -202,7 +202,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
   Firebase: 21ac9f28b09a8bdfc005f34c984fca84e7e8786d
-  firebase_auth: 58c8528b5873fdf88da566574f8b56e24807bea2
+  firebase_auth: 2dfa8e886191c24ddcf4da34463d47b72e6d19dc
   firebase_core: c21ac09a8d23afd3594b56ed786bad12e5266bba
   firebase_messaging: d98fd426eb18b88a6f20bcf0e2ee938d1f9564d8
   FirebaseAuth: 223adeeb2262b417532e89bf06a960e3a0a1e9e4

@@ -6,21 +6,23 @@ import 'package:freeily/models/Address.dart';
 import 'package:freeily/models/place_Current.dart';
 import 'package:freeily/models/place_Search.dart';
 import 'package:freeily/preferences/user_preferences.dart';
+import 'package:freeily/responses/stores_list_principal_response.dart';
 import 'package:freeily/services/places_service.dart';
 
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:freeily/services/stores_Services.dart';
+import 'package:freeily/store_principal/store_principal_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
+import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 part 'my_location_event.dart';
 part 'my_location_state.dart';
 
-class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
-    with ChangeNotifier {
+class MyLocationBloc extends ChangeNotifier {
   final prefs = new AuthUserPreferences();
   LatLng newPosition;
   String addresName = '';
@@ -28,6 +30,8 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
   bool isLocationCurrent = false;
 
   bool isLocationSearch = false;
+
+  final storeService = StoreService();
 
   PlaceSearch place;
 
@@ -44,23 +48,16 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
 
   BehaviorSubject<String> get numberAddress => _numberAddress;
 
-  MyLocationBloc() : super(MyLocationState());
-
   StreamSubscription<Position> _positionSubscription;
-  void initPositionLocation() async {
+
+  void initPositionLocation(context) async {
+    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+
     Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((Position position) {
       newPosition = new LatLng(position.latitude, position.longitude);
 
-      add(OnLocationChange(newPosition));
-    });
-
-    Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    ).then((Position position) {
-      newPosition = new LatLng(position.latitude, position.longitude);
-
-      add(OnLocationChange(newPosition));
+      getAddressLocation(context, authService.storeAuth.user.uid);
     });
   }
 
@@ -68,49 +65,54 @@ class MyLocationBloc extends Bloc<MyLocationEvent, MyLocationState>
     this._positionSubscription?.cancel();
   }
 
-  @override
-  Stream<MyLocationState> mapEventToState(
-    MyLocationEvent event,
-  ) async* {
-    if (event is OnLocationChange) {
-      yield state.copyWith(
-          isLocationCurrent: true, location: event.positionLocation);
+  getAddressLocation(context, String uid) async {
+    final AddressesCurrent resp = await placeService.getAddressByLocation(
+        newPosition.latitude.toString(), newPosition.longitude.toString());
 
-      final AddressesCurrent resp = await placeService.getAddressByLocation(
-          newPosition.latitude.toString(), newPosition.longitude.toString());
+    if (resp.results.length > 0) {
+      final addressComponent = resp.results[0].addressComponents;
 
-      if (resp.results.length > 0) {
-        final addressComponent = resp.results[0].addressComponents;
+      final addressNumber = addressComponent[0].longName;
 
-        final addressNumber = addressComponent[0].longName;
+      final address = addressComponent[1].longName;
 
-        final address = addressComponent[1].longName;
+      final addressFinal = '$address, $addressNumber';
 
-        final addressFinal = '$address, $addressNumber';
+      final city = addressComponent[3].longName;
 
-        final city = addressComponent[3].longName;
+      final commune = addressComponent[2].longName;
 
-        final commune = addressComponent[2].longName;
+      final country = addressComponent[6].longName;
 
-        final country = addressComponent[6].longName;
+      final comuneCity = '$commune, $city';
 
-        final comuneCity = '$commune, $city';
+      var placeCurrent = new PlaceSearch(
+          description: '$addressFinal, $city, $country',
+          placeId: addressFinal,
+          structuredFormatting: new StructuredFormatting(
+              mainText: addressFinal, secondaryText: comuneCity, number: ''));
 
-        var placeCurrent = new PlaceSearch(
-            description: '$addressFinal, $city, $country',
-            placeId: addressFinal,
-            structuredFormatting: new StructuredFormatting(
-                mainText: addressFinal, secondaryText: comuneCity, number: ''));
+      addresName = addressFinal;
 
-        addresName = addressFinal;
+      prefs.setSearchAddreses = placeCurrent;
 
-        prefs.setSearchAddreses = placeCurrent;
+      prefs.setLatSearch = newPosition.latitude;
+      prefs.setLongSearch = newPosition.longitude;
 
-        prefs.setLatSearch = newPosition.latitude;
-        prefs.setLongSearch = newPosition.longitude;
+      prefs.setLocationSearch = true;
 
-        prefs.setLocationSearch = true;
-      }
+      getStoresLocationList(context, address, commune, uid);
+    }
+  }
+
+  getStoresLocationList(context, address, location, uid) async {
+    final StoresListResponse resp = await storeService
+        .getStoresLocationListServices(address, location, uid);
+
+    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
+
+    if (resp.ok) {
+      storeBloc.chargeServicesStores(resp.storeListServices);
     }
   }
 
