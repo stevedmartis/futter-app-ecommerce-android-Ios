@@ -29,8 +29,9 @@ import 'package:provider/provider.dart';
 import '../../global/extension.dart';
 
 class OrderListPage extends StatefulWidget {
-  OrderListPage({this.fromOrderPage = false});
+  OrderListPage({this.fromOrderPage = false, this.isSale = false});
   final bool fromOrderPage;
+  final bool isSale;
   @override
   _OrderListPageState createState() => _OrderListPageState();
 }
@@ -112,7 +113,7 @@ class _OrderListPageState extends State<OrderListPage> {
               controller: _scrollController,
               slivers: <Widget>[
                 makeHeaderCustom('Mis pedidos'),
-                makeListOrders(loading)
+                makeListOrders(loading, widget.isSale)
               ]),
         ),
       ),
@@ -144,21 +145,21 @@ class _OrderListPageState extends State<OrderListPage> {
   }
 }
 
-SliverList makeListOrders(bool loading) {
+SliverList makeListOrders(bool loading, bool isSale) {
   return SliverList(
     delegate: SliverChildListDelegate([
-      Container(
-          child: StoresListByService(
-        loading: loading,
-      )),
+      Container(child: StoresListByService(loading: loading, isSale: isSale)),
     ]),
   );
 }
 
 class StoresListByService extends StatefulWidget {
-  const StoresListByService({Key key, this.loading}) : super(key: key);
+  const StoresListByService({Key key, this.loading, this.isSale = false})
+      : super(key: key);
 
   final bool loading;
+
+  final bool isSale;
 
   @override
   _StoresListByServiceState createState() => _StoresListByServiceState();
@@ -166,6 +167,8 @@ class StoresListByService extends StatefulWidget {
 
 class _StoresListByServiceState extends State<StoresListByService> {
   List<Order> orders = [];
+
+  List<Order> ordersStore = [];
   bool loading = false;
 
   @override
@@ -182,8 +185,11 @@ class _StoresListByServiceState extends State<StoresListByService> {
     final orderService = Provider.of<OrderService>(context);
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     orders = orderService.orders;
-
+    ordersStore = orderService.ordersStore;
     final List<Order> ordersProgress = orders.where((i) => i.isActive).toList();
+
+    final List<Order> ordersProgressSale =
+        ordersStore.where((i) => i.isActive).toList();
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 20),
@@ -193,7 +199,7 @@ class _StoresListByServiceState extends State<StoresListByService> {
         children: [
           Container(
             child: Text(
-              'Mis pedidos',
+              (!widget.isSale) ? 'Mis compras' : 'Mis ventas',
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 25,
@@ -203,7 +209,9 @@ class _StoresListByServiceState extends State<StoresListByService> {
           SizedBox(height: 5),
           Container(
             child: Text(
-              'Encuentra aquí tus pedidos actuales y pasados.',
+              (!widget.isSale)
+                  ? 'Encuentra aquí tus pedidos comprados.'
+                  : 'Encuentra aquí tus pedidos vendidos.',
               style: TextStyle(
                   fontWeight: FontWeight.normal,
                   fontSize: 15,
@@ -225,33 +233,62 @@ class _StoresListByServiceState extends State<StoresListByService> {
           SizedBox(
             height: 20,
           ),
-          SizedBox(
-              child: (ordersProgress.length > 0)
-                  ? ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: ordersProgress.length,
-                      itemBuilder: (BuildContext ctxt, int index) {
-                        final order = orders[index];
+          if (!widget.isSale)
+            SizedBox(
+                child: (ordersProgress.length > 0)
+                    ? ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: ordersProgress.length,
+                        itemBuilder: (BuildContext ctxt, int index) {
+                          final order = orders[index];
 
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: FadeIn(
-                            child: OrderStoreCard(
-                              order: order,
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: FadeIn(
+                              child: OrderStoreCard(
+                                order: order,
+                              ),
                             ),
+                          );
+                        })
+                    : Container(
+                        padding: EdgeInsets.only(top: 30),
+                        child: Center(
+                          child: Text(
+                            'No hay pedidos',
+                            style: TextStyle(color: Colors.grey),
                           ),
-                        );
-                      })
-                  : Container(
-                      padding: EdgeInsets.only(top: 30),
-                      child: Center(
-                        child: Text(
-                          'No hay pedidos',
-                          style: TextStyle(color: Colors.grey),
                         ),
-                      ),
-                    ))
+                      )),
+          if (widget.isSale)
+            SizedBox(
+                child: (ordersProgressSale.length > 0)
+                    ? ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: ordersProgressSale.length,
+                        itemBuilder: (BuildContext ctxt, int index) {
+                          final order = ordersStore[index];
+
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: FadeIn(
+                              child: OrderStoreCard(
+                                order: order,
+                              ),
+                            ),
+                          );
+                        })
+                    : Container(
+                        padding: EdgeInsets.only(top: 30),
+                        child: Center(
+                          child: Text(
+                            'No hay pedidos',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                      ))
         ],
       ),
     );

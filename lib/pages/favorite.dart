@@ -171,10 +171,9 @@ class _CatalogsListState extends State<CatalogsList>
   Widget build(BuildContext context) {
     final _bloc = Provider.of<FavoritesBLoC>(context);
     return Container(
-      height: (_bloc.productsFavoritesList.length > 0)
-          ? 160 * (_bloc.productsFavoritesList.length).toDouble()
-          : 160,
-      child: Stack(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: EdgeInsets.only(top: 20, left: 20),
@@ -188,7 +187,7 @@ class _CatalogsListState extends State<CatalogsList>
           ),
           (_bloc.productsFavoritesList.length > 0)
               ? Container(
-                  padding: EdgeInsets.only(top: 70),
+                  padding: EdgeInsets.only(top: 20),
                   child: ListView.builder(
                     shrinkWrap: true,
                     controller: scrollController,

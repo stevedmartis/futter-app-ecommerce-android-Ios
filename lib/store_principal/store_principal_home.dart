@@ -519,13 +519,16 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                         }),
                   ),
                 ),
+                if (ordersStoreActive.length > 0)
+                makeSpaceTitle(),
                 if (orderClientActive.length > 0)
                   makeListHorizontalCarouselOrdersProgress(
                       context, orderClientActive),
                 if (ordersStoreActive.length > 0)
                   makeListHorizontalCarouselOrdersStoreProgress(
                       context, ordersStoreActive),
-                makeSpaceTitle(),
+
+              
                 if (orderService.loading)
                   SliverAppBar(
                     automaticallyImplyLeading: false,

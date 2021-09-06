@@ -1,3 +1,4 @@
+import 'package:freeily/authentication/auth_bloc.dart';
 import 'package:freeily/bloc_globals/notitification.dart';
 import 'package:freeily/grocery_store/grocery_store_bloc.dart';
 
@@ -145,6 +146,7 @@ class _NotificationListState extends State<NotificationList>
   @override
   Widget build(BuildContext context) {
     final _bloc = Provider.of<OrderService>(context);
+    final storeAuth = Provider.of<AuthenticationBLoC>(context).storeAuth;
 
     final odersNotificationsClient = _bloc.orders;
 
@@ -171,7 +173,7 @@ class _NotificationListState extends State<NotificationList>
               Container(
                 padding: EdgeInsets.only(top: 20, left: 0),
                 child: Text(
-                  'Pedidos realizados',
+                  'Mis compras',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 25,
@@ -209,15 +211,15 @@ class _NotificationListState extends State<NotificationList>
               Center(
                 child: Container(
                   alignment: Alignment.bottomCenter,
-                  child: Text('Sin pedidos realizados',
-                      style: TextStyle(color: Colors.grey)),
+                  child:
+                      Text('Sin pedidos', style: TextStyle(color: Colors.grey)),
                 ),
               ),
             if (odersNotificationsStore.length > 0)
               Container(
                 padding: EdgeInsets.only(top: 20, left: 0),
                 child: Text(
-                  'Pedidos recibidos',
+                  'Mis ventas',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 25,
@@ -243,13 +245,14 @@ class _NotificationListState extends State<NotificationList>
                 },
               ),
             ),
-            if (odersNotificationsStore.length == 0 &&
+            if (storeAuth.service != 0 &&
+                odersNotificationsStore.length == 0 &&
                 odersNotificationsClient.length > 0)
               Center(
                 child: Container(
                   alignment: Alignment.bottomCenter,
-                  child: Text('Sin pedidos recibidos',
-                      style: TextStyle(color: Colors.grey)),
+                  child:
+                      Text('Sin pedidos', style: TextStyle(color: Colors.grey)),
                 ),
               ),
             if (odersNotificationsStore.length == 0 &&

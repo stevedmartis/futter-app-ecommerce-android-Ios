@@ -302,10 +302,11 @@ Route orderDetailRoute() {
   );
 }
 
-Route ordersListRoute(bool fromOrderPage) {
+Route ordersListRoute(bool fromOrderPage, bool isSale) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) => OrderListPage(
       fromOrderPage: fromOrderPage,
+      isSale: isSale,
     ),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = Offset(1.0, 0.0);

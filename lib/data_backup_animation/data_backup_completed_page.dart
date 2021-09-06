@@ -81,7 +81,7 @@ class DataBackupCompletedPage extends AnimatedWidget {
                               onPressed: () {
                                 (ordersCreate.length > 1)
                                     ? Navigator.push(
-                                        context, ordersListRoute(true))
+                                        context, ordersListRoute(true, false))
                                     : Navigator.push(
                                         context,
                                         orderProggressRoute(

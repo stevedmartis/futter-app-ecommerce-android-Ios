@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 
 import '../../../global/extension.dart';
 import 'package:universal_platform/universal_platform.dart';
+
 class PrincipalMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -45,19 +46,36 @@ class PrincipalMenu extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     HapticFeedback.lightImpact();
-                    Navigator.push(context, ordersListRoute(false));
+                    Navigator.push(context, ordersListRoute(false, false));
                   },
                   child: ListTile(
-                    leading: Icon(Icons.history,
+                    leading: Icon(Icons.shopping_bag,
                         color: currentTheme.currentTheme.primaryColor),
                     title: Text(
-                      'Mis pedidos',
+                      'Mis compras',
                       style: TextStyle(
                         color: Colors.white,
                       ),
                     ),
                   ),
                 ),
+                if (profile.service != 0)
+                  GestureDetector(
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      Navigator.push(context, ordersListRoute(false, true));
+                    },
+                    child: ListTile(
+                      leading: Icon(Icons.sell,
+                          color: currentTheme.currentTheme.primaryColor),
+                      title: Text(
+                        'Mis ventas',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
                 /* GestureDetector(
                   onTap: () {
                     HapticFeedback.lightImpact();
@@ -103,7 +121,7 @@ class PrincipalMenu extends StatelessWidget {
                       ),
                     ),
                   ),
-                ), 
+                ),
               ],
             ),
           ),
