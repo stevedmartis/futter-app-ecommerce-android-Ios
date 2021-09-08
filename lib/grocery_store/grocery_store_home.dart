@@ -1,9 +1,11 @@
 import 'dart:ui';
 
+import 'package:animate_do/animate_do.dart';
 import 'package:freeily/authentication/auth_bloc.dart';
 import 'package:freeily/models/store.dart';
 import 'package:freeily/profile_store.dart/profile_store_auth.dart';
 import 'package:freeily/theme/theme.dart';
+import 'package:freeily/widgets/cross_fade.dart';
 import 'package:freeily/widgets/image_cached.dart';
 import 'package:flutter/material.dart';
 import 'package:freeily/grocery_store/grocery_store_bloc.dart';
@@ -161,62 +163,60 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                                                   child: Container(
                                                       child: Row(
                                                     children: List.generate(
-                                                      bloc.cart.length,
-                                                      (index) => Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                horizontal:
-                                                                    8.0),
-                                                        child: Stack(
-                                                          children: [
-                                                            Hero(
-                                                              tag: 'list_${bloc.cart[index].product.images[0].url}' +
-                                                                  '${bloc.cart[index].product.name}' +
-                                                                  'details' +
-                                                                  '0',
-                                                              child: Container(
-                                                                  width: 50,
-                                                                  height: 50,
-                                                                  child: ClipRRect(
-                                                                      borderRadius: BorderRadius.all(Radius.circular(100.0)),
-                                                                      child: cachedNetworkImage(
-                                                                        bloc
-                                                                            .cart[index]
-                                                                            .product
-                                                                            .images[0]
-                                                                            .url,
-                                                                      ))),
-                                                            ),
-                                                            Positioned(
-                                                              right: 0,
-                                                              child:
-                                                                  CircleAvatar(
-                                                                radius: 10,
-                                                                backgroundColor:
-                                                                    currentTheme
-                                                                        .accentColor,
-                                                                child: Text(
-                                                                  bloc
-                                                                      .cart[
-                                                                          index]
-                                                                      .quantity
-                                                                      .toString(),
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .black,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                      fontSize:
-                                                                          12),
+                                                        bloc.cart.length,
+                                                        (index) => FadeIn(
+                                                              child: Padding(
+                                                                padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        8.0),
+                                                                child: Stack(
+                                                                  children: [
+                                                                    Hero(
+                                                                      tag: 'list_${bloc.cart[index].product.images[0].url}' +
+                                                                          '${bloc.cart[index].product.name}' +
+                                                                          'details' +
+                                                                          '0',
+                                                                      child: Container(
+                                                                          width: 50,
+                                                                          height: 50,
+                                                                          child: ClipRRect(
+                                                                              borderRadius: BorderRadius.all(Radius.circular(100.0)),
+                                                                              child: cachedNetworkImage(
+                                                                                bloc.cart[index].product.images[0].url,
+                                                                              ))),
+                                                                    ),
+                                                                    Positioned(
+                                                                      right: 0,
+                                                                      child:
+                                                                          CircleAvatar(
+                                                                        radius:
+                                                                            10,
+                                                                        backgroundColor:
+                                                                            currentTheme.accentColor,
+                                                                        child: CrossFade<
+                                                                            String>(
+                                                                          initialData:
+                                                                              '',
+                                                                          data: bloc
+                                                                              .cart[index]
+                                                                              .quantity
+                                                                              .toString(),
+                                                                          builder: (value) =>
+                                                                              Container(
+                                                                            child:
+                                                                                Text(
+                                                                              bloc.cart[index].quantity.toString(),
+                                                                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
+                                                            )),
                                                   )),
                                                 ),
                                               ),

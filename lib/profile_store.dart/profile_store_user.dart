@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:freeily/authentication/auth_bloc.dart';
 import 'package:freeily/bloc_globals/notitification.dart';
 import 'package:freeily/grocery_store/grocery_store_bloc.dart';
 import 'package:freeily/models/store.dart';
+
 import 'package:freeily/preferences/user_preferences.dart';
 import 'package:freeily/profile_store.dart/profile.dart';
 import 'package:freeily/profile_store.dart/profile_store_auth.dart';
@@ -283,13 +286,19 @@ class _ProfileStoreProductItem extends StatefulWidget {
 class __ProfileStoreProductItemState extends State<_ProfileStoreProductItem> {
   @override
   Widget build(BuildContext context) {
-    final currentTheme = Provider.of<ThemeChanger>(context);
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
     final groceryBloc = Provider.of<GroceryStoreBLoC>(context);
     final size = MediaQuery.of(context).size;
     final priceformat =
         NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
             .format(widget.product.price);
+
+    int quantityInitial = 1;
+
+    var productAdd = groceryBloc.cart.firstWhere(
+        (item) => item.product.id == widget.product.id,
+        orElse: () => null);
 
     return GestureDetector(
       onTap: () async {
@@ -329,7 +338,7 @@ class __ProfileStoreProductItemState extends State<_ProfileStoreProductItem> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            color: currentTheme.currentTheme.cardColor,
+            color: currentTheme.cardColor,
             child: Row(
               children: [
                 Container(
@@ -362,9 +371,7 @@ class __ProfileStoreProductItemState extends State<_ProfileStoreProductItem> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: (currentTheme.customTheme)
-                                ? Colors.white
-                                : _textColor,
+                            color: Colors.white,
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
@@ -389,13 +396,126 @@ class __ProfileStoreProductItemState extends State<_ProfileStoreProductItem> {
                           Text(
                             '\$$priceformat',
                             style: TextStyle(
-                              color: (currentTheme.customTheme)
-                                  ? Colors.white
-                                  : _textColor,
+                              color: Colors.white,
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
-                          )
+                          ),
+                          Spacer(),
+                          if (productAdd == null)
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 10.0, right: 10, bottom: 0),
+                              child: SizedBox(
+                                  height: size.height / 25,
+                                  width: size.width / 4,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      HapticFeedback.lightImpact();
+
+                                      groceryBloc.changeToNormal();
+
+                                      Timer(new Duration(milliseconds: 100),
+                                          () {
+                                        groceryBloc.addProduct(
+                                            widget.product, quantityInitial);
+
+                                        _listenNotification(context);
+                                      });
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 5.0,
+                                      fixedSize: Size.fromWidth(size.width),
+                                      primary: currentTheme.primaryColor,
+                                      shape: new RoundedRectangleBorder(
+                                        borderRadius:
+                                            new BorderRadius.circular(30.0),
+                                      ),
+                                    ),
+                                    child: Text('Agregar',
+                                        style: TextStyle(fontSize: 15)),
+                                  )),
+                            ),
+                          if (productAdd != null)
+                            Container(
+                              alignment: Alignment.centerRight,
+                              child: Row(
+                                children: [
+                                  (productAdd.quantity == 1)
+                                      ? Container(
+                                          padding: EdgeInsets.only(right: 20),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              HapticFeedback.lightImpact();
+                                              groceryBloc
+                                                  .deleteProduct(productAdd);
+                                            },
+                                            child: Icon(
+                                              Icons.delete_outline,
+                                              color: Colors.white,
+                                              size: 25,
+                                            ),
+                                          ),
+                                        )
+                                      : Container(
+                                          padding: EdgeInsets.only(right: 20),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              HapticFeedback.lightImpact();
+                                              if (productAdd.quantity > 0) {
+                                                setState(() {
+                                                  productAdd.quantity--;
+                                                });
+                                              }
+                                            },
+                                            child: Icon(
+                                              Icons.remove,
+                                              color: Colors.white,
+                                              size: 30,
+                                            ),
+                                          ),
+                                        ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(right: 20),
+                                    child: Text(
+                                      productAdd.quantity.toString(),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      HapticFeedback.lightImpact();
+                                      setState(() {
+                                        productAdd.quantity++;
+                                      });
+
+                                      Timer(new Duration(milliseconds: 100),
+                                          () {
+                                        groceryBloc.changeToNormal();
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.only(right: 20),
+                                      child: Icon(
+                                        Icons.add,
+                                        color: Colors.white,
+                                        size: 30,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                         ],
                       )
                     ],

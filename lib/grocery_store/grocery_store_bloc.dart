@@ -4,17 +4,14 @@ import 'package:freeily/store_product_concept/store_product_data.dart';
 import 'package:flutter/material.dart';
 import 'package:freeily/grocery_store/grocery_product.dart';
 
-enum GroceryState {
-  normal,
-  details,
-  cart,
-}
+enum GroceryState { normal, details, cart, add }
 
 class GroceryStoreBLoC with ChangeNotifier {
   GroceryState groceryState = GroceryState.normal;
   List<GroceryProduct> catalog = List.unmodifiable(groceryProducts);
   List<GroceryProductItem> cart = [];
   bool isReload = true;
+  bool isFadeDownItem = false;
 
   final prefs = new AuthUserPreferences();
 
