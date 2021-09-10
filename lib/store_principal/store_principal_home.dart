@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:animations/animations.dart';
 import 'package:freeily/authentication/auth_bloc.dart';
@@ -159,6 +161,11 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     final notifiModel = Provider.of<NotificationModel>(context, listen: false);
     int number = notifiModel.numberNotifiBell;
 
+    if (orderService.loading)
+      setState(() {
+        orderService.loading = false;
+      });
+
     final OrderStoresProducts resp =
         await orderService.getMyOrders(storeAuth.user.uid);
 
@@ -177,7 +184,12 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
       notifiModel.numberNotifiBell = number;
 
-      orderService.loading = true;
+      if (!orderService.loading)
+        Timer(new Duration(seconds: 1), () {
+          setState(() {
+            orderService.loading = true;
+          });
+        });
 
       notifiModel.numberSteamNotifiBell.sink.add(number);
       if (number >= 2) {
@@ -195,6 +207,11 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
     orderService.ordersStore = [];
 
+    if (orderService.loading)
+      setState(() {
+        orderService.loading = false;
+      });
+
     final OrderStoresProducts resp =
         await orderService.getMyOrdesStore(storeAuth.user.uid);
 
@@ -211,7 +228,12 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
 
       notifiModel.numberNotifiBell = number;
 
-      orderService.loading = true;
+      if (!orderService.loading)
+        Timer(new Duration(seconds: 1), () {
+          setState(() {
+            orderService.loading = true;
+          });
+        });
 
       number = orderNotificationStore.length;
       notifiModel.numberSteamNotifiBell.sink.add(number);
@@ -274,6 +296,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
   }
 
   Store storeAuth;
+  bool loadingOK = false;
 
   @override
   Widget build(BuildContext context) {
@@ -519,16 +542,11 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                         }),
                   ),
                 ),
-                if (ordersStoreActive.length > 0)
-                makeSpaceTitle(),
-                if (orderClientActive.length > 0)
-                  makeListHorizontalCarouselOrdersProgress(
-                      context, orderClientActive),
-                if (ordersStoreActive.length > 0)
+                makeListHorizontalCarouselOrdersProgress(
+                    context, orderClientActive),
+                if (storeAuth.service != 0)
                   makeListHorizontalCarouselOrdersStoreProgress(
                       context, ordersStoreActive),
-
-              
                 if (orderService.loading)
                   SliverAppBar(
                     automaticallyImplyLeading: false,
@@ -587,7 +605,7 @@ SliverPersistentHeader makeSpaceTitle() {
       floating: true,
       pinned: true,
       delegate: SliverCustomHeaderDelegate(
-          minHeight: 5.0, maxHeight: 5.0, child: Container()));
+          minHeight: 8.0, maxHeight: 8.0, child: Container()));
 }
 
 SliverPersistentHeader makeHeaderTitle(context, String titleService) {
@@ -643,34 +661,41 @@ SliverList makeListHorizontalCarouselOrdersProgress(
   final size = MediaQuery.of(context).size;
   return SliverList(
     delegate: SliverChildListDelegate([
-      FadeInRight(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 0.0, bottom: 0),
-          child: SizedBox(
-            child: (!orderService.loading)
-                ? buildLoadingWidget(context)
-                : CarouselSlider(
-                    items: List.generate(
-                      orderNotificationClient.length,
-                      (index) => OrderprogressStoreCard(
-                        order: orderNotificationClient[index],
-                        isStore: false,
+      Padding(
+        padding: const EdgeInsets.only(top: 10.0, bottom: 0),
+        child: SizedBox(
+          child: (!orderService.loading)
+              ? Container(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: buildLoadingWidget(context))
+              : (orderService.orders.length > 0)
+                  ? FadeInRight(
+                      child: CarouselSlider(
+                        items: List.generate(
+                          orderNotificationClient.length,
+                          (index) => OrderprogressStoreCard(
+                            order: orderNotificationClient[index],
+                            isStore: false,
+                          ),
+                        ),
+                        options: CarouselOptions(
+                            viewportFraction:
+                                (orderNotificationClient.length > 1)
+                                    ? 0.8
+                                    : 0.9,
+                            aspectRatio: size.height / 40 / 5.5,
+                            initialPage: 0,
+                            enableInfiniteScroll: false,
+                            reverse: false,
+                            autoPlay: true,
+                            autoPlayInterval: Duration(seconds: 5),
+                            autoPlayAnimationDuration:
+                                Duration(milliseconds: 800),
+                            scrollDirection: Axis.horizontal,
+                            onPageChanged: (index, reason) {}),
                       ),
-                    ),
-                    options: CarouselOptions(
-                        viewportFraction:
-                            (orderNotificationClient.length > 1) ? 0.8 : 0.9,
-                        aspectRatio: size.height / 40 / 5.5,
-                        initialPage: 0,
-                        enableInfiniteScroll: false,
-                        reverse: false,
-                        autoPlay: true,
-                        autoPlayInterval: Duration(seconds: 5),
-                        autoPlayAnimationDuration: Duration(milliseconds: 800),
-                        scrollDirection: Axis.horizontal,
-                        onPageChanged: (index, reason) {}),
-                  ),
-          ),
+                    )
+                  : Container(),
         ),
       ),
     ]),
@@ -679,17 +704,15 @@ SliverList makeListHorizontalCarouselOrdersProgress(
 
 SliverList makeListHorizontalCarouselOrdersStoreProgress(
     context, List<Order> orderNotificationStore) {
-  final orderService = Provider.of<OrderService>(context);
   final size = MediaQuery.of(context).size;
   return SliverList(
     delegate: SliverChildListDelegate([
-      FadeInRight(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 10.0, bottom: 0),
-          child: SizedBox(
-            child: (!orderService.loading)
-                ? buildLoadingWidget(context)
-                : CarouselSlider(
+      Padding(
+        padding: const EdgeInsets.only(top: 10.0, bottom: 0),
+        child: SizedBox(
+          child: (orderNotificationStore.length > 0)
+              ? FadeInRight(
+                  child: CarouselSlider(
                     items: List.generate(
                       orderNotificationStore.length,
                       (index) => OrderprogressStoreCard(
@@ -710,7 +733,8 @@ SliverList makeListHorizontalCarouselOrdersStoreProgress(
                         scrollDirection: Axis.horizontal,
                         onPageChanged: (index, reason) {}),
                   ),
-          ),
+                )
+              : Container(),
         ),
       ),
     ]),
@@ -1563,45 +1587,42 @@ class _StoreServicesListState extends State<StoreServicesList> {
         final travelPhotoItem = storeBloc.servicesStores[index];
         final percent = page - page.floor();
         final factor = percent > 0.5 ? (1 - percent) : percent;
-        return FadeIn(
-          duration: Duration(milliseconds: 300 * index),
-          child: InkWell(
-              onTap: () {
-                HapticFeedback.lightImpact();
-                storeBloc.servicesStores
-                    .insert(storeBloc.servicesStores.length, travelPhotoItem);
-                _animatedListKey.currentState
-                    .insertItem(storeBloc.servicesStores.length - 1);
-                final itemToDelete = travelPhotoItem;
-                widget.onPhotoSelected(travelPhotoItem);
-                storeBloc.servicesStores.removeAt(index);
-                _animatedListKey.currentState.removeItem(
-                  index,
-                  (context, animation) => FadeTransition(
-                    opacity: animation,
-                    child: SizeTransition(
-                      sizeFactor: animation,
-                      axis: Axis.horizontal,
-                      child: TravelPhotoListItem(
-                        travelPhoto: itemToDelete,
-                      ),
+        return InkWell(
+            onTap: () {
+              HapticFeedback.lightImpact();
+              storeBloc.servicesStores
+                  .insert(storeBloc.servicesStores.length, travelPhotoItem);
+              _animatedListKey.currentState
+                  .insertItem(storeBloc.servicesStores.length - 1);
+              final itemToDelete = travelPhotoItem;
+              widget.onPhotoSelected(travelPhotoItem);
+              storeBloc.servicesStores.removeAt(index);
+              _animatedListKey.currentState.removeItem(
+                index,
+                (context, animation) => FadeTransition(
+                  opacity: animation,
+                  child: SizeTransition(
+                    sizeFactor: animation,
+                    axis: Axis.horizontal,
+                    child: TravelPhotoListItem(
+                      travelPhoto: itemToDelete,
                     ),
                   ),
-                );
-              },
-              child: Transform(
-                transform: Matrix4.identity()
-                  ..setEntry(3, 2, 0.001)
-                  ..rotateY(
-                    vector.radians(
-                      90 * factor,
-                    ),
-                  ),
-                child: TravelPhotoListItem(
-                  travelPhoto: travelPhotoItem,
                 ),
-              )),
-        );
+              );
+            },
+            child: Transform(
+              transform: Matrix4.identity()
+                ..setEntry(3, 2, 0.001)
+                ..rotateY(
+                  vector.radians(
+                    90 * factor,
+                  ),
+                ),
+              child: TravelPhotoListItem(
+                travelPhoto: travelPhotoItem,
+              ),
+            ));
       },
       scrollDirection: Axis.horizontal,
       initialItemCount: storeBloc.servicesStores.length,
@@ -1618,7 +1639,7 @@ class TravelPhotoListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Center(
         child: Container(
           width: size.width / 3,

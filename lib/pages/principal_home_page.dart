@@ -80,6 +80,7 @@ class _PrincipalPageState extends State<PrincipalPage>
       final address = storeAuth.address.toString().split(",").first;
       storesByLocationlistServices(address, storeAuth.city, storeAuth.user.uid);
 
+      _myOrdersClient();
       Timer(new Duration(milliseconds: 0), () {
         if (storeAuth.service != 0) {
           _myOrdersStore();
@@ -88,7 +89,6 @@ class _PrincipalPageState extends State<PrincipalPage>
         getbankAccountByUser(storeAuth.user.uid);
       });
 
-      _myOrdersClient();
       myFavoritesProducts();
     } else if (prefs.addressSearchSave != '') {
       final address =
@@ -244,7 +244,12 @@ class _PrincipalPageState extends State<PrincipalPage>
 
       notifiModel.numberNotifiBell = number;
 
-      orderService.loading = true;
+      if (!orderService.loading)
+        Timer(new Duration(seconds: 2), () {
+          setState(() {
+            orderService.loading = true;
+          });
+        });
 
       notifiModel.numberSteamNotifiBell.sink.add(number);
       if (number >= 2) {
@@ -279,7 +284,12 @@ class _PrincipalPageState extends State<PrincipalPage>
 
       notifiModel.numberNotifiBell = number;
 
-      orderService.loading = true;
+      if (!orderService.loading)
+        Timer(new Duration(seconds: 2), () {
+          setState(() {
+            orderService.loading = true;
+          });
+        });
 
       number = orderNotificationStore.length;
       notifiModel.numberSteamNotifiBell.sink.add(number);

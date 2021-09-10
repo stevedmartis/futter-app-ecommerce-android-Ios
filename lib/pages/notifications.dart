@@ -1,10 +1,10 @@
-import 'package:freeily/authentication/auth_bloc.dart';
 import 'package:freeily/bloc_globals/notitification.dart';
 import 'package:freeily/grocery_store/grocery_store_bloc.dart';
 
 import 'package:freeily/models/store.dart';
 
 import 'package:freeily/profile_store.dart/product_detail.dart';
+import 'package:freeily/responses/orderStoresProduct.dart';
 
 import 'package:freeily/services/catalogo.dart';
 import 'package:freeily/services/order_service.dart';
@@ -146,11 +146,23 @@ class _NotificationListState extends State<NotificationList>
   @override
   Widget build(BuildContext context) {
     final _bloc = Provider.of<OrderService>(context);
-    final storeAuth = Provider.of<AuthenticationBLoC>(context).storeAuth;
 
-    final odersNotificationsClient = _bloc.orders;
+    List<Order> odersNotificationsClientActive = _bloc.orders
+        .where((i) => i.isActive && !i.isCancelByClient && !i.isCancelByStore)
+        .toList();
 
-    final odersNotificationsStore = _bloc.ordersStore;
+    List<Order> odersNotificationsClientCancel = _bloc.orders
+        .where((i) => !i.isActive && i.isCancelByClient || i.isCancelByStore)
+        .toList();
+
+    final odersNotificationsStoreActive = _bloc.ordersStore
+        .where((i) => i.isActive && !i.isCancelByClient && !i.isCancelByStore)
+        .toList();
+
+    List<Order> odersNotificationsStoreCancel = _bloc.orders
+        .where((i) => !i.isActive && i.isCancelByClient || i.isCancelByStore)
+        .toList();
+
     final _size = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.only(left: 20.0, right: 20),
@@ -169,7 +181,8 @@ class _NotificationListState extends State<NotificationList>
                     color: Colors.white),
               ),
             ),
-            if (odersNotificationsClient.length > 0)
+            if (odersNotificationsClientActive.length > 0 ||
+                odersNotificationsClientCancel.length > 0)
               Container(
                 padding: EdgeInsets.only(top: 20, left: 0),
                 child: Text(
@@ -180,15 +193,26 @@ class _NotificationListState extends State<NotificationList>
                       color: Colors.white),
                 ),
               ),
+            if (odersNotificationsClientActive.length > 0)
+              Container(
+                padding: EdgeInsets.only(top: 20, left: 0),
+                child: Text(
+                  'Pedidos en curso',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
+                      color: Colors.grey),
+                ),
+              ),
             Container(
               padding: EdgeInsets.only(top: 20, bottom: 10),
               child: ListView.builder(
                 shrinkWrap: true,
                 controller: scrollController,
-                itemCount: odersNotificationsClient.length,
+                itemCount: odersNotificationsClientActive.length,
                 itemBuilder: (context, index) {
-                  if (odersNotificationsClient.length > 0) {
-                    final order = odersNotificationsClient[index];
+                  if (odersNotificationsClientActive.length > 0) {
+                    final order = odersNotificationsClientActive[index];
                     return Container(
                       padding: EdgeInsets.only(bottom: 10),
                       height: _size.height / 4.4,
@@ -200,22 +224,48 @@ class _NotificationListState extends State<NotificationList>
                   } else {
                     return Center(
                         child: Container(
-                      child: Text('Aun no tienes notificaciones'),
+                      child: Text('Aun no tienes compras'),
                     ));
                   }
                 },
               ),
             ),
-            if (odersNotificationsClient.length == 0 &&
-                odersNotificationsStore.length > 0)
-              Center(
-                child: Container(
-                  alignment: Alignment.bottomCenter,
-                  child:
-                      Text('Sin pedidos', style: TextStyle(color: Colors.grey)),
+            if (odersNotificationsClientCancel.length > 0)
+              Container(
+                padding: EdgeInsets.only(top: 20, left: 0),
+                child: Text(
+                  'Pedidos cancelados',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
+                      color: Colors.grey),
                 ),
               ),
-            if (odersNotificationsStore.length > 0)
+            Container(
+              padding: EdgeInsets.only(top: 20, bottom: 10),
+              child: ListView.builder(
+                shrinkWrap: true,
+                controller: scrollController,
+                itemCount: odersNotificationsClientCancel.length,
+                itemBuilder: (context, index) {
+                  if (odersNotificationsClientCancel.length > 0) {
+                    final order = odersNotificationsClientCancel[index];
+                    return Container(
+                      padding: EdgeInsets.only(bottom: 10),
+                      height: _size.height / 4.4,
+                      child: OrderprogressStoreCard(
+                        order: order,
+                        isStore: false,
+                      ),
+                    );
+                  } else {
+                    return Center();
+                  }
+                },
+              ),
+            ),
+            if (odersNotificationsStoreActive.length > 0 ||
+                odersNotificationsStoreCancel.length > 0)
               Container(
                 padding: EdgeInsets.only(top: 20, left: 0),
                 child: Text(
@@ -226,14 +276,25 @@ class _NotificationListState extends State<NotificationList>
                       color: Colors.white),
                 ),
               ),
+            if (odersNotificationsStoreActive.length > 0)
+              Container(
+                padding: EdgeInsets.only(top: 20, left: 0),
+                child: Text(
+                  'Pedidos en curso',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
+                      color: Colors.grey),
+                ),
+              ),
             Container(
               padding: EdgeInsets.only(top: 20, bottom: 10),
               child: ListView.builder(
                 shrinkWrap: true,
                 controller: scrollController,
-                itemCount: odersNotificationsStore.length,
+                itemCount: odersNotificationsStoreActive.length,
                 itemBuilder: (context, index) {
-                  final order = odersNotificationsStore[index];
+                  final order = odersNotificationsStoreActive[index];
                   return Container(
                     padding: EdgeInsets.only(bottom: 10),
                     height: _size.height / 4.4,
@@ -245,18 +306,39 @@ class _NotificationListState extends State<NotificationList>
                 },
               ),
             ),
-            if (storeAuth.service != 0 &&
-                odersNotificationsStore.length == 0 &&
-                odersNotificationsClient.length > 0)
-              Center(
-                child: Container(
-                  alignment: Alignment.bottomCenter,
-                  child:
-                      Text('Sin pedidos', style: TextStyle(color: Colors.grey)),
+            if (odersNotificationsStoreCancel.length > 0)
+              Container(
+                padding: EdgeInsets.only(top: 20, left: 0),
+                child: Text(
+                  'Pedidos cancelados',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
+                      color: Colors.grey),
                 ),
               ),
-            if (odersNotificationsStore.length == 0 &&
-                odersNotificationsClient.length == 0)
+            Container(
+              padding: EdgeInsets.only(top: 20, bottom: 10),
+              child: ListView.builder(
+                shrinkWrap: true,
+                controller: scrollController,
+                itemCount: odersNotificationsStoreCancel.length,
+                itemBuilder: (context, index) {
+                  final order = odersNotificationsStoreCancel[index];
+                  return Container(
+                    padding: EdgeInsets.only(bottom: 10),
+                    height: _size.height / 4.4,
+                    child: OrderprogressStoreCard(
+                      order: order,
+                      isStore: true,
+                    ),
+                  );
+                },
+              ),
+            ),
+            if (odersNotificationsStoreActive.length == 0 &&
+                odersNotificationsClientActive.length == 0 &&
+                odersNotificationsClientCancel.length == 0)
               Center(
                 child: Container(
                   alignment: Alignment.bottomCenter,

@@ -415,13 +415,10 @@ class __ProfileStoreProductItemState extends State<_ProfileStoreProductItem> {
 
                                       groceryBloc.changeToNormal();
 
-                                      Timer(new Duration(milliseconds: 100),
-                                          () {
-                                        groceryBloc.addProduct(
-                                            widget.product, quantityInitial);
+                                      groceryBloc.addProduct(
+                                          widget.product, quantityInitial);
 
-                                        _listenNotification(context);
-                                      });
+                                      _listenNotification(context);
                                     },
                                     style: ElevatedButton.styleFrom(
                                       elevation: 5.0,

@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+
 import 'package:freeily/authentication/auth_bloc.dart';
 import 'package:freeily/bloc_globals/bloc/cards_services_bloc.dart';
 
@@ -271,6 +272,8 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
                                   }), */
             )))));
   }
+
+  String platformResponse;
 
   _createOrder(context) async {
     final List<StoresProduct> storesProducts = [];

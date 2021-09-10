@@ -504,7 +504,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                             SizedBox(
                               height: 10,
                             ),
-                            _createAbout(aboutCtrl),
+                            if (store.service != 0) _createAbout(aboutCtrl),
                             SizedBox(height: 20),
                             Divider(
                               height: 1,
@@ -1013,7 +1013,7 @@ class EditProfilePageState extends State<EditProfilePage> {
                         color: currentTheme.currentTheme.accentColor,
                         width: 2.0),
                   ),
-                  hintText: 'Ej: Empanadas, Mariscos, Pizzas, Etc',
+                  hintText: 'Ej: Empanadas, Calzado, Frutos, Cosas, Etc',
                   labelText: 'Servicio / Productos',
                   //counterText: snapshot.data,
                   errorText: snapshot.error),
