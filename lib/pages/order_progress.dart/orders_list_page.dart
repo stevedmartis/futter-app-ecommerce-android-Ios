@@ -399,14 +399,13 @@ class OrderStoreCard extends StatelessWidget {
 
     final store = order.store;
 
-    String textOne =
-        (isStore) ? "Prepara el pedido ..." : "El pedido esta en proceso ...";
+    String textOne = (isStore) ? "Pendido pendiente" : "Pedido en proceso ...";
 
     String textTwo =
-        (isStore) ? "Preparas el pedido ..." : "Pedido en preparación ...";
+        (isStore) ? "Preparas el pedido ..." : "En preparación ...";
 
     String textThree =
-        (isStore) ? "Envias el pedido ..." : "Pedido viene en camino ...";
+        (isStore) ? "Envias el pedido ..." : "Pedido en camino ...";
 
     String textFour = (isStore)
         ? "Entregado, evalua la experiencia!"
@@ -427,11 +426,7 @@ class OrderStoreCard extends StatelessWidget {
 
     if (!isStore && order.isCancelByStore) actualText = 'La tienda cancelo.';
 
-    if (isStore && order.isCancelByClient) actualText = ' El cliente cancelo.';
-
-    if (!isStore && order.isCancelByStore) actualText = 'Pedido cancelado.';
-
-    if (!isStore && order.isCancelByClient) actualText = 'Pedido cancelado.';
+    if (isStore && order.isCancelByClient) actualText = 'El cliente cancelo.';
 
     return GestureDetector(
       onTap: () {
