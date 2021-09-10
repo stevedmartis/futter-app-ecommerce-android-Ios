@@ -186,10 +186,21 @@ class _StoresListByServiceState extends State<StoresListByService> {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     orders = orderService.orders;
     ordersStore = orderService.ordersStore;
-    final List<Order> ordersProgress = orders.where((i) => i.isActive).toList();
+    final List<Order> ordersActiveClient = orders
+        .where((i) => i.isActive && !i.isCancelByClient || !i.isCancelByStore)
+        .toList();
 
-    final List<Order> ordersProgressSale =
-        ordersStore.where((i) => i.isActive).toList();
+    final List<Order> ordersCancelClient = orders
+        .where((i) => !i.isActive && i.isCancelByClient || i.isCancelByStore)
+        .toList();
+
+    final List<Order> ordersActiveStore = ordersStore
+        .where((i) => i.isActive && !i.isCancelByClient || !i.isCancelByStore)
+        .toList();
+
+    final List<Order> ordersCancelStore = ordersStore
+        .where((i) => !i.isActive && i.isCancelByClient || i.isCancelByStore)
+        .toList();
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 20),
@@ -235,19 +246,20 @@ class _StoresListByServiceState extends State<StoresListByService> {
           ),
           if (!widget.isSale)
             SizedBox(
-                child: (ordersProgress.length > 0)
+                child: (ordersActiveClient.length > 0)
                     ? ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        itemCount: ordersProgress.length,
+                        itemCount: ordersActiveClient.length,
                         itemBuilder: (BuildContext ctxt, int index) {
-                          final order = orders[index];
+                          final order = ordersActiveClient[index];
 
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 8.0),
                             child: FadeIn(
                               child: OrderStoreCard(
                                 order: order,
+                                isStore: widget.isSale,
                               ),
                             ),
                           );
@@ -261,21 +273,60 @@ class _StoresListByServiceState extends State<StoresListByService> {
                           ),
                         ),
                       )),
-          if (widget.isSale)
+          if (!widget.isSale && ordersCancelClient.length > 0)
+            Container(
+              child: Text(
+                'Pedidos cancelados',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                    color: Colors.grey),
+              ),
+            ),
+          if (!widget.isSale)
             SizedBox(
-                child: (ordersProgressSale.length > 0)
+              height: 20,
+            ),
+          if (!widget.isSale)
+            SizedBox(
+                child: (ordersCancelClient.length > 0)
                     ? ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        itemCount: ordersProgressSale.length,
+                        itemCount: ordersCancelClient.length,
                         itemBuilder: (BuildContext ctxt, int index) {
-                          final order = ordersStore[index];
+                          final order = ordersCancelClient[index];
 
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 8.0),
                             child: FadeIn(
                               child: OrderStoreCard(
                                 order: order,
+                                isStore: widget.isSale,
+                              ),
+                            ),
+                          );
+                        })
+                    : Container(
+                        padding: EdgeInsets.only(top: 30),
+                        child: Center(),
+                      )),
+          if (widget.isSale)
+            SizedBox(
+                child: (ordersActiveStore.length > 0)
+                    ? ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: ordersActiveStore.length,
+                        itemBuilder: (BuildContext ctxt, int index) {
+                          final order = ordersActiveStore[index];
+
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: FadeIn(
+                              child: OrderStoreCard(
+                                order: order,
+                                isStore: widget.isSale,
                               ),
                             ),
                           );
@@ -288,7 +339,45 @@ class _StoresListByServiceState extends State<StoresListByService> {
                             style: TextStyle(color: Colors.grey),
                           ),
                         ),
-                      ))
+                      )),
+          if (widget.isSale && ordersCancelStore.length > 0)
+            Container(
+              child: Text(
+                'Pedidos cancelados',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                    color: Colors.grey),
+              ),
+            ),
+          if (widget.isSale)
+            SizedBox(
+              height: 20,
+            ),
+          if (widget.isSale)
+            SizedBox(
+                child: (ordersCancelStore.length > 0)
+                    ? ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: ordersCancelStore.length,
+                        itemBuilder: (BuildContext ctxt, int index) {
+                          final order = ordersCancelStore[index];
+
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: FadeIn(
+                              child: OrderStoreCard(
+                                order: order,
+                                isStore: widget.isSale,
+                              ),
+                            ),
+                          );
+                        })
+                    : Container(
+                        padding: EdgeInsets.only(top: 30),
+                        child: Center(),
+                      )),
         ],
       ),
     );
@@ -296,9 +385,11 @@ class _StoresListByServiceState extends State<StoresListByService> {
 }
 
 class OrderStoreCard extends StatelessWidget {
-  OrderStoreCard({this.order});
+  OrderStoreCard({this.order, this.isStore});
 
   final Order order;
+
+  final bool isStore;
 
   @override
   Widget build(BuildContext context) {
@@ -308,10 +399,44 @@ class OrderStoreCard extends StatelessWidget {
 
     final store = order.store;
 
+    String textOne =
+        (isStore) ? "Prepara el pedido ..." : "El pedido esta en proceso ...";
+
+    String textTwo =
+        (isStore) ? "Preparas el pedido ..." : "Pedido en preparación ...";
+
+    String textThree =
+        (isStore) ? "Envias el pedido ..." : "Pedido viene en camino ...";
+
+    String textFour = (isStore)
+        ? "Entregado, evalua la experiencia!"
+        : "Pedido en tu dirección!";
+
+    String actualText = "";
+    if (order.isActive && !order.isPreparation) {
+      actualText = textOne;
+    } else if (order.isPreparation && !order.isDelivery) {
+      actualText = textTwo;
+    } else if (order.isDelivery && !order.isDelivered) {
+      actualText = textThree;
+    } else if (order.isDelivered) {
+      actualText = textFour;
+    }
+
+    if (isStore && order.isCancelByStore) actualText = 'Pedido cancelado.';
+
+    if (!isStore && order.isCancelByStore) actualText = 'La tienda cancelo.';
+
+    if (isStore && order.isCancelByClient) actualText = ' El cliente cancelo.';
+
+    if (!isStore && order.isCancelByStore) actualText = 'Pedido cancelado.';
+
+    if (!isStore && order.isCancelByClient) actualText = 'Pedido cancelado.';
+
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
-        Navigator.push(context, orderProggressRoute(order, false, false));
+        Navigator.push(context, orderProggressRoute(order, false, isStore));
       },
       child: Card(
         elevation: 6,
@@ -359,16 +484,25 @@ class OrderStoreCard extends StatelessWidget {
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.only(top: 5),
-                          child: Text(
-                            'Pedido en curso',
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            style: TextStyle(
-                                fontSize: 15,
-                                letterSpacing: -0.5,
-                                color: Colors.white54),
-                          ),
+                          padding: EdgeInsets.only(top: 10, right: 10),
+                          child: (order.isDelivered)
+                              ? Text(
+                                  actualText,
+                                  style: TextStyle(
+                                      color: currentTheme.primaryColor,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.normal),
+                                )
+                              : Text(
+                                  actualText,
+                                  style: TextStyle(
+                                      color: (order.isCancelByClient ||
+                                              order.isCancelByStore)
+                                          ? Colors.grey
+                                          : Colors.white,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.normal),
+                                ),
                         ),
                       ],
                     ),

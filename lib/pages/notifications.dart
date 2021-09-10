@@ -159,7 +159,7 @@ class _NotificationListState extends State<NotificationList>
         .where((i) => i.isActive && !i.isCancelByClient && !i.isCancelByStore)
         .toList();
 
-    List<Order> odersNotificationsStoreCancel = _bloc.orders
+    List<Order> odersNotificationsStoreCancel = _bloc.ordersStore
         .where((i) => !i.isActive && i.isCancelByClient || i.isCancelByStore)
         .toList();
 

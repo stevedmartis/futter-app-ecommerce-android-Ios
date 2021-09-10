@@ -542,9 +542,10 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                         }),
                   ),
                 ),
-                makeListHorizontalCarouselOrdersProgress(
-                    context, orderClientActive),
-                if (storeAuth.service != 0)
+                if (orderClientActive.length > 0)
+                  makeListHorizontalCarouselOrdersProgress(
+                      context, orderClientActive),
+                if (storeAuth.service != 0 && ordersStoreActive.length > 0)
                   makeListHorizontalCarouselOrdersStoreProgress(
                       context, ordersStoreActive),
                 if (orderService.loading)
@@ -662,7 +663,8 @@ SliverList makeListHorizontalCarouselOrdersProgress(
   return SliverList(
     delegate: SliverChildListDelegate([
       Padding(
-        padding: const EdgeInsets.only(top: 10.0, bottom: 0),
+        padding: EdgeInsets.only(
+            top: (orderNotificationClient.length > 0) ? 10.0 : 0, bottom: 10),
         child: SizedBox(
           child: (!orderService.loading)
               ? Container(
@@ -708,7 +710,9 @@ SliverList makeListHorizontalCarouselOrdersStoreProgress(
   return SliverList(
     delegate: SliverChildListDelegate([
       Padding(
-        padding: const EdgeInsets.only(top: 10.0, bottom: 0),
+        padding: EdgeInsets.only(
+            top: (orderNotificationStore.length > 0) ? 10.0 : 0,
+            bottom: (orderNotificationStore.length > 0) ? 10.0 : 0),
         child: SizedBox(
           child: (orderNotificationStore.length > 0)
               ? FadeInRight(
