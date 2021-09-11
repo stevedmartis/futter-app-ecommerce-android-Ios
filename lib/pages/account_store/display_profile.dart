@@ -5,6 +5,7 @@ import 'package:freeily/preferences/user_preferences.dart';
 import 'package:freeily/routes/routes.dart';
 
 import 'package:freeily/theme/theme.dart';
+import 'package:freeily/utils.dart';
 import 'package:freeily/widgets/circular_progress.dart';
 import 'package:freeily/widgets/modal_bottom_sheet.dart';
 import 'package:freeily/widgets/show_alert_error.dart';
@@ -13,8 +14,11 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 
 import 'package:provider/provider.dart';
+
+import '../add_edit_category.dart';
 
 class DisplayProfileStore extends StatefulWidget {
   @override
@@ -41,6 +45,10 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
 
   bool isSwitchChange = false;
 
+  int index = 0;
+
+  final List<String> timesValue = ['Minutos', 'Horas', 'Días'];
+
   @override
   void initState() {
     _scrollController = ScrollController()..addListener(() => setState(() {}));
@@ -49,6 +57,14 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
     store = authService.storeAuth;
 
     isSwitchChange = store.visibility;
+
+    index = (store.timeSelect == 'mins')
+        ? 0
+        : (store.timeSelect == 'hrs')
+            ? 1
+            : 2;
+
+    print(index);
 
     final getTimeMin = store.timeDelivery.toString().split("-").first;
 
@@ -200,7 +216,7 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
                                 SizedBox(height: 10),
 
                                 _createOff(),
-                                SizedBox(height: 20),
+                                SizedBox(height: 30),
 
                                 Container(
                                   width: size.width,
@@ -214,25 +230,66 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    _createMinTimeDelivery(),
-                                    Container(
-                                      padding:
-                                          EdgeInsets.only(left: 10, right: 10),
-                                      child: Text(' - ',
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold)),
-                                    ),
-                                    _createMaxTimeDelivery()
-                                  ],
+
+                                SizedBox(
+                                  height: 130,
+                                  child: Row(
+                                    children: [
+                                      _createMinTimeDelivery(),
+                                      Container(
+                                        padding:
+                                            EdgeInsets.only(left: 5, right: 10),
+                                        child: Text(' - ',
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      _createMaxTimeDelivery(),
+                                      buildCustomPicker(),
+                                    ],
+                                  ),
                                 )
                               ]),
                             )
                           ]))
                     ]))));
+  }
+
+  Widget buildCustomPicker() {
+    final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+    return Expanded(
+      child: CupertinoPicker(
+        scrollController: FixedExtentScrollController(initialItem: index),
+        itemExtent: 50,
+        diameterRatio: 0.7,
+        looping: true,
+        onSelectedItemChanged: (index) => setState(() => this.index = index),
+        // selectionOverlay: Container(),
+        selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
+          background: currentTheme.cardColor.withOpacity(0.30),
+        ),
+        children: Utils.modelBuilder<String>(
+          timesValue,
+          (index, value) {
+            final isSelected = this.index == index;
+            final color = isSelected ? currentTheme.primaryColor : Colors.white;
+
+            return Center(
+              child: Text(
+                value,
+                style: TextStyle(color: color, fontSize: 18),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  DateTime getDateTime() {
+    final now = DateTime.now();
+
+    return DateTime(now.year, now.month, now.day, now.hour, 0);
   }
 
   Widget _createSwitch() {
@@ -267,7 +324,7 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
         final size = MediaQuery.of(context).size;
 
         return Container(
-          width: size.width / 2.6,
+          width: size.width / 4,
           child: TextField(
             style: TextStyle(color: Colors.white),
             controller: minTimeDeliveryCtrl,
@@ -295,7 +352,7 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
                 ),
                 hintText: '',
                 labelText: 'Minimo',
-                suffix: Text('Mins'),
+                //suffix: Text('Mins'),
                 //counterText: snapshot.data,
                 errorText: snapshot.error),
             onChanged: storeProfileBloc.changeNumber,
@@ -313,7 +370,7 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
         final size = MediaQuery.of(context).size;
 
         return Container(
-          width: size.width / 2.6,
+          width: size.width / 4,
           child: TextField(
             style: TextStyle(color: Colors.white),
             controller: maxTimeDeliveryCtrl,
@@ -343,7 +400,7 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
                       BorderSide(color: currentTheme.accentColor, width: 2.0),
                 ),
                 hintText: '',
-                suffix: Text('Mins'),
+                // suffix: Text('Mins'),
                 labelText: 'Maximo',
                 //counterText: snapshot.data,
                 errorText: snapshot.error),
@@ -426,10 +483,19 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
     final timeDelivery =
         (minTime != "" && maxTime != "") ? '$minTime - $maxTime' : '';
 
+    final timeSelect = (timesValue[index] == 'Minutos')
+        ? 'mins'
+        : (timesValue[index] == 'Horas')
+            ? 'hrs'
+            : (timesValue[index] == 'Días')
+                ? 'días'
+                : '';
+
     final editProfileOk = await authService.editDisplayStoreProfile(
       storeProfile.user.uid,
       isSwitchChange,
       timeDelivery,
+      timeSelect,
       off,
     );
 
@@ -458,5 +524,63 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
       showAlertError(
           context, 'Error del servidor', 'lo sentimos, Intentelo mas tarde');
     }
+  }
+}
+
+class TimePickerPage extends StatefulWidget {
+  @override
+  _TimePickerPageState createState() => _TimePickerPageState();
+}
+
+class _TimePickerPageState extends State<TimePickerPage> {
+  DateTime dateTime = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+
+    dateTime = getDateTime();
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              buildTimePicker(),
+              const SizedBox(height: 24),
+              GestureDetector(
+                onTap: () => Utils.showSheet(
+                  context,
+                  child: buildTimePicker(),
+                  onClicked: () {
+                    final value = DateFormat('HH:mm').format(dateTime);
+
+                    Navigator.pop(context);
+                  },
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+
+  Widget buildTimePicker() => SizedBox(
+        height: 180,
+        child: CupertinoDatePicker(
+          initialDateTime: dateTime,
+          mode: CupertinoDatePickerMode.time,
+          minuteInterval: 10,
+          //use24hFormat: true,
+          onDateTimeChanged: (dateTime) =>
+              setState(() => this.dateTime = dateTime),
+        ),
+      );
+
+  DateTime getDateTime() {
+    final now = DateTime.now();
+
+    return DateTime(now.year, now.month, now.day, now.hour, 0);
   }
 }

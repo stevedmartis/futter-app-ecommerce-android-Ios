@@ -204,35 +204,36 @@ class _NotificationListState extends State<NotificationList>
                       color: Colors.grey),
                 ),
               ),
-            Container(
-              padding: EdgeInsets.only(top: 20, bottom: 10),
-              child: ListView.builder(
-                shrinkWrap: true,
-                controller: scrollController,
-                itemCount: odersNotificationsClientActive.length,
-                itemBuilder: (context, index) {
-                  if (odersNotificationsClientActive.length > 0) {
-                    final order = odersNotificationsClientActive[index];
-                    return Container(
-                      padding: EdgeInsets.only(bottom: 10),
-                      height: _size.height / 4.4,
-                      child: OrderprogressStoreCard(
-                        order: order,
-                        isStore: false,
-                      ),
-                    );
-                  } else {
-                    return Center(
-                        child: Container(
-                      child: Text('Aun no tienes compras'),
-                    ));
-                  }
-                },
+            if (odersNotificationsClientActive.length > 0)
+              Container(
+                padding: EdgeInsets.only(top: 20, bottom: 10),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  controller: scrollController,
+                  itemCount: odersNotificationsClientActive.length,
+                  itemBuilder: (context, index) {
+                    if (odersNotificationsClientActive.length > 0) {
+                      final order = odersNotificationsClientActive[index];
+                      return Container(
+                        padding: EdgeInsets.only(bottom: 10),
+                        height: _size.height / 5.0,
+                        child: OrderprogressStoreCard(
+                          order: order,
+                          isStore: false,
+                        ),
+                      );
+                    } else {
+                      return Center(
+                          child: Container(
+                        child: Text('Aun no tienes compras'),
+                      ));
+                    }
+                  },
+                ),
               ),
-            ),
             if (odersNotificationsClientCancel.length > 0)
               Container(
-                padding: EdgeInsets.only(top: 20, left: 0),
+                padding: EdgeInsets.only(top: 10, left: 0),
                 child: Text(
                   'Pedidos cancelados',
                   style: TextStyle(
@@ -241,33 +242,37 @@ class _NotificationListState extends State<NotificationList>
                       color: Colors.grey),
                 ),
               ),
-            Container(
-              padding: EdgeInsets.only(top: 20, bottom: 10),
-              child: ListView.builder(
-                shrinkWrap: true,
-                controller: scrollController,
-                itemCount: odersNotificationsClientCancel.length,
-                itemBuilder: (context, index) {
-                  if (odersNotificationsClientCancel.length > 0) {
-                    final order = odersNotificationsClientCancel[index];
-                    return Container(
-                      padding: EdgeInsets.only(bottom: 10),
-                      height: _size.height / 4.4,
-                      child: OrderprogressStoreCard(
-                        order: order,
-                        isStore: false,
-                      ),
-                    );
-                  } else {
-                    return Center();
-                  }
-                },
+            if (odersNotificationsClientCancel.length > 0)
+              Container(
+                padding: EdgeInsets.only(top: 20, bottom: 0),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  controller: scrollController,
+                  itemCount: odersNotificationsClientCancel.length,
+                  itemBuilder: (context, index) {
+                    if (odersNotificationsClientCancel.length > 0) {
+                      final order = odersNotificationsClientCancel[index];
+                      return Container(
+                        padding: EdgeInsets.only(bottom: 0),
+                        height: _size.height / 5.0,
+                        child: OrderprogressStoreCard(
+                          order: order,
+                          isStore: false,
+                        ),
+                      );
+                    } else {
+                      return Center();
+                    }
+                  },
+                ),
               ),
+            SizedBox(
+              height: 20,
             ),
             if (odersNotificationsStoreActive.length > 0 ||
                 odersNotificationsStoreCancel.length > 0)
               Container(
-                padding: EdgeInsets.only(top: 20, left: 0),
+                padding: EdgeInsets.only(top: 10, left: 0),
                 child: Text(
                   'Mis ventas',
                   style: TextStyle(
@@ -278,7 +283,7 @@ class _NotificationListState extends State<NotificationList>
               ),
             if (odersNotificationsStoreActive.length > 0)
               Container(
-                padding: EdgeInsets.only(top: 20, left: 0),
+                padding: EdgeInsets.only(top: 10, left: 0),
                 child: Text(
                   'Pedidos en curso',
                   style: TextStyle(
@@ -287,28 +292,29 @@ class _NotificationListState extends State<NotificationList>
                       color: Colors.grey),
                 ),
               ),
-            Container(
-              padding: EdgeInsets.only(top: 20, bottom: 10),
-              child: ListView.builder(
-                shrinkWrap: true,
-                controller: scrollController,
-                itemCount: odersNotificationsStoreActive.length,
-                itemBuilder: (context, index) {
-                  final order = odersNotificationsStoreActive[index];
-                  return Container(
-                    padding: EdgeInsets.only(bottom: 10),
-                    height: _size.height / 4.4,
-                    child: OrderprogressStoreCard(
-                      order: order,
-                      isStore: true,
-                    ),
-                  );
-                },
+            if (odersNotificationsStoreActive.length > 0)
+              Container(
+                padding: EdgeInsets.only(top: 10, bottom: 0),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  controller: scrollController,
+                  itemCount: odersNotificationsStoreActive.length,
+                  itemBuilder: (context, index) {
+                    final order = odersNotificationsStoreActive[index];
+                    return Container(
+                      padding: EdgeInsets.only(bottom: 0),
+                      height: _size.height / 5.0,
+                      child: OrderprogressStoreCard(
+                        order: order,
+                        isStore: true,
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
             if (odersNotificationsStoreCancel.length > 0)
               Container(
-                padding: EdgeInsets.only(top: 20, left: 0),
+                padding: EdgeInsets.only(top: 10, left: 0),
                 child: Text(
                   'Pedidos cancelados',
                   style: TextStyle(
@@ -317,28 +323,30 @@ class _NotificationListState extends State<NotificationList>
                       color: Colors.grey),
                 ),
               ),
-            Container(
-              padding: EdgeInsets.only(top: 20, bottom: 10),
-              child: ListView.builder(
-                shrinkWrap: true,
-                controller: scrollController,
-                itemCount: odersNotificationsStoreCancel.length,
-                itemBuilder: (context, index) {
-                  final order = odersNotificationsStoreCancel[index];
-                  return Container(
-                    padding: EdgeInsets.only(bottom: 10),
-                    height: _size.height / 4.4,
-                    child: OrderprogressStoreCard(
-                      order: order,
-                      isStore: true,
-                    ),
-                  );
-                },
+            if (odersNotificationsStoreCancel.length > 0)
+              Container(
+                padding: EdgeInsets.only(top: 10, bottom: 0),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  controller: scrollController,
+                  itemCount: odersNotificationsStoreCancel.length,
+                  itemBuilder: (context, index) {
+                    final order = odersNotificationsStoreCancel[index];
+                    return Container(
+                      padding: EdgeInsets.only(bottom: 0),
+                      height: _size.height / 5.0,
+                      child: OrderprogressStoreCard(
+                        order: order,
+                        isStore: true,
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
             if (odersNotificationsStoreActive.length == 0 &&
                 odersNotificationsClientActive.length == 0 &&
-                odersNotificationsClientCancel.length == 0)
+                odersNotificationsClientCancel.length == 0 &&
+                odersNotificationsStoreCancel.length == 0)
               Center(
                 child: Container(
                   alignment: Alignment.bottomCenter,

@@ -542,15 +542,17 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                         }),
                   ),
                 ),
+                if (orderClientActive.length > 0) makeSpaceTitle(),
                 if (orderClientActive.length > 0)
                   makeListHorizontalCarouselOrdersProgress(
                       context, orderClientActive, ordersStoreActive),
                 if (storeAuth.service != 0 && ordersStoreActive.length > 0)
-                  makeListHorizontalCarouselOrdersStoreProgress(
-                      context, ordersStoreActive),
-                if (orderClientActive.length == 0 &&
-                    ordersStoreActive.length == 0)
-                  makeSpaceTitle(),
+                  if (ordersStoreActive.length > 0 &&
+                      orderClientActive.length == 0)
+                    makeSpaceTitle(),
+                makeListHorizontalCarouselOrdersStoreProgress(
+                    context, ordersStoreActive),
+                makeSpaceTitle(),
                 if (orderService.loading)
                   SliverAppBar(
                     automaticallyImplyLeading: false,
@@ -665,37 +667,32 @@ SliverList makeListHorizontalCarouselOrdersProgress(context,
   final size = MediaQuery.of(context).size;
   return SliverList(
     delegate: SliverChildListDelegate([
-      Padding(
-        padding: EdgeInsets.only(
-            top: (orderNotificationClient.length > 0) ? 10.0 : 0,
-            bottom: (orderNotificationStore.length > 0) ? 0 : 10),
-        child: SizedBox(
-          child: (orderService.orders.length > 0)
-              ? FadeInRight(
-                  child: CarouselSlider(
-                    items: List.generate(
-                      orderNotificationClient.length,
-                      (index) => OrderprogressStoreCard(
-                        order: orderNotificationClient[index],
-                        isStore: false,
-                      ),
+      SizedBox(
+        child: (orderService.orders.length > 0)
+            ? FadeInRight(
+                child: CarouselSlider(
+                  items: List.generate(
+                    orderNotificationClient.length,
+                    (index) => OrderprogressStoreCard(
+                      order: orderNotificationClient[index],
+                      isStore: false,
                     ),
-                    options: CarouselOptions(
-                        viewportFraction:
-                            (orderNotificationClient.length > 1) ? 0.8 : 0.9,
-                        aspectRatio: size.height / 40 / 5.5,
-                        initialPage: 0,
-                        enableInfiniteScroll: false,
-                        reverse: false,
-                        autoPlay: true,
-                        autoPlayInterval: Duration(seconds: 5),
-                        autoPlayAnimationDuration: Duration(milliseconds: 800),
-                        scrollDirection: Axis.horizontal,
-                        onPageChanged: (index, reason) {}),
                   ),
-                )
-              : Container(),
-        ),
+                  options: CarouselOptions(
+                      viewportFraction:
+                          (orderNotificationClient.length > 1) ? 0.8 : 0.9,
+                      aspectRatio: size.height / 40 / 6,
+                      initialPage: 0,
+                      enableInfiniteScroll: false,
+                      reverse: false,
+                      autoPlay: true,
+                      autoPlayInterval: Duration(seconds: 5),
+                      autoPlayAnimationDuration: Duration(milliseconds: 800),
+                      scrollDirection: Axis.horizontal,
+                      onPageChanged: (index, reason) {}),
+                ),
+              )
+            : Container(),
       ),
     ]),
   );
@@ -706,36 +703,32 @@ SliverList makeListHorizontalCarouselOrdersStoreProgress(
   final size = MediaQuery.of(context).size;
   return SliverList(
     delegate: SliverChildListDelegate([
-      Padding(
-        padding: EdgeInsets.only(
-            top: 10, bottom: (orderNotificationStore.length > 0) ? 10.0 : 0),
-        child: SizedBox(
-          child: (orderNotificationStore.length > 0)
-              ? FadeInRight(
-                  child: CarouselSlider(
-                    items: List.generate(
-                      orderNotificationStore.length,
-                      (index) => OrderprogressStoreCard(
-                        order: orderNotificationStore[index],
-                        isStore: true,
-                      ),
+      SizedBox(
+        child: (orderNotificationStore.length > 0)
+            ? FadeInRight(
+                child: CarouselSlider(
+                  items: List.generate(
+                    orderNotificationStore.length,
+                    (index) => OrderprogressStoreCard(
+                      order: orderNotificationStore[index],
+                      isStore: true,
                     ),
-                    options: CarouselOptions(
-                        viewportFraction:
-                            (orderNotificationStore.length > 1) ? 0.8 : 0.9,
-                        aspectRatio: size.height / 40 / 5.5,
-                        initialPage: 0,
-                        enableInfiniteScroll: false,
-                        reverse: false,
-                        autoPlay: true,
-                        autoPlayInterval: Duration(seconds: 5),
-                        autoPlayAnimationDuration: Duration(milliseconds: 800),
-                        scrollDirection: Axis.horizontal,
-                        onPageChanged: (index, reason) {}),
                   ),
-                )
-              : Container(),
-        ),
+                  options: CarouselOptions(
+                      viewportFraction:
+                          (orderNotificationStore.length > 1) ? 0.8 : 0.9,
+                      aspectRatio: size.height / 40 / 6,
+                      initialPage: 0,
+                      enableInfiniteScroll: false,
+                      reverse: false,
+                      autoPlay: true,
+                      autoPlayInterval: Duration(seconds: 5),
+                      autoPlayAnimationDuration: Duration(milliseconds: 800),
+                      scrollDirection: Axis.horizontal,
+                      onPageChanged: (index, reason) {}),
+                ),
+              )
+            : Container(),
       ),
     ]),
   );
@@ -762,13 +755,8 @@ class _OrderprogressStoreCardState extends State<OrderprogressStoreCard> {
 
     final store = widget.order.store;
 
-    /* final getTimeMin =
-        authService.storeAuth.timeDelivery.toString().split("-").first;
-
-    final getTimeMax =
-        authService.storeAuth.timeDelivery.toString().split("-").last;
-
-    final estimated = getTimeMin + getTimeMax; */
+    final timeDelivery =
+        '${store.timeDelivery}  ${store.timeSelect.toLowerCase()}';
 
     return GestureDetector(
       onTap: () {
@@ -960,9 +948,9 @@ class _OrderprogressStoreCardState extends State<OrderprogressStoreCard> {
                         child: Text(
                           (!widget.isStore)
                               ? (store.timeDelivery != "")
-                                  ? 'Entrega estimada: ${store.timeDelivery}'
+                                  ? 'Entrega estimada: $timeDelivery'
                                   : 'Entrega estimada: 24 - 48 hrs.'
-                              : 'Entrega estimada: ${authService.storeAuth.timeDelivery}',
+                              : 'Entrega estimada: $timeDelivery',
                           style: TextStyle(
                               color: Colors.grey,
                               fontWeight: FontWeight.normal,
@@ -1144,6 +1132,9 @@ class StoreCard extends StatelessWidget {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final size = MediaQuery.of(context).size;
     final id = store.id;
+
+    final timeDelivery =
+        '${store.timeDelivery}  ${store.timeSelect.toLowerCase()}';
     return GestureDetector(
       onTap: () {
         HapticFeedback.mediumImpact();
@@ -1205,9 +1196,7 @@ class StoreCard extends StatelessWidget {
                       children: [
                         Container(
                           child: Text(
-                            (store.timeDelivery != "")
-                                ? '${store.timeDelivery}'
-                                : '',
+                            (store.timeDelivery != "") ? '$timeDelivery' : '',
                             style: TextStyle(color: Colors.white54),
                           ),
                         ),

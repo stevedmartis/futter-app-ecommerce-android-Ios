@@ -200,8 +200,7 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
             slivers: <Widget>[
               makeHeaderCustom('Tu pedido'),
               titleBox(context),
-              addressDeliveryInfo(context, minTimes, maxTimes),
-              makeListProducts(
+              makeAddressUserTimeDeliveryProductsStores(
                 context,
               ),
               orderDetailInfo(context),
@@ -346,239 +345,6 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
 List<Store> storesByProduct = [];
 List<BankAccount> bankAccountsByStore = [];
 
-SliverToBoxAdapter addressDeliveryInfo(context, minTimes, maxTimes) {
-  final currentTheme = Provider.of<ThemeChanger>(context);
-  final authBloc = Provider.of<AuthenticationBLoC>(context);
-  final size = MediaQuery.of(context).size;
-  final prefs = new AuthUserPreferences();
-
-  return SliverToBoxAdapter(
-    child: Container(
-      child: Column(
-        children: [
-          FadeIn(
-            child: Container(
-                padding: EdgeInsets.only(top: 0.0),
-                color: currentTheme.currentTheme.scaffoldBackgroundColor,
-                child: Container(
-                  padding: EdgeInsets.only(left: size.width / 20, top: 0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          //Navigator.of(context).pop();
-                        },
-                        child: new Align(
-                            alignment: Alignment.topCenter,
-                            child: Container(
-                              margin: EdgeInsets.only(right: 20),
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                  border:
-                                      Border.all(width: 2, color: Colors.grey)),
-                              child: Icon(
-                                Icons.location_on,
-                                size: 30,
-                                color: currentTheme.currentTheme.accentColor,
-                              ),
-                            )),
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            child: Text(
-                              'DIRECCIÓN DE ENTREGA',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15,
-                                  color: Colors.grey),
-                            ),
-                          ),
-                          Container(
-                            width: size.width / 1.7,
-                            child: Text(
-                              prefs.addressSearchSave != ''
-                                  ? '${prefs.addressSearchSave.mainText}'
-                                  : '...',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 20,
-                                  color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color:
-                              currentTheme.currentTheme.scaffoldBackgroundColor,
-                        ),
-                        child: Row(
-                          children: [
-                            Material(
-                              color: currentTheme
-                                  .currentTheme.scaffoldBackgroundColor,
-                              borderRadius: BorderRadius.circular(20),
-                              child: InkWell(
-                                splashColor: Colors.grey,
-                                borderRadius: BorderRadius.circular(20),
-                                radius: 40,
-                                onTap: () {
-                                  HapticFeedback.lightImpact();
-
-                                  final place = prefs.addressSearchSave;
-
-                                  var placeSave = new PlaceSearch(
-                                      description: authBloc.storeAuth.user.uid,
-                                      placeId: authBloc.storeAuth.user.uid,
-                                      structuredFormatting:
-                                          new StructuredFormatting(
-                                              mainText: place.mainText,
-                                              secondaryText:
-                                                  place.secondaryText,
-                                              number: place.number));
-                                  Navigator.push(
-                                      context, confirmLocationRoute(placeSave));
-                                },
-                                highlightColor: Colors.grey,
-                                child: Container(
-                                  margin: EdgeInsets.only(left: 5.0),
-                                  alignment: Alignment.center,
-                                  width: 34,
-                                  height: 34,
-                                  child: Icon(
-                                    Icons.edit_outlined,
-                                    color:
-                                        currentTheme.currentTheme.primaryColor,
-                                    size: 25,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                    ],
-                  ),
-                )),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 25.0, right: 25),
-            child: Divider(),
-          ),
-          Container(
-            padding: EdgeInsets.only(left: 20, bottom: 10, top: 10),
-            child: Row(
-              children: [
-                Container(
-                  child: Icon(
-                    Icons.location_city,
-                    color: Colors.grey,
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Container(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    prefs.addressSearchSave != ''
-                        ? '${prefs.addressSearchSave.secondaryText}'
-                        : '...',
-                    style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        fontSize: 20,
-                        color: Colors.grey),
-                  ),
-                ),
-                Spacer(),
-                Container(
-                  child: Icon(
-                    Icons.home_outlined,
-                    color: Colors.grey,
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Container(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    prefs.addressSearchSave != ''
-                        ? '${prefs.addressSearchSave.number}'
-                        : '...',
-                    style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        fontSize: 18,
-                        color: Colors.grey),
-                  ),
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 15.0, right: 15),
-            child: Divider(),
-          ),
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.only(left: 20),
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Entrega',
-                  style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 18,
-                      color: Colors.grey),
-                ),
-              ),
-              Spacer(),
-              Container(
-                padding: EdgeInsets.only(right: 20),
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  (minTimes == 24 && maxTimes == 48)
-                      ? '$minTimes - $maxTimes hrs.'
-                      : '$minTimes - $maxTimes mins.',
-                  style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 18,
-                      color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Divider(),
-        ],
-      ),
-    ),
-  );
-}
-
 SliverToBoxAdapter titleBox(context) {
   return SliverToBoxAdapter(
     child: Padding(
@@ -599,12 +365,12 @@ SliverToBoxAdapter titleBox(context) {
   );
 }
 
-SliverList makeListProducts(
+SliverList makeAddressUserTimeDeliveryProductsStores(
   context,
 ) {
   return SliverList(
       delegate: SliverChildListDelegate([
-    _buildProductsList(context),
+    _addressUserTimeDeliveryProductsStores(context),
   ]));
 }
 
@@ -620,8 +386,11 @@ enum CardType {
 
 List<Object> storesproducts = [];
 
-Widget _buildProductsList(context) {
+Widget _addressUserTimeDeliveryProductsStores(context) {
   final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+  final authBloc = Provider.of<AuthenticationBLoC>(context);
+  final size = MediaQuery.of(context).size;
+  final prefs = new AuthUserPreferences();
 
   var map = Map();
   final bloc = Provider.of<GroceryStoreBLoC>(context);
@@ -632,7 +401,7 @@ Widget _buildProductsList(context) {
       .forEach((e) => map.update(e.product.user, (x) => e, ifAbsent: () => e));
 
   mapList = map.values.toList();
-  final size = MediaQuery.of(context).size;
+
   final cardBloc = Provider.of<CreditCardServices>(context);
 /*   mapList.forEach((item) {
     final product = item.singleWhere((i) => i.user.uid == item.id);
@@ -652,6 +421,9 @@ Widget _buildProductsList(context) {
         Store store;
 
         store = storeBloc.getStoreByProducts(item.product.user);
+
+        final timeDelivery =
+            '${store.timeDelivery}  ${store.timeSelect.toLowerCase()}';
 
         List<dynamic> products = [];
 
@@ -700,6 +472,243 @@ Widget _buildProductsList(context) {
               ),
               child: Column(
                 children: [
+                  Container(
+                    child: Column(
+                      children: [
+                        FadeIn(
+                          child: Container(
+                              padding: EdgeInsets.only(top: 0.0),
+                              color: currentTheme.scaffoldBackgroundColor,
+                              child: Container(
+                                padding: EdgeInsets.only(
+                                    left: size.width / 20, top: 0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        //Navigator.of(context).pop();
+                                      },
+                                      child: new Align(
+                                          alignment: Alignment.topCenter,
+                                          child: Container(
+                                            margin: EdgeInsets.only(right: 20),
+                                            padding: EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(100),
+                                                border: Border.all(
+                                                    width: 2,
+                                                    color: Colors.grey)),
+                                            child: Icon(
+                                              Icons.location_on,
+                                              size: 30,
+                                              color: currentTheme.accentColor,
+                                            ),
+                                          )),
+                                    ),
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          child: Text(
+                                            'DIRECCIÓN DE ENTREGA',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 15,
+                                                color: Colors.grey),
+                                          ),
+                                        ),
+                                        Container(
+                                          width: size.width / 1.7,
+                                          child: Text(
+                                            prefs.addressSearchSave != ''
+                                                ? '${prefs.addressSearchSave.mainText}'
+                                                : '...',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.normal,
+                                                fontSize: 20,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: currentTheme
+                                            .scaffoldBackgroundColor,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Material(
+                                            color: currentTheme
+                                                .scaffoldBackgroundColor,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            child: InkWell(
+                                              splashColor: Colors.grey,
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              radius: 40,
+                                              onTap: () {
+                                                HapticFeedback.lightImpact();
+
+                                                final place =
+                                                    prefs.addressSearchSave;
+
+                                                var placeSave = new PlaceSearch(
+                                                    description: authBloc
+                                                        .storeAuth.user.uid,
+                                                    placeId: authBloc
+                                                        .storeAuth.user.uid,
+                                                    structuredFormatting:
+                                                        new StructuredFormatting(
+                                                            mainText:
+                                                                place.mainText,
+                                                            secondaryText: place
+                                                                .secondaryText,
+                                                            number:
+                                                                place.number));
+                                                Navigator.push(
+                                                    context,
+                                                    confirmLocationRoute(
+                                                        placeSave));
+                                              },
+                                              highlightColor: Colors.grey,
+                                              child: Container(
+                                                margin:
+                                                    EdgeInsets.only(left: 5.0),
+                                                alignment: Alignment.center,
+                                                width: 34,
+                                                height: 34,
+                                                child: Icon(
+                                                  Icons.edit_outlined,
+                                                  color:
+                                                      currentTheme.primaryColor,
+                                                  size: 25,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                  ],
+                                ),
+                              )),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 25.0, right: 25),
+                          child: Divider(),
+                        ),
+                        Container(
+                          padding:
+                              EdgeInsets.only(left: 20, bottom: 10, top: 10),
+                          child: Row(
+                            children: [
+                              Container(
+                                child: Icon(
+                                  Icons.location_city,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  prefs.addressSearchSave != ''
+                                      ? '${prefs.addressSearchSave.secondaryText}'
+                                      : '...',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 20,
+                                      color: Colors.grey),
+                                ),
+                              ),
+                              Spacer(),
+                              Container(
+                                child: Icon(
+                                  Icons.home_outlined,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  prefs.addressSearchSave != ''
+                                      ? '${prefs.addressSearchSave.number}'
+                                      : '...',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18,
+                                      color: Colors.grey),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15.0, right: 15),
+                          child: Divider(),
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(left: 20),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Entrega',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 18,
+                                    color: Colors.grey),
+                              ),
+                            ),
+                            Spacer(),
+                            Container(
+                              padding: EdgeInsets.only(right: 20),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                '$timeDelivery',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 18,
+                                    color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Divider(),
+                      ],
+                    ),
+                  ),
                   if (!store.notLocation)
                     Row(
                         crossAxisAlignment: CrossAxisAlignment.start,

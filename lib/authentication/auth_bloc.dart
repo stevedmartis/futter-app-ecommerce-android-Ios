@@ -505,6 +505,7 @@ class AuthenticationBLoC with ChangeNotifier {
     String uid,
     bool visibility,
     String time,
+    String timeSelect,
     int off,
   ) async {
     // this.authenticated = true;
@@ -515,6 +516,7 @@ class AuthenticationBLoC with ChangeNotifier {
       'uid': uid,
       'visibility': visibility,
       'time': time,
+      'timeSelect': timeSelect,
       'off': off
     };
 

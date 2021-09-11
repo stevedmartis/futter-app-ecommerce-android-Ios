@@ -503,6 +503,9 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
 
     quantityFirstSecond = firstProduct.quantity + secondProduct.quantity;
   }
+
+  final timeDelivery =
+      '${store.timeDelivery}  ${store.timeSelect.toLowerCase()}';
   return Padding(
     padding: const EdgeInsets.all(15.0),
     child: Card(
@@ -598,7 +601,7 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                                   width: 5.0,
                                 ),
                               ],
-                            )
+                            ),
                           ],
                         ),
                         Spacer(),
@@ -698,6 +701,40 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                     ),
               ],
             ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 15.0, right: 15),
+            child: Divider(),
+          ),
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.only(left: 20),
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Entrega',
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 18,
+                      color: Colors.grey),
+                ),
+              ),
+              Spacer(),
+              Container(
+                padding: EdgeInsets.only(right: 20),
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '$timeDelivery',
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 18,
+                      color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 10,
           ),
           Divider(),
           SizedBox(height: 10),

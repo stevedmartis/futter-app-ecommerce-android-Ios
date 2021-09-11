@@ -21,6 +21,7 @@ class Store {
       this.lastName = "",
       this.imageAvatar = "",
       this.timeDelivery,
+      this.timeSelect,
       this.percentOff,
       this.trophys = 0,
       this.isEco = false,
@@ -59,6 +60,7 @@ class Store {
   String instagram;
   int service;
   String timeDelivery;
+  String timeSelect;
   int percentOff;
   int trophys;
   bool isEco;
@@ -74,6 +76,7 @@ class Store {
         imageAvatar: json["imageAvatar"],
         service: json["service"],
         timeDelivery: json["time_delivery"],
+        timeSelect: json["timeSelect"],
         percentOff: json["percentOff"],
         trophys: json["trophys"],
         isEco: json["isEco"],
@@ -100,6 +103,7 @@ class Store {
         "imageAvatar": imageAvatar,
         "service": service,
         "timeDelivery": timeDelivery,
+        "timeSelect": timeSelect,
         "percentOff": percentOff,
         "trophys": trophys,
         "isEco": isEco,

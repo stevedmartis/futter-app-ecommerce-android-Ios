@@ -258,7 +258,7 @@ class EditProfilePageState extends State<EditProfilePage> {
     final PlacesSearch address = prefs.addressSearchSave;
 
     final isEmail = (store.user.email != "");
-    final isPhone = (store.user.phone != "0");
+    final isPhone = (store.user.phone != "");
 
     final isInstagram = (store.instagram != "");
     final isOff = (store.percentOff != 0);
@@ -635,9 +635,9 @@ class EditProfilePageState extends State<EditProfilePage> {
                                                   style: TextStyle(
                                                       color: Colors.grey),
                                                 ),
-                                              if (isPhone)
+                                              if (!isPhone)
                                                 Text(
-                                                  ',',
+                                                  ', ',
                                                   style: TextStyle(
                                                       color: Colors.grey),
                                                 ),

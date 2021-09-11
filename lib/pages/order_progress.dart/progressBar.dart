@@ -278,7 +278,7 @@ class _AnimatedBarState extends State<AnimatedBar>
       final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
       String textOne = (widget.isStore)
-          ? "Prepara el pedido ..."
+          ? "Nuevo pedido recibido."
           : "El pedido esta en proceso ...";
 
       String textTwo = (widget.isStore)
@@ -305,7 +305,7 @@ class _AnimatedBarState extends State<AnimatedBar>
       }
 
       if (widget.isStore && widget.order.isCancelByStore)
-        actualText = 'Pedido cancelado.';
+        actualText = 'Cancelaste el pedido.';
 
       if (!widget.isStore && widget.order.isCancelByStore)
         actualText = 'Pedido cancelado por la tienda.';

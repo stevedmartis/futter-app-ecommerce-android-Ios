@@ -297,6 +297,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
             GestureDetector(
               onTap: () => {
                 HapticFeedback.mediumImpact(),
+                SystemSound.play(SystemSoundType.click),
                 /* (bloc.cart.length > 0)
                     ? Navigator.push(context, orderDetailRoute())
                     : null */
