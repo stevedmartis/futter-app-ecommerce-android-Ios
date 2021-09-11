@@ -185,7 +185,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
       notifiModel.numberNotifiBell = number;
 
       if (!orderService.loading)
-        Timer(new Duration(seconds: 1), () {
+        Timer(new Duration(milliseconds: 300), () {
           setState(() {
             orderService.loading = true;
           });
@@ -229,7 +229,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
       notifiModel.numberNotifiBell = number;
 
       if (!orderService.loading)
-        Timer(new Duration(seconds: 1), () {
+        Timer(new Duration(milliseconds: 300), () {
           setState(() {
             orderService.loading = true;
           });
@@ -544,10 +544,13 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                 ),
                 if (orderClientActive.length > 0)
                   makeListHorizontalCarouselOrdersProgress(
-                      context, orderClientActive),
+                      context, orderClientActive, ordersStoreActive),
                 if (storeAuth.service != 0 && ordersStoreActive.length > 0)
                   makeListHorizontalCarouselOrdersStoreProgress(
                       context, ordersStoreActive),
+                if (orderClientActive.length == 0 &&
+                    ordersStoreActive.length == 0)
+                  makeSpaceTitle(),
                 if (orderService.loading)
                   SliverAppBar(
                     automaticallyImplyLeading: false,
@@ -606,7 +609,7 @@ SliverPersistentHeader makeSpaceTitle() {
       floating: true,
       pinned: true,
       delegate: SliverCustomHeaderDelegate(
-          minHeight: 8.0, maxHeight: 8.0, child: Container()));
+          minHeight: 10.0, maxHeight: 10.0, child: Container()));
 }
 
 SliverPersistentHeader makeHeaderTitle(context, String titleService) {
@@ -656,48 +659,42 @@ SliverList makeListRecomendations(bool loading) {
   );
 }
 
-SliverList makeListHorizontalCarouselOrdersProgress(
-    context, List<Order> orderNotificationClient) {
+SliverList makeListHorizontalCarouselOrdersProgress(context,
+    List<Order> orderNotificationClient, List<Order> orderNotificationStore) {
   final orderService = Provider.of<OrderService>(context);
   final size = MediaQuery.of(context).size;
   return SliverList(
     delegate: SliverChildListDelegate([
       Padding(
         padding: EdgeInsets.only(
-            top: (orderNotificationClient.length > 0) ? 10.0 : 0, bottom: 10),
+            top: (orderNotificationClient.length > 0) ? 10.0 : 0,
+            bottom: (orderNotificationStore.length > 0) ? 0 : 10),
         child: SizedBox(
-          child: (!orderService.loading)
-              ? Container(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  child: buildLoadingWidget(context))
-              : (orderService.orders.length > 0)
-                  ? FadeInRight(
-                      child: CarouselSlider(
-                        items: List.generate(
-                          orderNotificationClient.length,
-                          (index) => OrderprogressStoreCard(
-                            order: orderNotificationClient[index],
-                            isStore: false,
-                          ),
-                        ),
-                        options: CarouselOptions(
-                            viewportFraction:
-                                (orderNotificationClient.length > 1)
-                                    ? 0.8
-                                    : 0.9,
-                            aspectRatio: size.height / 40 / 5.5,
-                            initialPage: 0,
-                            enableInfiniteScroll: false,
-                            reverse: false,
-                            autoPlay: true,
-                            autoPlayInterval: Duration(seconds: 5),
-                            autoPlayAnimationDuration:
-                                Duration(milliseconds: 800),
-                            scrollDirection: Axis.horizontal,
-                            onPageChanged: (index, reason) {}),
+          child: (orderService.orders.length > 0)
+              ? FadeInRight(
+                  child: CarouselSlider(
+                    items: List.generate(
+                      orderNotificationClient.length,
+                      (index) => OrderprogressStoreCard(
+                        order: orderNotificationClient[index],
+                        isStore: false,
                       ),
-                    )
-                  : Container(),
+                    ),
+                    options: CarouselOptions(
+                        viewportFraction:
+                            (orderNotificationClient.length > 1) ? 0.8 : 0.9,
+                        aspectRatio: size.height / 40 / 5.5,
+                        initialPage: 0,
+                        enableInfiniteScroll: false,
+                        reverse: false,
+                        autoPlay: true,
+                        autoPlayInterval: Duration(seconds: 5),
+                        autoPlayAnimationDuration: Duration(milliseconds: 800),
+                        scrollDirection: Axis.horizontal,
+                        onPageChanged: (index, reason) {}),
+                  ),
+                )
+              : Container(),
         ),
       ),
     ]),
@@ -711,8 +708,7 @@ SliverList makeListHorizontalCarouselOrdersStoreProgress(
     delegate: SliverChildListDelegate([
       Padding(
         padding: EdgeInsets.only(
-            top: (orderNotificationStore.length > 0) ? 10.0 : 0,
-            bottom: (orderNotificationStore.length > 0) ? 10.0 : 0),
+            top: 10, bottom: (orderNotificationStore.length > 0) ? 10.0 : 0),
         child: SizedBox(
           child: (orderNotificationStore.length > 0)
               ? FadeInRight(

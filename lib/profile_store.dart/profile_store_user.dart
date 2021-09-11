@@ -260,11 +260,6 @@ void _listenNotification(context) {
   int number = notifiModel.numberNotifiBell;
   number++;
   notifiModel.numberNotifiBell = number;
-
-  if (number >= 2) {
-    final controller = notifiModel.bounceControllerBell;
-    controller.forward(from: 0.0);
-  }
 }
 
 String heroTag = '';

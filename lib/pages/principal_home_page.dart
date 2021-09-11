@@ -245,7 +245,7 @@ class _PrincipalPageState extends State<PrincipalPage>
       notifiModel.numberNotifiBell = number;
 
       if (!orderService.loading)
-        Timer(new Duration(seconds: 2), () {
+        Timer(new Duration(milliseconds: 300), () {
           setState(() {
             orderService.loading = true;
           });
@@ -285,7 +285,7 @@ class _PrincipalPageState extends State<PrincipalPage>
       notifiModel.numberNotifiBell = number;
 
       if (!orderService.loading)
-        Timer(new Duration(seconds: 2), () {
+        Timer(new Duration(milliseconds: 300), () {
           setState(() {
             orderService.loading = true;
           });

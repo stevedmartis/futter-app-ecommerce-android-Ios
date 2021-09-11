@@ -41,7 +41,7 @@ void main() async {
     ChangeNotifierProvider(create: (_) => MenuModel()),
     ChangeNotifierProvider(create: (_) => AuthenticationBLoC()),
     ChangeNotifierProvider(create: (_) => SocketService()),
-    ChangeNotifierProvider(create: (_) => ThemeChanger(3)),
+    ChangeNotifierProvider(create: (_) => ThemeChanger(1)),
     ChangeNotifierProvider(create: (_) => NotificationModel()),
     ChangeNotifierProvider(create: (_) => StoreBLoC()),
     ChangeNotifierProvider(create: (_) => MyLocationBloc()),
