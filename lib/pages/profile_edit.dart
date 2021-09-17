@@ -190,7 +190,7 @@ class EditProfilePageState extends State<EditProfilePage> {
   }
 
   String uploadedImage = '';
-  Size imageSize = Size(256.0, 170.0);
+  Size imageSize = Size(1800.0, 680.0);
   Rect region;
   PaletteGenerator paletteGenerator;
   ImageProvider imageStore;
@@ -219,7 +219,7 @@ class EditProfilePageState extends State<EditProfilePage> {
   Future<void> _updatePaletteGenerator(Rect newRegion) async {
     paletteGenerator = await PaletteGenerator.fromImageProvider(
       imageStore,
-      size: Size(256.0, 170.0),
+      size: imageSize,
       region: newRegion,
       maximumColorCount: 20,
     );

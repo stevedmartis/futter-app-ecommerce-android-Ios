@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:freeily/authentication/auth_bloc.dart';
@@ -143,6 +142,7 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final size = MediaQuery.of(context).size;
     final followService = Provider.of<FollowService>(context);
+
     void messageToWhatsapp(String number) async {
       await launch("https://wa.me/56$number?text=Hola!");
     }
@@ -248,7 +248,7 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                                                       20),
                                                 ],
                                                 focusNode: _focusNode,
-                                                autofocus: true,
+
                                                 controller: textCtrl,
                                                 //  keyboardType: TextInputType.emailAddress,
 
@@ -277,7 +277,7 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                                                             .cardColor,
                                                         width: 0.0),
                                                   ),
-                                                  hintText: '',
+                                                  hintText: 'Buscar productos',
                                                   //  labelText: 'Buscar ...',
                                                   //counterText: snapshot.data,
                                                   //  errorText: snapshot.error
@@ -339,7 +339,9 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                     floating: false,
                     pinned: true,
                     flexibleSpace: FlexibleSpaceBar(
-                      title: SABT(child: Text(widget.store.name)),
+                      title: FadeInUp(
+                          duration: Duration(milliseconds: 300),
+                          child: SABT(child: Text(widget.store.name))),
                       stretchModes: [
                         StretchMode.zoomBackground,
                         StretchMode.fadeTitle,
@@ -1114,8 +1116,7 @@ class _SABTState extends State<SABT> {
   Widget build(BuildContext context) {
     return Visibility(
       visible: _visible,
-      child:
-          FadeInUp(duration: Duration(microseconds: 200), child: widget.child),
+      child: widget.child,
     );
   }
 }

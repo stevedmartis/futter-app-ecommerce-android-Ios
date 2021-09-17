@@ -2,10 +2,11 @@ import 'package:animate_do/animate_do.dart';
 import 'package:freeily/authentication/auth_bloc.dart';
 import 'package:freeily/bloc_globals/notitification.dart';
 import 'package:freeily/grocery_store/grocery_store_bloc.dart';
+import 'package:freeily/pages/onboarding/pages/menu_drawer.dart';
 
 import 'package:freeily/profile_store.dart/profile_store_user.dart';
 import 'package:freeily/routes/routes.dart';
-import 'package:freeily/services/follow_service.dart';
+
 import 'package:freeily/theme/theme.dart';
 import 'package:freeily/widgets/circular_progress.dart';
 import 'package:freeily/widgets/cover_photo.dart';
@@ -14,7 +15,7 @@ import 'package:freeily/widgets/image_cached.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:freeily/profile_store.dart/product_detail.dart';
 import 'package:freeily/store_product_concept/store_product_bloc.dart';
 import 'package:freeily/store_product_concept/store_product_data.dart';
@@ -24,7 +25,7 @@ import 'package:intl/intl.dart';
 import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
+
 import '../global/extension.dart';
 
 const _blueColor = Color(0xFF00649FE);
@@ -82,18 +83,15 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
     final _bloc = Provider.of<TabsViewScrollBLoC>(context);
     final authBloc = Provider.of<AuthenticationBLoC>(context);
     final size = MediaQuery.of(context).size;
-    final followService = Provider.of<FollowService>(context);
-    void messageToWhatsapp(String number) async {
-      await launch("https://wa.me/56$number?text=Hola!");
-    }
 
     final storeAuth = authBloc.storeAuth;
-    final phoneStore = storeAuth.user.phone.toString();
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(new FocusNode());
       },
       child: Scaffold(
+          endDrawer: PrincipalMenu(),
           backgroundColor: currentTheme.scaffoldBackgroundColor,
           body: SafeArea(
               child: AnimatedBuilder(
@@ -104,23 +102,10 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
                 controller: _bloc.scrollController2,
                 slivers: [
                   SliverAppBar(
-                    leading: Container(),
-                    actions: [
-                      if (phoneStore != "")
-                        Container(
-                          child: IconButton(
-                            icon: FaIcon(FontAwesomeIcons.whatsapp,
-                                color: currentTheme.primaryColor),
-                            iconSize: 30,
-                            onPressed: () {
-                              HapticFeedback.lightImpact();
-                              messageToWhatsapp(
-                                  storeAuth.user.phone.toString());
-                            },
-                            color: Colors.blueAccent,
-                          ),
-                        ),
+                    actions: <Widget>[
+                      new Container(),
                     ],
+                    leading: Container(),
                     leadingWidth: 0,
                     backgroundColor: Color(int.parse(storeAuth.colorVibrant)),
                     title: Container(
@@ -188,7 +173,7 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
                                                       20),
                                                 ],
                                                 focusNode: _focusNode,
-                                                autofocus: true,
+
                                                 controller: textCtrl,
                                                 //  keyboardType: TextInputType.emailAddress,
 
@@ -217,7 +202,7 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
                                                             .cardColor,
                                                         width: 0.0),
                                                   ),
-                                                  hintText: '',
+                                                  hintText: 'Buscar productos',
                                                   //  labelText: 'Buscar ...',
                                                   //counterText: snapshot.data,
                                                   //  errorText: snapshot.error
@@ -270,7 +255,35 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
                                         ],
                                       ),
                                     ))),
-                            SizedBox(width: 10),
+                            SizedBox(width: 20),
+                            Container(
+                              alignment: Alignment.centerLeft,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: currentTheme.cardColor),
+                              child: Material(
+                                color: currentTheme.cardColor,
+                                borderRadius: BorderRadius.circular(20),
+                                child: InkWell(
+                                  splashColor: Colors.grey,
+                                  borderRadius: BorderRadius.circular(20),
+                                  radius: 30,
+                                  onTap: () {
+                                    HapticFeedback.lightImpact();
+                                    Scaffold.of(context).openEndDrawer();
+                                  },
+                                  highlightColor: Colors.grey,
+                                  child: Container(
+                                    width: 34,
+                                    height: 34,
+                                    child: Icon(
+                                      Icons.menu,
+                                      color: currentTheme.primaryColor,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         )),
                     stretch: true,
@@ -279,7 +292,9 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
                     floating: false,
                     pinned: true,
                     flexibleSpace: FlexibleSpaceBar(
-                      title: SABT(child: Text(storeAuth.name)),
+                      title: FadeInUp(
+                          duration: Duration(milliseconds: 300),
+                          child: SABT(child: Text(storeAuth.name))),
                       stretchModes: [
                         StretchMode.zoomBackground,
                         StretchMode.fadeTitle,
@@ -400,7 +415,7 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
                                           ],
                                         ))),
 
-                                if (followService.followers > 0)
+                                if (storeAuth.followers > 0)
                                   Positioned(
                                       bottom: size.height * 0.03,
                                       left: size.width / 2.8,
@@ -411,7 +426,7 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
                                           child: Row(
                                             children: [
                                               Text(
-                                                '${followService.followers} ',
+                                                '${storeAuth.followers} ',
                                                 style: TextStyle(
                                                     fontSize: 16,
                                                     fontWeight:

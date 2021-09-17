@@ -28,7 +28,7 @@ class BackgroundSliver extends StatelessWidget {
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                stops: [0, 0, 0.6, 1],
+                stops: [0, 0, 0.3, 1],
                 tileMode: TileMode.clamp),
           ),
         ));
