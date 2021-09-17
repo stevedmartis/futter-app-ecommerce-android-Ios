@@ -21,9 +21,9 @@ class TabsViewScrollBLoC with ChangeNotifier {
   TabController tabController;
   ScrollController scrollController = ScrollController();
   ScrollController hideBottomNavController;
-
+  bool isScrollColor = false;
   ScrollController scrollController2 =
-      ScrollController(initialScrollOffset: 200.0);
+      ScrollController(initialScrollOffset: 0.0);
 
   double initialOffset = 0.0;
 
@@ -44,15 +44,15 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
   void initStoreSelect(
       TickerProvider ticker, BuildContext context, Store store) {
-    initialOffset = 200.0;
+    initialOffset = 0.0;
     scrollController2 = ScrollController(initialScrollOffset: initialOffset);
 
     final categoriesByStoreUserId = storeCategoriesProducts
         .where((i) => i.store.user.uid == store.user.uid)
         .toList();
 
-    double offsetFrom = 0.0;
-    double offsetTo = 0.0;
+    double offsetFrom = 200.0;
+    double offsetTo = 200.0;
 
     for (int i = 0; i < categoriesByStoreUserId.length; i++) {
       final category = categoriesByStoreUserId[i];
@@ -93,10 +93,12 @@ class TabsViewScrollBLoC with ChangeNotifier {
     }
 
     scrollController.addListener(_onScrollListener);
+
+    scrollController2.addListener(_onScrollListener);
   }
 
   void init(TickerProvider ticker, BuildContext context) {
-    initialOffset = 260.0;
+    initialOffset = 0.0;
     scrollController2 = ScrollController(initialScrollOffset: initialOffset);
     final authBloc = Provider.of<AuthenticationBLoC>(context, listen: false);
 
@@ -107,8 +109,8 @@ class TabsViewScrollBLoC with ChangeNotifier {
     tabController =
         TabController(vsync: ticker, length: categoriesByStoreUserId.length);
 
-    double offsetFrom = 0.0;
-    double offsetTo = 0.0;
+    double offsetFrom = 200.0;
+    double offsetTo = 200.0;
 
     for (int i = 0; i < categoriesByStoreUserId.length; i++) {
       final category = categoriesByStoreUserId[i];
@@ -161,14 +163,18 @@ class TabsViewScrollBLoC with ChangeNotifier {
           : item.category.name.toLowerCase().contains(value.toLowerCase()));
 
       if (find.length > 0) {
-        final item = tabs.where(
-          (item) => item.category.id == find.first.product.category,
-        );
+        final findProduct = find.where((item) => item.product != null);
 
-        final indexCategory = tabs.indexOf(item.first);
-        // final indexCategory = items.indexOf(categoryById);
+        if (findProduct != null) {
+          final categoryItemFind = tabs.where(
+            (item) => item.category.id == findProduct.first.product.category,
+          );
+          if (categoryItemFind != null) {
+            final indexCategory = tabs.indexOf(categoryItemFind.first);
 
-        onCategorySelected(indexCategory, animationRequired: true);
+            onCategorySelected(indexCategory, animationRequired: true);
+          }
+        }
       }
     } else if (value.length == 0) {
       onCategorySelected(0, animationRequired: true);
@@ -334,31 +340,16 @@ class TabsViewScrollBLoC with ChangeNotifier {
 
   void _onScrollListener() {
     if (_listen) {
-      if (tabs.length > 0)
-        for (int i = 0; i < tabs.length; i++) {
-          final tab = tabs[i];
-
-          if (scrollController.offset >= tab.offsetFrom &&
-              scrollController.offset <= tab.offsetTo &&
-              !tab.selected) {
-            onCategorySelected(i, animationRequired: false);
-
-            tabController.animateTo(i);
-
-            break;
-          }
+      for (int i = 0; i < tabs.length; i++) {
+        final tab = tabs[i];
+        if (scrollController2.offset >= tab.offsetFrom &&
+            scrollController2.offset <= tab.offsetTo &&
+            !tab.selected) {
+          onCategorySelected(i, animationRequired: false);
+          tabController.animateTo(i);
+          break;
         }
-    }
-  }
-
-  void snapAppbar() async {
-    if (scrollController2.offset >= initialOffset || initial) {
-      await scrollController2.animateTo(
-        0.0,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.linear,
-      );
-      initial = false;
+      }
     }
   }
 
@@ -370,26 +361,58 @@ class TabsViewScrollBLoC with ChangeNotifier {
     }
     notifyListeners();
 
-    if (animationRequired && scrollController2.offset >= 0.0) {
-      await scrollController2.animateTo(
-        410,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeIn,
-      );
-
+    if (animationRequired) {
       _listen = false;
-      await scrollController.animateTo(
+
+      print(
         selected.offsetFrom,
-        duration: const Duration(milliseconds: 200),
+      );
+      await scrollController2.animateTo(
+        selected.offsetFrom,
+        duration: const Duration(milliseconds: 500),
         curve: Curves.linear,
       );
       _listen = true;
     }
   }
 
+  void snapAppbar() async {
+    if (scrollController2.offset >= initialOffset || initial) {
+      await scrollController2.animateTo(
+        0.0,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.linear,
+      );
+    }
+  }
+
+  void onTapProducts() async {
+    if (scrollController2.offset == 0.0) {
+      await scrollController2.animateTo(
+        200,
+        duration: const Duration(milliseconds: 800),
+        curve: Curves.slowMiddle,
+      );
+
+      _listen = true;
+    }
+  }
+
+  void onTapStore() async {
+    if (scrollController2.offset >= 0.0) {
+      await scrollController2.animateTo(
+        0.0,
+        duration: const Duration(milliseconds: 800),
+        curve: Curves.decelerate,
+      );
+
+      _listen = true;
+    }
+  }
+
   void hiddenHeader() async {
     await scrollController2.animateTo(
-      410,
+      200,
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeIn,
     );

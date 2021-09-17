@@ -1,12 +1,14 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:freeily/authentication/auth_bloc.dart';
 import 'package:freeily/bloc_globals/notitification.dart';
 import 'package:freeily/grocery_store/grocery_store_bloc.dart';
-import 'package:freeily/models/store.dart';
-import 'package:freeily/pages/onboarding/pages/menu_drawer.dart';
-import 'package:freeily/pages/principal_home_page.dart';
-import 'package:freeily/profile_store.dart/profile.dart';
+
+import 'package:freeily/profile_store.dart/profile_store_user.dart';
 import 'package:freeily/routes/routes.dart';
+import 'package:freeily/services/follow_service.dart';
 import 'package:freeily/theme/theme.dart';
+import 'package:freeily/widgets/circular_progress.dart';
+import 'package:freeily/widgets/cover_photo.dart';
 import 'package:freeily/widgets/elevated_button_style.dart';
 import 'package:freeily/widgets/image_cached.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,14 +18,17 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freeily/profile_store.dart/product_detail.dart';
 import 'package:freeily/store_product_concept/store_product_bloc.dart';
 import 'package:freeily/store_product_concept/store_product_data.dart';
+import 'package:freeily/widgets/sliver_card_animation/background_sliver.dart';
+import 'package:freeily/widgets/sliver_card_animation/body_sliver.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../global/extension.dart';
 
 const _blueColor = Color(0xFF00649FE);
-const _textHighColor = Color(0xFF241E1E);
+
 const _textColor = Color(0xFF5C5657);
 
 class ProfileStoreAuth extends StatefulWidget {
@@ -37,8 +42,6 @@ class ProfileStoreAuth extends StatefulWidget {
 
 class _ProfileStoreState extends State<ProfileStoreAuth>
     with TickerProviderStateMixin {
-  AnimationController _animationController;
-
   double get maxHeight => 400 + MediaQuery.of(context).padding.top;
   double get minHeight => MediaQuery.of(context).padding.bottom;
 
@@ -48,12 +51,6 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
         Provider.of<TabsViewScrollBLoC>(context, listen: false);
 
     if (!productsBloc.initialOK) productsBloc.init(this, context);
-
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-      reverseDuration: const Duration(milliseconds: 1300),
-    );
 
     super.initState();
   }
@@ -82,72 +79,433 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-    final productsBloc = Provider.of<TabsViewScrollBLoC>(context);
+    final _bloc = Provider.of<TabsViewScrollBLoC>(context);
     final authBloc = Provider.of<AuthenticationBLoC>(context);
+    final size = MediaQuery.of(context).size;
+    final followService = Provider.of<FollowService>(context);
+    void messageToWhatsapp(String number) async {
+      await launch("https://wa.me/56$number?text=Hola!");
+    }
 
+    final storeAuth = authBloc.storeAuth;
+    final phoneStore = storeAuth.user.phone.toString();
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(new FocusNode());
       },
       child: Scaffold(
-          endDrawer: PrincipalMenu(),
           backgroundColor: currentTheme.scaffoldBackgroundColor,
           body: SafeArea(
               child: AnimatedBuilder(
-            animation: productsBloc,
-            builder: (_, __) => NestedScrollView(
-                controller: productsBloc.scrollController2,
-                headerSliverBuilder: (context, value) {
-                  return [
-                    SliverPersistentHeader(
-                      delegate: _ProfileStoreHeader(
-                          animationController: _animationController,
-                          isAuthUser: widget.isAuthUser,
-                          store: authBloc.storeAuth),
-                      pinned: true,
-                    ),
-                    SliverPersistentHeader(
-                      pinned: true,
-                      delegate: SliverAppBarDelegate(
-                          minHeight: 70,
-                          maxHeight: 70,
-                          child: Container(
-                            color: currentTheme.scaffoldBackgroundColor,
-                            alignment: Alignment.centerLeft,
-                            child: TabBar(
-                              onTap: productsBloc.onCategorySelected,
-                              controller: productsBloc.tabController,
-                              indicatorWeight: 0.1,
-                              isScrollable: true,
-                              tabs: productsBloc.tabs
-                                  .map((e) => _TabWidget(
-                                        tabCategory: e,
-                                      ))
-                                  .toList(),
+            animation: _bloc,
+            builder: (_, __) => CustomScrollView(
+                physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics()),
+                controller: _bloc.scrollController2,
+                slivers: [
+                  SliverAppBar(
+                    leading: Container(),
+                    actions: [
+                      if (phoneStore != "")
+                        Container(
+                          child: IconButton(
+                            icon: FaIcon(FontAwesomeIcons.whatsapp,
+                                color: currentTheme.primaryColor),
+                            iconSize: 30,
+                            onPressed: () {
+                              HapticFeedback.lightImpact();
+                              messageToWhatsapp(
+                                  storeAuth.user.phone.toString());
+                            },
+                            color: Colors.blueAccent,
+                          ),
+                        ),
+                    ],
+                    leadingWidth: 0,
+                    backgroundColor: Color(int.parse(storeAuth.colorVibrant)),
+                    title: Container(
+                        color: Color(int.parse(storeAuth.colorVibrant)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              alignment: Alignment.centerLeft,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: currentTheme.cardColor),
+                              child: Material(
+                                color: currentTheme.cardColor,
+                                borderRadius: BorderRadius.circular(20),
+                                child: InkWell(
+                                  splashColor: Colors.grey,
+                                  borderRadius: BorderRadius.circular(20),
+                                  radius: 30,
+                                  onTap: () {
+                                    HapticFeedback.lightImpact();
+                                    Navigator.pop(context);
+                                  },
+                                  highlightColor: Colors.grey,
+                                  child: Container(
+                                    width: 34,
+                                    height: 34,
+                                    child: Icon(
+                                      Icons.chevron_left,
+                                      color: currentTheme.primaryColor,
+                                      size: 30,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
-                          )),
-                    ),
-                  ];
-                },
+                            SizedBox(width: 10),
+                            Expanded(
+                                child: AnimatedContainer(
+                                    duration: Duration(milliseconds: 200),
+                                    width: size.width,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                        color: currentTheme.cardColor,
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    child: Container(
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                  color: currentTheme.cardColor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          50)),
+                                              padding: EdgeInsets.only(
+                                                  top: 20, left: 20),
+                                              child: TextField(
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                                inputFormatters: [
+                                                  new LengthLimitingTextInputFormatter(
+                                                      20),
+                                                ],
+                                                focusNode: _focusNode,
+                                                autofocus: true,
+                                                controller: textCtrl,
+                                                //  keyboardType: TextInputType.emailAddress,
 
-                // tab bar view
-                body: Container(
-                  child: ListView.builder(
-                    controller: productsBloc.scrollController,
-                    itemCount: productsBloc.items.length,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    itemBuilder: (context, index) {
-                      final item = productsBloc.items[index];
-                      if (item.isCategory) {
-                        return Container(
-                            child: ProfileStoreCategoryItem(item.category));
-                      } else {
-                        return _ProfileStoreProductItem(
-                            item.product, item.product.category);
-                      }
-                    },
+                                                maxLines: 1,
+
+                                                decoration: InputDecoration(
+                                                  fillColor: Colors.white,
+                                                  enabledBorder:
+                                                      UnderlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: currentTheme
+                                                            .cardColor),
+                                                  ),
+                                                  border: UnderlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: Colors.white),
+                                                  ),
+                                                  labelStyle: TextStyle(
+                                                      color: Colors.white54),
+                                                  // icon: Icon(Icons.perm_identity),
+                                                  //  fillColor: currentTheme.accentColor,
+                                                  focusedBorder:
+                                                      OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: currentTheme
+                                                            .cardColor,
+                                                        width: 0.0),
+                                                  ),
+                                                  hintText: '',
+                                                  //  labelText: 'Buscar ...',
+                                                  //counterText: snapshot.data,
+                                                  //  errorText: snapshot.error
+                                                ),
+                                                onChanged: (value) => _bloc
+                                                    .sharedProductOnStoreCurrent(
+                                                        value),
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: -2,
+                                            child: AnimatedContainer(
+                                                duration:
+                                                    Duration(milliseconds: 200),
+                                                alignment: Alignment.topRight,
+                                                child: Container(
+                                                  width: 40,
+                                                  height: 40,
+                                                  decoration: ShapeDecoration(
+                                                    shadows: [
+                                                      BoxShadow(
+                                                        color: Colors.black
+                                                            .withOpacity(0.50),
+                                                        offset:
+                                                            Offset(3.0, 3.0),
+                                                        blurRadius: 2.0,
+                                                        spreadRadius: 1.0,
+                                                      )
+                                                    ],
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        30.0)),
+                                                    gradient: LinearGradient(
+                                                        colors: gradients,
+                                                        begin:
+                                                            Alignment.topLeft,
+                                                        end: Alignment
+                                                            .bottomRight),
+                                                  ),
+                                                  child: Icon(
+                                                    Icons.search,
+                                                    color: Colors.white,
+                                                  ),
+                                                )),
+                                          )
+                                        ],
+                                      ),
+                                    ))),
+                            SizedBox(width: 10),
+                          ],
+                        )),
+                    stretch: true,
+                    expandedHeight: size.height / 3.2,
+                    collapsedHeight: 100,
+                    floating: false,
+                    pinned: true,
+                    flexibleSpace: FlexibleSpaceBar(
+                      title: SABT(child: Text(storeAuth.name)),
+                      stretchModes: [
+                        StretchMode.zoomBackground,
+                        StretchMode.fadeTitle,
+                        // StretchMode.blurBackground
+                      ],
+                      background: GestureDetector(
+                        onTap: () => {_bloc.onTapStore()},
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: ClipRRect(
+                            /*  borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(30.0),
+                                bottomRight: Radius.circular(30.0),
+                              ), */
+                            child: Stack(
+                              children: [
+                                BackgroundSliver(
+                                    colorVibrant: storeAuth.colorVibrant),
+
+                                Positioned(
+                                  bottom: size.height * 0.03,
+                                  left: size.width / 20,
+                                  child: Hero(
+                                      tag:
+                                          'user_auth_avatar_list_${storeAuth.imageAvatar}',
+                                      child: CoverPhoto(
+                                          imageAvatar: storeAuth.imageAvatar,
+                                          size: size)),
+                                ),
+
+                                Positioned(
+                                    bottom: size.height * 0.17,
+                                    left: size.width / 2.8,
+                                    child: AnimatedOpacity(
+                                      duration:
+                                          const Duration(milliseconds: 200),
+                                      opacity: 1.0,
+                                      child: Container(
+                                        width: size.width / 1.5,
+                                        child: Text(
+                                          storeAuth.name.capitalize(),
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w600),
+                                          textAlign: TextAlign.start,
+                                        ),
+                                      ),
+                                    )),
+
+                                Positioned(
+                                    bottom: size.height * 0.14,
+                                    left: size.width / 2.8,
+                                    child: AnimatedOpacity(
+                                      duration:
+                                          const Duration(milliseconds: 200),
+                                      opacity: 1.0,
+                                      child: Container(
+                                        width: size.width / 1.5,
+                                        child: Text(
+                                          '@${storeAuth.user.username}',
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.normal,
+                                              color: Colors.grey),
+                                          textAlign: TextAlign.start,
+                                        ),
+                                      ),
+                                    )),
+
+                                Positioned(
+                                    bottom: size.height * 0.11,
+                                    left: size.width / 2.8,
+                                    child: AnimatedOpacity(
+                                      duration:
+                                          const Duration(milliseconds: 200),
+                                      opacity: 1.0,
+                                      child: Container(
+                                        width: size.width / 1.5,
+                                        child: Text(
+                                          '${storeAuth.about}',
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.normal,
+                                              color: Colors.grey),
+                                          textAlign: TextAlign.start,
+                                        ),
+                                      ),
+                                    )),
+
+                                Positioned(
+                                    bottom: size.height * 0.06,
+                                    left: size.width / 2.8,
+                                    child: AnimatedOpacity(
+                                        duration:
+                                            const Duration(milliseconds: 200),
+                                        opacity: 1.0,
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              '${storeAuth.timeDelivery} ',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: Colors.white),
+                                              textAlign: TextAlign.start,
+                                            ),
+                                            Text(
+                                              '${storeAuth.timeSelect}',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: Colors.grey),
+                                              textAlign: TextAlign.start,
+                                            ),
+                                          ],
+                                        ))),
+
+                                if (followService.followers > 0)
+                                  Positioned(
+                                      bottom: size.height * 0.03,
+                                      left: size.width / 2.8,
+                                      child: AnimatedOpacity(
+                                          duration:
+                                              const Duration(milliseconds: 200),
+                                          opacity: 1.0,
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                '${followService.followers} ',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color: Colors.white),
+                                                textAlign: TextAlign.start,
+                                              ),
+                                              Text(
+                                                'Seguidores',
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color: Colors.grey),
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ],
+                                          )))
+
+                                //FavoriteCircle(size: size, percent: percent)
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      centerTitle: true,
+                    ),
                   ),
-                )),
+                  SliverToBoxAdapter(
+                    child: Body(
+                      size: size,
+                      store: storeAuth,
+                      isAuth: true,
+                    ),
+                  ),
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: SliverAppBarDelegate(
+                        minHeight: 50,
+                        maxHeight: 50,
+                        child: Container(
+                          color: currentTheme.scaffoldBackgroundColor,
+                          alignment: Alignment.centerLeft,
+                          child: (!loading)
+                              ? TabBar(
+                                  onTap: _bloc.onCategorySelected,
+                                  controller: _bloc.tabController,
+                                  indicatorWeight: 0.1,
+                                  isScrollable: true,
+                                  tabs: _bloc.tabs
+                                      .map((e) =>
+                                          (e.category.products.length > 0)
+                                              ? FadeInLeft(
+                                                  child: _TabWidget(
+                                                    tabCategory: e,
+                                                  ),
+                                                )
+                                              : Container())
+                                      .toList(),
+                                )
+                              : Container(),
+                        )),
+                  ),
+                  SliverToBoxAdapter(
+                    child: (!loading)
+                        ? Container(
+                            child: ListView.builder(
+                              primary: false,
+                              shrinkWrap: true,
+                              controller: _bloc.scrollController,
+                              itemCount: _bloc.items.length,
+                              padding: EdgeInsets.only(
+                                  left: 20,
+                                  right: 20,
+                                  bottom: (_bloc.items.length > 4) ? 0 : 200),
+                              itemBuilder: (context, index) {
+                                final item = _bloc.items[index];
+                                if (item.isCategory) {
+                                  return Container(
+                                      child: ProfileStoreCategoryItem(
+                                          item.category));
+                                } else {
+                                  return _ProfileStoreProductItem(
+                                      item.product, item.product.category);
+                                }
+                              },
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 200.0),
+                            child: buildLoadingWidget(context),
+                          ),
+                  ),
+                ]),
           ))),
     );
   }
@@ -362,319 +720,6 @@ const List<Color> gradients = [
   Color(0xffF78C39),
   Color(0xffFEB42C),
 ];
-
-const _maxHeaderExtent = 410.0;
-const _minHeaderExtent = 150.0;
-
-const _maxImageSize = 160.0;
-const _minImageSize = 60.0;
-
-const _leftMarginDisc = 100.0;
-
-const _bottomMarginDisc = 150.0;
-
-const _bottomMarginName = 270.0;
-
-const _maxTitleSize = 25.0;
-const _maxSubTitleSize = 18.0;
-
-const _minTitleSize = 16.0;
-const _minSubTitleSize = 12.0;
-
-class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
-  _ProfileStoreHeader(
-      {this.animationController, this.isAuthUser, @required this.store});
-  final AnimationController animationController;
-
-  final bool isAuthUser;
-  final Store store;
-
-  GlobalKey<ScaffoldState> scaffolKey = GlobalKey<ScaffoldState>();
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    final currentTheme = Provider.of<ThemeChanger>(context);
-
-    final productsBloc = Provider.of<TabsViewScrollBLoC>(context);
-
-    final authBloc = Provider.of<AuthenticationBLoC>(context);
-
-    final percent = 1 -
-        ((maxExtent - shrinkOffset - minExtent) / (maxExtent - minExtent))
-            .clamp(0.0, 1.0);
-    final size = MediaQuery.of(context).size;
-    final currentImageSize = (_maxImageSize * (1 - percent)).clamp(
-      _minImageSize,
-      _maxImageSize,
-    );
-    final titleSize = (_maxTitleSize * (1.75 - percent)).clamp(
-      _minTitleSize,
-      _maxTitleSize,
-    );
-
-    final subTitleSize = (_maxSubTitleSize * (1.80 - percent)).clamp(
-      _minSubTitleSize,
-      _maxSubTitleSize,
-    );
-
-    final maxMargin = size.width / 4;
-    final textMovement = 5.0;
-    final leftTextMargin = maxMargin + (textMovement * percent);
-
-    final username = authBloc.storeAuth.user.username;
-
-    return GestureDetector(
-      onTap: () => {
-        productsBloc.snapAppbar(),
-      },
-      child: Container(
-        color: currentTheme.currentTheme.scaffoldBackgroundColor,
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              top: 18.0,
-              child: IconButton(
-                icon: FaIcon(FontAwesomeIcons.chevronLeft,
-                    color: currentTheme.currentTheme.primaryColor),
-                iconSize: 25,
-                onPressed: () => {
-                  HapticFeedback.lightImpact(),
-                  if (authBloc.storeAuth.user.first)
-                    {
-                      Navigator.push(context, principalHomeRoute()),
-                      Provider.of<MenuModel>(context, listen: false)
-                          .currentPage = 0,
-                    }
-                  else
-                    {
-                      Navigator.pop(context),
-                    }
-                },
-                color: Colors.blueAccent,
-              ),
-            ),
-            if (productsBloc.items.length > 0)
-              Positioned(
-                top: 20,
-                left: 50,
-                width: size.width / 1.4,
-                height: 40,
-                child: GestureDetector(
-                  onTap: () => {
-                    FocusScope.of(context).requestFocus(_focusNode),
-                  },
-                  child: Container(
-                      width: size.width,
-                      decoration: BoxDecoration(
-                          color: currentTheme.currentTheme.cardColor,
-                          borderRadius: BorderRadius.circular(20)),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              width: size.width,
-                              padding: EdgeInsets.only(top: 20, left: 20),
-                              child: TextField(
-                                style: TextStyle(color: Colors.white),
-                                inputFormatters: [
-                                  new LengthLimitingTextInputFormatter(20),
-                                ],
-                                focusNode: _focusNode,
-                                controller: textCtrl,
-                                maxLines: 1,
-                                decoration: InputDecoration(
-                                  fillColor: Colors.white,
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: currentTheme
-                                            .currentTheme.cardColor),
-                                  ),
-                                  border: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.white),
-                                  ),
-                                  labelStyle: TextStyle(color: Colors.white54),
-                                  // icon: Icon(Icons.perm_identity),
-                                  //  fillColor: currentTheme.accentColor,
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color:
-                                            currentTheme.currentTheme.cardColor,
-                                        width: 0.0),
-                                  ),
-                                  hintText: 'Buscar productos ...',
-                                ),
-                                onChanged: (value) => productsBloc
-                                    .sharedProductOnStoreCurrent(value),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: -2,
-                            child: AnimatedContainer(
-                                duration: Duration(milliseconds: 200),
-                                alignment: Alignment.topRight,
-                                child: Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: ShapeDecoration(
-                                    shadows: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.50),
-                                        offset: Offset(3.0, 3.0),
-                                        blurRadius: 2.0,
-                                        spreadRadius: 1.0,
-                                      )
-                                    ],
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(30.0)),
-                                    gradient: LinearGradient(
-                                        colors: gradients,
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight),
-                                  ),
-                                  child: Icon(
-                                    Icons.search,
-                                    color: Colors.white,
-                                  ),
-                                )),
-                          )
-                        ],
-                      )),
-                ),
-              ),
-            Positioned(
-              top: (_bottomMarginName * (1 - percent))
-                  .clamp(75.0, _bottomMarginName),
-              left: leftTextMargin,
-              height: _maxImageSize,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    width:
-                        (percent <= 0.9) ? size.width / 2.1 : size.width / 2.8,
-                    child: Text(
-                      store.name,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: titleSize,
-                        letterSpacing: -0.5,
-                        color: (currentTheme.customTheme)
-                            ? Colors.white
-                            : _textHighColor,
-                      ),
-                    ),
-                  ),
-                  AnimatedContainer(
-                    width: (percent <= 0.9) ? size.width / 1.3 : size.width / 3,
-                    duration: Duration(milliseconds: 100),
-                    child: Text(
-                      '@$username',
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: TextStyle(
-                        fontSize: subTitleSize,
-                        letterSpacing: -0.5,
-                        color: (currentTheme.customTheme)
-                            ? Colors.white54
-                            : _textColor,
-                      ),
-                    ),
-                  ),
-                  if (authBloc.storeAuth.followers > 0)
-                    AnimatedContainer(
-                      duration: Duration(milliseconds: 100),
-                      child: Text(
-                        '${authBloc.storeAuth.followers}  Seguidores',
-                        style: TextStyle(
-                          fontSize: subTitleSize,
-                          letterSpacing: -0.5,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            ButtonEditProfile(percent: percent, left: leftTextMargin),
-
-            /*  Positioned(
-              bottom: 20.0,
-              left: (_leftMarginDisc * (1 - percent))
-                  .clamp(33.0, _leftMarginDisc),
-              height: currentImageSize,
-              child: Transform.rotate(
-                angle: vector.radians(360 * -percent),
-                child: Image.asset(
-                  currentAlbum.imageDisc,
-                ),
-              ),
-            ), */
-
-            Positioned(
-                bottom: (_bottomMarginDisc * (1 - percent))
-                    .clamp(20.0, _bottomMarginDisc),
-                left: (_leftMarginDisc * (1 - percent))
-                    .clamp(20.0, _leftMarginDisc),
-                height: currentImageSize,
-                child: Hero(
-                  tag: (isAuthUser)
-                      ? (authBloc.redirect != 'header')
-                          ? 'user_auth_avatar'
-                          : 'user_auth_avatar-header'
-                      : 'user_auth_avatar_list',
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(100.0)),
-                    child: (authBloc.storeAuth.imageAvatar != "")
-                        ? Container(
-                            height: currentImageSize,
-                            width: currentImageSize,
-                            child: cachedNetworkImage(
-                              authBloc.storeAuth.imageAvatar,
-                            ),
-                          )
-                        : Image.asset(currentProfile.imageAvatar),
-                  ),
-                )),
-            /* Positioned(
-              right: 40,
-              top: 18.0,
-              child: IconButton(
-                icon: Icon(Icons.share,
-                    color: currentTheme.currentTheme.primaryColor),
-                iconSize: 25,
-                onPressed: () => Navigator.pop(context),
-                color: Colors.blueAccent,
-              ),
-            ), */
-            Positioned(
-              right: 0,
-              top: 18.0,
-              child: IconButton(
-                icon: Icon(Icons.menu,
-                    color: currentTheme.currentTheme.primaryColor),
-                iconSize: 30,
-                onPressed: () => {Scaffold.of(context).openEndDrawer()},
-                color: Colors.blueAccent,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  double get maxExtent => _maxHeaderExtent;
-
-  @override
-  double get minExtent => _minHeaderExtent;
-
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => false;
-}
 
 class ButtonFollow extends StatefulWidget {
   const ButtonFollow(

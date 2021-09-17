@@ -14,11 +14,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 
 import 'package:provider/provider.dart';
-
-import '../add_edit_category.dart';
 
 class DisplayProfileStore extends StatefulWidget {
   @override
@@ -524,63 +521,5 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
       showAlertError(
           context, 'Error del servidor', 'lo sentimos, Intentelo mas tarde');
     }
-  }
-}
-
-class TimePickerPage extends StatefulWidget {
-  @override
-  _TimePickerPageState createState() => _TimePickerPageState();
-}
-
-class _TimePickerPageState extends State<TimePickerPage> {
-  DateTime dateTime = DateTime.now();
-
-  @override
-  void initState() {
-    super.initState();
-
-    dateTime = getDateTime();
-  }
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildTimePicker(),
-              const SizedBox(height: 24),
-              GestureDetector(
-                onTap: () => Utils.showSheet(
-                  context,
-                  child: buildTimePicker(),
-                  onClicked: () {
-                    final value = DateFormat('HH:mm').format(dateTime);
-
-                    Navigator.pop(context);
-                  },
-                ),
-              )
-            ],
-          ),
-        ),
-      );
-
-  Widget buildTimePicker() => SizedBox(
-        height: 180,
-        child: CupertinoDatePicker(
-          initialDateTime: dateTime,
-          mode: CupertinoDatePickerMode.time,
-          minuteInterval: 10,
-          //use24hFormat: true,
-          onDateTimeChanged: (dateTime) =>
-              setState(() => this.dateTime = dateTime),
-        ),
-      );
-
-  DateTime getDateTime() {
-    final now = DateTime.now();
-
-    return DateTime(now.year, now.month, now.day, now.hour, 0);
   }
 }

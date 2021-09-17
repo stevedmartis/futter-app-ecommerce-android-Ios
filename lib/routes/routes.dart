@@ -27,6 +27,7 @@ import 'package:freeily/pages/onboarding/onboarding.dart';
 
 import 'package:freeily/pages/order_progress.dart/order_page.dart';
 import 'package:freeily/pages/order_progress.dart/orders_list_page.dart';
+import 'package:freeily/pages/palet_color.dart';
 import 'package:freeily/pages/payment_method_options_page.dart';
 
 import 'package:freeily/pages/principal_home_page.dart';
@@ -72,6 +73,26 @@ Route loginRoute() {
       return Login(
         screenHeight: screenHeight,
       );
+    },
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(0.0, 0.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
+
+Route paletroute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return PaletColor();
     },
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = Offset(0.0, 0.0);

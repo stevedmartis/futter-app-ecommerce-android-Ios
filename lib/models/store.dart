@@ -37,7 +37,8 @@ class Store {
       this.visibility = true,
       this.isFollowing,
       this.notLocation = false,
-      this.followers = 0});
+      this.followers = 0,
+      this.colorVibrant = 'fffff'});
 
   final String id;
   final User user;
@@ -66,6 +67,7 @@ class Store {
   bool isEco;
   DateTime createdAt;
   DateTime updatedAt;
+  String colorVibrant;
 
   factory Store.fromJson(Map<String, dynamic> json) => Store(
         id: json["id"],
@@ -90,6 +92,7 @@ class Store {
         latitude: json["latitude"],
         longitude: json["longitude"],
         notLocation: json["notLocation"],
+        colorVibrant: json["colorVibrant"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
       );
@@ -119,5 +122,6 @@ class Store {
         "longitude": longitude,
         "createdAt": updatedAt,
         "updatedAt": updatedAt,
+        "colorVibrant": colorVibrant
       };
 }

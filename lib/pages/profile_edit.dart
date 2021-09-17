@@ -29,6 +29,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_platform/universal_platform.dart';
 import "package:universal_html/html.dart" as html;
@@ -189,6 +190,10 @@ class EditProfilePageState extends State<EditProfilePage> {
   }
 
   String uploadedImage = '';
+  Size imageSize = Size(256.0, 170.0);
+  Rect region;
+  PaletteGenerator paletteGenerator;
+  ImageProvider imageStore;
 
   Future _onAddImageClick() async {
     final pickedFile = await picker.getImage(
@@ -200,9 +205,25 @@ class EditProfilePageState extends State<EditProfilePage> {
 
     final File file = File(pickedFile.path);
 
+    imageStore = AssetImage(file.path);
+
+    region = Offset.zero & imageSize;
+
+    _updatePaletteGenerator(region);
+
     setState(() {
       getFileImage(0, file);
     });
+  }
+
+  Future<void> _updatePaletteGenerator(Rect newRegion) async {
+    paletteGenerator = await PaletteGenerator.fromImageProvider(
+      imageStore,
+      size: Size(256.0, 170.0),
+      region: newRegion,
+      maximumColorCount: 20,
+    );
+    setState(() {});
   }
 
   Future _onImageCameraClick() async {
@@ -287,26 +308,22 @@ class EditProfilePageState extends State<EditProfilePage> {
                     this.isEmailChange, this.isNameChange, this.isPassChange)
                 : buildLoadingWidget(context),
           ],
-          leading: (authService.redirect == 'profile' ||
-                  !authService.storeAuth.user.first)
-              ? IconButton(
-                  icon: Icon(
-                    Icons.chevron_left,
-                    color: currentTheme.currentTheme.primaryColor,
-                  ),
-                  iconSize: 30,
-                  onPressed: () {
-                    if (authService.redirect == 'profile' ||
-                        authService.isChangeToSale) {
-                      Provider.of<MenuModel>(context, listen: false)
-                          .currentPage = 0;
-                      Navigator.push(context, principalHomeRoute());
-                    } else
-                      Navigator.pop(context);
-                  },
-                  color: Colors.white,
-                )
-              : Container(),
+          leading: IconButton(
+            icon: Icon(
+              Icons.chevron_left,
+              color: currentTheme.currentTheme.primaryColor,
+            ),
+            iconSize: 30,
+            onPressed: () {
+              if (authService.redirect == 'profile' ||
+                  authService.isChangeToSale) {
+                Provider.of<MenuModel>(context, listen: false).currentPage = 0;
+                Navigator.push(context, principalHomeRoute());
+              } else
+                Navigator.pop(context);
+            },
+            color: Colors.white,
+          ),
           title: Text(
             (store.user.first) ? 'Confirmar perfil' : 'Editar perfil',
             style: TextStyle(
@@ -1040,6 +1057,20 @@ class EditProfilePageState extends State<EditProfilePage> {
     if (authService.isImageProfileChange) {
       final fileType = uploadImageFile.imageFile.path.split('.');
 
+      final lightVibrantColor = paletteGenerator.lightVibrantColor?.color;
+      final vibrantColor = paletteGenerator.vibrantColor?.color;
+      final darkVibrantColor = paletteGenerator.darkVibrantColor?.color;
+
+      final colorExist = vibrantColor != null
+          ? vibrantColor.value.toRadixString(16)
+          : darkVibrantColor != null
+              ? darkVibrantColor.value.toRadixString(16)
+              : lightVibrantColor != null
+                  ? lightVibrantColor.value.toRadixString(16)
+                  : '0f0f0f';
+
+      var colorVibrantStore = '0x$colorExist';
+
       final resp = await authService.uploadImageProfile(
           fileType[0], fileType[1], uploadImageFile.imageFile);
 
@@ -1051,7 +1082,8 @@ class EditProfilePageState extends State<EditProfilePage> {
             name,
             password,
             resp,
-            authService.serviceSelect);
+            authService.serviceSelect,
+            colorVibrantStore);
 
         if (editProfileOk != null) {
           if (editProfileOk == true) {
@@ -1088,7 +1120,8 @@ class EditProfilePageState extends State<EditProfilePage> {
           name,
           password,
           storeProfile.imageAvatar,
-          authService.serviceSelect);
+          authService.serviceSelect,
+          store.colorVibrant);
 
       if (editProfileOk != null) {
         if (editProfileOk == true) {

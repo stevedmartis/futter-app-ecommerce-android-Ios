@@ -231,48 +231,39 @@ class _StoresListByServiceState extends State<StoresListByService> {
           ),
           SizedBox(height: 20),
           Divider(),
-          SizedBox(height: 20),
-          Container(
-            child: Text(
-              'Pedidos en curso',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25,
-                  color: currentTheme.accentColor),
+          if (ordersActiveClient.length > 0) SizedBox(height: 20),
+          if (ordersActiveClient.length > 0)
+            Container(
+              child: Text(
+                'Pedidos en curso',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                    color: currentTheme.accentColor),
+              ),
             ),
-          ),
           SizedBox(
             height: 20,
           ),
           if (!widget.isSale)
             SizedBox(
-                child: (ordersActiveClient.length > 0)
-                    ? ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: ordersActiveClient.length,
-                        itemBuilder: (BuildContext ctxt, int index) {
-                          final order = ordersActiveClient[index];
+                child: ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: ordersActiveClient.length,
+                    itemBuilder: (BuildContext ctxt, int index) {
+                      final order = ordersActiveClient[index];
 
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: FadeIn(
-                              child: OrderStoreCard(
-                                order: order,
-                                isStore: widget.isSale,
-                              ),
-                            ),
-                          );
-                        })
-                    : Container(
-                        padding: EdgeInsets.only(top: 30),
-                        child: Center(
-                          child: Text(
-                            'No hay pedidos',
-                            style: TextStyle(color: Colors.grey),
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: FadeIn(
+                          child: OrderStoreCard(
+                            order: order,
+                            isStore: widget.isSale,
                           ),
                         ),
-                      )),
+                      );
+                    })),
           if (!widget.isSale && ordersCancelClient.length > 0)
             Container(
               child: Text(

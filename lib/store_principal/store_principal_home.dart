@@ -681,7 +681,7 @@ SliverList makeListHorizontalCarouselOrdersProgress(context,
                   options: CarouselOptions(
                       viewportFraction:
                           (orderNotificationClient.length > 1) ? 0.8 : 0.9,
-                      aspectRatio: size.height / 40 / 6,
+                      aspectRatio: size.height / 250,
                       initialPage: 0,
                       enableInfiniteScroll: false,
                       reverse: false,
@@ -717,7 +717,7 @@ SliverList makeListHorizontalCarouselOrdersStoreProgress(
                   options: CarouselOptions(
                       viewportFraction:
                           (orderNotificationStore.length > 1) ? 0.8 : 0.9,
-                      aspectRatio: size.height / 40 / 6,
+                      aspectRatio: size.height / 250,
                       initialPage: 0,
                       enableInfiniteScroll: false,
                       reverse: false,
@@ -750,7 +750,7 @@ class _OrderprogressStoreCardState extends State<OrderprogressStoreCard> {
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final notifiBloc = Provider.of<NotificationModel>(context);
-    final authService = Provider.of<AuthenticationBLoC>(context);
+
     final id = widget.order.id;
 
     final store = widget.order.store;
@@ -1131,7 +1131,6 @@ class StoreCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final size = MediaQuery.of(context).size;
-    final id = store.id;
 
     final timeDelivery =
         '${store.timeDelivery}  ${store.timeSelect.toLowerCase()}';
@@ -1147,7 +1146,7 @@ class StoreCard extends StatelessWidget {
           child: Row(
             children: <Widget>[
               Hero(
-                tag: 'user_auth_avatar_list_$id',
+                tag: 'user_auth_avatar_list_${store.imageAvatar}',
                 child: AspectRatio(
                   aspectRatio: 1,
                   child: ClipRRect(

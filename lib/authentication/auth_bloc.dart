@@ -318,8 +318,15 @@ class AuthenticationBLoC with ChangeNotifier {
     return token;
   }
 
-  Future editProfile(String uid, String username, String about, String name,
-      String password, String imageAvatar, int service) async {
+  Future editProfile(
+      String uid,
+      String username,
+      String about,
+      String name,
+      String password,
+      String imageAvatar,
+      int service,
+      String colorVibrantStore) async {
     // this.authenticated = true;
 
     final urlFinal = ('${Environment.apiUrl}/api/store/edit');
@@ -331,7 +338,8 @@ class AuthenticationBLoC with ChangeNotifier {
       'about': about,
       'password': password,
       'imageAvatar': imageAvatar,
-      'service': service
+      'service': service,
+      'colorVibrant': colorVibrantStore
     };
 
     String token = '';

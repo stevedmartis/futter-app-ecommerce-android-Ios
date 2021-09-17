@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:freeily/authentication/auth_bloc.dart';
@@ -7,7 +8,7 @@ import 'package:freeily/grocery_store/grocery_store_bloc.dart';
 import 'package:freeily/models/store.dart';
 
 import 'package:freeily/preferences/user_preferences.dart';
-import 'package:freeily/profile_store.dart/profile.dart';
+
 import 'package:freeily/profile_store.dart/profile_store_auth.dart';
 import 'package:freeily/routes/routes.dart';
 
@@ -15,11 +16,13 @@ import 'package:freeily/services/catalogo.dart';
 import 'package:freeily/services/follow_service.dart';
 
 import 'package:freeily/store_principal/store_principal_bloc.dart';
+import 'package:freeily/store_principal/store_principal_home.dart';
 import 'package:freeily/theme/theme.dart';
 import 'package:freeily/widgets/circular_progress.dart';
+import 'package:freeily/widgets/cover_photo.dart';
 import 'package:freeily/widgets/elevated_button_style.dart';
 import 'package:freeily/widgets/image_cached.dart';
-import 'package:freeily/widgets/modal_bottom_sheet.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -28,16 +31,20 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freeily/profile_store.dart/product_detail.dart';
 import 'package:freeily/store_product_concept/store_product_bloc.dart';
 import 'package:freeily/store_product_concept/store_product_data.dart';
+import 'package:freeily/widgets/sliver_card_animation/background_sliver.dart';
+import 'package:freeily/widgets/sliver_card_animation/body_sliver.dart';
+
+import 'package:freeily/widgets/sliver_card_animation/cut_rectangle.dart';
+import 'package:freeily/widgets/sliver_card_animation/data_cut_rectangle.dart';
+
 import 'package:intl/intl.dart';
+
 import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
 import '../global/extension.dart';
 
 import 'package:url_launcher/url_launcher.dart';
-
-const _textHighColor = Color(0xFF241E1E);
-const _textColor = Color(0xFF5C5657);
 
 class ProfileStoreSelect extends StatefulWidget {
   ProfileStoreSelect({this.isAuthUser = false, this.store});
@@ -134,7 +141,13 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+    final size = MediaQuery.of(context).size;
+    final followService = Provider.of<FollowService>(context);
+    void messageToWhatsapp(String number) async {
+      await launch("https://wa.me/56$number?text=Hola!");
+    }
 
+    final phoneStore = widget.store.user.phone.toString();
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(new FocusNode());
@@ -144,28 +157,378 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
           body: SafeArea(
               child: AnimatedBuilder(
             animation: _bloc,
-            builder: (_, __) => NestedScrollView(
-              controller: _bloc.scrollController2,
-              headerSliverBuilder: (context, value) {
-                return [
-                  SliverPersistentHeader(
-                    delegate: _SearchMenuStoreHeader(
-                        bloc: _bloc, store: widget.store),
+            builder: (_, __) => CustomScrollView(
+                physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics()),
+                controller: _bloc.scrollController2,
+                slivers: [
+                  SliverAppBar(
+                    leading: Container(),
+                    actions: [
+                      if (phoneStore != "")
+                        Container(
+                          child: IconButton(
+                            icon: FaIcon(FontAwesomeIcons.whatsapp,
+                                color: currentTheme.primaryColor),
+                            iconSize: 30,
+                            onPressed: () {
+                              HapticFeedback.lightImpact();
+                              messageToWhatsapp(
+                                  widget.store.user.phone.toString());
+                            },
+                            color: Colors.blueAccent,
+                          ),
+                        ),
+                    ],
+                    leadingWidth: 0,
+                    backgroundColor:
+                        Color(int.parse(widget.store.colorVibrant)),
+                    title: Container(
+                        color: Color(int.parse(widget.store.colorVibrant)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              alignment: Alignment.centerLeft,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: currentTheme.cardColor),
+                              child: Material(
+                                color: currentTheme.cardColor,
+                                borderRadius: BorderRadius.circular(20),
+                                child: InkWell(
+                                  splashColor: Colors.grey,
+                                  borderRadius: BorderRadius.circular(20),
+                                  radius: 30,
+                                  onTap: () {
+                                    HapticFeedback.lightImpact();
+                                    Navigator.pop(context);
+                                  },
+                                  highlightColor: Colors.grey,
+                                  child: Container(
+                                    width: 34,
+                                    height: 34,
+                                    child: Icon(
+                                      Icons.chevron_left,
+                                      color: currentTheme.primaryColor,
+                                      size: 30,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                                child: AnimatedContainer(
+                                    duration: Duration(milliseconds: 200),
+                                    width: size.width,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                        color: currentTheme.cardColor,
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    child: Container(
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                  color: currentTheme.cardColor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          50)),
+                                              padding: EdgeInsets.only(
+                                                  top: 20, left: 20),
+                                              child: TextField(
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                                inputFormatters: [
+                                                  new LengthLimitingTextInputFormatter(
+                                                      20),
+                                                ],
+                                                focusNode: _focusNode,
+                                                autofocus: true,
+                                                controller: textCtrl,
+                                                //  keyboardType: TextInputType.emailAddress,
+
+                                                maxLines: 1,
+
+                                                decoration: InputDecoration(
+                                                  fillColor: Colors.white,
+                                                  enabledBorder:
+                                                      UnderlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: currentTheme
+                                                            .cardColor),
+                                                  ),
+                                                  border: UnderlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: Colors.white),
+                                                  ),
+                                                  labelStyle: TextStyle(
+                                                      color: Colors.white54),
+                                                  // icon: Icon(Icons.perm_identity),
+                                                  //  fillColor: currentTheme.accentColor,
+                                                  focusedBorder:
+                                                      OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: currentTheme
+                                                            .cardColor,
+                                                        width: 0.0),
+                                                  ),
+                                                  hintText: '',
+                                                  //  labelText: 'Buscar ...',
+                                                  //counterText: snapshot.data,
+                                                  //  errorText: snapshot.error
+                                                ),
+                                                onChanged: (value) => _bloc
+                                                    .sharedProductOnStoreCurrent(
+                                                        value),
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: -2,
+                                            child: AnimatedContainer(
+                                                duration:
+                                                    Duration(milliseconds: 200),
+                                                alignment: Alignment.topRight,
+                                                child: Container(
+                                                  width: 40,
+                                                  height: 40,
+                                                  decoration: ShapeDecoration(
+                                                    shadows: [
+                                                      BoxShadow(
+                                                        color: Colors.black
+                                                            .withOpacity(0.50),
+                                                        offset:
+                                                            Offset(3.0, 3.0),
+                                                        blurRadius: 2.0,
+                                                        spreadRadius: 1.0,
+                                                      )
+                                                    ],
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        30.0)),
+                                                    gradient: LinearGradient(
+                                                        colors: gradients,
+                                                        begin:
+                                                            Alignment.topLeft,
+                                                        end: Alignment
+                                                            .bottomRight),
+                                                  ),
+                                                  child: Icon(
+                                                    Icons.search,
+                                                    color: Colors.white,
+                                                  ),
+                                                )),
+                                          )
+                                        ],
+                                      ),
+                                    ))),
+                            SizedBox(width: 10),
+                          ],
+                        )),
+                    stretch: true,
+                    expandedHeight: size.height / 3.2,
+                    collapsedHeight: 100,
+                    floating: false,
                     pinned: true,
+                    flexibleSpace: FlexibleSpaceBar(
+                      title: SABT(child: Text(widget.store.name)),
+                      stretchModes: [
+                        StretchMode.zoomBackground,
+                        StretchMode.fadeTitle,
+                        // StretchMode.blurBackground
+                      ],
+                      background: GestureDetector(
+                        onTap: () => {_bloc.onTapStore()},
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: ClipRRect(
+                            /*  borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(30.0),
+                                bottomRight: Radius.circular(30.0),
+                              ), */
+                            child: Stack(
+                              children: [
+                                BackgroundSliver(
+                                    colorVibrant: widget.store.colorVibrant),
+
+                                Positioned(
+                                  bottom: size.height * 0.03,
+                                  left: size.width / 20,
+                                  child: Hero(
+                                      tag:
+                                          'user_auth_avatar_list_${widget.store.imageAvatar}',
+                                      child: CoverPhoto(
+                                          imageAvatar: widget.store.imageAvatar,
+                                          size: size)),
+                                ),
+
+                                Positioned(
+                                    bottom: size.height * 0.17,
+                                    left: size.width / 2.8,
+                                    child: AnimatedOpacity(
+                                      duration:
+                                          const Duration(milliseconds: 200),
+                                      opacity: 1.0,
+                                      child: Container(
+                                        width: size.width / 1.5,
+                                        child: Text(
+                                          widget.store.name.capitalize(),
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w600),
+                                          textAlign: TextAlign.start,
+                                        ),
+                                      ),
+                                    )),
+
+                                Positioned(
+                                    bottom: size.height * 0.14,
+                                    left: size.width / 2.8,
+                                    child: AnimatedOpacity(
+                                      duration:
+                                          const Duration(milliseconds: 200),
+                                      opacity: 1.0,
+                                      child: Container(
+                                        width: size.width / 1.5,
+                                        child: Text(
+                                          '@${widget.store.user.username}',
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.normal,
+                                              color: Colors.grey),
+                                          textAlign: TextAlign.start,
+                                        ),
+                                      ),
+                                    )),
+
+                                Positioned(
+                                    bottom: size.height * 0.11,
+                                    left: size.width / 2.8,
+                                    child: AnimatedOpacity(
+                                      duration:
+                                          const Duration(milliseconds: 200),
+                                      opacity: 1.0,
+                                      child: Container(
+                                        width: size.width / 1.5,
+                                        child: Text(
+                                          '${widget.store.about}',
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.normal,
+                                              color: Colors.grey),
+                                          textAlign: TextAlign.start,
+                                        ),
+                                      ),
+                                    )),
+
+                                Positioned(
+                                    bottom: size.height * 0.06,
+                                    left: size.width / 2.8,
+                                    child: AnimatedOpacity(
+                                        duration:
+                                            const Duration(milliseconds: 200),
+                                        opacity: 1.0,
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              '${widget.store.timeDelivery} ',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: Colors.white),
+                                              textAlign: TextAlign.start,
+                                            ),
+                                            Text(
+                                              '${widget.store.timeSelect}',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: Colors.grey),
+                                              textAlign: TextAlign.start,
+                                            ),
+                                          ],
+                                        ))),
+
+                                if (followService.followers > 0)
+                                  Positioned(
+                                      bottom: size.height * 0.03,
+                                      left: size.width / 2.8,
+                                      child: AnimatedOpacity(
+                                          duration:
+                                              const Duration(milliseconds: 200),
+                                          opacity: 1.0,
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                '${followService.followers} ',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color: Colors.white),
+                                                textAlign: TextAlign.start,
+                                              ),
+                                              Text(
+                                                'Seguidores',
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color: Colors.grey),
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ],
+                                          )))
+
+                                //FavoriteCircle(size: size, percent: percent)
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      centerTitle: true,
+                    ),
                   ),
-                  SliverPersistentHeader(
+                  /*  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: _AppBarStore(
+                        store: widget.store,
+                        minExtended: kToolbarHeight,
+                        maxExtended: size.height * 0.35,
+                        size: size,
+                        bloc: _bloc),
+                  ), */
+                  SliverToBoxAdapter(
+                    child: Body(
+                      size: size,
+                      store: widget.store,
+                      isAuth: false,
+                    ),
+                  ),
+                  /*  SliverPersistentHeader(
                     delegate: _ProfileStoreHeader(
                         bloc: _bloc,
                         animationController: _animationController,
                         isAuthUser: widget.isAuthUser,
                         store: widget.store),
                     pinned: false,
-                  ),
+                  ), */
                   SliverPersistentHeader(
                     pinned: true,
                     delegate: SliverAppBarDelegate(
-                        minHeight: 70,
-                        maxHeight: 70,
+                        minHeight: 50,
+                        maxHeight: 50,
                         child: Container(
                           color: currentTheme.scaffoldBackgroundColor,
                           alignment: Alignment.centerLeft,
@@ -189,37 +552,200 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                               : Container(),
                         )),
                   ),
-                ];
-              },
-
-              // tab bar view
-              body: (!loading)
-                  ? Container(
-                      child: ListView.builder(
-                        primary: false,
-                        controller: _bloc.scrollController,
-                        itemCount: _bloc.items.length,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        itemBuilder: (context, index) {
-                          final item = _bloc.items[index];
-                          if (item.isCategory) {
-                            return Container(
-                                child: ProfileStoreCategoryItem(item.category));
-                          } else {
-                            return _ProfileStoreProductItem(
-                                item.product, item.product.category, _bloc);
-                          }
-                        },
-                      ),
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.only(bottom: 200.0),
-                      child: buildLoadingWidget(context),
-                    ),
-            ),
+                  SliverToBoxAdapter(
+                    child: (!loading)
+                        ? Container(
+                            child: ListView.builder(
+                              primary: false,
+                              shrinkWrap: true,
+                              controller: _bloc.scrollController,
+                              itemCount: _bloc.items.length,
+                              padding: EdgeInsets.only(
+                                  left: 20,
+                                  right: 20,
+                                  bottom: (_bloc.items.length > 4) ? 0 : 200),
+                              itemBuilder: (context, index) {
+                                final item = _bloc.items[index];
+                                if (item.isCategory) {
+                                  return Container(
+                                      child: ProfileStoreCategoryItem(
+                                          item.category));
+                                } else {
+                                  return _ProfileStoreProductItem(item.product,
+                                      item.product.category, _bloc);
+                                }
+                              },
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 200.0),
+                            child: buildLoadingWidget(context),
+                          ),
+                  ),
+                ]),
           ))),
     );
   }
+}
+
+SliverPersistentHeader makeHeaderCustom(BuildContext context, String title) {
+  //final catalogo = new ProfileStoreCategory();
+  final currentTheme = Provider.of<ThemeChanger>(context);
+  final size = MediaQuery.of(context).size;
+
+  final storeBLoC = Provider.of<StoreBLoC>(context);
+
+  final authBLoC = Provider.of<AuthenticationBLoC>(context);
+
+  return SliverPersistentHeader(
+      pinned: true,
+      floating: false,
+      delegate: SliverCustomHeaderDelegate(
+          minHeight: 60,
+          maxHeight: 60,
+          child: Container(
+              color: currentTheme.currentTheme.scaffoldBackgroundColor,
+              child: Row(
+                children: [
+                  SizedBox(width: 10),
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: currentTheme.currentTheme.cardColor),
+                    child: Row(
+                      children: [
+                        Material(
+                          color: currentTheme.currentTheme.cardColor,
+                          borderRadius: BorderRadius.circular(20),
+                          child: InkWell(
+                            splashColor: Colors.grey,
+                            borderRadius: BorderRadius.circular(20),
+                            radius: 30,
+                            onTap: () {
+                              HapticFeedback.lightImpact();
+                              Navigator.pop(context);
+                            },
+                            highlightColor: Colors.grey,
+                            child: Container(
+                              width: 34,
+                              height: 34,
+                              child: Icon(
+                                Icons.chevron_left,
+                                color: currentTheme.currentTheme.primaryColor,
+                                size: 30,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                      child: AnimatedContainer(
+                          duration: Duration(milliseconds: 200),
+                          width: size.width,
+                          height: 40,
+                          decoration: BoxDecoration(
+                              color: currentTheme.currentTheme.cardColor,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Container(
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    padding: EdgeInsets.only(top: 20, left: 10),
+                                    child: TextField(
+                                      style: TextStyle(color: Colors.white),
+                                      inputFormatters: [
+                                        new LengthLimitingTextInputFormatter(
+                                            20),
+                                      ],
+                                      focusNode: _focusNode,
+                                      autofocus: true,
+                                      controller: textCtrl,
+                                      //  keyboardType: TextInputType.emailAddress,
+
+                                      maxLines: 1,
+
+                                      decoration: InputDecoration(
+                                        fillColor: Colors.white,
+                                        enabledBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: currentTheme
+                                                  .currentTheme.cardColor),
+                                        ),
+                                        border: UnderlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: Colors.white),
+                                        ),
+                                        labelStyle:
+                                            TextStyle(color: Colors.white54),
+                                        // icon: Icon(Icons.perm_identity),
+                                        //  fillColor: currentTheme.accentColor,
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: currentTheme
+                                                  .currentTheme.cardColor,
+                                              width: 0.0),
+                                        ),
+                                        hintText: '',
+                                        //  labelText: 'Buscar ...',
+                                        //counterText: snapshot.data,
+                                        //  errorText: snapshot.error
+                                      ),
+                                      onChanged: (value) => storeBLoC
+                                          .searchStoresOrProductsByQuery(value,
+                                              authBLoC.storeAuth.user.uid),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: -2,
+                                  child: AnimatedContainer(
+                                      duration: Duration(milliseconds: 200),
+                                      alignment: Alignment.topRight,
+                                      child: Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: ShapeDecoration(
+                                          shadows: [
+                                            BoxShadow(
+                                              color: Colors.black
+                                                  .withOpacity(0.50),
+                                              offset: Offset(3.0, 3.0),
+                                              blurRadius: 2.0,
+                                              spreadRadius: 1.0,
+                                            )
+                                          ],
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30.0)),
+                                          gradient: LinearGradient(
+                                              colors: gradients,
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight),
+                                        ),
+                                        child: Icon(
+                                          Icons.search,
+                                          color: Colors.white,
+                                        ),
+                                      )),
+                                )
+                              ],
+                            ),
+                          ))),
+                  SizedBox(width: 10),
+                ],
+              ))));
+}
+
+SliverPersistentHeader makeSpaceTitle() {
+  return SliverPersistentHeader(
+      floating: true,
+      pinned: true,
+      delegate: SliverCustomHeaderDelegate(
+          minHeight: 10.0, maxHeight: 10.0, child: Container()));
 }
 
 class _TabWidget extends StatelessWidget {
@@ -297,9 +823,11 @@ class __ProfileStoreProductItemState extends State<_ProfileStoreProductItem> {
 
     return GestureDetector(
       onTap: () async {
-        FocusScope.of(context).requestFocus(new FocusNode());
         HapticFeedback.lightImpact();
+        FocusScope.of(context).requestFocus(new FocusNode());
+
         groceryBloc.changeToDetails();
+        widget.bloc.onTapProducts();
 
         await Navigator.of(context).push(
           PageRouteBuilder(
@@ -532,344 +1060,68 @@ const List<Color> gradients = [
   Color(0xffFEB42C),
 ];
 
-const _maxHeaderExtent = 340.0;
-const _minHeaderExtent = 200.0;
-
-const _maxImageSize = 160.0;
-const _minImageSize = 60.0;
-
-const _leftMarginDisc = 100.0;
-
-const _bottomMarginDisc = 150.0;
-
-const _bottomMarginName = 210.0;
-
-const _maxTitleSize = 25.0;
-const _maxSubTitleSize = 18.0;
-
-const _minTitleSize = 16.0;
-const _minSubTitleSize = 12.0;
-
-class _SearchMenuStoreHeader extends SliverPersistentHeaderDelegate {
-  _SearchMenuStoreHeader({this.bloc, this.store});
-
-  final TabsViewScrollBLoC bloc;
-  final Store store;
-
+class SABT extends StatefulWidget {
+  final Widget child;
+  const SABT({
+    Key key,
+    @required this.child,
+  }) : super(key: key);
   @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    final currentTheme = Provider.of<ThemeChanger>(context);
-
-    final size = MediaQuery.of(context).size;
-    void messageToWhatsapp(String number) async {
-      await launch("https://wa.me/56$number?text=Hola!");
-    }
-
-    final phoneStore = store.user.phone.toString();
-
-    return GestureDetector(
-      onTap: () => {
-        bloc.snapAppbar(),
-      },
-      child: Container(
-        color: currentTheme.currentTheme.scaffoldBackgroundColor,
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              top: 18.0,
-              child: IconButton(
-                icon: FaIcon(FontAwesomeIcons.chevronLeft,
-                    color: currentTheme.currentTheme.primaryColor),
-                iconSize: 25,
-                onPressed: () {
-                  HapticFeedback.lightImpact();
-                  Navigator.pop(context);
-                },
-                color: Colors.blueAccent,
-              ),
-            ),
-            Positioned(
-              top: 20,
-              left: 50,
-              width: size.width / 1.4,
-              height: 40,
-              child: GestureDetector(
-                onTap: () => {
-                  bloc.hiddenHeader(),
-                  FocusScope.of(context).requestFocus(_focusNode),
-                },
-                child: Container(
-                    width: size.width,
-                    decoration: BoxDecoration(
-                        color: currentTheme.currentTheme.cardColor,
-                        borderRadius: BorderRadius.circular(20)),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            width: size.width,
-                            padding: EdgeInsets.only(top: 20, left: 20),
-                            child: TextField(
-                              onTap: () {
-                                bloc.hiddenHeader();
-                              },
-                              style: TextStyle(color: Colors.white),
-                              inputFormatters: [
-                                new LengthLimitingTextInputFormatter(20),
-                              ],
-                              focusNode: _focusNode,
-
-                              controller: textCtrl,
-                              //  keyboardType: TextInputType.emailAddress,
-
-                              maxLines: 1,
-
-                              decoration: InputDecoration(
-                                fillColor: Colors.white,
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color:
-                                          currentTheme.currentTheme.cardColor),
-                                ),
-                                border: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
-                                ),
-                                labelStyle: TextStyle(color: Colors.white54),
-                                // icon: Icon(Icons.perm_identity),
-                                //  fillColor: currentTheme.accentColor,
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: currentTheme.currentTheme.cardColor,
-                                  ),
-                                ),
-                                hintText: 'Buscar productos ...',
-                              ),
-                              onChanged: (value) =>
-                                  bloc.sharedProductOnStoreCurrent(value),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: -2,
-                          child: AnimatedContainer(
-                              duration: Duration(milliseconds: 200),
-                              alignment: Alignment.topRight,
-                              child: Container(
-                                width: 40,
-                                height: 40,
-                                decoration: ShapeDecoration(
-                                  shadows: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.50),
-                                      offset: Offset(3.0, 3.0),
-                                      blurRadius: 2.0,
-                                      spreadRadius: 1.0,
-                                    )
-                                  ],
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(30.0)),
-                                  gradient: LinearGradient(
-                                      colors: gradients,
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight),
-                                ),
-                                child: Icon(
-                                  Icons.search,
-                                  color: Colors.white,
-                                ),
-                              )),
-                        ),
-                      ],
-                    )),
-              ),
-            ),
-            if (phoneStore != "")
-              Positioned(
-                right: 0,
-                top: 18.0,
-                child: IconButton(
-                  icon: FaIcon(FontAwesomeIcons.whatsapp,
-                      color: currentTheme.currentTheme.primaryColor),
-                  iconSize: 30,
-                  onPressed: () {
-                    HapticFeedback.lightImpact();
-                    messageToWhatsapp(store.user.phone.toString());
-                  },
-                  color: Colors.blueAccent,
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
+  _SABTState createState() {
+    return new _SABTState();
   }
-
-  @override
-  double get maxExtent => 70;
-
-  @override
-  double get minExtent => 70;
-
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => false;
 }
 
-class _ProfileStoreHeader extends SliverPersistentHeaderDelegate {
-  _ProfileStoreHeader(
-      {this.bloc,
-      this.animationController,
-      this.isAuthUser,
-      @required this.store});
-  final AnimationController animationController;
-
-  final TabsViewScrollBLoC bloc;
-
-  final bool isAuthUser;
-  final Store store;
-
+class _SABTState extends State<SABT> {
+  ScrollPosition _position;
+  bool _visible;
   @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    final currentTheme = Provider.of<ThemeChanger>(context);
-
-    final followService = Provider.of<FollowService>(context);
-
-    final percent = 1 -
-        ((maxExtent - shrinkOffset - minExtent) / (maxExtent - minExtent))
-            .clamp(0.0, 1.0);
-    final size = MediaQuery.of(context).size;
-    final currentImageSize = (_maxImageSize * (1 - percent)).clamp(
-      _minImageSize,
-      _maxImageSize,
-    );
-    final titleSize = (_maxTitleSize * (1.75 - percent)).clamp(
-      _minTitleSize,
-      _maxTitleSize,
-    );
-
-    final subTitleSize = (_maxSubTitleSize * (1.80 - percent)).clamp(
-      _minSubTitleSize,
-      _maxSubTitleSize,
-    );
-
-    final maxMargin = size.width / 4;
-    final textMovement = 5.0;
-    final leftTextMargin = maxMargin + (textMovement * percent);
-
-    final username = store.user.username;
-
-    return GestureDetector(
-      onTap: () => bloc.snapAppbar(),
-      child: Container(
-        color: currentTheme.currentTheme.scaffoldBackgroundColor,
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              top: (_bottomMarginName * (1 - percent))
-                  .clamp(75.0, _bottomMarginName),
-              left: (percent >= 0.9) ? leftTextMargin : leftTextMargin + 30,
-              height: _maxImageSize,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    store.name.capitalize(),
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: titleSize,
-                      letterSpacing: -0.5,
-                      color: (currentTheme.customTheme)
-                          ? Colors.white
-                          : _textHighColor,
-                    ),
-                  ),
-                  AnimatedContainer(
-                    width: size.width / 3,
-                    duration: Duration(milliseconds: 100),
-                    child: Text(
-                      '@$username',
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: TextStyle(
-                        fontSize: subTitleSize,
-                        letterSpacing: -0.5,
-                        color: (currentTheme.customTheme)
-                            ? Colors.white54
-                            : _textColor,
-                      ),
-                    ),
-                  ),
-                  if (followService.followers > 0)
-                    AnimatedContainer(
-                      duration: Duration(milliseconds: 100),
-                      child: Text(
-                        '${followService.followers}  Seguidores',
-                        style: TextStyle(
-                          fontSize: subTitleSize,
-                          letterSpacing: -0.5,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            Positioned(
-              bottom: 0.0,
-              left: 20,
-              height: 50,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  ButtonFollow(
-                      percent: percent, store: store, left: leftTextMargin),
-                ],
-              ),
-            ),
-            Positioned(
-                bottom: (_bottomMarginDisc * (1 - percent))
-                    .clamp(70.0, _bottomMarginDisc),
-                left: (_leftMarginDisc * (1 - percent))
-                    .clamp(20.0, _leftMarginDisc),
-                height: currentImageSize,
-                child: Hero(
-                  tag: 'user_auth_avatar_list_${store.id}',
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(100.0)),
-                    child: (store.imageAvatar != "")
-                        ? Container(
-                            height: currentImageSize,
-                            width: currentImageSize,
-                            child: cachedNetworkImage(
-                              store.imageAvatar,
-                            ),
-                          )
-                        : Image.asset(currentProfile.imageAvatar),
-                  ),
-                )),
-          ],
-        ),
-      ),
-    );
+  void dispose() {
+    _removeListener();
+    super.dispose();
   }
 
   @override
-  double get maxExtent => _maxHeaderExtent;
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _removeListener();
+    _addListener();
+  }
+
+  void _addListener() {
+    _position = Scrollable.of(context)?.position;
+    _position?.addListener(_positionListener);
+    _positionListener();
+  }
+
+  void _removeListener() {
+    _position?.removeListener(_positionListener);
+  }
+
+  void _positionListener() {
+    final FlexibleSpaceBarSettings settings =
+        context.dependOnInheritedWidgetOfExactType();
+    bool visible =
+        settings == null || settings.currentExtent <= settings.minExtent;
+    if (_visible != visible) {
+      setState(() {
+        _visible = visible;
+      });
+    }
+  }
 
   @override
-  double get minExtent => _minHeaderExtent;
-
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => false;
+  Widget build(BuildContext context) {
+    return Visibility(
+      visible: _visible,
+      child:
+          FadeInUp(duration: Duration(microseconds: 200), child: widget.child),
+    );
+  }
 }
 
 class ButtonFollow extends StatefulWidget {
-  const ButtonFollow({Key key, @required this.percent, this.left, this.store})
-      : super(key: key);
-
-  final num percent;
+  const ButtonFollow({Key key, this.left, this.store}) : super(key: key);
 
   final Store store;
 
@@ -920,21 +1172,8 @@ class _ButtonFollowState extends State<ButtonFollow> {
     }
   }
 
-  _launchMessageEmail(String email) async {
-    final url = Uri.encodeFull('mailto:$email?subject=Hola&body=Mensage');
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final instagramStore = widget.store.instagram.toString();
-
-    final emailStore = widget.store.user.email.toString();
-
     final authService = Provider.of<AuthenticationBLoC>(context);
     //  final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
@@ -959,37 +1198,6 @@ class _ButtonFollowState extends State<ButtonFollow> {
                   isDelete: false,
                   isAccent: (!widget.store.isFollowing))),
         ),
-        if (emailStore != "")
-          Container(
-              padding: EdgeInsets.only(left: 10),
-              width: 120,
-              height: 35,
-              child: elevatedButtonCustom(
-                  context: context,
-                  title: 'Email',
-                  onPress: () {
-                    HapticFeedback.lightImpact();
-                    _launchMessageEmail(widget.store.instagram);
-                  },
-                  isEdit: true,
-                  isDelete: false,
-                  isAccent: false)),
-        if (instagramStore != "")
-          Container(
-              padding: EdgeInsets.only(left: 10),
-              width: 120,
-              height: 35,
-              child: elevatedButtonCustom(
-                  context: context,
-                  title: 'Contacto',
-                  onPress: () {
-                    HapticFeedback.lightImpact();
-
-                    showContactOptionsStoreMCBottomSheet(context, widget.store);
-                  },
-                  isEdit: true,
-                  isDelete: false,
-                  isAccent: false)),
       ],
     );
   }
@@ -1048,5 +1256,70 @@ class SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     return maxHeight != oldDelegate.maxHeight ||
         minHeight != oldDelegate.minHeight ||
         child != oldDelegate.child;
+  }
+}
+
+class _CustomBottomSliver extends StatefulWidget {
+  const _CustomBottomSliver(
+      {Key key,
+      @required this.size,
+      @required this.percent,
+      @required this.store})
+      : super(key: key);
+
+  final Size size;
+  final double percent;
+  final Store store;
+
+  @override
+  __CustomBottomSliverState createState() => __CustomBottomSliverState();
+}
+
+class __CustomBottomSliverState extends State<_CustomBottomSliver>
+    with TickerProviderStateMixin {
+  AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 200),
+    );
+  }
+
+  @override
+  void dispose() {
+    // Properly dispose the controller. This is important!
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.percent > 0.6) _animationController.forward();
+    if (widget.percent < 0.6) _animationController.reset();
+    final currentTheme =
+        Provider.of<ThemeChanger>(context, listen: false).currentTheme;
+
+    return Container(
+      height: widget.size.height * 0.12,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          CustomPaint(
+            painter: CutRectangle(
+                _animationController.view,
+                currentTheme.scaffoldBackgroundColor,
+                Color(int.parse(widget.store.colorVibrant))),
+          ),
+          DataCutRectangle(
+            size: widget.size,
+            percent: widget.percent,
+            store: widget.store,
+          )
+        ],
+      ),
+    );
   }
 }

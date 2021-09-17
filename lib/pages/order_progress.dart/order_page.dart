@@ -506,6 +506,9 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
 
   final timeDelivery =
       '${store.timeDelivery}  ${store.timeSelect.toLowerCase()}';
+
+  final timeDeliveryAuthStore =
+      '${authBloc.storeAuth.timeDelivery}  ${authBloc.storeAuth.timeSelect.toLowerCase()}';
   return Padding(
     padding: const EdgeInsets.all(15.0),
     child: Card(
@@ -724,7 +727,7 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                 padding: EdgeInsets.only(right: 20),
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  '$timeDelivery',
+                  (isStore) ? '$timeDeliveryAuthStore' : '$timeDelivery',
                   style: TextStyle(
                       fontWeight: FontWeight.normal,
                       fontSize: 18,

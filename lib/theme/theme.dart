@@ -4,6 +4,8 @@ class ThemeChanger with ChangeNotifier {
   bool _darkTheme = false;
   bool _customTheme = false;
 
+  bool _colorPalettChange = false;
+
   ThemeData _currentTheme;
 
   bool get darkTheme => this._darkTheme;
@@ -11,6 +13,14 @@ class ThemeChanger with ChangeNotifier {
   bool get customTheme => this._customTheme;
 
   ThemeData get currentTheme => this._currentTheme;
+
+  bool get colorPalettChange => this._colorPalettChange;
+
+  set colorPalettChange(bool value) {
+    _colorPalettChange = value;
+
+    notifyListeners();
+  }
 
   ThemeChanger(int theme) {
     switch (theme) {

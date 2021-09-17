@@ -20,7 +20,30 @@ elevatedButtonCustom(
   final currentTheme =
       Provider.of<ThemeChanger>(context, listen: false).currentTheme;
 
-  return OutlinedButton(
+  return /* Container(
+    alignment: Alignment.bottomCenter,
+    width: _size.width / 1.15,
+    height: _size.height / 12,
+    decoration: ShapeDecoration(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+      gradient: LinearGradient(colors: [
+        Color(0xff0B60FF),
+        Color(0xff0B60FF),
+      ], begin: Alignment.topLeft, end: Alignment.bottomRight),
+    ),
+    child: Container(
+      padding: EdgeInsets.only(left: 10, right: 20),
+      child: Container(
+        alignment: Alignment.center,
+        child: Text(title,
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.w300)),
+      ),
+    ),
+  ); */
+      OutlinedButton(
     style: ButtonStyle(
       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
