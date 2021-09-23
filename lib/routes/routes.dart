@@ -20,6 +20,7 @@ import 'package:freeily/pages/discovery_demo.dart';
 import 'package:freeily/pages/favorite.dart';
 import 'package:freeily/pages/form_current_location.dart';
 import 'package:freeily/pages/get_phone/firebase/auth/phone_auth/get_phone.dart';
+import 'package:freeily/pages/get_phone/firebase/auth/phone_auth/verify.dart';
 import 'package:freeily/pages/loading_page.dart';
 import 'package:freeily/pages/login/login.dart';
 import 'package:freeily/pages/notifications.dart';
@@ -112,6 +113,24 @@ Route paletroute() {
 Route profileEditRoute() {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) => EditProfilePage(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(0.5, 0.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
+
+phoneAuthVerifyRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => PhoneAuthVerify(),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = Offset(0.5, 0.0);
       var end = Offset.zero;

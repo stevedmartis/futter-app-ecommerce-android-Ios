@@ -1,3 +1,5 @@
+//import 'package:firebase_analytics/firebase_analytics.dart';
+//import 'package:firebase_analytics/observer.dart';
 import 'package:freeily/authentication/auth_bloc.dart';
 import 'package:freeily/authentication/auth_firebase.dart';
 import 'package:freeily/bloc_globals/bloc/favorites_bloc.dart';
@@ -74,11 +76,17 @@ class FreeilyApp extends StatelessWidget {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
+  //  final FirebaseAnalytics analytics = FirebaseAnalytics();
+    /*  final FirebaseAnalyticsObserver observer =
+        FirebaseAnalyticsObserver(analytics: analytics); */
     final currentTheme = Provider.of<ThemeChanger>(context);
 
     return FeatureDiscovery(
       recordStepsInSharedPreferences: false,
       child: MaterialApp(
+      /*   navigatorObservers: [
+          FirebaseAnalyticsObserver(analytics: analytics),
+        ], */
         theme: currentTheme.currentTheme,
         debugShowCheckedModeBanner: false,
         color: currentTheme.currentTheme.scaffoldBackgroundColor,

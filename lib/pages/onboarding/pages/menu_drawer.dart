@@ -83,7 +83,7 @@ class PrincipalMenu extends StatelessWidget {
                   },
                   child: ListTile(
                     leading: Icon(Icons.payment,
-                        color: currentTheme.currentTheme.accentColor),
+                        color: currentTheme.currentTheme.primaryColor),
                     title: Text(
                       'Mis tarjetas',
                       style: TextStyle(
@@ -111,7 +111,7 @@ class PrincipalMenu extends StatelessWidget {
                   },
                   child: ListTile(
                     leading: Icon(Icons.exit_to_app,
-                        color: currentTheme.currentTheme.accentColor),
+                        color: currentTheme.currentTheme.primaryColor),
                     title: Text(
                       'Cerrar Sesión',
                       style: TextStyle(

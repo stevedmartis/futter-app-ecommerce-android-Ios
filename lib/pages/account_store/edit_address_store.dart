@@ -182,11 +182,11 @@ class _LocationStorePageState extends State<LocationStorePage> {
                                                 color: Colors.white54,
                                               ),
                                               // icon: Icon(Icons.perm_identity),
-                                              //  fillColor: currentTheme.accentColor,
+                                              //  fillColor: currentTheme.primaryColor,
                                               focusedBorder: OutlineInputBorder(
                                                 borderSide: BorderSide(
                                                     color: currentTheme
-                                                        .accentColor,
+                                                        .primaryColor,
                                                     width: 2.0),
                                               ),
                                               hintText: '',
@@ -226,10 +226,10 @@ class _LocationStorePageState extends State<LocationStorePage> {
                                           color: Colors.white54,
                                         ),
                                         // icon: Icon(Icons.perm_identity),
-                                        //  fillColor: currentTheme.accentColor,
+                                        //  fillColor: currentTheme.primaryColor,
                                         focusedBorder: OutlineInputBorder(
                                           borderSide: BorderSide(
-                                              color: currentTheme.accentColor,
+                                              color: currentTheme.primaryColor,
                                               width: 2.0),
                                         ),
                                         hintText: '',
@@ -268,10 +268,11 @@ class _LocationStorePageState extends State<LocationStorePage> {
                                             color: Colors.white54,
                                           ),
                                           // icon: Icon(Icons.perm_identity),
-                                          //  fillColor: currentTheme.accentColor,
+                                          //  fillColor: currentTheme.primaryColor,
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                                color: currentTheme.accentColor,
+                                                color:
+                                                    currentTheme.primaryColor,
                                                 width: 2.0),
                                           ),
                                           hintText: '',

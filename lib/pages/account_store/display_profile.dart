@@ -300,7 +300,7 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
         style: TextStyle(color: Colors.white54),
       ),
       trailing: Switch.adaptive(
-        activeColor: currentTheme.currentTheme.accentColor,
+        activeColor: currentTheme.currentTheme.primaryColor,
         value: isSwitchChange,
         onChanged: (value) {
           FocusScope.of(context).requestFocus(new FocusNode());
@@ -342,10 +342,10 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
                   color: Colors.white54,
                 ),
                 // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
+                //  fillColor: currentTheme.primaryColor,
                 focusedBorder: OutlineInputBorder(
                   borderSide:
-                      BorderSide(color: currentTheme.accentColor, width: 2.0),
+                      BorderSide(color: currentTheme.primaryColor, width: 2.0),
                 ),
                 hintText: '',
                 labelText: 'Minimo',
@@ -391,10 +391,10 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
                   color: Colors.white54,
                 ),
                 // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
+                //  fillColor: currentTheme.primaryColor,
                 focusedBorder: OutlineInputBorder(
                   borderSide:
-                      BorderSide(color: currentTheme.accentColor, width: 2.0),
+                      BorderSide(color: currentTheme.primaryColor, width: 2.0),
                 ),
                 hintText: '',
                 // suffix: Text('Mins'),
@@ -446,10 +446,10 @@ class _DisplayProfileStoreState extends State<DisplayProfileStore> {
                       : Colors.black54,
                 ),
                 // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
+                //  fillColor: currentTheme.primaryColor,
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: currentTheme.currentTheme.accentColor,
+                    color: currentTheme.currentTheme.primaryColor,
                   ),
                 ),
                 hintText: '',

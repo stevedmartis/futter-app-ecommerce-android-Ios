@@ -261,7 +261,7 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
               /*  IconButton(
                               icon: Icon(
                                 Icons.add,
-                                color: currentTheme.accentColor,
+                                color: currentTheme.primaryColor,
                               ),
                               iconSize: 30,
                               onPressed: () => {
@@ -504,7 +504,7 @@ Widget _addressUserTimeDeliveryProductsStores(context) {
                                             child: Icon(
                                               Icons.location_on,
                                               size: 30,
-                                              color: currentTheme.accentColor,
+                                              color: currentTheme.primaryColor,
                                             ),
                                           )),
                                     ),
@@ -897,7 +897,7 @@ Widget _addressUserTimeDeliveryProductsStores(context) {
                                           decoration: new BoxDecoration(
                                             color: (!store.notLocation)
                                                 ? Colors.grey
-                                                : currentTheme.accentColor,
+                                                : currentTheme.primaryColor,
                                             shape: BoxShape.circle,
                                           ),
                                           alignment: Alignment.bottomCenter,
@@ -1111,7 +1111,7 @@ Widget _addressUserTimeDeliveryProductsStores(context) {
                                                           Icons.attach_money,
                                                           size: 30,
                                                           color: currentTheme
-                                                              .accentColor,
+                                                              .primaryColor,
                                                         ),
                                                       )),
                                                   Column(
@@ -1237,7 +1237,7 @@ Widget _addressUserTimeDeliveryProductsStores(context) {
                                                                   .account_balance,
                                                               size: 30,
                                                               color: currentTheme
-                                                                  .accentColor,
+                                                                  .primaryColor,
                                                             ),
                                                           )),
                                                       SizedBox(

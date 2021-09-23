@@ -796,7 +796,7 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                               decoration: new BoxDecoration(
                                 color: (!store.notLocation)
                                     ? Colors.grey
-                                    : currentTheme.accentColor,
+                                    : currentTheme.primaryColor,
                                 shape: BoxShape.circle,
                               ),
                               alignment: Alignment.bottomCenter,
@@ -1003,7 +1003,7 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                                                     Icons.attach_money,
                                                     size: 30,
                                                     color: currentTheme
-                                                        .accentColor,
+                                                        .primaryColor,
                                                   ),
                                                 )),
                                             Column(
@@ -1146,7 +1146,7 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                                                                 .account_balance,
                                                             size: 30,
                                                             color: currentTheme
-                                                                .accentColor,
+                                                                .primaryColor,
                                                           ),
                                                         )),
                                                     SizedBox(
@@ -1444,7 +1444,7 @@ Widget _buildProductsList(context, Order order, minTimes, maxTimes,
                                                     Icons.attach_money,
                                                     size: 30,
                                                     color: currentTheme
-                                                        .accentColor,
+                                                        .primaryColor,
                                                   ),
                                                 )),
                                             Column(

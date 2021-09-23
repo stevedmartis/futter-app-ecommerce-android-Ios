@@ -333,7 +333,7 @@ class _BankAccountStoreState extends State<BankAccountStore> {
           child: TextField(
             controller: bankCtrl,
             style: TextStyle(
-              color: (currentTheme.accentColor),
+              color: (currentTheme.primaryColor),
             ),
             onTap: () {
               showMaterialCupertinoBottomSheetBanks(
@@ -353,12 +353,12 @@ class _BankAccountStoreState extends State<BankAccountStore> {
               labelStyle: TextStyle(color: Colors.white54),
               prefixIcon: Icon(Icons.account_balance,
                   color: (bankCtrl.text != '')
-                      ? currentTheme.accentColor
+                      ? currentTheme.primaryColor
                       : Colors.white),
-              //  fillColor: currentTheme.accentColor,
+              //  fillColor: currentTheme.primaryColor,
               focusedBorder: OutlineInputBorder(
                 borderSide:
-                    BorderSide(color: currentTheme.accentColor, width: 2.0),
+                    BorderSide(color: currentTheme.primaryColor, width: 2.0),
               ),
               hintText: '',
               labelText: 'Banco de la cuenta',
@@ -399,10 +399,10 @@ class _BankAccountStoreState extends State<BankAccountStore> {
                   color: Colors.white54,
                 ),
                 // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
+                //  fillColor: currentTheme.primaryColor,
                 focusedBorder: OutlineInputBorder(
                   borderSide:
-                      BorderSide(color: currentTheme.accentColor, width: 2.0),
+                      BorderSide(color: currentTheme.primaryColor, width: 2.0),
                 ),
                 hintText: '',
                 labelText: 'Nombre del titular',
@@ -443,10 +443,10 @@ class _BankAccountStoreState extends State<BankAccountStore> {
                   color: Colors.white54,
                 ),
                 // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
+                //  fillColor: currentTheme.primaryColor,
                 focusedBorder: OutlineInputBorder(
                   borderSide:
-                      BorderSide(color: currentTheme.accentColor, width: 2.0),
+                      BorderSide(color: currentTheme.primaryColor, width: 2.0),
                 ),
                 hintText: '',
                 labelText: 'Número de cuenta',
@@ -487,10 +487,10 @@ class _BankAccountStoreState extends State<BankAccountStore> {
                   color: Colors.white54,
                 ),
                 // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
+                //  fillColor: currentTheme.primaryColor,
                 focusedBorder: OutlineInputBorder(
                   borderSide:
-                      BorderSide(color: currentTheme.accentColor, width: 2.0),
+                      BorderSide(color: currentTheme.primaryColor, width: 2.0),
                 ),
                 hintText: '',
                 labelText: 'Rut del titular',
@@ -537,10 +537,10 @@ class _BankAccountStoreState extends State<BankAccountStore> {
                         : Colors.black54,
                   ),
                   // icon: Icon(Icons.perm_identity),
-                  //  fillColor: currentTheme.accentColor,
+                  //  fillColor: currentTheme.primaryColor,
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: currentTheme.currentTheme.accentColor,
+                      color: currentTheme.currentTheme.primaryColor,
                     ),
                   ),
                   hintText: '',

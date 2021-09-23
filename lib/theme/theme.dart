@@ -18,7 +18,6 @@ class ThemeChanger with ChangeNotifier {
         _darkTheme = false;
         _customTheme = false;
         _currentTheme = ThemeData.light().copyWith(
-            accentColor: Color(0xffFEB42C),
             scaffoldBackgroundColor: Colors.white,
             primaryColor: Color(0xff32D73F),
             brightness: Brightness.light,
@@ -29,14 +28,13 @@ class ThemeChanger with ChangeNotifier {
         _darkTheme = true;
         _customTheme = false;
         _currentTheme = ThemeData.dark().copyWith(
-          accentColor: Colors.black,
+          primaryColor: Colors.black,
         );
         break;
       case 3:
         _darkTheme = false;
         _customTheme = true;
         _currentTheme = ThemeData.dark().copyWith(
-          accentColor: Color(0xff32D73F),
           primaryColor: Color(0xff32D73F),
           brightness: Brightness.dark,
           scaffoldBackgroundColor: Color(0xFF0F0F0F),
@@ -57,12 +55,12 @@ class ThemeChanger with ChangeNotifier {
 
     if (value) {
       _currentTheme = ThemeData.dark().copyWith(
-        accentColor: Colors.black,
+        primaryColor: Colors.black,
         primaryColorLight: Colors.white,
       );
     } else {
       _currentTheme = ThemeData.light().copyWith(
-          accentColor: Colors.black, primaryColorLight: Color(0xFFEDE9EC));
+          primaryColor: Colors.black, primaryColorLight: Color(0xFFEDE9EC));
     }
     notifyListeners();
   }
@@ -73,8 +71,7 @@ class ThemeChanger with ChangeNotifier {
 
     if (value) {
       _currentTheme = ThemeData.dark().copyWith(
-        accentColor: Color(0xFF00649FE),
-        primaryColor: Color(0xFFA39FA2).withOpacity(0.50),
+        primaryColor: Color(0xff32D73F).withOpacity(0.50),
         cardColor: Color(0xFF1E1E1E),
         brightness: Brightness.dark,
         primaryColorLight: Colors.white,
@@ -83,10 +80,10 @@ class ThemeChanger with ChangeNotifier {
       );
     } else {
       _currentTheme = ThemeData.light().copyWith(
-          accentColor: Color(0xff32D73F), //0xffF78C39
+          //0xffF78C39
           brightness: Brightness.light,
           scaffoldBackgroundColor: Color(0xFFEFEEF6),
-          primaryColor: Color(0xFFCBC3C5),
+          primaryColor: Color(0xff32D73F),
           secondaryHeaderColor: Color(0xffF78C39),
           cardColor: Colors.white);
     }

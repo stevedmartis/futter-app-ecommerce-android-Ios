@@ -209,11 +209,11 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                                 Icons.location_city,
                                                 color: Colors.grey,
                                               ),
-                                              //  fillColor: currentTheme.accentColor,
+                                              //  fillColor: currentTheme.primaryColor,
                                               focusedBorder: OutlineInputBorder(
                                                 borderSide: BorderSide(
                                                     color: currentTheme
-                                                        .accentColor,
+                                                        .primaryColor,
                                                     width: 2.0),
                                               ),
                                               hintText: '',
@@ -258,10 +258,10 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                           Icons.location_on,
                                           color: Colors.grey,
                                         ),
-                                        //  fillColor: currentTheme.accentColor,
+                                        //  fillColor: currentTheme.primaryColor,
                                         focusedBorder: OutlineInputBorder(
                                           borderSide: BorderSide(
-                                              color: currentTheme.accentColor,
+                                              color: currentTheme.primaryColor,
                                               width: 2.0),
                                         ),
                                         hintText: '',
@@ -305,10 +305,11 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
                                             Icons.home,
                                             color: Colors.grey,
                                           ),
-                                          //  fillColor: currentTheme.accentColor,
+                                          //  fillColor: currentTheme.primaryColor,
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
-                                                color: currentTheme.accentColor,
+                                                color:
+                                                    currentTheme.primaryColor,
                                                 width: 2.0),
                                           ),
                                           hintText: '',

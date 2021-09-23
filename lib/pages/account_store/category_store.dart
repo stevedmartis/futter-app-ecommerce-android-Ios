@@ -384,10 +384,11 @@ class _CategorySelectStoreState extends State<CategorySelectStore> {
                       : Colors.black54,
                 ),
                 // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
+                //  fillColor: currentTheme.primaryColor,
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: currentTheme.currentTheme.accentColor, width: 2.0),
+                      color: currentTheme.currentTheme.primaryColor,
+                      width: 2.0),
                 ),
                 hintText: '',
                 labelText: 'Categoría',

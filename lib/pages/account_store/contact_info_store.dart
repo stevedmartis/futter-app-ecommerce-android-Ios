@@ -262,14 +262,14 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
                   color: Colors.white54,
                 ),
                 // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
+                //  fillColor: currentTheme.primaryColor,
                 focusedBorder: OutlineInputBorder(
                   borderSide:
-                      BorderSide(color: currentTheme.accentColor, width: 2.0),
+                      BorderSide(color: currentTheme.primaryColor, width: 2.0),
                 ),
                 hintText: '',
                 prefix: Text('+56 ',
-                    style: TextStyle(color: currentTheme.accentColor)),
+                    style: TextStyle(color: currentTheme.primaryColor)),
                 labelText: 'Número empresa de la tienda',
                 //counterText: snapshot.data,
                 errorText: snapshot.error),
@@ -314,10 +314,10 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
                       : Colors.black54,
                 ),
                 // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
+                //  fillColor: currentTheme.primaryColor,
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: currentTheme.currentTheme.accentColor,
+                    color: currentTheme.currentTheme.primaryColor,
                   ),
                 ),
                 hintText: '',
@@ -366,10 +366,10 @@ class _ContactInfoStoreState extends State<ContactInfoStore> {
                       : Colors.black54,
                 ),
                 // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
+                //  fillColor: currentTheme.primaryColor,
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: currentTheme.currentTheme.accentColor,
+                    color: currentTheme.currentTheme.primaryColor,
                   ),
                 ),
                 hintText: '',

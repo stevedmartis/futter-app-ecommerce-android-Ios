@@ -451,10 +451,11 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
                       : Colors.black54,
                 ),
                 // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
+                //  fillColor: currentTheme.primaryColor,
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: currentTheme.currentTheme.accentColor, width: 2.0),
+                      color: currentTheme.currentTheme.primaryColor,
+                      width: 2.0),
                 ),
                 hintText: '',
                 labelText: 'Nombre *',
@@ -501,10 +502,11 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
                       : Colors.black54,
                 ),
                 // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
+                //  fillColor: currentTheme.primaryColor,
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: currentTheme.currentTheme.accentColor, width: 2.0),
+                      color: currentTheme.currentTheme.primaryColor,
+                      width: 2.0),
                 ),
                 hintText: '',
                 labelText: 'Descripción *',
@@ -567,10 +569,11 @@ class _AddUpdateProductPageState extends State<AddUpdateProductPage>
                       : Colors.black54,
                 ),
                 // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
+                //  fillColor: currentTheme.primaryColor,
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: currentTheme.currentTheme.accentColor, width: 2.0),
+                      color: currentTheme.currentTheme.primaryColor,
+                      width: 2.0),
                 ),
                 hintText: '',
                 labelText: 'Precio',

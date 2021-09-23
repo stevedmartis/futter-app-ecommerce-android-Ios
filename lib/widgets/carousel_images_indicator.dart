@@ -73,7 +73,7 @@ class _CarouselWithIndicatorState
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: _current == index
-                          ? currentTheme.accentColor
+                          ? currentTheme.primaryColor
                           : Colors.grey.withOpacity(0.50),
                     ),
                   );

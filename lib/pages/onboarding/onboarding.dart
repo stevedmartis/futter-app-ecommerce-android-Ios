@@ -107,7 +107,7 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
           textColumn: CommunityTextColumn(
             title: 'Haz delivery!',
             text:
-                'Con repartidores sercanos entrega tus pedidos y gestiona el seguimiento.',
+                'Reparte y sigue tus pedidos recibidos y entregalos al cliente!',
           ),
         );
       case 3:
@@ -237,7 +237,7 @@ class _OnboardingState extends State<Onboarding> with TickerProviderStateMixin {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
 /*     Color gradientStart = Color(0xffFF8236); //Change start gradient color here
-    Color gradientEnd = currentTheme.accentColor; */
+    Color gradientEnd = currentTheme.primaryColor; */
     return Scaffold(
       body: Container(
         decoration: new BoxDecoration(

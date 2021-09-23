@@ -143,7 +143,7 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
                       /*  IconButton(
                               icon: Icon(
                                 Icons.add,
-                                color: currentTheme.accentColor,
+                                color: currentTheme.primaryColor,
                               ),
                               iconSize: 30,
                               onPressed: () => {

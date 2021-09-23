@@ -325,268 +325,265 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
     if (groceryBloc.isReload) this.getCartSave();
     groceryBloc.changeReaload();
 
-    return SafeArea(
-      child: Scaffold(
-          backgroundColor: currentTheme.scaffoldBackgroundColor,
-          body: RefreshIndicator(
-            color: currentTheme.accentColor,
-            onRefresh: () => pullToRefreshData(),
-            child: CustomScrollView(
-              physics: const BouncingScrollPhysics(
-                  parent: AlwaysScrollableScrollPhysics()),
-              controller: _scrollController,
-              slivers: [
-                SliverAppBar(
-                  leadingWidth: 70,
-                  backgroundColor: currentTheme.scaffoldBackgroundColor,
-                  leading: Container(
-                      width: 100,
-                      height: 100,
-                      margin: EdgeInsets.only(left: 20, top: 10),
-                      child: GestureDetector(
-                        onTap: () {
-                          HapticFeedback.mediumImpact();
-                          if (storeAuth.user.uid == '0') {
-                            authService.redirect = 'profile';
-                            Navigator.push(context, loginRoute());
-                          } else {
-                            authService.redirect = 'home';
-                            Navigator.push(context, profileAuthRoute(true));
-                          }
-                        },
-                        child: Container(
-                            width: 100,
-                            height: 100,
-                            child: Hero(
-                              tag: 'user_auth_avatar',
-                              child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(100.0)),
-                                child: (authService.storeAuth.imageAvatar != "")
-                                    ? Container(
-                                        width: 150,
-                                        height: 150,
-                                        child: cachedNetworkImage(
-                                          authService.storeAuth.imageAvatar,
-                                        ),
-                                      )
-                                    : Image.asset(currentProfile.imageAvatar),
-                              ),
-                            )),
-                      )),
-                  actions: [
-                    GestureDetector(
+    return Scaffold(
+        backgroundColor: currentTheme.scaffoldBackgroundColor,
+        body: RefreshIndicator(
+          color: currentTheme.primaryColor,
+          onRefresh: () => pullToRefreshData(),
+          child: CustomScrollView(
+            physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics()),
+            controller: _scrollController,
+            slivers: [
+              SliverAppBar(
+                leadingWidth: 70,
+                backgroundColor: currentTheme.scaffoldBackgroundColor,
+                leading: Container(
+                    width: 100,
+                    height: 100,
+                    margin: EdgeInsets.only(left: 20, top: 10),
+                    child: GestureDetector(
                       onTap: () {
-                        HapticFeedback.lightImpact();
-                        Navigator.push(context, notificationsRoute());
+                        HapticFeedback.mediumImpact();
+                        if (storeAuth.user.uid == '0') {
+                          authService.redirect = 'profile';
+                          Navigator.push(context, loginRoute());
+                        } else {
+                          authService.redirect = 'home';
+                          Navigator.push(context, profileAuthRoute(true));
+                        }
                       },
                       child: Container(
-                        padding: EdgeInsets.only(right: 10, top: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            StreamBuilder(
-                              stream: notifiBloc.numberSteamNotifiBell,
-                              builder: (BuildContext context,
-                                  AsyncSnapshot snapshot) {
-                                int number =
-                                    (snapshot.data != null) ? snapshot.data : 0;
+                          width: 100,
+                          height: 100,
+                          child: Hero(
+                            tag: 'user_auth_avatar',
+                            child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(100.0)),
+                              child: (authService.storeAuth.imageAvatar != "")
+                                  ? Container(
+                                      width: 150,
+                                      height: 150,
+                                      child: cachedNetworkImage(
+                                        authService.storeAuth.imageAvatar,
+                                      ),
+                                    )
+                                  : Image.asset(currentProfile.imageAvatar),
+                            ),
+                          )),
+                    )),
+                actions: [
+                  GestureDetector(
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      Navigator.push(context, notificationsRoute());
+                    },
+                    child: Container(
+                      padding: EdgeInsets.only(right: 10, top: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          StreamBuilder(
+                            stream: notifiBloc.numberSteamNotifiBell,
+                            builder:
+                                (BuildContext context, AsyncSnapshot snapshot) {
+                              int number =
+                                  (snapshot.data != null) ? snapshot.data : 0;
 
-                                return Container(
-                                  child: Swing(
-                                    animate: number > 0,
-                                    delay: Duration(seconds: 1),
-                                    controller: (controller) =>
-                                        Provider.of<NotificationModel>(context)
-                                            .bounceControllerBell = controller,
-                                    child: Stack(
-                                      children: [
+                              return Container(
+                                child: Swing(
+                                  animate: number > 0,
+                                  delay: Duration(seconds: 1),
+                                  controller: (controller) =>
+                                      Provider.of<NotificationModel>(context)
+                                          .bounceControllerBell = controller,
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                          padding: EdgeInsets.only(right: 8),
+                                          child: FaIcon(
+                                            FontAwesomeIcons.bell,
+                                            color: Colors.white,
+                                            size: 25,
+                                          )),
+                                      if (number > 0)
                                         Container(
-                                            padding: EdgeInsets.only(right: 8),
-                                            child: FaIcon(
-                                              FontAwesomeIcons.bell,
-                                              color: Colors.white,
-                                              size: 25,
-                                            )),
-                                        if (number > 0)
-                                          Container(
-                                            child: Container(
-                                              child: Text(
-                                                '$number',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 10,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              alignment: Alignment.center,
-                                              width: 15,
-                                              height: 15,
-                                              decoration: BoxDecoration(
-                                                  color:
-                                                      currentTheme.primaryColor,
-                                                  shape: BoxShape.circle),
+                                          child: Container(
+                                            child: Text(
+                                              '$number',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
                                             ),
+                                            alignment: Alignment.center,
+                                            width: 15,
+                                            height: 15,
+                                            decoration: BoxDecoration(
+                                                color:
+                                                    currentTheme.primaryColor,
+                                                shape: BoxShape.circle),
                                           ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                            Swing(
-                              animate: isItems,
-                              delay: Duration(seconds: 1),
-                              controller: (controller) =>
-                                  Provider.of<NotificationModel>(context)
-                                      .bounceControllerBell = controller,
-                              child: GestureDetector(
-                                  onTap: () {
-                                    HapticFeedback.lightImpact();
-
-                                    if (bloc.loadingStores)
-                                      showMaterialCupertinoBottomSheet(context);
-                                  },
-                                  child: Container(
-                                    padding:
-                                        EdgeInsets.only(top: isItems ? 0 : 5),
-                                    child: Stack(
-                                      children: [
-                                        Container(
-                                            child: Icon(
-                                          Icons.shopping_bag_outlined,
-                                          color: Colors.white,
-                                          size: 30,
-                                        )),
-                                        Container(
-                                          child: (groceryBloc
-                                                      .totalCartElements() >
-                                                  0)
-                                              ? Container(
-                                                  child: Text(
-                                                    groceryBloc.cart.length
-                                                        .toString(),
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                  alignment: Alignment.center,
-                                                  width: 15,
-                                                  height: 15,
-                                                  decoration: BoxDecoration(
-                                                      color: Color(0xff32D73F),
-                                                      shape: BoxShape.circle),
-                                                )
-                                              : Container(),
                                         ),
-                                      ],
-                                    ),
-                                  )),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
-                  stretch: true,
-                  expandedHeight: size.height / 4,
-                  collapsedHeight: 70,
-                  floating: false,
-                  pinned: true,
-                  flexibleSpace: FlexibleSpaceBar(
-                    stretchModes: [
-                      StretchMode.zoomBackground,
-                      StretchMode.fadeTitle,
-                      // StretchMode.blurBackground
-                    ],
-                    background: Material(
-                      type: MaterialType.transparency,
-                      child: Stack(
-                        children: <Widget>[
-                          Positioned.fill(
-                            child: AnimatedSwitcher(
-                              duration: Duration(milliseconds: 700),
-                              child: StoreServiceDetails(
-                                key: Key(bloc.selected.name),
-                                storeService: bloc.selected,
-                              ),
-                            ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          Swing(
+                            animate: isItems,
+                            delay: Duration(seconds: 1),
+                            controller: (controller) =>
+                                Provider.of<NotificationModel>(context)
+                                    .bounceControllerBell = controller,
+                            child: GestureDetector(
+                                onTap: () {
+                                  HapticFeedback.lightImpact();
+
+                                  if (bloc.loadingStores)
+                                    showMaterialCupertinoBottomSheet(context);
+                                },
+                                child: Container(
+                                  padding:
+                                      EdgeInsets.only(top: isItems ? 0 : 5),
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                          child: Icon(
+                                        Icons.shopping_bag_outlined,
+                                        color: Colors.white,
+                                        size: 30,
+                                      )),
+                                      Container(
+                                        child: (groceryBloc
+                                                    .totalCartElements() >
+                                                0)
+                                            ? Container(
+                                                child: Text(
+                                                  groceryBloc.cart.length
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                alignment: Alignment.center,
+                                                width: 15,
+                                                height: 15,
+                                                decoration: BoxDecoration(
+                                                    color: Color(0xff32D73F),
+                                                    shape: BoxShape.circle),
+                                              )
+                                            : Container(),
+                                      ),
+                                    ],
+                                  ),
+                                )),
                           ),
                         ],
                       ),
                     ),
-                    centerTitle: true,
-                    title: OpenContainer(
-                        closedElevation: 5,
-                        openElevation: 5,
-                        closedColor: (_showTitle)
-                            ? currentTheme.cardColor
-                            : Colors.black.withOpacity(0.20),
-                        openColor: (_showTitle)
-                            ? currentTheme.cardColor
-                            : Colors.black.withOpacity(0.20),
-                        transitionType: ContainerTransitionType.fade,
-                        openShape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        closedShape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        openBuilder: (_, closeContainer) {
-                          return SearchPrincipalPage(
-                              storeListServices: bloc.storesListInitial);
-                        },
-                        closedBuilder: (_, openContainer) {
-                          return Container(child: MyTextField(_showTitle));
-                        }),
-                  ),
-                ),
-                if (orderClientActive.length > 0) makeSpaceTitle(),
-                if (orderClientActive.length > 0)
-                  makeListHorizontalCarouselOrdersProgress(
-                      context, orderClientActive, ordersStoreActive),
-                if (storeAuth.service != 0 && ordersStoreActive.length > 0)
-                  if (ordersStoreActive.length > 0 &&
-                      orderClientActive.length == 0)
-                    makeSpaceTitle(),
-                makeListHorizontalCarouselOrdersStoreProgress(
-                    context, ordersStoreActive),
-                makeSpaceTitle(),
-                if (orderService.loading)
-                  SliverAppBar(
-                    automaticallyImplyLeading: false,
-                    expandedHeight: size.height / 5.5,
-                    collapsedHeight: size.height / 5.5,
-                    pinned: false,
-                    actionsIconTheme: IconThemeData(opacity: 0.0),
-                    flexibleSpace: Stack(
+                  )
+                ],
+                stretch: true,
+                expandedHeight: size.height / 4,
+                collapsedHeight: 70,
+                floating: false,
+                pinned: true,
+                flexibleSpace: FlexibleSpaceBar(
+                  stretchModes: [
+                    StretchMode.zoomBackground,
+                    StretchMode.fadeTitle,
+                    // StretchMode.blurBackground
+                  ],
+                  background: Material(
+                    type: MaterialType.transparency,
+                    child: Stack(
                       children: <Widget>[
                         Positioned.fill(
-                          child: Material(
-                              type: MaterialType.transparency,
-                              child: Container(
-                                  color: currentTheme.scaffoldBackgroundColor,
-                                  child: StoreServicesList(
-                                    onPhotoSelected: (item) => {
-                                      _changeService(bloc, item.id),
-                                      setState(() {
-                                        HapticFeedback.lightImpact();
-                                        bloc.selected = item;
-                                      })
-                                    },
-                                  ))),
-                        )
+                          child: AnimatedSwitcher(
+                            duration: Duration(milliseconds: 700),
+                            child: StoreServiceDetails(
+                              key: Key(bloc.selected.name),
+                              storeService: bloc.selected,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                if (orderService.loading)
-                  makeHeaderTitle(context, bloc.selected.name),
-                if (orderService.loading) makeListRecomendations(loading),
-              ],
-            ),
-          )),
-    );
+                  centerTitle: true,
+                  title: OpenContainer(
+                      closedElevation: 5,
+                      openElevation: 5,
+                      closedColor: (_showTitle)
+                          ? currentTheme.cardColor
+                          : Colors.black.withOpacity(0.20),
+                      openColor: (_showTitle)
+                          ? currentTheme.cardColor
+                          : Colors.black.withOpacity(0.20),
+                      transitionType: ContainerTransitionType.fade,
+                      openShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      closedShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      openBuilder: (_, closeContainer) {
+                        return SearchPrincipalPage(
+                            storeListServices: bloc.storesListInitial);
+                      },
+                      closedBuilder: (_, openContainer) {
+                        return Container(child: MyTextField(_showTitle));
+                      }),
+                ),
+              ),
+              if (orderClientActive.length > 0) makeSpaceTitle(),
+              if (orderClientActive.length > 0)
+                makeListHorizontalCarouselOrdersProgress(
+                    context, orderClientActive, ordersStoreActive),
+              if (storeAuth.service != 0 && ordersStoreActive.length > 0)
+                if (ordersStoreActive.length > 0 &&
+                    orderClientActive.length == 0)
+                  makeSpaceTitle(),
+              makeListHorizontalCarouselOrdersStoreProgress(
+                  context, ordersStoreActive),
+              makeSpaceTitle(),
+              if (orderService.loading)
+                SliverAppBar(
+                  automaticallyImplyLeading: false,
+                  expandedHeight: size.height / 5.5,
+                  collapsedHeight: size.height / 5.5,
+                  pinned: false,
+                  actionsIconTheme: IconThemeData(opacity: 0.0),
+                  flexibleSpace: Stack(
+                    children: <Widget>[
+                      Positioned.fill(
+                        child: Material(
+                            type: MaterialType.transparency,
+                            child: Container(
+                                color: currentTheme.scaffoldBackgroundColor,
+                                child: StoreServicesList(
+                                  onPhotoSelected: (item) => {
+                                    _changeService(bloc, item.id),
+                                    setState(() {
+                                      HapticFeedback.lightImpact();
+                                      bloc.selected = item;
+                                    })
+                                  },
+                                ))),
+                      )
+                    ],
+                  ),
+                ),
+              if (orderService.loading)
+                makeHeaderTitle(context, bloc.selected.name),
+              if (orderService.loading) makeListRecomendations(loading),
+            ],
+          ),
+        ));
   }
 }
 
@@ -627,7 +624,7 @@ SliverPersistentHeader makeHeaderTitle(context, String titleService) {
             child: Container(
               color: currentTheme.scaffoldBackgroundColor,
               child: Padding(
-                padding: const EdgeInsets.only(top: 5.0, left: 10),
+                padding: const EdgeInsets.only(top: 15.0, left: 10),
                 child: CrossFade<String>(
                   initialData: '',
                   data: titleService,
@@ -885,7 +882,8 @@ class _OrderprogressStoreCardState extends State<OrderprogressStoreCard> {
                                             width: 15,
                                             height: 15,
                                             decoration: BoxDecoration(
-                                                color: currentTheme.accentColor,
+                                                color:
+                                                    currentTheme.primaryColor,
                                                 shape: BoxShape.circle),
                                           ),
                                         ),
@@ -932,7 +930,8 @@ class _OrderprogressStoreCardState extends State<OrderprogressStoreCard> {
                                             width: 15,
                                             height: 15,
                                             decoration: BoxDecoration(
-                                                color: currentTheme.accentColor,
+                                                color:
+                                                    currentTheme.primaryColor,
                                                 shape: BoxShape.circle),
                                           ),
                                         ),
@@ -1142,7 +1141,7 @@ class StoreCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SizedBox(
-          height: size.height / 8,
+          height: size.height / 7,
           child: Row(
             children: <Widget>[
               Hero(
@@ -1162,81 +1161,76 @@ class StoreCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      child: Text(
-                        '${store.name.capitalize()}',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20),
-                      ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    child: Text(
+                      (store.timeDelivery != "") ? '$timeDelivery' : '',
+                      style: TextStyle(color: Colors.white54, fontSize: 12),
                     ),
-                    Container(
-                      child: Container(
-                        child: Text(
-                          (store.about != "")
-                              ? '${store.about.capitalize()}'
-                              : '',
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          style: TextStyle(
-                              fontSize: 15,
-                              letterSpacing: -0.5,
-                              color: Colors.white54),
-                        ),
-                      ),
+                  ),
+                  Container(
+                    child: Text(
+                      '${store.name.capitalize()}',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20),
                     ),
-                    Row(
+                  ),
+                  Expanded(
+                    child: Row(
                       children: [
-                        Container(
-                          child: Text(
-                            (store.timeDelivery != "") ? '$timeDelivery' : '',
-                            style: TextStyle(color: Colors.white54),
+                        if (store.about != "")
+                          Container(
+                            child: Chip(
+                              backgroundColor:
+                                  Color(int.parse(store.colorVibrant)),
+                              labelStyle: TextStyle(color: Colors.white),
+                              label: Text('${store.about.capitalize()}',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 15)),
+                            ),
                           ),
-                        ),
                       ],
                     ),
-                    if (store.percentOff != 0)
-                      Container(
-                        padding: EdgeInsets.only(top: 5.0),
-                        child: Row(
-                          children: [
-                            Stack(
-                              children: [
-                                FaIcon(FontAwesomeIcons.certificate,
-                                    size: 15, color: Colors.blueAccent),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                    left: 4,
-                                    top: 4,
-                                  ),
-                                  child: FaIcon(FontAwesomeIcons.percent,
-                                      size: 7,
-                                      color:
-                                          currentTheme.scaffoldBackgroundColor),
+                  ),
+                  if (store.percentOff != 0)
+                    Container(
+                      child: Row(
+                        children: [
+                          Stack(
+                            children: [
+                              FaIcon(FontAwesomeIcons.certificate,
+                                  size: 15, color: Colors.blueAccent),
+                              Container(
+                                margin: EdgeInsets.only(
+                                  left: 4,
+                                  top: 4,
                                 ),
-                              ],
-                            ),
-                            SizedBox(width: 5.0),
-                            Container(
-                              child: Text(
-                                'Hasta ${store.percentOff}% OFF',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.blueAccent,
-                                    fontWeight: FontWeight.w500),
+                                child: FaIcon(FontAwesomeIcons.percent,
+                                    size: 7,
+                                    color:
+                                        currentTheme.scaffoldBackgroundColor),
                               ),
+                            ],
+                          ),
+                          SizedBox(width: 5.0),
+                          Container(
+                            child: Text(
+                              'Hasta ${store.percentOff}% OFF',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.blueAccent,
+                                  fontWeight: FontWeight.w500),
                             ),
-                          ],
-                        ),
-                      )
-                  ],
-                ),
+                          ),
+                        ],
+                      ),
+                    )
+                ],
               ),
             ],
           ),
@@ -1348,7 +1342,7 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                   ),
                 ), */
                 Positioned(
-                    top: 20,
+                    top: _size.height / 20,
                     left: 10,
                     right: 10,
                     height: 40,
@@ -1376,7 +1370,7 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                                   alignment: Alignment.centerRight,
                                   child: Icon(
                                     Icons.location_on,
-                                    color: currentTheme.accentColor,
+                                    color: currentTheme.primaryColor,
                                     size: 20,
                                   ),
                                 ),
@@ -1404,7 +1398,7 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                                 GestureDetector(
                                   child: Container(
                                     child: Icon(Icons.expand_more,
-                                        color: currentTheme.accentColor),
+                                        color: currentTheme.primaryColor),
                                   ),
                                 )
                               ],

@@ -37,9 +37,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:permission_handler/permission_handler.dart' as PermissionHandle;
 import 'package:provider/provider.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart';
 import 'package:universal_platform/universal_platform.dart';
 
 class PrincipalPage extends StatefulWidget {
@@ -66,6 +66,8 @@ class _PrincipalPageState extends State<PrincipalPage>
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
     final cardBloc = Provider.of<CreditCardServices>(context, listen: false);
     final orderService = Provider.of<OrderService>(context, listen: false);
+
+    final storeBloc = Provider.of<StoreBLoC>(context, listen: false);
 
     storeAuth = authService.storeAuth;
 
@@ -101,9 +103,17 @@ class _PrincipalPageState extends State<PrincipalPage>
       });
     } else {
       Timer(new Duration(milliseconds: 0), () {
+        storeBloc.loadingStores = true;
         orderService.loading = true;
+        showMaterialCupertinoBottomSheetLocation(context, () {
+          HapticFeedback.lightImpact();
+          myLocationBloc.initPositionLocation(context);
+
+          Navigator.pop(context);
+        }, () {
+          Navigator.pop(context);
+        }, false);
       });
-      storeBloc.loadingStores = false;
     }
 
     if (!isWeb) locationStatus();
@@ -302,35 +312,6 @@ class _PrincipalPageState extends State<PrincipalPage>
 
   bool _isDialogShowing = false;
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-    final isGranted = await Permission.location.isGranted;
-
-    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    final isPermanentlyDenied = await Permission.location.isPermanentlyDenied;
-
-    if (state == AppLifecycleState.resumed) {
-      if (isGranted && serviceEnabled) {
-        //myLocationBloc.initPositionLocation();
-
-        if (_isDialogShowing) {
-          setState(() {
-            _isDialogShowing = false;
-          });
-          Navigator.pop(context);
-        }
-      } else if (!serviceEnabled) {
-        if (!_isDialogShowing) showModalGpsLocation();
-        _isDialogShowing = true;
-        //Navigator.pop(context);
-      } else if (serviceEnabled && isPermanentlyDenied) {
-        //if (_isDialogShowing) Navigator.pop(context);
-      }
-    }
-
-    if (state == AppLifecycleState.inactive) {}
-  }
-
   /*   void _listenMessage(dynamic payload) {
       final notifiModel = Provider.of<NotificationModel>(context, listen: false);
       int numberMessages = notifiModel.number;
@@ -360,6 +341,37 @@ class _PrincipalPageState extends State<PrincipalPage>
       }
     } */
 
+  Location location = new Location();
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    final isGranted = await PermissionHandle.Permission.location.isGranted;
+
+    final serviceEnabled = await location.serviceEnabled();
+    final isPermanentlyDenied =
+        await PermissionHandle.Permission.location.isPermanentlyDenied;
+
+    if (state == AppLifecycleState.resumed) {
+      if (isGranted && serviceEnabled) {
+        //myLocationBloc.initPositionLocation();
+
+        if (_isDialogShowing) {
+          setState(() {
+            _isDialogShowing = false;
+          });
+          Navigator.pop(context);
+        }
+      } else if (!serviceEnabled) {
+        if (!_isDialogShowing) showModalGpsLocation();
+        _isDialogShowing = true;
+        //Navigator.pop(context);
+      } else if (serviceEnabled && isPermanentlyDenied) {
+        //if (_isDialogShowing) Navigator.pop(context);
+      }
+    }
+
+    if (state == AppLifecycleState.inactive) {}
+  }
+
   void showModalGpsLocation() async {
     _isDialogShowing = true;
 
@@ -368,7 +380,7 @@ class _PrincipalPageState extends State<PrincipalPage>
         'Para encontrar las tiendas y enviar tus pedidos en tu ubicación',
         'Permitir',
         context, () async {
-      await Geolocator.openAppSettings();
+      await PermissionHandle.openAppSettings();
 
       Navigator.pop(context);
     }, () {
@@ -379,15 +391,16 @@ class _PrincipalPageState extends State<PrincipalPage>
   }
 
   void locationStatus() async {
-    final isGranted = await Permission.location.isGranted;
+    final isGranted = await PermissionHandle.Permission.location.isGranted;
     //final isPermanentlyDenied = await Permission.location.isPermanentlyDenied;
-    final isDenied = await Permission.location.isDenied;
-    final isPermanentlyDenied = await Permission.location.isPermanentlyDenied;
+    final isDenied = await PermissionHandle.Permission.location.isDenied;
+    final isPermanentlyDenied =
+        await PermissionHandle.Permission.location.isPermanentlyDenied;
 
-    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    final serviceEnabled = await location.serviceEnabled();
+    final status = await PermissionHandle.Permission.location.request();
+
     if (isDenied) {
-      final status = await Permission.location.request();
-
       if (prefs.addressSearchSave != '') {
         return;
       } else {
@@ -397,7 +410,7 @@ class _PrincipalPageState extends State<PrincipalPage>
       if (prefs.addressSearchSave != '') {
         return;
       } else {
-        accessGps(PermissionStatus.granted);
+        accessGps(status);
       }
     } else if (isGranted && !serviceEnabled) {
     } else if (!serviceEnabled) {
@@ -406,15 +419,15 @@ class _PrincipalPageState extends State<PrincipalPage>
       });
       showModalGpsLocation();
     } else if (isPermanentlyDenied && prefs.addressSearchSave != '') {
-      final status = await Permission.location.request();
+      final status = await PermissionHandle.Permission.location.request();
 
       accessGps(status);
     }
   }
 
-  void accessGps(PermissionStatus status) {
+  void accessGps(PermissionHandle.PermissionStatus status) {
     switch (status) {
-      case PermissionStatus.granted:
+      case PermissionHandle.PermissionStatus.granted:
         Timer(new Duration(milliseconds: 300), () {
           showMaterialCupertinoBottomSheetLocation(context, () {
             HapticFeedback.lightImpact();
@@ -428,7 +441,7 @@ class _PrincipalPageState extends State<PrincipalPage>
 
         break;
 
-      case PermissionStatus.denied:
+      case PermissionHandle.PermissionStatus.denied:
         showMaterialCupertinoBottomSheetLocation(context, () {
           HapticFeedback.lightImpact();
           showModalGpsLocation();
@@ -443,11 +456,12 @@ class _PrincipalPageState extends State<PrincipalPage>
         );
 
         break;
-      case PermissionStatus.restricted:
-      case PermissionStatus.permanentlyDenied:
+
+      case PermissionHandle.PermissionStatus.permanentlyDenied:
         showMaterialCupertinoBottomSheetLocation(context, () {
           HapticFeedback.lightImpact();
-          showModalGpsLocation();
+          myLocationBloc.initPositionLocation(context);
+          Navigator.pop(context);
         }, () {
           Navigator.pop(context);
         }, false);
@@ -486,10 +500,9 @@ class _PrincipalPageState extends State<PrincipalPage>
 
     final _onFirstPage = (currentPage == 0) ? true : false;
 
-    return SafeArea(
-        child: Scaffold(
-            // endDrawer: PrincipalMenu(),
-            body: Stack(
+    return Scaffold(
+        // endDrawer: PrincipalMenu(),
+        body: Stack(
       children: [
         PageTransitionSwitcher(
           duration: Duration(milliseconds: 500),
@@ -508,7 +521,7 @@ class _PrincipalPageState extends State<PrincipalPage>
         ),
         _PositionedMenu(),
       ],
-    )));
+    ));
   }
 }
 
@@ -551,7 +564,7 @@ class __PositionedMenuState extends State<_PositionedMenu> {
                   child: GridLayoutMenu(
                       show: bloc.isVisible,
                       backgroundColor: Colors.black,
-                      activeColor: appTheme.accentColor,
+                      activeColor: appTheme.primaryColor,
                       inactiveColor: Colors.white,
                       items: [
                         GLMenuButton(

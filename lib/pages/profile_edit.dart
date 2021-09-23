@@ -764,7 +764,7 @@ class EditProfilePageState extends State<EditProfilePage> {
         onSelectedItemChanged: (index) => setState(() => this.index = index),
         // selectionOverlay: Container(),
         selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
-          background: currentTheme.accentColor.withOpacity(0.12),
+          background: currentTheme.primaryColor.withOpacity(0.12),
         ),
         children: Utils.modelBuilder<String>(
           values,
@@ -923,10 +923,11 @@ class EditProfilePageState extends State<EditProfilePage> {
                       : Colors.black54,
                 ),
                 // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
+                //  fillColor: currentTheme.primaryColor,
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: currentTheme.currentTheme.accentColor, width: 2.0),
+                      color: currentTheme.currentTheme.primaryColor,
+                      width: 2.0),
                 ),
                 hintText: '',
                 labelText: 'Nombre de usuario *',
@@ -970,10 +971,11 @@ class EditProfilePageState extends State<EditProfilePage> {
                       : Colors.black54,
                 ),
                 // icon: Icon(Icons.perm_identity),
-                //  fillColor: currentTheme.accentColor,
+                //  fillColor: currentTheme.primaryColor,
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                      color: currentTheme.currentTheme.accentColor, width: 2.0),
+                      color: currentTheme.currentTheme.primaryColor,
+                      width: 2.0),
                 ),
                 hintText: '',
                 labelText: 'Nombre',
@@ -1024,10 +1026,10 @@ class EditProfilePageState extends State<EditProfilePage> {
                         : Colors.black54,
                   ),
                   // icon: Icon(Icons.perm_identity),
-                  //  fillColor: currentTheme.accentColor,
+                  //  fillColor: currentTheme.primaryColor,
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                        color: currentTheme.currentTheme.accentColor,
+                        color: currentTheme.currentTheme.primaryColor,
                         width: 2.0),
                   ),
                   hintText: 'Ej: Empanadas, Calzado, Frutos, Cosas, Etc',

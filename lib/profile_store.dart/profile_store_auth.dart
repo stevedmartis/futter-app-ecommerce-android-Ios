@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:freeily/authentication/auth_bloc.dart';
 import 'package:freeily/bloc_globals/notitification.dart';
 import 'package:freeily/grocery_store/grocery_store_bloc.dart';
+import 'package:freeily/models/store.dart';
 import 'package:freeily/pages/onboarding/pages/menu_drawer.dart';
 
 import 'package:freeily/profile_store.dart/profile_store_user.dart';
@@ -77,6 +78,8 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
   int initPosition;
   bool isFallow;
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
@@ -91,10 +94,10 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
         FocusScope.of(context).requestFocus(new FocusNode());
       },
       child: Scaffold(
+          key: _scaffoldKey,
           endDrawer: PrincipalMenu(),
           backgroundColor: currentTheme.scaffoldBackgroundColor,
-          body: SafeArea(
-              child: AnimatedBuilder(
+          body: AnimatedBuilder(
             animation: _bloc,
             builder: (_, __) => CustomScrollView(
                 physics: const BouncingScrollPhysics(
@@ -109,7 +112,7 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
                     leadingWidth: 0,
                     backgroundColor: Color(int.parse(storeAuth.colorVibrant)),
                     title: Container(
-                        color: Color(int.parse(storeAuth.colorVibrant)),
+                        color: Colors.transparent,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -270,7 +273,7 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
                                   radius: 30,
                                   onTap: () {
                                     HapticFeedback.lightImpact();
-                                    Scaffold.of(context).openEndDrawer();
+                                    _scaffoldKey.currentState.openEndDrawer();
                                   },
                                   highlightColor: Colors.grey,
                                   child: Container(
@@ -306,148 +309,13 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
                           type: MaterialType.transparency,
                           child: ClipRRect(
                             /*  borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(30.0),
-                                bottomRight: Radius.circular(30.0),
-                              ), */
-                            child: Stack(
-                              children: [
-                                BackgroundSliver(
-                                    colorVibrant: storeAuth.colorVibrant),
-
-                                Positioned(
-                                  bottom: size.height * 0.03,
-                                  left: size.width / 20,
-                                  child: Hero(
-                                      tag:
-                                          'user_auth_avatar_list_${storeAuth.imageAvatar}',
-                                      child: CoverPhoto(
-                                          imageAvatar: storeAuth.imageAvatar,
-                                          size: size)),
-                                ),
-
-                                Positioned(
-                                    bottom: size.height * 0.17,
-                                    left: size.width / 2.8,
-                                    child: AnimatedOpacity(
-                                      duration:
-                                          const Duration(milliseconds: 200),
-                                      opacity: 1.0,
-                                      child: Container(
-                                        width: size.width / 1.5,
-                                        child: Text(
-                                          storeAuth.name.capitalize(),
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w600),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                      ),
-                                    )),
-
-                                Positioned(
-                                    bottom: size.height * 0.14,
-                                    left: size.width / 2.8,
-                                    child: AnimatedOpacity(
-                                      duration:
-                                          const Duration(milliseconds: 200),
-                                      opacity: 1.0,
-                                      child: Container(
-                                        width: size.width / 1.5,
-                                        child: Text(
-                                          '@${storeAuth.user.username}',
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.normal,
-                                              color: Colors.grey),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                      ),
-                                    )),
-
-                                Positioned(
-                                    bottom: size.height * 0.11,
-                                    left: size.width / 2.8,
-                                    child: AnimatedOpacity(
-                                      duration:
-                                          const Duration(milliseconds: 200),
-                                      opacity: 1.0,
-                                      child: Container(
-                                        width: size.width / 1.5,
-                                        child: Text(
-                                          '${storeAuth.about}',
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.normal,
-                                              color: Colors.grey),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                      ),
-                                    )),
-
-                                Positioned(
-                                    bottom: size.height * 0.06,
-                                    left: size.width / 2.8,
-                                    child: AnimatedOpacity(
-                                        duration:
-                                            const Duration(milliseconds: 200),
-                                        opacity: 1.0,
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              '${storeAuth.timeDelivery} ',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: Colors.white),
-                                              textAlign: TextAlign.start,
-                                            ),
-                                            Text(
-                                              '${storeAuth.timeSelect}',
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: Colors.grey),
-                                              textAlign: TextAlign.start,
-                                            ),
-                                          ],
-                                        ))),
-
-                                if (storeAuth.followers > 0)
-                                  Positioned(
-                                      bottom: size.height * 0.03,
-                                      left: size.width / 2.8,
-                                      child: AnimatedOpacity(
-                                          duration:
-                                              const Duration(milliseconds: 200),
-                                          opacity: 1.0,
-                                          child: Row(
-                                            children: [
-                                              Text(
-                                                '${storeAuth.followers} ',
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                    color: Colors.white),
-                                                textAlign: TextAlign.start,
-                                              ),
-                                              Text(
-                                                'Seguidores',
-                                                style: TextStyle(
-                                                    fontSize: 15,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                    color: Colors.grey),
-                                                textAlign: TextAlign.start,
-                                              ),
-                                            ],
-                                          )))
-
-                                //FavoriteCircle(size: size, percent: percent)
-                              ],
+                            bottomLeft: Radius.circular(30.0),
+                            bottomRight: Radius.circular(30.0),
+                          ), */
+                            child: StoreProfileData(
+                              storeAuth: storeAuth,
+                              size: size,
+                              isAuth: true,
                             ),
                           ),
                         ),
@@ -521,7 +389,154 @@ class _ProfileStoreState extends State<ProfileStoreAuth>
                           ),
                   ),
                 ]),
-          ))),
+          )),
+    );
+  }
+}
+
+class StoreProfileData extends StatelessWidget {
+  const StoreProfileData({
+    Key key,
+    @required this.storeAuth,
+    @required this.size,
+    @required this.isAuth,
+  }) : super(key: key);
+
+  final Store storeAuth;
+  final Size size;
+  final bool isAuth;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        BackgroundSliver(colorVibrant: storeAuth.colorVibrant),
+
+        Positioned(
+          bottom: size.height * 0.03,
+          left: size.width / 20,
+          child: Hero(
+              tag: (isAuth)
+                  ? 'user_auth_avatar'
+                  : 'user_auth_avatar_list_${storeAuth.imageAvatar}',
+              child:
+                  CoverPhoto(imageAvatar: storeAuth.imageAvatar, size: size)),
+        ),
+
+        Positioned(
+            bottom: size.height * 0.16,
+            left: size.width / 2.6,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: 1.0,
+              child: Container(
+                width: size.width / 1.5,
+                child: Text(
+                  storeAuth.name.capitalize(),
+                  maxLines: 1,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                  textAlign: TextAlign.start,
+                ),
+              ),
+            )),
+
+        Positioned(
+            bottom: size.height * 0.135,
+            left: size.width / 2.6,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: 1.0,
+              child: Container(
+                width: size.width / 1.5,
+                child: Text(
+                  '@${storeAuth.user.username}',
+                  maxLines: 1,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.white),
+                  textAlign: TextAlign.start,
+                ),
+              ),
+            )),
+
+        /*  if (storeAuth.followers > 0)
+          Positioned(
+              bottom: size.height * 0.09,
+              left: size.width / 2.6,
+              child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: 1.0,
+                  child: Row(
+                    children: [
+                      Text(
+                        '${storeAuth.followers} ',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white),
+                        textAlign: TextAlign.start,
+                      ),
+                      Text(
+                        'Seguidores',
+                        style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.grey),
+                        textAlign: TextAlign.start,
+                      ),
+                    ],
+                  ))),
+ */
+
+        Positioned(
+            bottom: size.height * 0.10,
+            left: size.width / 2.6,
+            child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: 1.0,
+                child: Row(
+                  children: [
+                    Text(
+                      '${storeAuth.timeDelivery} ',
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white),
+                      textAlign: TextAlign.start,
+                    ),
+                    Text(
+                      '${storeAuth.timeSelect}',
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white),
+                      textAlign: TextAlign.start,
+                    ),
+                  ],
+                ))),
+
+        if (storeAuth.about != "")
+          Positioned(
+              bottom: size.height * 0.03,
+              left: size.width / 2.6,
+              child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: 1.0,
+                  child: Container(
+                    alignment: Alignment.topCenter,
+                    child: Chip(
+                      backgroundColor: Color(int.parse(storeAuth.colorVibrant)),
+                      labelStyle: TextStyle(color: Colors.white),
+                      label: Text(
+                        '${storeAuth.about}',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ))),
+
+        //FavoriteCircle(size: size, percent: percent)
+      ],
     );
   }
 }

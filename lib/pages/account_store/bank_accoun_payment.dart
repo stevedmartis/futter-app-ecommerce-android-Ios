@@ -234,7 +234,7 @@ class _BankAccountStoreState extends State<BankAccountStorePayment> {
         enabled: false,
         controller: bankCtrl,
         style: TextStyle(
-          color: (currentTheme.accentColor),
+          color: (currentTheme.primaryColor),
         ),
         decoration: InputDecoration(
           enabledBorder: UnderlineInputBorder(
@@ -246,11 +246,12 @@ class _BankAccountStoreState extends State<BankAccountStorePayment> {
           labelStyle: TextStyle(color: Colors.white54),
           prefixIcon: Icon(Icons.account_balance,
               color: (bankCtrl.text != '')
-                  ? currentTheme.accentColor
+                  ? currentTheme.primaryColor
                   : Colors.white),
-          //  fillColor: currentTheme.accentColor,
+          //  fillColor: currentTheme.primaryColor,
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: currentTheme.accentColor, width: 2.0),
+            borderSide:
+                BorderSide(color: currentTheme.primaryColor, width: 2.0),
           ),
           hintText: '',
           labelText: 'Banco de la cuenta',
@@ -287,10 +288,10 @@ class _BankAccountStoreState extends State<BankAccountStorePayment> {
               color: Colors.white54,
             ),
             suffixIcon: Icon(Icons.content_copy),
-            //  fillColor: currentTheme.accentColor,
+            //  fillColor: currentTheme.primaryColor,
             focusedBorder: OutlineInputBorder(
               borderSide:
-                  BorderSide(color: currentTheme.accentColor, width: 2.0),
+                  BorderSide(color: currentTheme.primaryColor, width: 2.0),
             ),
             hintText: '',
             labelText: 'Nombre del titular',
@@ -326,7 +327,8 @@ class _BankAccountStoreState extends State<BankAccountStorePayment> {
           ),
           suffixIcon: Icon(Icons.content_copy),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: currentTheme.accentColor, width: 2.0),
+            borderSide:
+                BorderSide(color: currentTheme.primaryColor, width: 2.0),
           ),
           hintText: '',
           labelText: 'Número de cuenta',
@@ -364,7 +366,7 @@ class _BankAccountStoreState extends State<BankAccountStorePayment> {
             suffixIcon: Icon(Icons.content_copy),
             focusedBorder: OutlineInputBorder(
               borderSide:
-                  BorderSide(color: currentTheme.accentColor, width: 2.0),
+                  BorderSide(color: currentTheme.primaryColor, width: 2.0),
             ),
             hintText: '',
             labelText: 'Rut del titular',
@@ -407,7 +409,7 @@ class _BankAccountStoreState extends State<BankAccountStorePayment> {
               suffixIcon: Icon(Icons.content_copy),
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: currentTheme.currentTheme.accentColor,
+                  color: currentTheme.currentTheme.primaryColor,
                 ),
               ),
               hintText: '',

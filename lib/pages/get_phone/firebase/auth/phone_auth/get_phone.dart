@@ -70,7 +70,7 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
                       child: Container(
                         width: size.width,
                         child: Text(
-                          'Ingresa Numero celular',
+                          'Ingresa Número celular',
                           maxLines: 2,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -106,7 +106,7 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
                               keyboardType: TextInputType.number,
 
                               style: TextStyle(
-                                color: (currentTheme.accentColor),
+                                color: (currentTheme.primaryColor),
                               ),
                               inputFormatters: <TextInputFormatter>[
                                 LengthLimitingTextInputFormatter(9),
@@ -124,27 +124,27 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
                                     color: Colors.white54,
                                   ),
                                   // icon: Icon(Icons.perm_identity),
-                                  //  fillColor: currentTheme.accentColor,
+                                  //  fillColor: currentTheme.primaryColor,
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                        color: currentTheme.accentColor,
+                                        color: currentTheme.primaryColor,
                                         width: 2.0),
                                   ),
                                   hintText: '',
                                   prefix: Text('+56 ',
                                       style: TextStyle(
-                                          color: currentTheme.accentColor)),
+                                          color: currentTheme.primaryColor)),
                                   labelText: 'Numero celular',
                                   prefixIcon: Container(
                                     child: (UniversalPlatform.isAndroid)
                                         ? Icon(Icons.phone_android,
                                             color: (isDisabled)
                                                 ? Colors.grey
-                                                : currentTheme.accentColor)
+                                                : currentTheme.primaryColor)
                                         : Icon(Icons.phone_iphone,
                                             color: (isDisabled)
                                                 ? Colors.grey
-                                                : currentTheme.accentColor),
+                                                : currentTheme.primaryColor),
                                   )
 
                                   //counterText: snapshot.data,
@@ -179,7 +179,7 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
                                 if (!isDisabled) {
                                   showModalLoading(context);
 
-                                  startPhoneAuth();
+                                startPhoneAuth();
                                 } else {
                                   return false;
                                 }

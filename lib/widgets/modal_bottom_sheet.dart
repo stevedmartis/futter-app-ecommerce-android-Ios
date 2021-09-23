@@ -159,12 +159,12 @@ showLocationMaterialCupertinoBottomSheet(BuildContext context,
                       ),
                       prefixIcon: Icon(
                         Icons.location_on_outlined,
-                        color: currentTheme.currentTheme.accentColor,
+                        color: currentTheme.currentTheme.primaryColor,
                       ),
-                      //  fillColor: currentTheme.accentColor,
+                      //  fillColor: currentTheme.primaryColor,
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                            color: currentTheme.currentTheme.accentColor,
+                            color: currentTheme.currentTheme.primaryColor,
                             width: 2.0),
                       ),
                       hintText: '',
@@ -189,7 +189,8 @@ showLocationMaterialCupertinoBottomSheet(BuildContext context,
                       Navigator.push(context, confirmLocationRoute(placeSave));
                     },
                     leading: Icon(Icons.home,
-                        size: 25, color: currentTheme.currentTheme.accentColor),
+                        size: 25,
+                        color: currentTheme.currentTheme.primaryColor),
                     title: Text(
                       prefs.addressSearchSave != ''
                           ? '${prefs.addressSearchSave.mainText}'
@@ -300,7 +301,7 @@ showSelectServiceMaterialCupertinoBottomSheet(context) {
                           : Colors.white,
                       leading: Icon(Icons.restaurant_menu,
                           size: 25,
-                          color: currentTheme.currentTheme.accentColor),
+                          color: currentTheme.currentTheme.primaryColor),
                       title: Text(
                         'Restaurante',
                         style: TextStyle(
@@ -348,7 +349,7 @@ showSelectServiceMaterialCupertinoBottomSheet(context) {
                           : Colors.white,
                       leading: FaIcon(FontAwesomeIcons.lemon,
                           size: 25,
-                          color: currentTheme.currentTheme.accentColor),
+                          color: currentTheme.currentTheme.primaryColor),
                       title: Text(
                         'Fruteria/Verduleria',
                         style: TextStyle(
@@ -396,7 +397,7 @@ showSelectServiceMaterialCupertinoBottomSheet(context) {
                           : Colors.white,
                       leading: FaIcon(FontAwesomeIcons.wineBottle,
                           size: 25,
-                          color: currentTheme.currentTheme.accentColor),
+                          color: currentTheme.currentTheme.primaryColor),
                       title: Text(
                         'Licoreria/Botilleria',
                         style: TextStyle(
@@ -498,11 +499,11 @@ showMaterialCupertinoBottomSheetLocation(BuildContext context,
                                       prefixIcon: Icon(
                                           Icons.location_on_outlined,
                                           color: Colors.white),
-                                      //  fillColor: currentTheme.accentColor,
+                                      //  fillColor: currentTheme.primaryColor,
                                       focusedBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
                                             color: currentTheme
-                                                .currentTheme.accentColor,
+                                                .currentTheme.primaryColor,
                                             width: 2.0),
                                       ),
                                       hintText: '',

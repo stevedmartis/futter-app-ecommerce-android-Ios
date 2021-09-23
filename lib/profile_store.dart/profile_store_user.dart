@@ -18,7 +18,7 @@ import 'package:freeily/store_principal/store_principal_bloc.dart';
 import 'package:freeily/store_principal/store_principal_home.dart';
 import 'package:freeily/theme/theme.dart';
 import 'package:freeily/widgets/circular_progress.dart';
-import 'package:freeily/widgets/cover_photo.dart';
+
 import 'package:freeily/widgets/elevated_button_style.dart';
 import 'package:freeily/widgets/image_cached.dart';
 
@@ -30,7 +30,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freeily/profile_store.dart/product_detail.dart';
 import 'package:freeily/store_product_concept/store_product_bloc.dart';
 import 'package:freeily/store_product_concept/store_product_data.dart';
-import 'package:freeily/widgets/sliver_card_animation/background_sliver.dart';
+
 import 'package:freeily/widgets/sliver_card_animation/body_sliver.dart';
 
 import 'package:freeily/widgets/sliver_card_animation/cut_rectangle.dart';
@@ -141,7 +141,7 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final size = MediaQuery.of(context).size;
-    final followService = Provider.of<FollowService>(context);
+    //  final followService = Provider.of<FollowService>(context);
 
     void messageToWhatsapp(String number) async {
       await launch("https://wa.me/56$number?text=Hola!");
@@ -154,8 +154,7 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
       },
       child: Scaffold(
           backgroundColor: currentTheme.scaffoldBackgroundColor,
-          body: SafeArea(
-              child: AnimatedBuilder(
+          body: AnimatedBuilder(
             animation: _bloc,
             builder: (_, __) => CustomScrollView(
                 physics: const BouncingScrollPhysics(
@@ -165,26 +164,13 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                   SliverAppBar(
                     leading: Container(),
                     actions: [
-                      if (phoneStore != "")
-                        Container(
-                          child: IconButton(
-                            icon: FaIcon(FontAwesomeIcons.whatsapp,
-                                color: currentTheme.primaryColor),
-                            iconSize: 30,
-                            onPressed: () {
-                              HapticFeedback.lightImpact();
-                              messageToWhatsapp(
-                                  widget.store.user.phone.toString());
-                            },
-                            color: Colors.blueAccent,
-                          ),
-                        ),
+                      Container(),
                     ],
                     leadingWidth: 0,
                     backgroundColor:
                         Color(int.parse(widget.store.colorVibrant)),
                     title: Container(
-                        color: Color(int.parse(widget.store.colorVibrant)),
+                        color: Colors.transparent,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -227,7 +213,7 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                                     decoration: BoxDecoration(
                                         color: currentTheme.cardColor,
                                         borderRadius:
-                                            BorderRadius.circular(20)),
+                                            BorderRadius.circular(100)),
                                     child: Container(
                                       child: Row(
                                         children: [
@@ -237,7 +223,7 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                                                   color: currentTheme.cardColor,
                                                   borderRadius:
                                                       BorderRadius.circular(
-                                                          50)),
+                                                          100)),
                                               padding: EdgeInsets.only(
                                                   top: 20, left: 20),
                                               child: TextField(
@@ -331,6 +317,37 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                                       ),
                                     ))),
                             SizedBox(width: 10),
+                            if (phoneStore != "")
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: currentTheme.cardColor),
+                                child: Material(
+                                  color: currentTheme.cardColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: InkWell(
+                                    splashColor: Colors.grey,
+                                    borderRadius: BorderRadius.circular(20),
+                                    radius: 30,
+                                    onTap: () {
+                                      HapticFeedback.lightImpact();
+                                      messageToWhatsapp(
+                                          widget.store.user.phone.toString());
+                                    },
+                                    highlightColor: Colors.grey,
+                                    child: Container(
+                                        alignment: Alignment.center,
+                                        width: 34,
+                                        height: 34,
+                                        child: FaIcon(
+                                          FontAwesomeIcons.whatsapp,
+                                          color: currentTheme.primaryColor,
+                                          size: 25,
+                                        )),
+                                  ),
+                                ),
+                              ),
                           ],
                         )),
                     stretch: true,
@@ -353,148 +370,13 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                           type: MaterialType.transparency,
                           child: ClipRRect(
                             /*  borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(30.0),
-                                bottomRight: Radius.circular(30.0),
-                              ), */
-                            child: Stack(
-                              children: [
-                                BackgroundSliver(
-                                    colorVibrant: widget.store.colorVibrant),
-
-                                Positioned(
-                                  bottom: size.height * 0.03,
-                                  left: size.width / 20,
-                                  child: Hero(
-                                      tag:
-                                          'user_auth_avatar_list_${widget.store.imageAvatar}',
-                                      child: CoverPhoto(
-                                          imageAvatar: widget.store.imageAvatar,
-                                          size: size)),
-                                ),
-
-                                Positioned(
-                                    bottom: size.height * 0.17,
-                                    left: size.width / 2.8,
-                                    child: AnimatedOpacity(
-                                      duration:
-                                          const Duration(milliseconds: 200),
-                                      opacity: 1.0,
-                                      child: Container(
-                                        width: size.width / 1.5,
-                                        child: Text(
-                                          widget.store.name.capitalize(),
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w600),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                      ),
-                                    )),
-
-                                Positioned(
-                                    bottom: size.height * 0.14,
-                                    left: size.width / 2.8,
-                                    child: AnimatedOpacity(
-                                      duration:
-                                          const Duration(milliseconds: 200),
-                                      opacity: 1.0,
-                                      child: Container(
-                                        width: size.width / 1.5,
-                                        child: Text(
-                                          '@${widget.store.user.username}',
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.normal,
-                                              color: Colors.grey),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                      ),
-                                    )),
-
-                                Positioned(
-                                    bottom: size.height * 0.11,
-                                    left: size.width / 2.8,
-                                    child: AnimatedOpacity(
-                                      duration:
-                                          const Duration(milliseconds: 200),
-                                      opacity: 1.0,
-                                      child: Container(
-                                        width: size.width / 1.5,
-                                        child: Text(
-                                          '${widget.store.about}',
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.normal,
-                                              color: Colors.grey),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                      ),
-                                    )),
-
-                                Positioned(
-                                    bottom: size.height * 0.06,
-                                    left: size.width / 2.8,
-                                    child: AnimatedOpacity(
-                                        duration:
-                                            const Duration(milliseconds: 200),
-                                        opacity: 1.0,
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              '${widget.store.timeDelivery} ',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: Colors.white),
-                                              textAlign: TextAlign.start,
-                                            ),
-                                            Text(
-                                              '${widget.store.timeSelect}',
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: Colors.grey),
-                                              textAlign: TextAlign.start,
-                                            ),
-                                          ],
-                                        ))),
-
-                                if (followService.followers > 0)
-                                  Positioned(
-                                      bottom: size.height * 0.03,
-                                      left: size.width / 2.8,
-                                      child: AnimatedOpacity(
-                                          duration:
-                                              const Duration(milliseconds: 200),
-                                          opacity: 1.0,
-                                          child: Row(
-                                            children: [
-                                              Text(
-                                                '${followService.followers} ',
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                    color: Colors.white),
-                                                textAlign: TextAlign.start,
-                                              ),
-                                              Text(
-                                                'Seguidores',
-                                                style: TextStyle(
-                                                    fontSize: 15,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                    color: Colors.grey),
-                                                textAlign: TextAlign.start,
-                                              ),
-                                            ],
-                                          )))
-
-                                //FavoriteCircle(size: size, percent: percent)
-                              ],
+                            bottomLeft: Radius.circular(30.0),
+                            bottomRight: Radius.circular(30.0),
+                          ), */
+                            child: StoreProfileData(
+                              storeAuth: widget.store,
+                              size: size,
+                              isAuth: false,
                             ),
                           ),
                         ),
@@ -503,14 +385,14 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                     ),
                   ),
                   /*  SliverPersistentHeader(
-                    pinned: true,
-                    delegate: _AppBarStore(
-                        store: widget.store,
-                        minExtended: kToolbarHeight,
-                        maxExtended: size.height * 0.35,
-                        size: size,
-                        bloc: _bloc),
-                  ), */
+                pinned: true,
+                delegate: _AppBarStore(
+                    store: widget.store,
+                    minExtended: kToolbarHeight,
+                    maxExtended: size.height * 0.35,
+                    size: size,
+                    bloc: _bloc),
+              ), */
                   SliverToBoxAdapter(
                     child: Body(
                       size: size,
@@ -519,13 +401,13 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                     ),
                   ),
                   /*  SliverPersistentHeader(
-                    delegate: _ProfileStoreHeader(
-                        bloc: _bloc,
-                        animationController: _animationController,
-                        isAuthUser: widget.isAuthUser,
-                        store: widget.store),
-                    pinned: false,
-                  ), */
+                delegate: _ProfileStoreHeader(
+                    bloc: _bloc,
+                    animationController: _animationController,
+                    isAuthUser: widget.isAuthUser,
+                    store: widget.store),
+                pinned: false,
+              ), */
                   SliverPersistentHeader(
                     pinned: true,
                     delegate: SliverAppBarDelegate(
@@ -585,7 +467,7 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                           ),
                   ),
                 ]),
-          ))),
+          )),
     );
   }
 }

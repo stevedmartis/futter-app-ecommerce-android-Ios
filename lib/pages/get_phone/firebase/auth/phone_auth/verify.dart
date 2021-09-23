@@ -1,4 +1,8 @@
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
 import 'package:freeily/authentication/auth_bloc.dart';
+import 'package:freeily/pages/get_phone/providers/countries.dart';
 import 'package:freeily/pages/get_phone/providers/phone_auth.dart';
 
 import 'package:freeily/pages/principal_home_page.dart';
@@ -19,17 +23,23 @@ class PhoneAuthVerify extends StatefulWidget {
   _PhoneAuthVerifyState createState() => _PhoneAuthVerifyState();
 }
 
-class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
+class _PhoneAuthVerifyState extends State<PhoneAuthVerify>
+    with TickerProviderStateMixin {
   FocusNode focusNode1 = FocusNode();
   FocusNode focusNode2 = FocusNode();
   FocusNode focusNode3 = FocusNode();
   FocusNode focusNode4 = FocusNode();
   FocusNode focusNode5 = FocusNode();
   FocusNode focusNode6 = FocusNode();
+  AnimationController _animationController;
   String code = "";
+  bool reSendActive = false;
+  Duration timeAnim = Duration(minutes: 3);
 
   @override
   void initState() {
+    _animationController = AnimationController(duration: timeAnim, vsync: this);
+
     super.initState();
   }
 
@@ -57,16 +67,7 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
         child: GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
       child: Scaffold(
-          appBar: AppBar(
-              backgroundColor: Colors.black,
-              leading: IconButton(
-                color: currentTheme.primaryColor,
-                icon: Icon(
-                  Icons.chevron_left,
-                  size: 40,
-                ),
-                onPressed: () => Navigator.pop(context),
-              )),
+          appBar: AppBar(backgroundColor: Colors.black, leading: Container()),
           backgroundColor: Colors.black,
           body: Container(
             padding: EdgeInsets.only(
@@ -84,7 +85,7 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
                       child: Container(
                         width: size.width,
                         child: Text(
-                          'Ingresa Codigo Verificación',
+                          'Ingresa Codigo de Verificación',
                           maxLines: 2,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -92,6 +93,86 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
                           ),
                         ),
                       ),
+                    ),
+
+                    Container(
+                      padding: EdgeInsets.only(top: 5),
+                      width: size.width,
+                      child: Text(
+                        ' Código enviado al número:',
+                        maxLines: 2,
+                        style: TextStyle(
+                            fontWeight: FontWeight.normal,
+                            fontSize: 18,
+                            color: Colors.grey),
+                      ),
+                    ),
+
+                    Container(
+                      padding: EdgeInsets.only(top: 5),
+                      width: size.width,
+                      child: Text(
+                        '${phoneAuthDataProvider.phone}',
+                        maxLines: 2,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: Colors.white),
+                      ),
+                    ),
+
+                    Expanded(
+                      child: TweenAnimationBuilder<Duration>(
+                          duration: _animationController.duration,
+                          tween: Tween(
+                              begin: _animationController.duration,
+                              end: Duration.zero),
+                          onEnd: () {
+                            print('Timer ended');
+                          },
+                          builder: (BuildContext context, Duration value,
+                              Widget child) {
+                            final minutes = value.inMinutes;
+                            final seconds = value.inSeconds % 60;
+                            return GestureDetector(
+                              onTap: () {
+                                if (minutes == 0 || seconds == 0)
+                                  startPhoneAuth();
+                              },
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 5),
+                                child: Container(
+                                    width: size.width,
+                                    child: Row(
+                                      children: [
+                                        (minutes != 0 || seconds != 0)
+                                            ? Text('Reenviar en: ',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    fontSize: 18))
+                                            : Text('Reenviar',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: currentTheme
+                                                        .primaryColor,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18)),
+                                        if (minutes != 0 || seconds != 0)
+                                          Text('$minutes:$seconds',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18))
+                                      ],
+                                    )),
+                              ),
+                            );
+                          }),
                     ),
 
                     // email
@@ -120,7 +201,7 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
                               keyboardType: TextInputType.number,
 
                               style: TextStyle(
-                                color: (currentTheme.accentColor),
+                                color: (currentTheme.primaryColor),
                               ),
                               inputFormatters: <TextInputFormatter>[
                                 LengthLimitingTextInputFormatter(6),
@@ -140,7 +221,7 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
 
                                 focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
-                                      color: currentTheme.accentColor,
+                                      color: currentTheme.primaryColor,
                                       width: 2.0),
                                 ),
                                 hintText: '',
@@ -203,6 +284,30 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
                 )),
           )),
     ));
+  }
+
+  startPhoneAuth() async {
+    final phoneAuthDataProvider =
+        Provider.of<PhoneAuthDataProvider>(context, listen: false);
+    phoneAuthDataProvider.loading = true;
+    var countryProvider = Provider.of<CountryProvider>(context, listen: false);
+    bool validPhone = await phoneAuthDataProvider.instantiate(
+        dialCode: countryProvider.selectedCountry.dialCode,
+        onCodeSent: () {
+          Navigator.of(context).pushAndRemoveUntil(
+              phoneAuthVerifyRoute(), (Route<dynamic> route) => false);
+        },
+        onFailed: () {
+          showSnackBar(context, phoneAuthDataProvider.message);
+        },
+        onError: () {
+          showSnackBar(context, phoneAuthDataProvider.message);
+        });
+    if (!validPhone) {
+      phoneAuthDataProvider.loading = false;
+      showSnackBar(context, "Numero celular invalido");
+      return;
+    }
   }
 
   signIn(String code) {

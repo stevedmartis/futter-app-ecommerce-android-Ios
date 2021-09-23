@@ -191,7 +191,7 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                           color: currentTheme.currentTheme.primaryColor,
                           size: 35,
                         ),
-                        backgroundColor: currentTheme.currentTheme.accentColor,
+                        backgroundColor: currentTheme.currentTheme.primaryColor,
                         overflowMode: OverflowMode.extendBackground,
                         title: const Text('Crear nuevo!'),
                         description: Column(children: <Widget>[
@@ -309,7 +309,7 @@ class _CustomAppBarHeaderState extends State<CustomAppBarHeaderPages> {
                                       decoration: BoxDecoration(
                                           color: (currentTheme.customTheme)
                                               ? currentTheme
-                                                  .currentTheme.accentColor
+                                                  .currentTheme.primaryColor
                                               : Colors.black,
                                           shape: BoxShape.circle),
                                     ),
@@ -398,7 +398,7 @@ class CustomSliverAppBarHeader extends StatelessWidget {
               child: Icon(
                 Icons.more_vert,
                 size: 25,
-                color: currentTheme.accentColor,
+                color: currentTheme.primaryColor,
               )),
         ],
       ),

@@ -2,7 +2,6 @@ import 'package:animate_do/animate_do.dart';
 import 'package:freeily/authentication/auth_bloc.dart';
 import 'package:freeily/bloc_globals/bloc/cards_services_bloc.dart';
 
-import 'package:freeily/grocery_store/grocery_store_bloc.dart';
 import 'package:freeily/models/credit_Card.dart';
 
 import 'package:freeily/models/store.dart';
@@ -25,7 +24,6 @@ import 'package:flutter/material.dart';
 
 import 'package:freeily/store_product_concept/store_product_data.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 
 import 'dart:math' as math;
 
@@ -56,7 +54,7 @@ class _PaymentMethosOptionsPageState extends State<PaymentMethosOptionsPage> {
 
     super.initState();
 
-    StripeService.init();
+    // StripeService.init();
   }
 
   @override
@@ -263,22 +261,22 @@ class _CreditCardOptionState extends State<CreditCardOption> {
   @override
   Widget build(BuildContext context) {
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-    final cardBloc = Provider.of<CreditCardServices>(context);
-    final authBloc = Provider.of<AuthenticationBLoC>(context);
-    final bloc = Provider.of<GroceryStoreBLoC>(context);
-    final totalFormat =
+    //final cardBloc = Provider.of<CreditCardServices>(context);
+    // final authBloc = Provider.of<AuthenticationBLoC>(context);
+    // final bloc = Provider.of<GroceryStoreBLoC>(context);
+    /*  final totalFormat =
         NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
-            .format(bloc.totalPriceElements());
+            .format(bloc.totalPriceElements()); */
 
     void newCreditCard() async {
       HapticFeedback.lightImpact();
 
       showModalLoading(context);
 
-      final amount = totalFormat;
-      final currency = 'USD';
+      //  final amount = totalFormat;
+      //  final currency = 'USD';
 
-      final resp = await this
+      /*  final resp = await this
           .stripeService
           .payWithNewCreditCard(amount: amount, currency: currency);
 
@@ -312,7 +310,7 @@ class _CreditCardOptionState extends State<CreditCardOption> {
         } else {
           Navigator.pop(context);
         }
-      }
+      } */
     }
 
     return GestureDetector(
@@ -342,7 +340,7 @@ class _CreditCardOptionState extends State<CreditCardOption> {
                         child: Icon(
                           Icons.credit_card,
                           size: 30,
-                          color: currentTheme.accentColor,
+                          color: currentTheme.primaryColor,
                         ),
                       )),
                   Container(
@@ -408,7 +406,7 @@ class MyCreditsCardOption extends StatelessWidget {
                         child: Icon(
                           Icons.payments,
                           size: 30,
-                          color: currentTheme.accentColor,
+                          color: currentTheme.primaryColor,
                         ),
                       )),
                   Container(
@@ -488,7 +486,7 @@ class CashOption extends StatelessWidget {
                         child: Icon(
                           Icons.attach_money,
                           size: 30,
-                          color: currentTheme.accentColor,
+                          color: currentTheme.primaryColor,
                         ),
                       )),
                   Container(
@@ -626,7 +624,7 @@ class BankAccountOption extends StatelessWidget {
                         child: Icon(
                           Icons.account_balance,
                           size: 30,
-                          color: currentTheme.accentColor,
+                          color: currentTheme.primaryColor,
                         ),
                       )),
                   Container(

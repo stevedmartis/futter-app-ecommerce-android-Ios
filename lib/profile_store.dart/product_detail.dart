@@ -1,3 +1,4 @@
+import 'package:card_swiper/card_swiper.dart';
 import 'package:freeily/authentication/auth_bloc.dart';
 import 'package:freeily/bloc_globals/bloc/favorites_bloc.dart';
 import 'package:freeily/pages/products_list.dart';
@@ -14,7 +15,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freeily/store_product_concept/store_product_data.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
+
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../global/extension.dart';

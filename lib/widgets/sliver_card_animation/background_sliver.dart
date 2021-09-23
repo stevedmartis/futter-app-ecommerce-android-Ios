@@ -22,9 +22,9 @@ class BackgroundSliver extends StatelessWidget {
             gradient: new LinearGradient(
                 colors: [
                   currentTheme.scaffoldBackgroundColor,
-                  Color(int.parse(colorVibrant)),
-                  Color(int.parse(colorVibrant)),
-                  currentTheme.scaffoldBackgroundColor
+                  Color(int.parse(colorVibrant)).withOpacity(0.90),
+                  Color(int.parse(colorVibrant)).withOpacity(0.90),
+                  currentTheme.scaffoldBackgroundColor,
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,

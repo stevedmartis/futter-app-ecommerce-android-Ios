@@ -133,7 +133,7 @@ showAlertPermissionGpsModalMatCup(String title, String subTitle, String action,
                   isDefaultAction: true,
                   child: Text(
                     action,
-                    style: TextStyle(color: currentTheme.accentColor),
+                    style: TextStyle(color: currentTheme.primaryColor),
                   ),
                   onPressed: () => onPress()),
             ],

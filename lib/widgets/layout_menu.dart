@@ -140,7 +140,7 @@ class __GridLayoutMenuButtonState extends State<_GridLayoutMenuButton> {
                 widget.item.icon,
                 size: 30,
                 color: (intemSelected == widget.index)
-                    ? currentTheme.accentColor
+                    ? currentTheme.primaryColor
                     : Colors.grey,
               ),
             ),

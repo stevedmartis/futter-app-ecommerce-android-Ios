@@ -238,7 +238,7 @@ class _SearchPrincipalPageState extends State<SearchPrincipalPage> {
                                           labelStyle:
                                               TextStyle(color: Colors.white54),
                                           // icon: Icon(Icons.perm_identity),
-                                          //  fillColor: currentTheme.accentColor,
+                                          //  fillColor: currentTheme.primaryColor,
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
                                                 color: currentTheme

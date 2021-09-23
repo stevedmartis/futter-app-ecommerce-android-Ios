@@ -345,8 +345,8 @@ class _CatalogsListState extends State<CatalogsList>
                                         ],
                                       );
                                     }
-                                  }) as FutureOr<bool>;
-                            } as FutureOr<bool> Function(SlideActionType),
+                                  });
+                            },
                             onDismissed: (actionType) {
                               HapticFeedback.lightImpact();
                               showSnackBar(context, 'Catalogo Eliminado');
@@ -372,9 +372,9 @@ class _CatalogsListState extends State<CatalogsList>
                                         : (renderingMode ==
                                                 SlidableRenderingMode.dismiss
                                             ? currentTheme
-                                                .currentTheme.accentColor
+                                                .currentTheme.primaryColor
                                             : currentTheme
-                                                .currentTheme.accentColor),
+                                                .currentTheme.primaryColor),
                                     icon: Icons.edit,
                                     onTap: () async {
                                       HapticFeedback.mediumImpact();

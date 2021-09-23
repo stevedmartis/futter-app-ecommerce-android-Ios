@@ -193,7 +193,7 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
                                                                         radius:
                                                                             10,
                                                                         backgroundColor:
-                                                                            currentTheme.accentColor,
+                                                                            currentTheme.primaryColor,
                                                                         child: CrossFade<
                                                                             String>(
                                                                           initialData:

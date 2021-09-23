@@ -12,9 +12,10 @@ import 'package:freeily/services/places_service.dart';
 import 'package:flutter/material.dart';
 import 'package:freeily/services/stores_Services.dart';
 import 'package:freeily/store_principal/store_principal_bloc.dart';
-import 'package:geolocator/geolocator.dart';
+//import 'package:geolocator/geolocator.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'package:meta/meta.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
@@ -28,6 +29,7 @@ class MyLocationBloc extends ChangeNotifier {
   String addresName = '';
   List<Address> addresses = [];
   bool isLocationCurrent = false;
+  Location location = new Location();
 
   bool isLocationSearch = false;
 
@@ -48,21 +50,21 @@ class MyLocationBloc extends ChangeNotifier {
 
   BehaviorSubject<String> get numberAddress => _numberAddress;
 
-  StreamSubscription<Position> _positionSubscription;
+  StreamSubscription<LocationData> _positionSubscription;
 
   void initPositionLocation(context) async {
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
 
-    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then((Position position) {
-      newPosition = new LatLng(position.latitude, position.longitude);
-
+    location.onLocationChanged.listen((LocationData currentLocation) {
+      print(currentLocation);
+      newPosition =
+          new LatLng(currentLocation.latitude, currentLocation.longitude);
       getAddressLocation(context, authService.storeAuth.user.uid);
     });
   }
 
   void disposePositionLocation() {
-    this._positionSubscription?.cancel();
+    this._positionSubscription.cancel();
   }
 
   getAddressLocation(context, String uid) async {
@@ -163,8 +165,8 @@ class MyLocationBloc extends ChangeNotifier {
 
   @override
   void dispose() {
-    _searchResults?.close();
-    _numberAddress?.close();
+    _searchResults.close();
+    _numberAddress.close();
     super.dispose();
   }
 }
@@ -200,12 +202,12 @@ class LocationBloc with Validators {
   String get price => _priceController.value;
 
   dispose() {
-    _privacityController?.close();
+    _privacityController.close();
 
-    _addressController?.close();
+    _addressController.close();
 
-    _descriptionController?.close();
-    _priceController?.close();
+    _descriptionController.close();
+    _priceController.close();
 
     //  _roomsController?.close();
   }

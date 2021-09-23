@@ -1,7 +1,4 @@
-import 'package:freeily/authentication/auth_bloc.dart';
 import 'package:freeily/bloc_globals/bloc/cards_services_bloc.dart';
-import 'package:freeily/grocery_store/grocery_store_bloc.dart';
-import 'package:freeily/models/credit_Card.dart';
 
 import 'package:freeily/routes/routes.dart';
 import 'package:freeily/services/stripe_service.dart';
@@ -14,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class CreditCardListPage extends StatefulWidget {
@@ -31,7 +27,7 @@ class _CreditCardListPageState extends State<CreditCardListPage> {
 
     super.initState();
 
-    StripeService.init();
+    // StripeService.init();
   }
 
   @override
@@ -80,14 +76,11 @@ class _CreditCardListPageState extends State<CreditCardListPage> {
   }
 
   SliverPersistentHeader makeHeaderCustom(String title) {
-    //final catalogo = new ProfileStoreCategory();
+    // final bloc = Provider.of<GroceryStoreBLoC>(context);
 
-    final cardBloc = Provider.of<CreditCardServices>(context);
-    final bloc = Provider.of<GroceryStoreBLoC>(context);
-    final authBloc = Provider.of<AuthenticationBLoC>(context);
-    final totalFormat =
+    /*   final totalFormat =
         NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
-            .format(bloc.totalPriceElements());
+            .format(bloc.totalPriceElements()); */
 
     return SliverPersistentHeader(
         pinned: true,
@@ -108,11 +101,11 @@ class _CreditCardListPageState extends State<CreditCardListPage> {
                       HapticFeedback.lightImpact();
 
                       showModalLoading(context);
-
+/* 
                       final amount = totalFormat;
-                      final currency = 'USD';
+                      final currency = 'USD'; */
 
-                      final resp = await this
+                      /* final resp = await this
                           .stripeService
                           .payWithNewCreditCard(
                               amount: amount, currency: currency);
@@ -143,7 +136,7 @@ class _CreditCardListPageState extends State<CreditCardListPage> {
                         if (resp.customerId != 'cancel')
                           showSnackBar(context, 'Algo salió mal ');
                         Navigator.pop(context);
-                      }
+                      } */
                     }))));
   }
 }
@@ -182,7 +175,7 @@ class _CreditCardsListState extends State<CreditCardsList> {
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 30,
-                color: currentTheme.accentColor),
+                color: currentTheme.primaryColor),
           ),
         ),
         PageView.builder(

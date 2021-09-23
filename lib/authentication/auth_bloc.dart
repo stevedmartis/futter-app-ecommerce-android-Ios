@@ -141,13 +141,14 @@ class AuthenticationBLoC with ChangeNotifier {
 
       final googleKey = await account.authentication;
 
+      showAlertError(context, 'googkey', '${googleKey.idToken}');
       String address = '';
       String city = '';
       int number = 0;
       double long = 0;
       double lat = 0;
 
-      showModalLoading(context);
+      // showModalLoading(context);
 
       address = prefs.addressSearchSave.mainText;
       city = prefs.addressSearchSave.secondaryText;
@@ -157,14 +158,12 @@ class AuthenticationBLoC with ChangeNotifier {
       long = prefs.longSearch;
       lat = prefs.latSearch;
 
-      final resp = await siginWithGoogleBack(
-          googleKey.idToken, address, city, number, long, lat);
+      final bool resp = await siginWithGoogleBack(
+          context, googleKey.idToken, address, city, number, long, lat);
 
       print(resp);
       if (resp) {
         Navigator.pop(context);
-        return resp;
-      } else {
         showAlertError(context, 'Error', '$resp');
       }
     } catch (e) {
@@ -200,8 +199,8 @@ class AuthenticationBLoC with ChangeNotifier {
     }
   }
 
-  Future siginWithGoogleBack(token, String address, String city, int number,
-      double long, double lat) async {
+  Future siginWithGoogleBack(context, token, String address, String city,
+      int number, double long, double lat) async {
     final urlFinal = ('${Environment.apiUrl}/api/google/sign-in');
 
     final resp = await http.post(Uri.parse(urlFinal),
@@ -238,7 +237,8 @@ class AuthenticationBLoC with ChangeNotifier {
 
       return loginResponse.ok;
     } else {
-      return resp;
+      showAlertError(context, 'Error', '$resp');
+      return false;
     }
   }
 

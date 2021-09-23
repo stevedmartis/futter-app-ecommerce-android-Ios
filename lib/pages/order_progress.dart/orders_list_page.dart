@@ -239,7 +239,7 @@ class _StoresListByServiceState extends State<StoresListByService> {
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 25,
-                    color: currentTheme.accentColor),
+                    color: currentTheme.primaryColor),
               ),
             ),
           SizedBox(
