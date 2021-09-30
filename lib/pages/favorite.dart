@@ -193,23 +193,16 @@ class _CatalogsListState extends State<CatalogsList>
                     controller: scrollController,
                     itemCount: _bloc.productsFavoritesList.length,
                     itemBuilder: (context, index) {
-                      if (_bloc.productsFavoritesList.length > 0) {
-                        final item = _bloc.productsFavoritesList[index];
-                        return FadeIn(
-                            child:
-                                ProfileStoreProductItem(item, item.category));
-                      } else {
-                        return Center(
-                            child: Container(
-                          child: Text('Sin Favoritos'),
-                        ));
-                      }
+                      final item = _bloc.productsFavoritesList[index];
+                      return FadeIn(
+                          child: ProfileStoreProductItem(item, item.category));
                     },
                   ))
               : Center(
                   child: Container(
+                    padding: EdgeInsets.only(top: 70),
                     alignment: Alignment.bottomCenter,
-                    child: Text('Sin favoritos',
+                    child: Text('Sin catalogos',
                         style: TextStyle(color: Colors.grey)),
                   ),
                 ),

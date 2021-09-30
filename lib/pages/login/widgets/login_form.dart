@@ -35,7 +35,9 @@ class LoginForm extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          if (!UniversalPlatform.isAndroid)
+          if (UniversalPlatform.isIOS &&
+              !UniversalPlatform.isWeb &&
+              !UniversalPlatform.isAndroid)
             FadeSlideTransition(
               animation: animation,
               additionalOffset: 4 * space,
@@ -54,9 +56,7 @@ class LoginForm extends StatelessWidget {
                 ),
               ),
             ),
-
-              if (!UniversalPlatform.isAndroid)
-          SizedBox(height: space),
+          if (!UniversalPlatform.isAndroid) SizedBox(height: space),
           FadeSlideTransition(
             animation: animation,
             additionalOffset: 2 * space,
@@ -180,7 +180,7 @@ class LoginForm extends StatelessWidget {
       redirectByAction(context);
     } else {
       // Mostara alerta
-      showAlertError(context, 'Error', 'Intente mas tarde');
+      showAlertError(context, 'Error 1', 'Intente mas tarde');
     }
   }
 }

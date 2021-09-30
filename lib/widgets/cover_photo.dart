@@ -18,7 +18,7 @@ class CoverPhoto extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
       ),
-      width: size.width * 0.27,
+      width: size.width * 0.30,
       height: size.height * 0.18,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),

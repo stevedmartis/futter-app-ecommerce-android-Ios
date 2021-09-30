@@ -32,6 +32,15 @@ class AuthenticationBLoC with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<String> getTokenPlatform() async {
+    String token = '';
+    (UniversalPlatform.isWeb)
+        ? token = prefs.token
+        : token = await this._storage.read(key: 'token');
+
+    return token;
+  }
+
   bool get isImageProfileChange => this._imageProfileChanges;
 
   int _serviceSelect = 0;
@@ -58,7 +67,11 @@ class AuthenticationBLoC with ChangeNotifier {
   static GoogleSignIn _googleSignIn = GoogleSignIn(
       scopes: <String>['email', 'profile'],
       clientId:
-          '639303241258-80ht1peb9glatcqnl055qtalmfjh485d.apps.googleusercontent.com');
+          // '639303241258-80ht1peb9glatcqnl055qtalmfjh485d.apps.googleusercontent.com'
+          '639303241258-c8erosrtluirsah9ptuskjia910li7d7.apps.googleusercontent.com'
+
+      //  'gI2hTSGeaFnydFa2-vNBO88W'
+      );
 
   static GoogleSignIn _googleSignInApple = GoogleSignIn(
     scopes: <String>['email'],
@@ -141,35 +154,49 @@ class AuthenticationBLoC with ChangeNotifier {
 
       final googleKey = await account.authentication;
 
-      showAlertError(context, 'googkey', '${googleKey.idToken}');
       String address = '';
       String city = '';
       int number = 0;
       double long = 0;
       double lat = 0;
 
-      // showModalLoading(context);
+      showModalLoading(context);
 
-      address = prefs.addressSearchSave.mainText;
-      city = prefs.addressSearchSave.secondaryText;
-      number = (prefs.addressSearchSave.number != '')
-          ? int.parse(prefs.addressSearchSave.number)
+      address = (prefs.addressSearchSave != '')
+          ? prefs.addressSearchSave.mainText
+          : '';
+
+      city = (prefs.addressSearchSave != '')
+          ? prefs.addressSearchSave.secondaryText
+          : '';
+
+      number = (prefs.addressSearchSave != '')
+          ? (prefs.addressSearchSave.number != '')
+              ? int.parse(prefs.addressSearchSave.number)
+              : 0
           : 0;
-      long = prefs.longSearch;
-      lat = prefs.latSearch;
+
+      long = (prefs.addressSearchSave != '') ? prefs.longSearch : -70.6037229;
+
+      lat = (prefs.addressSearchSave != '') ? prefs.latSearch : -70.6037229;
 
       final bool resp = await siginWithGoogleBack(
           context, googleKey.idToken, address, city, number, long, lat);
 
-      print(resp);
       if (resp) {
         Navigator.pop(context);
-        showAlertError(context, 'Error', '$resp');
+
+        return resp;
+      } else {
+        print('error');
+        Navigator.pop(context);
       }
     } catch (e) {
       // Mostara alerta
-      showAlertError(context, 'Error', '$e');
-      print(e);
+
+      print(e.toString());
+
+      return false;
     }
   }
 
@@ -233,11 +260,10 @@ class AuthenticationBLoC with ChangeNotifier {
       prefs.setLocationCurrent = false;
       prefs.setSearchAddreses = placeStore;
 
-      print(loginResponse.ok);
-
       return loginResponse.ok;
     } else {
-      showAlertError(context, 'Error', '$resp');
+      print(resp.toString());
+      showAlertError(context, 'Error2', '$resp');
       return false;
     }
   }
@@ -286,7 +312,9 @@ class AuthenticationBLoC with ChangeNotifier {
     prefs.setLocationSearch = false;
 
     prefs.setLocationCurrent = false;
-    return await _storage.write(key: 'token', value: token);
+    return (UniversalPlatform.isWeb)
+        ? prefs.setToken = token
+        : await _storage.write(key: 'token', value: token);
   }
 
   Future logout() async {
@@ -342,10 +370,7 @@ class AuthenticationBLoC with ChangeNotifier {
       'colorVibrant': colorVibrantStore
     };
 
-    String token = '';
-    (UniversalPlatform.isWeb)
-        ? token = prefs.token
-        : token = await this._storage.read(key: 'token');
+    String token = await getTokenPlatform();
 
     final resp = await http.post(Uri.parse(urlFinal),
         body: jsonEncode(data),
@@ -381,10 +406,7 @@ class AuthenticationBLoC with ChangeNotifier {
 
     final data = {'uid': uid, 'service': service};
 
-    String token = '';
-    (UniversalPlatform.isWeb)
-        ? token = prefs.token
-        : token = await this._storage.read(key: 'token');
+    String token = await getTokenPlatform();
 
     final resp = await http.post(Uri.parse(urlFinal),
         body: jsonEncode(data),
@@ -426,10 +448,7 @@ class AuthenticationBLoC with ChangeNotifier {
       'instagram': instagram
     };
 
-    String token = '';
-    (UniversalPlatform.isWeb)
-        ? token = prefs.token
-        : token = await this._storage.read(key: 'token');
+    String token = await getTokenPlatform();
 
     final resp = await http.post(Uri.parse(urlFinal),
         body: jsonEncode(data),
@@ -474,10 +493,7 @@ class AuthenticationBLoC with ChangeNotifier {
       'city': location
     };
 
-    String token = '';
-    (UniversalPlatform.isWeb)
-        ? token = prefs.token
-        : token = await this._storage.read(key: 'token');
+    String token = await getTokenPlatform();
 
     final resp = await http.post(Uri.parse(urlFinal),
         body: jsonEncode(data),
@@ -528,10 +544,7 @@ class AuthenticationBLoC with ChangeNotifier {
       'off': off
     };
 
-    String token = '';
-    (UniversalPlatform.isWeb)
-        ? token = prefs.token
-        : token = await this._storage.read(key: 'token');
+    String token = await getTokenPlatform();
 
     final resp = await http.post(Uri.parse(urlFinal),
         body: jsonEncode(data),
@@ -672,11 +685,8 @@ class AuthenticationBLoC with ChangeNotifier {
 
     final mimeType = mime(image.path).split('/'); //image/jpeg
 
-    String token = '';
-    (UniversalPlatform.isWeb)
-        ? token = prefs.token
-        : token = await this._storage.read(key: 'token');
-
+    String token = await getTokenPlatform();
+    print(token);
     Map<String, String> headers = {
       "Content-Type": "image/mimeType",
       "x-token": token,
@@ -714,10 +724,7 @@ class AuthenticationBLoC with ChangeNotifier {
   Future<bool> isLoggedIn() async {
     var urlFinal = ('${Environment.apiUrl}/api/login/renew');
 
-    String token = '';
-    (UniversalPlatform.isWeb)
-        ? token = prefs.token
-        : token = await this._storage.read(key: 'token');
+    String token = await getTokenPlatform();
 
     //this.logout();
     final resp = await http.get(Uri.parse(urlFinal),

@@ -1,3 +1,4 @@
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:freeily/data_backup_animation/data_backup_home.dart';
 import 'package:freeily/grocery_store/grocery_store_home.dart';
 import 'package:freeily/models/Address.dart';
@@ -38,6 +39,7 @@ import 'package:freeily/pages/products_list.dart';
 import 'package:freeily/pages/search_principal_page.dart';
 import 'package:freeily/pages/single_image_upload.dart';
 import 'package:freeily/profile_store.dart/profile_store_auth.dart';
+import 'package:freeily/profile_store.dart/profile_store_user.dart';
 import 'package:freeily/responses/orderStoresProduct.dart';
 import 'package:freeily/responses/place_search_response.dart';
 import 'package:freeily/store_principal/main_store_principal.dart';
@@ -45,12 +47,29 @@ import 'package:freeily/store_product_concept/store_product_data.dart';
 import 'package:flutter/material.dart';
 
 final Map<String, Widget Function(BuildContext)> appRoutes = {
-  'loading': (_) => LoadingPage(),
-  'login': (_) => Login(
+  '/': (_) => LoadingPage(),
+  '/login': (_) => Login(
         screenHeight: 300,
       ),
-  'vender': (_) => CatalogosListPage(),
+  '/vender': (_) => CatalogosListPage(),
+  '/tienda': (_) => ProfileStoreSelect(
+        isAuthUser: false,
+      ),
 };
+
+class FreeilyModule extends Module {
+  @override
+  List<Bind> get binds => [];
+
+  @override
+  List<ModularRoute> get routes => [
+        ChildRoute('/',
+            child: (context, args) => LoadingPage(
+                store: (args.queryParams['store'] != null)
+                    ? args.queryParams['store']
+                    : '0')),
+      ];
+}
 
 final pageRouter = <_Route>[
   _Route(Icons.play_arrow, 'flow', MainStoreServicesApp()),

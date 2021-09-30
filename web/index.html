@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -11,11 +12,31 @@
     Fore more details:
     * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
   -->
-  <base href="/">
+
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+
+
+  <meta name='robots' content='noindex, follow' />
+
+  <!-- This site is optimized with the Yoast SEO plugin v16.9 - https://yoast.com/wordpress/plugins/seo/ -->
+  <title>Freeily - Shopping marketplace pymes, e-ccomerce Gratis.</title>
+  <meta name="description"
+    content="Freeily - Shopping marketplace pymes, compra, vende y cuida el medio ambiente. Restaurantes, Mercados, Moda, Licorerías y más." />
+  <meta property="og:locale" content="es_MX" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Freeily - Shopping marketplace pymes, e-ccomerce Gratis." />
+  <meta property="og:description"
+    content="Freeily - Shopping marketplace pymes, compra, vende y cuida el medio ambiente. Restaurantes, Mercados, Moda, Licorerías y más." />
+  <meta property="og:url" content="https://freeily.cl/" />
+  <meta property="og:site_name" content="Freeily" />
+  <meta property="article:modified_time" content="2021-09-22T13:35:17+00:00" />
+  <meta property="og:image:width" content="1024" />
+  <meta property="og:image:height" content="1024" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:label1" content="Tiempo de lectura" />
+  <meta name="twitter:data1" content="17 minutos" />
 
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -24,16 +45,36 @@
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="freeily_icon.png" />
 
-  <title>flutter_ecommerce_app</title>
+
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" type="text/css" href="splash/style.css">
 </head>
+
 <body>
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-messaging.js"></script>
+
+
+  <script>
+    var config = {
+      apiKey: "AIzaSyAN1SBI_t0wUmdZk4PpVVVFaJvKP8atKFM",
+      authDomain: "kiozer.firebaseapp.com",
+      projectId: "kiozer",
+      storageBucket: "kiozer.appspot.com",
+      messagingSenderId: "639303241258",
+      appId: "1:639303241258:web:673597af6f960df8abfd53",
+      measurementId: "G-M3CES0R4YR"
+    };
+    firebase.initializeApp(config);
+  </script>
+
+
+
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('flutter-first-frame', function () {
@@ -42,10 +83,15 @@
     }
   </script>
   <picture id="splash">
-    <source srcset="splash/img/light-1x.png 1x, splash/img/light-2x.png 2x, splash/img/light-3x.png 3x, splash/img/light-4x.png 4x" media="(prefers-color-scheme: light) or (prefers-color-scheme: no-preference)">
-    <source srcset="splash/img/dark-1x.png 1x, splash/img/dark-2x.png 2x, splash/img/dark-3x.png 3x, splash/img/dark-4x.png 4x" media="(prefers-color-scheme: dark)">
+    <source
+      srcset="splash/img/light-1x.png 1x, splash/img/light-2x.png 2x, splash/img/light-3x.png 3x, splash/img/light-4x.png 4x"
+      media="(prefers-color-scheme: light) or (prefers-color-scheme: no-preference)">
+    <source
+      srcset="splash/img/dark-1x.png 1x, splash/img/dark-2x.png 2x, splash/img/dark-3x.png 3x, splash/img/dark-4x.png 4x"
+      media="(prefers-color-scheme: dark)">
     <img class="center" src="splash/img/light-1x.png" />
   </picture>
   <script src="main.dart.js" type="application/javascript"></script>
 </body>
+
 </html>

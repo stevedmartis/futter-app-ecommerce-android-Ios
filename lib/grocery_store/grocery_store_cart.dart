@@ -140,6 +140,7 @@ class _GroceryStoreCartState extends State<GroceryStoreCart> {
                                                             .ellipsis,
                                                         maxLines: 1,
                                                         style: TextStyle(
+                                                            color: Colors.white,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: 15),

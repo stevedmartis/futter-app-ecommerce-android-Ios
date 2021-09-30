@@ -42,6 +42,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:universal_platform/universal_platform.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 import '../global/extension.dart';
 import 'package:freeily/services/stores_Services.dart' as storeServices;
@@ -578,6 +579,7 @@ class _StorePrincipalHomeState extends State<StorePrincipalHome> {
                     ],
                   ),
                 ),
+              makeSpaceTitle(),
               if (orderService.loading)
                 makeHeaderTitle(context, bloc.selected.name),
               if (orderService.loading) makeListRecomendations(loading),
@@ -624,7 +626,7 @@ SliverPersistentHeader makeHeaderTitle(context, String titleService) {
             child: Container(
               color: currentTheme.scaffoldBackgroundColor,
               child: Padding(
-                padding: const EdgeInsets.only(top: 15.0, left: 10),
+                padding: const EdgeInsets.only(top: 0.0, left: 10),
                 child: CrossFade<String>(
                   initialData: '',
                   data: titleService,
@@ -1342,12 +1344,12 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                   ),
                 ), */
                 Positioned(
-                    top: _size.height / 20,
+                    top: 15.0,
                     left: 10,
                     right: 10,
                     height: 40,
                     child: AnimatedOpacity(
-                        opacity: (prefs.addressSearchSave != '') ? 1.0 : 0.0,
+                        opacity: 1.0,
                         duration: Duration(milliseconds: 200),
                         child: GestureDetector(
                           onTap: () {
@@ -1356,7 +1358,9 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                             showModalLocation(
                                 context,
                                 _selectedGender,
-                                prefs.addressSearchSave.secondaryText,
+                                (prefs.addressSearchSave != '')
+                                    ? prefs.addressSearchSave.secondaryText
+                                    : '',
                                 authBloc.storeAuth.user.uid);
                           },
                           child: Container(
@@ -1384,7 +1388,7 @@ class _StoreServiceDetailsState extends State<StoreServiceDetails>
                                       child: Text(
                                         prefs.addressSearchSave != ''
                                             ? '${prefs.addressSearchSave.mainText}'
-                                            : '...',
+                                            : 'Mi ubicación',
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
                                         softWrap: false,
@@ -1639,24 +1643,25 @@ class TravelPhotoListItem extends StatelessWidget {
                   ),
                 ),
               ),
-              Positioned.fill(
-                child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5.0),
-                        gradient: LinearGradient(
-                          colors: [
-                            Color.fromARGB(200, 0, 0, 0),
-                            Color.fromARGB(0, 0, 0, 0)
-                          ],
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.center,
+              if (!UniversalPlatform.isWeb)
+                Positioned.fill(
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          gradient: LinearGradient(
+                            colors: [
+                              Color.fromARGB(0, 0, 0, 0),
+                              Color.fromARGB(200, 0, 0, 0)
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
                         ),
-                      ),
-                    )),
-              ),
-              Positioned.fill(
+                      )),
+                ),
+              Positioned(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(

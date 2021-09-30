@@ -73,7 +73,12 @@ class _ConfirmLocationPagetate extends State<ConfirmLocationPage> {
             onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
             child: Scaffold(
                 appBar: AppBar(
-                  title: _showTitle ? Text('Confirmar dirección') : Text(''),
+                  title: _showTitle
+                      ? Text('Confirmar dirección',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ))
+                      : Text(''),
                   backgroundColor: Colors.black,
                   leading: IconButton(
                     color: currentTheme.primaryColor,

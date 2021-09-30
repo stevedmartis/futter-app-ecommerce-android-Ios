@@ -88,6 +88,7 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify>
                           'Ingresa Codigo de Verificación',
                           maxLines: 2,
                           style: TextStyle(
+                            color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 30,
                           ),
@@ -189,7 +190,6 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify>
                             : isDisabled = true;
 
                         return Expanded(
-                          flex: 2,
                           child: Container(
                             padding: EdgeInsets.only(
                               top: 10,

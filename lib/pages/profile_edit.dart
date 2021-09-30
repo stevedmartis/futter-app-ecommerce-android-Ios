@@ -205,7 +205,9 @@ class EditProfilePageState extends State<EditProfilePage> {
 
     final File file = File(pickedFile.path);
 
-    imageStore = AssetImage(file.path);
+    if (UniversalPlatform.isAndroid) imageStore = FileImage(file);
+
+    if (UniversalPlatform.isIOS) imageStore = AssetImage(file.path);
 
     region = Offset.zero & imageSize;
 
@@ -223,6 +225,7 @@ class EditProfilePageState extends State<EditProfilePage> {
       region: newRegion,
       maximumColorCount: 20,
     );
+
     setState(() {});
   }
 

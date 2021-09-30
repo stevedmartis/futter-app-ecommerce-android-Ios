@@ -79,6 +79,15 @@ class BankService with ChangeNotifier {
         image: 'assets/logos/logos_banks/paris.jpeg')
   ];
 
+  Future<String> getTokenPlatform() async {
+    String token = '';
+    (UniversalPlatform.isWeb)
+        ? token = prefs.token
+        : token = await this._storage.read(key: 'token');
+
+    return token;
+  }
+
   getBanks(String value) {
     if (value.length >= 3) {
       final find = banks.where(
@@ -106,10 +115,7 @@ class BankService with ChangeNotifier {
       "email": email,
     };
 
-    String token = '';
-    (UniversalPlatform.isWeb)
-        ? token = prefs.token
-        : token = await this._storage.read(key: 'token');
+    final token = await getTokenPlatform();
 
     final resp = await http.post(Uri.parse(urlFinal),
         body: jsonEncode(data),
@@ -142,10 +148,7 @@ class BankService with ChangeNotifier {
       "email": email,
     };
 
-    String token = '';
-    (UniversalPlatform.isWeb)
-        ? token = prefs.token
-        : token = await this._storage.read(key: 'token');
+    final token = await getTokenPlatform();
 
     final resp = await http.post(Uri.parse(urlFinal),
         body: jsonEncode(data),
@@ -167,10 +170,7 @@ class BankService with ChangeNotifier {
   Future getAccountBankByUser(String uid) async {
     final urlFinal = ('${Environment.apiUrl}/api/bank/account/by/user/$uid');
 
-    String token = '';
-    (UniversalPlatform.isWeb)
-        ? token = prefs.token
-        : token = await this._storage.read(key: 'token');
+    final token = await getTokenPlatform();
 
     final resp = await http.get(Uri.parse(urlFinal),
         headers: {'Content-Type': 'application/json', 'x-token': token});

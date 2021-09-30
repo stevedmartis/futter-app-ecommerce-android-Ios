@@ -46,11 +46,14 @@ import '../global/extension.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProfileStoreSelect extends StatefulWidget {
-  ProfileStoreSelect({this.isAuthUser = false, this.store});
+  ProfileStoreSelect(
+      {this.isAuthUser = false, this.store, this.storeUsername = '0'});
 
   final bool isAuthUser;
 
   final Store store;
+
+  final String storeUsername;
 
   @override
   _ProfileStoreState createState() => _ProfileStoreState();
@@ -59,6 +62,8 @@ class ProfileStoreSelect extends StatefulWidget {
 class _ProfileStoreState extends State<ProfileStoreSelect>
     with TickerProviderStateMixin {
   final _bloc = TabsViewScrollBLoC();
+
+  bool isStoreRoute = false;
 
   AnimationController _animationController;
 
@@ -69,6 +74,12 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
 
   @override
   void initState() {
+    print(widget.storeUsername);
+
+    if (widget.storeUsername != '0')
+      setState(() {
+        isStoreRoute = true;
+      });
     final followService = Provider.of<FollowService>(context, listen: false);
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -358,7 +369,11 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                     flexibleSpace: FlexibleSpaceBar(
                       title: FadeInUp(
                           duration: Duration(milliseconds: 300),
-                          child: SABT(child: Text(widget.store.name))),
+                          child: SABT(
+                              child: Text(
+                            widget.store.name,
+                            style: TextStyle(color: Colors.white),
+                          ))),
                       stretchModes: [
                         StretchMode.zoomBackground,
                         StretchMode.fadeTitle,

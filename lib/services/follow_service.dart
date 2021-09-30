@@ -21,10 +21,19 @@ class FollowService with ChangeNotifier {
     notifyListeners();
   }
 
-  String token = '';
+  Future<String> getTokenPlatform() async {
+    String token = '';
+    (UniversalPlatform.isWeb)
+        ? token = prefs.token
+        : token = await this._storage.read(key: 'token');
+
+    return token;
+  }
+
   final prefs = new AuthUserPreferences();
   Future followStore(String storeId, String followerId) async {
-    final token = await this._storage.read(key: 'token');
+    final token = await getTokenPlatform();
+
     final urlFinal =
         ('${Environment.apiUrl}/api/follow/follow/$storeId/$followerId');
 
@@ -63,10 +72,7 @@ class FollowService with ChangeNotifier {
 
   Future getStoreAndProductsByValue(String value, String uid) async {
     final urlFinal = ('${Environment.apiUrl}/api/search/principal/$value/$uid');
-
-    (UniversalPlatform.isWeb)
-        ? token = prefs.token
-        : token = await this._storage.read(key: 'token');
+    final token = await getTokenPlatform();
 
     final resp = await http.get(Uri.parse(urlFinal),
         headers: {'Content-Type': 'application/json', 'x-token': token});

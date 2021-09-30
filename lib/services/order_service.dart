@@ -1,4 +1,5 @@
 import 'package:freeily/global/enviroments.dart';
+import 'package:freeily/preferences/user_preferences.dart';
 
 import 'package:freeily/responses/message_error_response.dart';
 import 'package:freeily/responses/orderStoresProduct.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 class OrderService with ChangeNotifier {
   List<Order> _orders = [];
@@ -23,6 +25,17 @@ class OrderService with ChangeNotifier {
     this._loading = value;
 
     notifyListeners();
+  }
+
+  final prefs = new AuthUserPreferences();
+
+  Future<String> getTokenPlatform() async {
+    String token = '';
+    (UniversalPlatform.isWeb)
+        ? token = prefs.token
+        : token = await this._storage.read(key: 'token');
+
+    return token;
   }
 
   List<Order> get orders => this._orders;
@@ -113,7 +126,7 @@ class OrderService with ChangeNotifier {
   Future getMyOrders(String uid) async {
     // this.authenticated = true;
 
-    final token = await this._storage.read(key: 'token');
+    String token = await getTokenPlatform();
     final urlFinal = ('${Environment.apiUrl}/api/order/orders/by/client/$uid');
 
     final resp = await http.get(Uri.parse(urlFinal),
@@ -135,7 +148,8 @@ class OrderService with ChangeNotifier {
   Future getMyOrdesStore(String uid) async {
     // this.authenticated = true;
 
-    final token = await this._storage.read(key: 'token');
+    final token = await getTokenPlatform();
+
     final urlFinal = ('${Environment.apiUrl}/api/order/orders/by/store/$uid');
 
     final resp = await http.get(Uri.parse(urlFinal),
@@ -166,7 +180,7 @@ class OrderService with ChangeNotifier {
       'creditCardClient': creditCardClient
     };
 
-    final token = await this._storage.read(key: 'token');
+    final token = await getTokenPlatform();
 
     final resp = await http.post(Uri.parse(urlFinal),
         body: json.encode(data),
@@ -188,7 +202,8 @@ class OrderService with ChangeNotifier {
 
     final data = {'id': orderId, 'isStore': isStore};
 
-    final token = await this._storage.read(key: 'token');
+    final token = await getTokenPlatform();
+
     final urlFinal =
         ('${Environment.apiUrl}/api/order/update/notification/order');
 
@@ -213,8 +228,8 @@ class OrderService with ChangeNotifier {
     // this.authenticated = true;
 
     final data = {'id': orderId, 'isStore': isStore};
+    final token = await getTokenPlatform();
 
-    final token = await this._storage.read(key: 'token');
     final urlFinal = ('${Environment.apiUrl}/api/order/update/cancel/order');
 
     final resp = await http.post(Uri.parse(urlFinal),
@@ -239,7 +254,8 @@ class OrderService with ChangeNotifier {
 
     final data = {'id': orderId};
 
-    final token = await this._storage.read(key: 'token');
+    final token = await getTokenPlatform();
+
     final urlFinal = ('${Environment.apiUrl}/api/order/update/prepare');
 
     final resp = await http.post(Uri.parse(urlFinal),
@@ -263,7 +279,8 @@ class OrderService with ChangeNotifier {
     // this.authenticated = true;
     final data = {'id': orderId};
 
-    final token = await this._storage.read(key: 'token');
+    final token = await getTokenPlatform();
+
     final urlFinal = ('${Environment.apiUrl}/api/order/update/delivery');
 
     final resp = await http.post(Uri.parse(urlFinal),
@@ -286,8 +303,8 @@ class OrderService with ChangeNotifier {
   Future editOrderDelivered(String orderId) async {
     // this.authenticated = true;
     final data = {'id': orderId};
+    final token = await getTokenPlatform();
 
-    final token = await this._storage.read(key: 'token');
     final urlFinal = ('${Environment.apiUrl}/api/order/update/delivered');
 
     final resp = await http.post(Uri.parse(urlFinal),
@@ -308,7 +325,7 @@ class OrderService with ChangeNotifier {
   }
 
   Future deleteCatalogo(String catalogoId) async {
-    final token = await this._storage.read(key: 'token');
+    final token = await getTokenPlatform();
 
     final urlFinal = ('${Environment.apiUrl}/api/catalogo/delete/$catalogoId');
 
@@ -326,8 +343,7 @@ class OrderService with ChangeNotifier {
     // this.authenticated = true;
 
     final urlFinal = ('${Environment.apiUrl}/api/catalogo/update/position');
-
-    final token = await this._storage.read(key: 'token');
+    final token = await getTokenPlatform();
 
     //final data = {'name': name, 'email': description, 'uid': uid};
     var map = {'catalogos': catalogos, 'user': ""};

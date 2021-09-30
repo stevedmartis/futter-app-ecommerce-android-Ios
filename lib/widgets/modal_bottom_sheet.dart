@@ -174,36 +174,38 @@ showLocationMaterialCupertinoBottomSheet(BuildContext context,
                     ),
                   ),
                 ),
-                ListTile(
-                    onTap: () {
-                      final place = prefs.addressSearchSave;
+                if (prefs.addressSearchSave != '')
+                  ListTile(
+                      onTap: () {
+                        final place = prefs.addressSearchSave;
 
-                      var placeSave = new PlaceSearch(
-                          description: authBloc.storeAuth.user.uid,
-                          placeId: authBloc.storeAuth.user.uid,
-                          structuredFormatting: new StructuredFormatting(
-                              mainText: place.mainText,
-                              secondaryText: place.secondaryText,
-                              number: place.number));
+                        var placeSave = new PlaceSearch(
+                            description: authBloc.storeAuth.user.uid,
+                            placeId: authBloc.storeAuth.user.uid,
+                            structuredFormatting: new StructuredFormatting(
+                                mainText: place.mainText,
+                                secondaryText: place.secondaryText,
+                                number: place.number));
 
-                      Navigator.push(context, confirmLocationRoute(placeSave));
-                    },
-                    leading: Icon(Icons.home,
-                        size: 25,
-                        color: currentTheme.currentTheme.primaryColor),
-                    title: Text(
-                      prefs.addressSearchSave != ''
-                          ? '${prefs.addressSearchSave.mainText}'
-                          : '...',
-                      style: TextStyle(
-                          fontSize: 15,
-                          color: (currentTheme.customTheme)
-                              ? Colors.white54
-                              : Colors.black54),
-                    ),
-                    trailing: radio
-                    //trailing:
-                    ),
+                        Navigator.push(
+                            context, confirmLocationRoute(placeSave));
+                      },
+                      leading: Icon(Icons.home,
+                          size: 25,
+                          color: currentTheme.currentTheme.primaryColor),
+                      title: Text(
+                        prefs.addressSearchSave != ''
+                            ? '${prefs.addressSearchSave.mainText}'
+                            : '...',
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: (currentTheme.customTheme)
+                                ? Colors.white54
+                                : Colors.black54),
+                      ),
+                      trailing: radio
+                      //trailing:
+                      ),
               ],
             )),
       ),
@@ -598,6 +600,7 @@ showMaterialCupertinoBottomSheetLocation(BuildContext context,
                                           child: Text(
                                             'Ubicación actual',
                                             style: TextStyle(
+                                                color: Colors.white,
                                                 fontWeight: FontWeight.w500,
                                                 fontSize: 15),
                                           ),

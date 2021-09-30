@@ -173,7 +173,10 @@ class _ProductsByCategoryStorePage extends State<ProductsByCategoryStorePage> {
           Container(
             child: Text(
               widget.category.name.capitalize(),
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30),
             ),
           ),
           Container(

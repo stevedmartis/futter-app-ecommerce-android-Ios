@@ -12,10 +12,19 @@ import 'package:universal_platform/universal_platform.dart';
 class StoreService with ChangeNotifier {
   final _storage = new FlutterSecureStorage();
 
-  String token = '';
+  Future<String> getTokenPlatform() async {
+    String token = '';
+    (UniversalPlatform.isWeb)
+        ? token = prefs.token
+        : token = await this._storage.read(key: 'token');
+
+    return token;
+  }
+
   final prefs = new AuthUserPreferences();
   Future getStoresAuthListServices(String uid) async {
-    final token = await this._storage.read(key: 'token');
+    final token = await getTokenPlatform();
+
     final urlFinal =
         ('${Environment.apiUrl}/api/store/auth/stores/list/principal');
 
@@ -55,10 +64,6 @@ class StoreService with ChangeNotifier {
 
   Future getStoreAndProductsByValue(String value, String uid) async {
     final urlFinal = ('${Environment.apiUrl}/api/search/principal/$value/$uid');
-
-    (UniversalPlatform.isWeb)
-        ? token = prefs.token
-        : token = await this._storage.read(key: 'token');
 
     final resp = await http.get(Uri.parse(urlFinal),
         headers: {'Content-Type': 'application/json'});

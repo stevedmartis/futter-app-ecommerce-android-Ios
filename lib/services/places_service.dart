@@ -1,26 +1,42 @@
+import 'dart:convert';
+
 import 'package:freeily/models/place_Current.dart';
 import 'package:freeily/models/place_Search.dart';
+import 'package:freeily/responses/google_maps_autocomplete.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'package:flutter/material.dart';
+import 'package:freeily/global/enviroments.dart';
 
 class PlaceService with ChangeNotifier {
   final apiKey = 'AIzaSyD_lFpA7YI75XFW12HdnpS32Y8q3k-v31Q';
 
-  Future getAutocomplete(String searchTerm) async {
+  Future<GoogleMapsAutoComplete> getAutocomplete(String searchTerm) async {
     // this.authenticated = true;
 
     final urlFinal =
         'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$searchTerm&types=address&language=es_419&components=country:cl&key=$apiKey';
 
-    final resp = await http.get(Uri.parse(urlFinal));
+    final placesResponse = await getAutocompleteApi(urlFinal);
 
-    var json = convert.jsonDecode(resp.body);
+    var response = googleMapsAutoCompleteFromJson(placesResponse.body);
 
-    var jsonResult = json['predictions'] as List;
+    print(response);
+    return response;
+  }
 
-    return jsonResult.map((place) => PlaceSearch.fromJson(place)).toList();
+  Future getAutocompleteApi(String urlFinal) async {
+    // this.authenticated = true;
+
+    final data = {'urlFinal': urlFinal};
+    final resp = await http.post(
+        Uri.parse('${Environment.apiUrl}/api/google-maps/autocomplete'),
+        body: jsonEncode(data),
+        headers: {'Content-Type': 'application/json'});
+
+    print(resp);
+    return resp;
   }
 
   Future getRoadsAutocomplete(String searchTerm) async {

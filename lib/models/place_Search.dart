@@ -10,6 +10,12 @@ class PlaceSearch {
         structuredFormatting:
             StructuredFormatting.fromJson(json["structured_formatting"]),
       );
+
+  Map<String, dynamic> toJson() => {
+        "description": description,
+        "place_id": placeId,
+        "structured_formatting": structuredFormatting.toJson(),
+      };
 }
 
 class StructuredFormatting {

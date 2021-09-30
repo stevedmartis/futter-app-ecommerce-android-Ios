@@ -71,8 +71,6 @@ class _PrincipalPageState extends State<PrincipalPage>
 
     storeAuth = authService.storeAuth;
 
-    cardBloc.getMyCreditCards(storeAuth.user.uid);
-
     categoriesStoreProducts();
 
     // storeslistServices();
@@ -81,7 +79,7 @@ class _PrincipalPageState extends State<PrincipalPage>
     if (storeAuth.user.uid != '0') {
       final address = storeAuth.address.toString().split(",").first;
       storesByLocationlistServices(address, storeAuth.city, storeAuth.user.uid);
-
+      cardBloc.getMyCreditCards(storeAuth.user.uid);
       _myOrdersClient();
       Timer(new Duration(milliseconds: 0), () {
         if (storeAuth.service != 0) {
@@ -105,18 +103,10 @@ class _PrincipalPageState extends State<PrincipalPage>
       Timer(new Duration(milliseconds: 0), () {
         storeBloc.loadingStores = true;
         orderService.loading = true;
-        showMaterialCupertinoBottomSheetLocation(context, () {
-          HapticFeedback.lightImpact();
-          myLocationBloc.initPositionLocation(context);
-
-          Navigator.pop(context);
-        }, () {
-          Navigator.pop(context);
-        }, false);
       });
     }
 
-    if (!isWeb) locationStatus();
+    locationStatus();
     if (!isWeb) WidgetsBinding.instance.addObserver(this);
 
     this
@@ -391,6 +381,38 @@ class _PrincipalPageState extends State<PrincipalPage>
   }
 
   void locationStatus() async {
+    Location location = new Location();
+
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await location.serviceEnabled();
+
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    if (prefs.addressSearchSave == '')
+      showMaterialCupertinoBottomSheetLocation(context, () {
+        HapticFeedback.lightImpact();
+        myLocationBloc.initPositionLocation(context);
+
+        Navigator.pop(context);
+      }, () {
+        Navigator.pop(context);
+      }, false);
+/* 
     final isGranted = await PermissionHandle.Permission.location.isGranted;
     //final isPermanentlyDenied = await Permission.location.isPermanentlyDenied;
     final isDenied = await PermissionHandle.Permission.location.isDenied;
@@ -398,8 +420,8 @@ class _PrincipalPageState extends State<PrincipalPage>
         await PermissionHandle.Permission.location.isPermanentlyDenied;
 
     final serviceEnabled = await location.serviceEnabled();
-    final status = await PermissionHandle.Permission.location.request();
-
+    final status = await PermissionHandle.Permission.location.request(); */
+/* 
     if (isDenied) {
       if (prefs.addressSearchSave != '') {
         return;
@@ -422,7 +444,7 @@ class _PrincipalPageState extends State<PrincipalPage>
       final status = await PermissionHandle.Permission.location.request();
 
       accessGps(status);
-    }
+    } */
   }
 
   void accessGps(PermissionHandle.PermissionStatus status) {

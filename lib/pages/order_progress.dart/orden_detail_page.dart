@@ -200,6 +200,7 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> {
             slivers: <Widget>[
               makeHeaderCustom('Tu pedido'),
               titleBox(context),
+              makeAddressUser(context),
               makeAddressUserTimeDeliveryProductsStores(
                 context,
               ),
@@ -356,7 +357,10 @@ SliverToBoxAdapter titleBox(context) {
           Container(
             child: Text(
               'Tu pedido',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30),
             ),
           ),
         ],
@@ -365,12 +369,21 @@ SliverToBoxAdapter titleBox(context) {
   );
 }
 
+SliverList makeAddressUser(
+  context,
+) {
+  return SliverList(
+      delegate: SliverChildListDelegate([
+    _addressUser(context),
+  ]));
+}
+
 SliverList makeAddressUserTimeDeliveryProductsStores(
   context,
 ) {
   return SliverList(
       delegate: SliverChildListDelegate([
-    _addressUserTimeDeliveryProductsStores(context),
+    _timesDeliveryProductsStores(context),
   ]));
 }
 
@@ -386,11 +399,163 @@ enum CardType {
 
 List<Object> storesproducts = [];
 
-Widget _addressUserTimeDeliveryProductsStores(context) {
+Widget _addressUser(context) {
   final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
   final authBloc = Provider.of<AuthenticationBLoC>(context);
   final size = MediaQuery.of(context).size;
   final prefs = new AuthUserPreferences();
+
+  var map = Map();
+  final bloc = Provider.of<GroceryStoreBLoC>(context);
+
+  bloc.cart
+      .forEach((e) => map.update(e.product.user, (x) => e, ifAbsent: () => e));
+
+  mapList = map.values.toList();
+
+  return Container(
+    child: FadeInLeft(
+        delay: Duration(milliseconds: 200),
+        child: Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 10.0,
+            ),
+            child: Container(
+              child: Column(
+                children: [
+                  FadeIn(
+                    child: Container(
+                        padding: EdgeInsets.only(top: 0.0),
+                        color: currentTheme.scaffoldBackgroundColor,
+                        child: Container(
+                          padding:
+                              EdgeInsets.only(left: size.width / 20, top: 0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  //Navigator.of(context).pop();
+                                },
+                                child: new Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Container(
+                                      margin: EdgeInsets.only(right: 20),
+                                      padding: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(100),
+                                          border: Border.all(
+                                              width: 2, color: Colors.grey)),
+                                      child: Icon(
+                                        Icons.location_on,
+                                        size: 30,
+                                        color: currentTheme.primaryColor,
+                                      ),
+                                    )),
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    child: Text(
+                                      'DIRECCIÓN DE ENTREGA',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 15,
+                                          color: Colors.grey),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: size.width / 1.7,
+                                    child: Text(
+                                      prefs.addressSearchSave != ''
+                                          ? '${prefs.addressSearchSave.mainText}'
+                                          : '...',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 20,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: currentTheme.scaffoldBackgroundColor,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Material(
+                                      color:
+                                          currentTheme.scaffoldBackgroundColor,
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: InkWell(
+                                        splashColor: Colors.grey,
+                                        borderRadius: BorderRadius.circular(20),
+                                        radius: 40,
+                                        onTap: () {
+                                          HapticFeedback.lightImpact();
+
+                                          final place = prefs.addressSearchSave;
+
+                                          var placeSave = new PlaceSearch(
+                                              description:
+                                                  authBloc.storeAuth.user.uid,
+                                              placeId:
+                                                  authBloc.storeAuth.user.uid,
+                                              structuredFormatting:
+                                                  new StructuredFormatting(
+                                                      mainText: place.mainText,
+                                                      secondaryText:
+                                                          place.secondaryText,
+                                                      number: place.number));
+                                          Navigator.push(context,
+                                              confirmLocationRoute(placeSave));
+                                        },
+                                        highlightColor: Colors.grey,
+                                        child: Container(
+                                          margin: EdgeInsets.only(left: 5.0),
+                                          alignment: Alignment.center,
+                                          width: 34,
+                                          height: 34,
+                                          child: Icon(
+                                            Icons.edit_outlined,
+                                            color: currentTheme.primaryColor,
+                                            size: 25,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                            ],
+                          ),
+                        )),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Divider(),
+                ],
+              ),
+            ))),
+  );
+}
+
+Widget _timesDeliveryProductsStores(context) {
+  final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
+  final size = MediaQuery.of(context).size;
 
   var map = Map();
   final bloc = Provider.of<GroceryStoreBLoC>(context);
@@ -464,6 +629,17 @@ Widget _addressUserTimeDeliveryProductsStores(context) {
 
           quantityFirstSecond = firstProduct.quantity + secondProduct.quantity;
         }
+
+        double totalPriceElements = products.fold<double>(
+          0.0,
+          (previousValue, element) =>
+              previousValue + (element.quantity * element.product.price),
+        );
+
+        final totalFormat =
+            NumberFormat.currency(locale: 'id', symbol: '', decimalDigits: 0)
+                .format(totalPriceElements);
+
         return FadeInLeft(
           delay: Duration(milliseconds: 100 * index),
           child: Padding(
@@ -472,243 +648,6 @@ Widget _addressUserTimeDeliveryProductsStores(context) {
               ),
               child: Column(
                 children: [
-                  Container(
-                    child: Column(
-                      children: [
-                        FadeIn(
-                          child: Container(
-                              padding: EdgeInsets.only(top: 0.0),
-                              color: currentTheme.scaffoldBackgroundColor,
-                              child: Container(
-                                padding: EdgeInsets.only(
-                                    left: size.width / 20, top: 0),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        //Navigator.of(context).pop();
-                                      },
-                                      child: new Align(
-                                          alignment: Alignment.topCenter,
-                                          child: Container(
-                                            margin: EdgeInsets.only(right: 20),
-                                            padding: EdgeInsets.all(10),
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(100),
-                                                border: Border.all(
-                                                    width: 2,
-                                                    color: Colors.grey)),
-                                            child: Icon(
-                                              Icons.location_on,
-                                              size: 30,
-                                              color: currentTheme.primaryColor,
-                                            ),
-                                          )),
-                                    ),
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          child: Text(
-                                            'DIRECCIÓN DE ENTREGA',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 15,
-                                                color: Colors.grey),
-                                          ),
-                                        ),
-                                        Container(
-                                          width: size.width / 1.7,
-                                          child: Text(
-                                            prefs.addressSearchSave != ''
-                                                ? '${prefs.addressSearchSave.mainText}'
-                                                : '...',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 20,
-                                                color: Colors.white),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        color: currentTheme
-                                            .scaffoldBackgroundColor,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Material(
-                                            color: currentTheme
-                                                .scaffoldBackgroundColor,
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            child: InkWell(
-                                              splashColor: Colors.grey,
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                              radius: 40,
-                                              onTap: () {
-                                                HapticFeedback.lightImpact();
-
-                                                final place =
-                                                    prefs.addressSearchSave;
-
-                                                var placeSave = new PlaceSearch(
-                                                    description: authBloc
-                                                        .storeAuth.user.uid,
-                                                    placeId: authBloc
-                                                        .storeAuth.user.uid,
-                                                    structuredFormatting:
-                                                        new StructuredFormatting(
-                                                            mainText:
-                                                                place.mainText,
-                                                            secondaryText: place
-                                                                .secondaryText,
-                                                            number:
-                                                                place.number));
-                                                Navigator.push(
-                                                    context,
-                                                    confirmLocationRoute(
-                                                        placeSave));
-                                              },
-                                              highlightColor: Colors.grey,
-                                              child: Container(
-                                                margin:
-                                                    EdgeInsets.only(left: 5.0),
-                                                alignment: Alignment.center,
-                                                width: 34,
-                                                height: 34,
-                                                child: Icon(
-                                                  Icons.edit_outlined,
-                                                  color:
-                                                      currentTheme.primaryColor,
-                                                  size: 25,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                  ],
-                                ),
-                              )),
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 25.0, right: 25),
-                          child: Divider(),
-                        ),
-                        Container(
-                          padding:
-                              EdgeInsets.only(left: 20, bottom: 10, top: 10),
-                          child: Row(
-                            children: [
-                              Container(
-                                child: Icon(
-                                  Icons.location_city,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  prefs.addressSearchSave != ''
-                                      ? '${prefs.addressSearchSave.secondaryText}'
-                                      : '...',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 20,
-                                      color: Colors.grey),
-                                ),
-                              ),
-                              Spacer(),
-                              Container(
-                                child: Icon(
-                                  Icons.home_outlined,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  prefs.addressSearchSave != ''
-                                      ? '${prefs.addressSearchSave.number}'
-                                      : '...',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 18,
-                                      color: Colors.grey),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15.0, right: 15),
-                          child: Divider(),
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.only(left: 20),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                'Entrega',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 18,
-                                    color: Colors.grey),
-                              ),
-                            ),
-                            Spacer(),
-                            Container(
-                              padding: EdgeInsets.only(right: 20),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                '$timeDelivery',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 18,
-                                    color: Colors.white),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Divider(),
-                      ],
-                    ),
-                  ),
                   if (!store.notLocation)
                     Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -760,6 +699,48 @@ Widget _addressUserTimeDeliveryProductsStores(context) {
                             ],
                           ),
                         ]),
+                  Container(
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(left: 20),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Entrega',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 18,
+                                    color: Colors.grey),
+                              ),
+                            ),
+                            Spacer(),
+                            Container(
+                              padding: EdgeInsets.only(right: 20),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                '$timeDelivery',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 18,
+                                    color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: Divider()),
+                        SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    ),
+                  ),
                   Container(
                     padding: EdgeInsets.only(left: 20),
                     child: Row(
@@ -843,7 +824,7 @@ Widget _addressUserTimeDeliveryProductsStores(context) {
                                   ),
                                 ),
                               ],
-                            )
+                            ),
                           ],
                         ),
                         Container(
@@ -957,6 +938,48 @@ Widget _addressUserTimeDeliveryProductsStores(context) {
                       child: Divider()),
                   SizedBox(
                     height: 10,
+                  ),
+                  Container(
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(left: 20),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Productos:',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 18,
+                                    color: Colors.grey),
+                              ),
+                            ),
+                            Spacer(),
+                            Container(
+                              padding: EdgeInsets.only(right: 20),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                '\$$totalFormat',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 18,
+                                    color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: Divider()),
+                        SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    ),
                   ),
                   StreamBuilder<CreditCard>(
                       stream: cardBloc.cardselectedToPay.stream,
@@ -1073,7 +1096,7 @@ Widget _addressUserTimeDeliveryProductsStores(context) {
                                                 ),
                                               )
                                             ],
-                                          )
+                                          ),
                                         ],
                                       ),
                                     )
@@ -1366,7 +1389,7 @@ Widget _addressUserTimeDeliveryProductsStores(context) {
                   ),
                   Container(
                     child: Divider(),
-                  )
+                  ),
                 ],
               )),
         );
@@ -1555,7 +1578,7 @@ SliverToBoxAdapter orderDetailInfo(context) {
                 Container(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Productos',
+                    'Total Productos',
                     style: TextStyle(
                         fontWeight: FontWeight.normal,
                         fontSize: 15,

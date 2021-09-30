@@ -73,6 +73,7 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
                           'Ingresa Número celular',
                           maxLines: 2,
                           style: TextStyle(
+                            color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 30,
                           ),
@@ -179,7 +180,7 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
                                 if (!isDisabled) {
                                   showModalLoading(context);
 
-                                startPhoneAuth();
+                                  startPhoneAuth();
                                 } else {
                                   return false;
                                 }

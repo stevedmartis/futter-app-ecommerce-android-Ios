@@ -648,9 +648,9 @@ class _BankAccountStoreState extends State<BankAccountStore> {
 
         showSnackBar(context, 'Cuenta bancaria editada');
 
-        if (authService.isChangeToSale && store.user.first) {
+        if (authService.isChangeToSale || store.user.first) {
           Navigator.pushAndRemoveUntil(
-              context, profileAuthRoute(true), (Route<dynamic> route) => true);
+              context, profileEditRoute(), (Route<dynamic> route) => true);
         } else {
           Navigator.pop(context);
         }

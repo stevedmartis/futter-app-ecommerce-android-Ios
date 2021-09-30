@@ -103,6 +103,8 @@ class MyLocationBloc extends ChangeNotifier {
 
       prefs.setLocationSearch = true;
 
+      print('location!!');
+
       getStoresLocationList(context, address, commune, uid);
     }
   }
@@ -123,7 +125,7 @@ class MyLocationBloc extends ChangeNotifier {
 
     // final resp2 = await placeService.getAutocompleteDetails(searchTerm);
 
-    _searchResults.sink.add(resp);
+    _searchResults.sink.add(resp.predictions);
   }
 
   changeNumberAddress(String value) async {

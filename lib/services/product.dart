@@ -41,10 +41,17 @@ class StoreProductService with ChangeNotifier {
 
   final _storage = new FlutterSecureStorage();
 
-  Future getMyFavoritesProducts(String uid) async {
+  Future<String> getTokenPlatform() async {
+    String token = '';
     (UniversalPlatform.isWeb)
         ? token = prefs.token
         : token = await this._storage.read(key: 'token');
+
+    return token;
+  }
+
+  Future getMyFavoritesProducts(String uid) async {
+    final token = await getTokenPlatform();
     final urlFinal =
         ('${Environment.apiUrl}/api/product/products/favorites/user/$uid');
 
@@ -69,9 +76,7 @@ class StoreProductService with ChangeNotifier {
 
     final data = {'product': productId, 'user': userId};
 
-    (UniversalPlatform.isWeb)
-        ? token = prefs.token
-        : token = await this._storage.read(key: 'token');
+    final token = await getTokenPlatform();
 
     final urlFinal = ('${Environment.apiUrl}/api/favorite/update/');
 
@@ -94,9 +99,7 @@ class StoreProductService with ChangeNotifier {
     // this.authenticated = true;
 
     final urlFinal = ('${Environment.apiUrl}/api/product/new');
-    (UniversalPlatform.isWeb)
-        ? token = prefs.token
-        : token = await this._storage.read(key: 'token');
+    final token = await getTokenPlatform();
 
     final resp = await http.post(Uri.parse(urlFinal),
         body: jsonEncode(product),
@@ -116,9 +119,7 @@ class StoreProductService with ChangeNotifier {
   Future editProduct(ProfileStoreProduct product) async {
     // this.authenticated = true;
 
-    (UniversalPlatform.isWeb)
-        ? token = prefs.token
-        : token = await this._storage.read(key: 'token');
+    final token = await getTokenPlatform();
     final urlFinal = ('${Environment.apiUrl}/api/product/update/product');
 
     final resp = await http.post(Uri.parse(urlFinal),
@@ -139,9 +140,7 @@ class StoreProductService with ChangeNotifier {
   }
 
   Future deleteProduct(String catalogoId) async {
-    (UniversalPlatform.isWeb)
-        ? token = prefs.token
-        : token = await this._storage.read(key: 'token');
+    final token = await getTokenPlatform();
 
     final urlFinal = ('${Environment.apiUrl}/api/product/delete/$catalogoId');
 
@@ -161,9 +160,7 @@ class StoreProductService with ChangeNotifier {
 
     final urlFinal =
         Uri.https('${Environment.apiUrl}', '/api/catalogo/update/position');
-    (UniversalPlatform.isWeb)
-        ? token = prefs.token
-        : token = await this._storage.read(key: 'token');
+    final token = await getTokenPlatform();
 
     //final data = {'name': name, 'email': description, 'uid': uid};
     final data = {'catalogos': catalogos, 'userId': userId};
@@ -184,7 +181,6 @@ class StoreProductService with ChangeNotifier {
     }
   }
 
-  String token = '';
   Future<ImagesResponse> uploadImagesProducts(
       List<http.MultipartFile> images, String id) async {
     final urlUploadMultiFiles =
@@ -193,9 +189,7 @@ class StoreProductService with ChangeNotifier {
     final urlUploadFile =
         ('${Environment.apiUrl}/api/aws/upload/image/product');
 
-    (UniversalPlatform.isWeb)
-        ? token = prefs.token
-        : token = await this._storage.read(key: 'token');
+    final token = await getTokenPlatform();
 
     Map<String, String> headers = {
       "Content-Type": "image/mimeType",
