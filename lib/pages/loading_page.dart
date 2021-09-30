@@ -34,49 +34,57 @@ class LoadingPage extends StatelessWidget {
     if (autenticado) {
       socketService.connect();
 
-      Navigator.of(context).push(PageRouteBuilder(
-        transitionDuration: Duration(milliseconds: 1000),
-        pageBuilder: (BuildContext context, Animation<double> animation,
-            Animation<double> secondaryAnimation) {
-          return (store == '0')
-              ? PrincipalPage()
-              : ProfileStoreSelect(
-                  isAuthUser: false,
-                  storeUsername: store,
-                );
-        },
-        transitionsBuilder: (BuildContext context, Animation<double> animation,
-            Animation<double> secondaryAnimation, Widget child) {
-          return Align(
-            child: FadeTransition(
-              opacity: animation,
-              child: child,
-            ),
-          );
-        },
-      ));
+      Navigator.of(context).pushAndRemoveUntil(
+          PageRouteBuilder(
+            transitionDuration: Duration(milliseconds: 1000),
+            pageBuilder: (BuildContext context, Animation<double> animation,
+                Animation<double> secondaryAnimation) {
+              return (store == '0')
+                  ? PrincipalPage()
+                  : ProfileStoreSelect(
+                      isAuthUser: false,
+                      storeUsername: store,
+                    );
+            },
+            transitionsBuilder: (BuildContext context,
+                Animation<double> animation,
+                Animation<double> secondaryAnimation,
+                Widget child) {
+              return Align(
+                child: FadeTransition(
+                  opacity: animation,
+                  child: child,
+                ),
+              );
+            },
+          ),
+          (Route<dynamic> route) => true);
     } else {
-      Navigator.of(context).push(PageRouteBuilder(
-        transitionDuration: Duration(milliseconds: 600),
-        pageBuilder: (BuildContext context, Animation<double> animation,
-            Animation<double> secondaryAnimation) {
-          return (store == '0')
-              ? PrincipalPage()
-              : ProfileStoreSelect(
-                  isAuthUser: false,
-                  storeUsername: store,
-                );
-        },
-        transitionsBuilder: (BuildContext context, Animation<double> animation,
-            Animation<double> secondaryAnimation, Widget child) {
-          return Align(
-            child: FadeTransition(
-              opacity: animation,
-              child: child,
-            ),
-          );
-        },
-      ));
+      Navigator.of(context).pushAndRemoveUntil(
+          PageRouteBuilder(
+            transitionDuration: Duration(milliseconds: 600),
+            pageBuilder: (BuildContext context, Animation<double> animation,
+                Animation<double> secondaryAnimation) {
+              return (store == '0')
+                  ? PrincipalPage()
+                  : ProfileStoreSelect(
+                      isAuthUser: false,
+                      storeUsername: store,
+                    );
+            },
+            transitionsBuilder: (BuildContext context,
+                Animation<double> animation,
+                Animation<double> secondaryAnimation,
+                Widget child) {
+              return Align(
+                child: FadeTransition(
+                  opacity: animation,
+                  child: child,
+                ),
+              );
+            },
+          ),
+          (Route<dynamic> route) => true);
     }
   }
 }

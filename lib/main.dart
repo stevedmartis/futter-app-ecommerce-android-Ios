@@ -2,7 +2,6 @@
 //import 'package:firebase_analytics/observer.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:freeily/authentication/auth_bloc.dart';
-import 'package:freeily/authentication/auth_firebase.dart';
 import 'package:freeily/bloc_globals/bloc/favorites_bloc.dart';
 import 'package:freeily/bloc_globals/bloc_location/bloc/my_location_bloc.dart';
 import 'package:freeily/pages/get_phone/providers/countries.dart';
@@ -53,7 +52,6 @@ void main() async {
     ChangeNotifierProvider(create: (_) => GroceryStoreBLoC()),
     ChangeNotifierProvider(create: (_) => TabsViewScrollBLoC()),
     ChangeNotifierProvider(create: (_) => StoreService()),
-    ChangeNotifierProvider(create: (_) => FireBaseAuthBLoC()),
     ChangeNotifierProvider(create: (_) => FollowService()),
     ChangeNotifierProvider(create: (_) => NotificationsBLoC()),
     ChangeNotifierProvider(

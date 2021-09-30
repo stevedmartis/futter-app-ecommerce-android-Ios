@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart' show ChangeNotifier, VoidCallback;
 import 'package:flutter/widgets.dart' show TextEditingController;
 import 'package:rxdart/rxdart.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 enum PhoneAuthState {
   Started,
@@ -134,23 +135,40 @@ class PhoneAuthDataProvider with ChangeNotifier {
     };
 
     _addStatusMessage('Phone auth started');
-    FireBase.auth
-        .verifyPhoneNumber(
-            phoneNumber: phone.toString(),
-            timeout: Duration(seconds: 60),
-            verificationCompleted: verificationCompleted,
-            verificationFailed: verificationFailed,
-            codeSent: codeSent,
-            codeAutoRetrievalTimeout: codeAutoRetrievalTimeout)
-        .then((value) {
-      if (onCodeSent != null) onCodeSent();
-      _addStatus(PhoneAuthState.CodeSent);
-      _addStatusMessage('Code sent');
-    }).catchError((error) {
-      if (onError != null) onError();
-      _addStatus(PhoneAuthState.Error);
-      _addStatusMessage(error.toString());
-    });
+
+    if (UniversalPlatform.isWeb)
+      FireBase.auth
+          .signInWithPhoneNumber(
+        phone.toString(),
+      )
+          .then((value) {
+        if (onCodeSent != null) onCodeSent();
+        _addStatus(PhoneAuthState.CodeSent);
+        _addStatusMessage('Code sent');
+      }).catchError((error) {
+        if (onError != null) onError();
+        _addStatus(PhoneAuthState.Error);
+        _addStatusMessage(error.toString());
+      });
+
+    if (!UniversalPlatform.isWeb)
+      FireBase.auth
+          .verifyPhoneNumber(
+              phoneNumber: phone.toString(),
+              timeout: Duration(seconds: 60),
+              verificationCompleted: verificationCompleted,
+              verificationFailed: verificationFailed,
+              codeSent: codeSent,
+              codeAutoRetrievalTimeout: codeAutoRetrievalTimeout)
+          .then((value) {
+        if (onCodeSent != null) onCodeSent();
+        _addStatus(PhoneAuthState.CodeSent);
+        _addStatusMessage('Code sent');
+      }).catchError((error) {
+        if (onError != null) onError();
+        _addStatus(PhoneAuthState.Error);
+        _addStatusMessage(error.toString());
+      });
   }
 
   void verifyOTPAndLogin({String smsCode}) async {
