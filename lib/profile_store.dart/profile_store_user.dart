@@ -5,14 +5,17 @@ import 'package:freeily/authentication/auth_bloc.dart';
 import 'package:freeily/bloc_globals/notitification.dart';
 import 'package:freeily/grocery_store/grocery_store_bloc.dart';
 import 'package:freeily/models/store.dart';
+import 'package:freeily/pages/principal_home_page.dart';
 
 import 'package:freeily/preferences/user_preferences.dart';
 
 import 'package:freeily/profile_store.dart/profile_store_auth.dart';
+import 'package:freeily/responses/store_response.dart';
 import 'package:freeily/routes/routes.dart';
 
 import 'package:freeily/services/catalogo.dart';
 import 'package:freeily/services/follow_service.dart';
+import 'package:freeily/services/stores_Services.dart';
 
 import 'package:freeily/store_principal/store_principal_bloc.dart';
 import 'package:freeily/store_principal/store_principal_home.dart';
@@ -30,6 +33,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freeily/profile_store.dart/product_detail.dart';
 import 'package:freeily/store_product_concept/store_product_bloc.dart';
 import 'package:freeily/store_product_concept/store_product_data.dart';
+import 'package:freeily/widgets/show_alert_error.dart';
 
 import 'package:freeily/widgets/sliver_card_animation/body_sliver.dart';
 
@@ -68,22 +72,30 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
   AnimationController _animationController;
 
   bool loading = false;
+  bool loadingok = false;
+
+  Store store;
+
+  int colorVibrant;
+
+  String phoneStore;
 
   double get maxHeight => 400 + MediaQuery.of(context).padding.top;
   double get minHeight => MediaQuery.of(context).padding.bottom;
 
   @override
   void initState() {
-    print(widget.storeUsername);
-
-    if (widget.storeUsername != '0')
-      setState(() {
-        isStoreRoute = true;
-      });
     final followService = Provider.of<FollowService>(context, listen: false);
 
+    setState(() {
+      store = widget.store;
+
+      phoneStore = store.user.phone.toString();
+      colorVibrant = int.parse(store.colorVibrant);
+    });
+
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      followService.followers = widget.store.followers;
+      followService.followers = store.followers;
     });
 
     categoriesStoreProducts();
@@ -93,6 +105,7 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
 
   void categoriesStoreProducts() async {
     setState(() {
+      loadingok = true;
       loading = true;
     });
 
@@ -102,12 +115,15 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
     final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
 
     final resp = await storeService.getAllCategoriesProducts(
-        widget.store.user.uid, authService.storeAuth.user.uid);
+        store.user.uid,
+        (authService.storeAuth.user != null)
+            ? authService.storeAuth.user.uid
+            : '0');
 
     if (resp.ok) {
       _bloc.storeCategoriesProducts = resp.storeCategoriesProducts;
 
-      _bloc.initStoreSelect(this, context, widget.store);
+      _bloc.initStoreSelect(this, context, store);
 
       _animationController = AnimationController(
         vsync: this,
@@ -116,6 +132,7 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
       );
 
       setState(() {
+        loadingok = true;
         loading = false;
       });
     }
@@ -158,248 +175,260 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
       await launch("https://wa.me/56$number?text=Hola!");
     }
 
-    final phoneStore = widget.store.user.phone.toString();
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(new FocusNode());
       },
       child: Scaffold(
           backgroundColor: currentTheme.scaffoldBackgroundColor,
-          body: AnimatedBuilder(
-            animation: _bloc,
-            builder: (_, __) => CustomScrollView(
-                physics: const BouncingScrollPhysics(
-                    parent: AlwaysScrollableScrollPhysics()),
-                controller: _bloc.scrollController2,
-                slivers: [
-                  SliverAppBar(
-                    leading: Container(),
-                    actions: [
-                      Container(),
-                    ],
-                    leadingWidth: 0,
-                    backgroundColor:
-                        Color(int.parse(widget.store.colorVibrant)),
-                    title: Container(
-                        color: Colors.transparent,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              alignment: Alignment.centerLeft,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: currentTheme.cardColor),
-                              child: Material(
-                                color: currentTheme.cardColor,
-                                borderRadius: BorderRadius.circular(20),
-                                child: InkWell(
-                                  splashColor: Colors.grey,
-                                  borderRadius: BorderRadius.circular(20),
-                                  radius: 30,
-                                  onTap: () {
-                                    HapticFeedback.lightImpact();
-                                    Navigator.pop(context);
-                                  },
-                                  highlightColor: Colors.grey,
-                                  child: Container(
-                                    width: 34,
-                                    height: 34,
-                                    child: Icon(
-                                      Icons.chevron_left,
-                                      color: currentTheme.primaryColor,
-                                      size: 30,
+          body: (loadingok)
+              ? AnimatedBuilder(
+                  animation: _bloc,
+                  builder: (_, __) => CustomScrollView(
+                      physics: const BouncingScrollPhysics(
+                          parent: AlwaysScrollableScrollPhysics()),
+                      controller: _bloc.scrollController2,
+                      slivers: [
+                        SliverAppBar(
+                          leading: Container(),
+                          actions: [
+                            Container(),
+                          ],
+                          leadingWidth: 0,
+                          backgroundColor: Color(colorVibrant),
+                          title: Container(
+                              color: Colors.transparent,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: currentTheme.cardColor),
+                                    child: Material(
+                                      color: currentTheme.cardColor,
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: InkWell(
+                                        splashColor: Colors.grey,
+                                        borderRadius: BorderRadius.circular(20),
+                                        radius: 30,
+                                        onTap: () {
+                                          HapticFeedback.lightImpact();
+                                          Navigator.pop(context);
+                                        },
+                                        highlightColor: Colors.grey,
+                                        child: Container(
+                                          width: 34,
+                                          height: 34,
+                                          child: Icon(
+                                            Icons.chevron_left,
+                                            color: currentTheme.primaryColor,
+                                            size: 30,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Expanded(
-                                child: AnimatedContainer(
-                                    duration: Duration(milliseconds: 200),
-                                    width: size.width,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                        color: currentTheme.cardColor,
-                                        borderRadius:
-                                            BorderRadius.circular(100)),
-                                    child: Container(
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                  color: currentTheme.cardColor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          100)),
-                                              padding: EdgeInsets.only(
-                                                  top: 20, left: 20),
-                                              child: TextField(
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                                inputFormatters: [
-                                                  new LengthLimitingTextInputFormatter(
-                                                      20),
-                                                ],
-                                                focusNode: _focusNode,
-
-                                                controller: textCtrl,
-                                                //  keyboardType: TextInputType.emailAddress,
-
-                                                maxLines: 1,
-
-                                                decoration: InputDecoration(
-                                                  fillColor: Colors.white,
-                                                  enabledBorder:
-                                                      UnderlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: currentTheme
-                                                            .cardColor),
-                                                  ),
-                                                  border: UnderlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: Colors.white),
-                                                  ),
-                                                  labelStyle: TextStyle(
-                                                      color: Colors.white54),
-                                                  // icon: Icon(Icons.perm_identity),
-                                                  //  fillColor: currentTheme.accentColor,
-                                                  focusedBorder:
-                                                      OutlineInputBorder(
-                                                    borderSide: BorderSide(
+                                  SizedBox(width: 10),
+                                  Expanded(
+                                      child: AnimatedContainer(
+                                          duration: Duration(milliseconds: 200),
+                                          width: size.width,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                              color: currentTheme.cardColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(100)),
+                                          child: Container(
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
                                                         color: currentTheme
                                                             .cardColor,
-                                                        width: 0.0),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(100)),
+                                                    padding: EdgeInsets.only(
+                                                        top: 20, left: 20),
+                                                    child: TextField(
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                      inputFormatters: [
+                                                        new LengthLimitingTextInputFormatter(
+                                                            20),
+                                                      ],
+                                                      focusNode: _focusNode,
+
+                                                      controller: textCtrl,
+                                                      //  keyboardType: TextInputType.emailAddress,
+
+                                                      maxLines: 1,
+
+                                                      decoration:
+                                                          InputDecoration(
+                                                        fillColor: Colors.white,
+                                                        enabledBorder:
+                                                            UnderlineInputBorder(
+                                                          borderSide: BorderSide(
+                                                              color: currentTheme
+                                                                  .cardColor),
+                                                        ),
+                                                        border:
+                                                            UnderlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide(
+                                                                  color: Colors
+                                                                      .white),
+                                                        ),
+                                                        labelStyle: TextStyle(
+                                                            color:
+                                                                Colors.white54),
+                                                        // icon: Icon(Icons.perm_identity),
+                                                        //  fillColor: currentTheme.accentColor,
+                                                        focusedBorder:
+                                                            OutlineInputBorder(
+                                                          borderSide: BorderSide(
+                                                              color: currentTheme
+                                                                  .cardColor,
+                                                              width: 0.0),
+                                                        ),
+                                                        hintText:
+                                                            'Buscar productos',
+                                                        //  labelText: 'Buscar ...',
+                                                        //counterText: snapshot.data,
+                                                        //  errorText: snapshot.error
+                                                      ),
+                                                      onChanged: (value) => _bloc
+                                                          .sharedProductOnStoreCurrent(
+                                                              value),
+                                                    ),
                                                   ),
-                                                  hintText: 'Buscar productos',
-                                                  //  labelText: 'Buscar ...',
-                                                  //counterText: snapshot.data,
-                                                  //  errorText: snapshot.error
                                                 ),
-                                                onChanged: (value) => _bloc
-                                                    .sharedProductOnStoreCurrent(
-                                                        value),
-                                              ),
+                                                Expanded(
+                                                  flex: -2,
+                                                  child: AnimatedContainer(
+                                                      duration: Duration(
+                                                          milliseconds: 200),
+                                                      alignment:
+                                                          Alignment.topRight,
+                                                      child: Container(
+                                                        width: 40,
+                                                        height: 40,
+                                                        decoration:
+                                                            ShapeDecoration(
+                                                          shadows: [
+                                                            BoxShadow(
+                                                              color: Colors
+                                                                  .black
+                                                                  .withOpacity(
+                                                                      0.50),
+                                                              offset: Offset(
+                                                                  3.0, 3.0),
+                                                              blurRadius: 2.0,
+                                                              spreadRadius: 1.0,
+                                                            )
+                                                          ],
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          30.0)),
+                                                          gradient: LinearGradient(
+                                                              colors: gradients,
+                                                              begin: Alignment
+                                                                  .topLeft,
+                                                              end: Alignment
+                                                                  .bottomRight),
+                                                        ),
+                                                        child: Icon(
+                                                          Icons.search,
+                                                          color: Colors.white,
+                                                        ),
+                                                      )),
+                                                )
+                                              ],
                                             ),
-                                          ),
-                                          Expanded(
-                                            flex: -2,
-                                            child: AnimatedContainer(
-                                                duration:
-                                                    Duration(milliseconds: 200),
-                                                alignment: Alignment.topRight,
-                                                child: Container(
-                                                  width: 40,
-                                                  height: 40,
-                                                  decoration: ShapeDecoration(
-                                                    shadows: [
-                                                      BoxShadow(
-                                                        color: Colors.black
-                                                            .withOpacity(0.50),
-                                                        offset:
-                                                            Offset(3.0, 3.0),
-                                                        blurRadius: 2.0,
-                                                        spreadRadius: 1.0,
-                                                      )
-                                                    ],
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        30.0)),
-                                                    gradient: LinearGradient(
-                                                        colors: gradients,
-                                                        begin:
-                                                            Alignment.topLeft,
-                                                        end: Alignment
-                                                            .bottomRight),
-                                                  ),
-                                                  child: Icon(
-                                                    Icons.search,
-                                                    color: Colors.white,
-                                                  ),
-                                                )),
-                                          )
-                                        ],
+                                          ))),
+                                  SizedBox(width: 10),
+                                  if (phoneStore != "")
+                                    Container(
+                                      alignment: Alignment.centerLeft,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          color: currentTheme.cardColor),
+                                      child: Material(
+                                        color: currentTheme.cardColor,
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: InkWell(
+                                          splashColor: Colors.grey,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          radius: 30,
+                                          onTap: () {
+                                            HapticFeedback.lightImpact();
+                                            messageToWhatsapp(
+                                                store.user.phone.toString());
+                                          },
+                                          highlightColor: Colors.grey,
+                                          child: Container(
+                                              alignment: Alignment.center,
+                                              width: 34,
+                                              height: 34,
+                                              child: FaIcon(
+                                                FontAwesomeIcons.whatsapp,
+                                                color:
+                                                    currentTheme.primaryColor,
+                                                size: 25,
+                                              )),
+                                        ),
                                       ),
-                                    ))),
-                            SizedBox(width: 10),
-                            if (phoneStore != "")
-                              Container(
-                                alignment: Alignment.centerLeft,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: currentTheme.cardColor),
-                                child: Material(
-                                  color: currentTheme.cardColor,
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: InkWell(
-                                    splashColor: Colors.grey,
-                                    borderRadius: BorderRadius.circular(20),
-                                    radius: 30,
-                                    onTap: () {
-                                      HapticFeedback.lightImpact();
-                                      messageToWhatsapp(
-                                          widget.store.user.phone.toString());
-                                    },
-                                    highlightColor: Colors.grey,
-                                    child: Container(
-                                        alignment: Alignment.center,
-                                        width: 34,
-                                        height: 34,
-                                        child: FaIcon(
-                                          FontAwesomeIcons.whatsapp,
-                                          color: currentTheme.primaryColor,
-                                          size: 25,
-                                        )),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        )),
-                    stretch: true,
-                    expandedHeight: size.height / 3.2,
-                    collapsedHeight: 100,
-                    floating: false,
-                    pinned: true,
-                    flexibleSpace: FlexibleSpaceBar(
-                      title: FadeInUp(
-                          duration: Duration(milliseconds: 300),
-                          child: SABT(
-                              child: Text(
-                            widget.store.name,
-                            style: TextStyle(color: Colors.white),
-                          ))),
-                      stretchModes: [
-                        StretchMode.zoomBackground,
-                        StretchMode.fadeTitle,
-                        // StretchMode.blurBackground
-                      ],
-                      background: GestureDetector(
-                        onTap: () => {_bloc.onTapStore()},
-                        child: Material(
-                          type: MaterialType.transparency,
-                          child: ClipRRect(
-                            /*  borderRadius: BorderRadius.only(
+                                    ),
+                                ],
+                              )),
+                          stretch: true,
+                          expandedHeight: size.height / 3.2,
+                          collapsedHeight: 100,
+                          floating: false,
+                          pinned: true,
+                          flexibleSpace: FlexibleSpaceBar(
+                            title: FadeInUp(
+                                duration: Duration(milliseconds: 300),
+                                child: SABT(
+                                    child: Text(
+                                  store.name,
+                                  style: TextStyle(color: Colors.white),
+                                ))),
+                            stretchModes: [
+                              StretchMode.zoomBackground,
+                              StretchMode.fadeTitle,
+                              // StretchMode.blurBackground
+                            ],
+                            background: GestureDetector(
+                              onTap: () => {_bloc.onTapStore()},
+                              child: Material(
+                                type: MaterialType.transparency,
+                                child: ClipRRect(
+                                  /*  borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(30.0),
                             bottomRight: Radius.circular(30.0),
                           ), */
-                            child: StoreProfileData(
-                              storeAuth: widget.store,
-                              size: size,
-                              isAuth: false,
+                                  child: StoreProfileData(
+                                    storeAuth: store,
+                                    size: size,
+                                    isAuth: false,
+                                  ),
+                                ),
+                              ),
                             ),
+                            centerTitle: true,
                           ),
                         ),
-                      ),
-                      centerTitle: true,
-                    ),
-                  ),
-                  /*  SliverPersistentHeader(
+                        /*  SliverPersistentHeader(
                 pinned: true,
                 delegate: _AppBarStore(
                     store: widget.store,
@@ -408,14 +437,15 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                     size: size,
                     bloc: _bloc),
               ), */
-                  SliverToBoxAdapter(
-                    child: Body(
-                      size: size,
-                      store: widget.store,
-                      isAuth: false,
-                    ),
-                  ),
-                  /*  SliverPersistentHeader(
+
+                        SliverToBoxAdapter(
+                          child: Body(
+                            size: size,
+                            store: store,
+                            isAuth: false,
+                          ),
+                        ),
+                        /*  SliverPersistentHeader(
                 delegate: _ProfileStoreHeader(
                     bloc: _bloc,
                     animationController: _animationController,
@@ -423,66 +453,74 @@ class _ProfileStoreState extends State<ProfileStoreSelect>
                     store: widget.store),
                 pinned: false,
               ), */
-                  SliverPersistentHeader(
-                    pinned: true,
-                    delegate: SliverAppBarDelegate(
-                        minHeight: 50,
-                        maxHeight: 50,
-                        child: Container(
-                          color: currentTheme.scaffoldBackgroundColor,
-                          alignment: Alignment.centerLeft,
+
+                        SliverPersistentHeader(
+                          pinned: true,
+                          delegate: SliverAppBarDelegate(
+                              minHeight: 50,
+                              maxHeight: 50,
+                              child: Container(
+                                color: currentTheme.scaffoldBackgroundColor,
+                                alignment: Alignment.centerLeft,
+                                child: (!loading)
+                                    ? TabBar(
+                                        onTap: _bloc.onCategorySelected,
+                                        controller: _bloc.tabController,
+                                        indicatorWeight: 0.1,
+                                        isScrollable: true,
+                                        tabs: _bloc.tabs
+                                            .map((e) =>
+                                                (e.category.products.length > 0)
+                                                    ? FadeInLeft(
+                                                        child: _TabWidget(
+                                                          tabCategory: e,
+                                                        ),
+                                                      )
+                                                    : Container())
+                                            .toList(),
+                                      )
+                                    : Container(),
+                              )),
+                        ),
+                        SliverToBoxAdapter(
                           child: (!loading)
-                              ? TabBar(
-                                  onTap: _bloc.onCategorySelected,
-                                  controller: _bloc.tabController,
-                                  indicatorWeight: 0.1,
-                                  isScrollable: true,
-                                  tabs: _bloc.tabs
-                                      .map((e) =>
-                                          (e.category.products.length > 0)
-                                              ? FadeInLeft(
-                                                  child: _TabWidget(
-                                                    tabCategory: e,
-                                                  ),
-                                                )
-                                              : Container())
-                                      .toList(),
+                              ? Container(
+                                  child: ListView.builder(
+                                    primary: false,
+                                    shrinkWrap: true,
+                                    controller: _bloc.scrollController,
+                                    itemCount: _bloc.items.length,
+                                    padding: EdgeInsets.only(
+                                        left: 20,
+                                        right: 20,
+                                        bottom:
+                                            (_bloc.items.length > 4) ? 0 : 200),
+                                    itemBuilder: (context, index) {
+                                      final item = _bloc.items[index];
+                                      if (item.isCategory) {
+                                        return Container(
+                                            child: ProfileStoreCategoryItem(
+                                                item.category));
+                                      } else {
+                                        return _ProfileStoreProductItem(
+                                            item.product,
+                                            item.product.category,
+                                            _bloc);
+                                      }
+                                    },
+                                  ),
                                 )
-                              : Container(),
-                        )),
-                  ),
-                  SliverToBoxAdapter(
-                    child: (!loading)
-                        ? Container(
-                            child: ListView.builder(
-                              primary: false,
-                              shrinkWrap: true,
-                              controller: _bloc.scrollController,
-                              itemCount: _bloc.items.length,
-                              padding: EdgeInsets.only(
-                                  left: 20,
-                                  right: 20,
-                                  bottom: (_bloc.items.length > 4) ? 0 : 200),
-                              itemBuilder: (context, index) {
-                                final item = _bloc.items[index];
-                                if (item.isCategory) {
-                                  return Container(
-                                      child: ProfileStoreCategoryItem(
-                                          item.category));
-                                } else {
-                                  return _ProfileStoreProductItem(item.product,
-                                      item.product.category, _bloc);
-                                }
-                              },
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 200.0),
-                            child: buildLoadingWidget(context),
-                          ),
-                  ),
-                ]),
-          )),
+                              : Padding(
+                                  padding: const EdgeInsets.only(bottom: 200.0),
+                                  child: buildLoadingWidget(context),
+                                ),
+                        ),
+                      ]),
+                )
+              : Center(
+                  child: Container(
+                  child: buildLoadingWidget(context),
+                ))),
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:freeily/global/enviroments.dart';
 import 'package:freeily/preferences/user_preferences.dart';
 import 'package:freeily/responses/message_error_response.dart';
 import 'package:freeily/responses/search_stores_products_response.dart';
+import 'package:freeily/responses/store_response.dart';
 import 'package:freeily/responses/stores_list_principal_response.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -19,6 +20,26 @@ class StoreService with ChangeNotifier {
         : token = await this._storage.read(key: 'token');
 
     return token;
+  }
+
+  Future getStoreByUsername(String username) async {
+    final token = await getTokenPlatform();
+
+    final urlFinal = ('${Environment.apiUrl}/api/store/by/username/$username');
+
+    print(urlFinal);
+    final resp = await http.get(Uri.parse(urlFinal),
+        headers: {'Content-Type': 'application/json', 'x-token': token});
+
+    if (resp.statusCode == 200) {
+      final StoreResponse storeFound = storeResponseFromJson(resp.body);
+
+      return storeFound;
+    } else {
+      final respBody = errorMessageResponseFromJson(resp.body);
+
+      return respBody;
+    }
   }
 
   final prefs = new AuthUserPreferences();

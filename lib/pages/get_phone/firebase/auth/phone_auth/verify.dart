@@ -256,7 +256,6 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify>
                             onTap: () {
                               HapticFeedback.lightImpact();
                               if (!isDisabled) {
-                                showModalLoading(context);
                                 signIn(codeOtp);
                               } else {
                                 return false;
@@ -287,6 +286,8 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify>
   }
 
   startPhoneAuth() async {
+    showModalLoading(context);
+
     final phoneAuthDataProvider =
         Provider.of<PhoneAuthDataProvider>(context, listen: false);
     phoneAuthDataProvider.loading = true;
@@ -294,13 +295,16 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify>
     bool validPhone = await phoneAuthDataProvider.instantiate(
         dialCode: countryProvider.selectedCountry.dialCode,
         onCodeSent: () {
+          Navigator.pop(context);
           Navigator.of(context).pushAndRemoveUntil(
               phoneAuthVerifyRoute(), (Route<dynamic> route) => false);
         },
         onFailed: () {
+          Navigator.pop(context);
           showSnackBar(context, phoneAuthDataProvider.message);
         },
         onError: () {
+          Navigator.pop(context);
           showSnackBar(context, phoneAuthDataProvider.message);
         });
     if (!validPhone) {
@@ -337,7 +341,7 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify>
 
   onError() {
     showSnackBar(context,
-        "PhoneAuth error ${Provider.of<PhoneAuthDataProvider>(context, listen: false).message}");
+        "${Provider.of<PhoneAuthDataProvider>(context, listen: false).message}");
   }
 
   onAutoRetrievalTimeOut() {

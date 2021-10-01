@@ -1,6 +1,6 @@
 import 'package:freeily/authentication/auth_bloc.dart';
 import 'package:freeily/global/enviroments.dart';
-import 'package:freeily/responses/store_response.dart';
+import 'package:freeily/responses/stores_response.dart';
 
 import 'package:http/http.dart' as http;
 

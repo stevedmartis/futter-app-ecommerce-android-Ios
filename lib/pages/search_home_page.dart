@@ -1,6 +1,6 @@
 import 'package:freeily/models/profile.dart';
 import 'package:freeily/provider/store_provider.dart';
-import 'package:freeily/responses/store_response.dart';
+import 'package:freeily/responses/stores_response.dart';
 import 'package:freeily/theme/theme.dart';
 import 'package:freeily/widgets/circular_progress.dart';
 import 'package:flutter/material.dart';

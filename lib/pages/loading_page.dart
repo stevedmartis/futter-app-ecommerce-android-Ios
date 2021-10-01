@@ -1,7 +1,6 @@
 import 'package:freeily/authentication/auth_bloc.dart';
 import 'package:freeily/pages/principal_home_page.dart';
 
-import 'package:freeily/profile_store.dart/profile_store_user.dart';
 import 'package:freeily/sockets/socket_connection.dart';
 import 'package:freeily/widgets/circular_progress.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,6 @@ class LoadingPage extends StatelessWidget {
   final String store;
   @override
   Widget build(BuildContext context) {
-    print(store);
     return Scaffold(
       body: FutureBuilder(
         future: checkLoginState(context, store),
@@ -39,12 +37,7 @@ class LoadingPage extends StatelessWidget {
             transitionDuration: Duration(milliseconds: 1000),
             pageBuilder: (BuildContext context, Animation<double> animation,
                 Animation<double> secondaryAnimation) {
-              return (store == '0')
-                  ? PrincipalPage()
-                  : ProfileStoreSelect(
-                      isAuthUser: false,
-                      storeUsername: store,
-                    );
+              return PrincipalPage();
             },
             transitionsBuilder: (BuildContext context,
                 Animation<double> animation,
@@ -65,12 +58,7 @@ class LoadingPage extends StatelessWidget {
             transitionDuration: Duration(milliseconds: 600),
             pageBuilder: (BuildContext context, Animation<double> animation,
                 Animation<double> secondaryAnimation) {
-              return (store == '0')
-                  ? PrincipalPage()
-                  : ProfileStoreSelect(
-                      isAuthUser: false,
-                      storeUsername: store,
-                    );
+              return PrincipalPage();
             },
             transitionsBuilder: (BuildContext context,
                 Animation<double> animation,

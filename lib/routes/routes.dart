@@ -63,11 +63,10 @@ class FreeilyModule extends Module {
 
   @override
   List<ModularRoute> get routes => [
-        ChildRoute('/',
-            child: (context, args) => LoadingPage(
-                store: (args.queryParams['store'] != null)
-                    ? args.queryParams['store']
-                    : '0')),
+        ChildRoute('/', child: (context, args) => LoadingPage()),
+        ChildRoute('/:store',
+            child: (context, args) =>
+                GroceryStoreHome(userName: args.params['store'])),
       ];
 }
 
@@ -247,8 +246,9 @@ Route dataRoute(List<Order> orders) {
 
 Route profileCartRoute(Store store) {
   return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) =>
-        GroceryStoreHome(store),
+    pageBuilder: (context, animation, secondaryAnimation) => GroceryStoreHome(
+      store: store,
+    ),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = Offset(0.0, 1.0);
       var end = Offset.zero;

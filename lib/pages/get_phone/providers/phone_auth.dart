@@ -134,8 +134,6 @@ class PhoneAuthDataProvider with ChangeNotifier {
       });
     };
 
-    _addStatusMessage('Phone auth started');
-
     if (UniversalPlatform.isWeb)
       FireBase.auth
           .signInWithPhoneNumber(
@@ -144,11 +142,17 @@ class PhoneAuthDataProvider with ChangeNotifier {
           .then((value) {
         if (onCodeSent != null) onCodeSent();
         _addStatus(PhoneAuthState.CodeSent);
-        _addStatusMessage('Code sent');
+        _addStatusMessage('Code enviado!');
       }).catchError((error) {
-        if (onError != null) onError();
-        _addStatus(PhoneAuthState.Error);
-        _addStatusMessage(error.toString());
+        print(error.toString());
+        if (error.code == 'too-many-requests') {
+          _addStatusMessage(
+              'Demaciados intentos incorrectos, por favor intenta mas tarde.');
+          _addStatus(PhoneAuthState.Error);
+          onError();
+        }
+
+        // _addStatusMessage(error.toString());
       });
 
     if (!UniversalPlatform.isWeb)
@@ -163,11 +167,11 @@ class PhoneAuthDataProvider with ChangeNotifier {
           .then((value) {
         if (onCodeSent != null) onCodeSent();
         _addStatus(PhoneAuthState.CodeSent);
-        _addStatusMessage('Code sent');
+        _addStatusMessage('Code enviado!');
       }).catchError((error) {
-        if (onError != null) onError();
         _addStatus(PhoneAuthState.Error);
         _addStatusMessage(error.toString());
+        if (onError != null) onError();
       });
   }
 
@@ -175,18 +179,43 @@ class PhoneAuthDataProvider with ChangeNotifier {
     _authCredential = PhoneAuthProvider.credential(
         verificationId: actualCode, smsCode: smsCode);
 
-    FireBase.auth.signInWithCredential(_authCredential).then((result) async {
-      print(actualCode);
+    if (UniversalPlatform.isWeb) {
+      ConfirmationResult confirmationResult = await FireBase.auth
+          .signInWithPhoneNumber('+56' + _phoneNumberController.text);
 
-      _addStatusMessage('Authentication successful');
-      _addStatus(PhoneAuthState.Verified);
-      if (onVerified != null) onVerified();
-    }).catchError((error) {
-      if (onError != null) onError();
-      _addStatus(PhoneAuthState.Error);
-      _addStatusMessage(
-          'Something has gone wrong, please try later(signInWithPhoneNumber) $error');
-    });
+      try {
+        final response = await confirmationResult.confirm(smsCode);
+
+        if (response != null) {
+          _addStatusMessage('Verificado con exito');
+          _addStatus(PhoneAuthState.Verified);
+          onVerified();
+        }
+      } catch (e) {
+        if (e.code == 'invalid-verification-code') {
+          _addStatusMessage(
+              'Codigo incorrecto, Por favor ingrese codigo en mensaje SMS enviado');
+          _addStatus(PhoneAuthState.Error);
+          onError();
+        } else {
+          _addStatusMessage(
+              'Error, Por favor ingrese codigo en mensaje SMS enviado');
+          _addStatus(PhoneAuthState.Error);
+        }
+      }
+    }
+
+    if (!UniversalPlatform.isWeb)
+      FireBase.auth.signInWithCredential(_authCredential).then((result) async {
+        _addStatusMessage('Verificado con exito');
+        _addStatus(PhoneAuthState.Verified);
+        if (onVerified != null) onVerified();
+      }).catchError((error) {
+        if (onError != null) onError();
+        _addStatus(PhoneAuthState.Error);
+        _addStatusMessage(
+            'Demaciados intentos incorrectos, Por favor intenta más tarde.  $error');
+      });
   }
 
   _addStatus(PhoneAuthState state) {

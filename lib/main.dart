@@ -26,6 +26,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
+import 'package:universal_platform/universal_platform.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 import 'bloc_globals/bloc/cards_services_bloc.dart';
 import 'bloc_globals/bloc/notifications_bloc.dart';
@@ -38,7 +40,7 @@ void main() async {
 
   final prefs = new AuthUserPreferences();
   await prefs.initPrefs();
-
+  setPathUrlStrategy();
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => MenuModel()),
     ChangeNotifierProvider(create: (_) => AuthenticationBLoC()),
@@ -72,8 +74,9 @@ void main() async {
 class FreeilyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations(
-        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+    if (UniversalPlatform.isWeb)
+      SystemChrome.setPreferredOrientations(
+          [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     //  final FirebaseAnalytics analytics = FirebaseAnalytics();
     /*  final FirebaseAnalyticsObserver observer =

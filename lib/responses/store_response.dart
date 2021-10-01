@@ -1,32 +1,24 @@
-// To parse this JSON data, do
-//
-//     final usuariosResponse = usuariosResponseFromJson(jsonString);
-
 import 'dart:convert';
-
 import 'package:freeily/models/store.dart';
 
-StoresResponse storesResponseFromJson(String str) =>
-    StoresResponse.fromJson(json.decode(str));
+StoreResponse storeResponseFromJson(String str) =>
+    StoreResponse.fromJson(json.decode(str));
 
-String storesResponseToJson(StoresResponse data) => json.encode(data.toJson());
+String storeResponseToJson(StoreResponse data) => json.encode(data.toJson());
 
-class StoresResponse {
-  StoresResponse({this.ok, this.stores});
+class StoreResponse {
+  StoreResponse({
+    this.ok,
+    this.store,
+  });
 
   bool ok;
-  List<Store> stores;
+  Store store;
 
-  factory StoresResponse.fromJson(Map<String, dynamic> json) => StoresResponse(
+  factory StoreResponse.fromJson(Map<String, dynamic> json) => StoreResponse(
         ok: json["ok"],
-        stores:
-            List<Store>.from(json["profiles"].map((x) => Store.fromJson(x))),
+        store: Store.fromJson(json["store"]),
       );
 
-  Map<String, dynamic> toJson() => {
-        "ok": ok,
-        "stores": List<dynamic>.from(stores.map((x) => x.toJson())),
-      };
-
-  StoresResponse.withError(String errorValue);
+  Map<String, dynamic> toJson() => {"ok": ok, "store": store.toJson()};
 }

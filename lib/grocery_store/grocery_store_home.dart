@@ -4,12 +4,14 @@ import 'package:animate_do/animate_do.dart';
 import 'package:freeily/authentication/auth_bloc.dart';
 import 'package:freeily/models/store.dart';
 import 'package:freeily/profile_store.dart/profile_store_auth.dart';
+import 'package:freeily/services/stores_Services.dart';
 import 'package:freeily/theme/theme.dart';
 import 'package:freeily/widgets/cross_fade.dart';
 import 'package:freeily/widgets/image_cached.dart';
 import 'package:flutter/material.dart';
 import 'package:freeily/grocery_store/grocery_store_bloc.dart';
 import 'package:freeily/profile_store.dart/profile_store_user.dart';
+import 'package:freeily/widgets/show_alert_error.dart';
 import 'package:provider/provider.dart';
 
 import 'grocery_store_cart.dart';
@@ -19,14 +21,44 @@ const cartBarHeight = 65.0;
 const _panelTransition = Duration(milliseconds: 500);
 
 class GroceryStoreHome extends StatefulWidget {
-  GroceryStoreHome(this.store);
+  GroceryStoreHome({this.store, this.userName});
   final Store store;
+
+  final String userName;
   @override
   _GroceryStoreHomeState createState() => _GroceryStoreHomeState();
 }
 
 class _GroceryStoreHomeState extends State<GroceryStoreHome> {
   double get toolBarHeight => kToolbarHeight;
+  Store store;
+  bool loadingStore = false;
+  bool isAuth = false;
+  bool isStoreRoute = false;
+  @override
+  void initState() {
+    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+    print(' username: ${widget.userName}');
+
+    if (widget.userName != '0')
+      setState(() {
+        isStoreRoute = true;
+      });
+
+    if (!isStoreRoute) {
+      setState(() {
+        store = widget.store;
+
+        loadingStore = true;
+
+        isAuth = (store.user.uid == authService.storeAuth.user.uid);
+      });
+    } else {
+      storeByUsername();
+    }
+
+    super.initState();
+  }
 
   void _onVerticalGesture(
     DragUpdateDetails details,
@@ -64,14 +96,31 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
     return size.height;
   }
 
-  /*  double _getTopForAppBar(GroceryState state) {
-    if (state == GroceryState.normal) {
-      return 0.0;
-    } else if (state == GroceryState.cart) {
-      return -cartBarHeight;
+  storeByUsername() async {
+    final storeService = Provider.of<StoreService>(context, listen: false);
+    final storeResponse =
+        await storeService.getStoreByUsername(widget.userName);
+
+    final authService = Provider.of<AuthenticationBLoC>(context, listen: false);
+    final autenticado = await authService.isLoggedIn();
+    print(storeResponse.ok);
+
+    if (storeResponse.ok) {
+      setState(() {
+        print(store);
+        store = storeResponse.store;
+
+        loadingStore = true;
+
+        isAuth = (store.user.uid == authService.storeAuth.user.uid);
+      });
+    } else {
+      print(storeResponse.msg);
+
+      Navigator.pushReplacementNamed(context, '/');
+      showSnackBar(context, storeResponse.msg);
     }
-    return -toolBarHeight;
-  } */
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +130,7 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
 
     final authService = Provider.of<AuthenticationBLoC>(context);
     final currentTheme = Provider.of<ThemeChanger>(context).currentTheme;
-    final isAuth = (widget.store.user.uid == authService.storeAuth.user.uid);
+
     return AnimatedBuilder(
         animation: bloc,
         builder: (context, _) {
@@ -89,36 +138,36 @@ class _GroceryStoreHomeState extends State<GroceryStoreHome> {
             backgroundColor: Colors.black,
             body: Stack(
               children: [
-                AnimatedPositioned(
-                  duration: _panelTransition,
-                  curve: Curves.decelerate,
-                  left: 0,
-                  right: 0,
-                  top: _getTopForWhitePanel(bloc.groceryState, size),
-                  height: size.height - toolBarHeight,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(
-                        30,
+                if (loadingStore)
+                  AnimatedPositioned(
+                    duration: _panelTransition,
+                    curve: Curves.decelerate,
+                    left: 0,
+                    right: 0,
+                    top: _getTopForWhitePanel(bloc.groceryState, size),
+                    height: size.height - toolBarHeight,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(
+                          30,
+                        ),
+                        bottomRight: Radius.circular(
+                          30,
+                        ),
                       ),
-                      bottomRight: Radius.circular(
-                        30,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                        ),
+                        child: (!isAuth)
+                            ? ProfileStoreSelect(
+                                isAuthUser: isAuth,
+                                store: store,
+                              )
+                            : ProfileStoreAuth(isAuthUser: isAuth),
                       ),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                      ),
-                      child: (!isAuth)
-                          ? ProfileStoreSelect(
-                              isAuthUser: (widget.store.user.uid ==
-                                  authService.storeAuth.user.uid),
-                              store: widget.store,
-                            )
-                          : ProfileStoreAuth(isAuthUser: isAuth),
                     ),
                   ),
-                ),
                 AnimatedPositioned(
                   curve: Curves.decelerate,
                   duration: _panelTransition,

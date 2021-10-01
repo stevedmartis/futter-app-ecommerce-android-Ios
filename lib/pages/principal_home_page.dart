@@ -162,6 +162,7 @@ class _PrincipalPageState extends State<PrincipalPage>
     final storeService =
         Provider.of<StoreCategoiesService>(context, listen: false);
 
+    print(storeAuth);
     final resp = await storeService.getMyCategoriesProducts(storeAuth.user.uid);
 
     final productsBloc =
@@ -412,86 +413,6 @@ class _PrincipalPageState extends State<PrincipalPage>
       }, () {
         Navigator.pop(context);
       }, false);
-/* 
-    final isGranted = await PermissionHandle.Permission.location.isGranted;
-    //final isPermanentlyDenied = await Permission.location.isPermanentlyDenied;
-    final isDenied = await PermissionHandle.Permission.location.isDenied;
-    final isPermanentlyDenied =
-        await PermissionHandle.Permission.location.isPermanentlyDenied;
-
-    final serviceEnabled = await location.serviceEnabled();
-    final status = await PermissionHandle.Permission.location.request(); */
-/* 
-    if (isDenied) {
-      if (prefs.addressSearchSave != '') {
-        return;
-      } else {
-        accessGps(status);
-      }
-    } else if (isGranted && serviceEnabled) {
-      if (prefs.addressSearchSave != '') {
-        return;
-      } else {
-        accessGps(status);
-      }
-    } else if (isGranted && !serviceEnabled) {
-    } else if (!serviceEnabled) {
-      setState(() {
-        _isDialogShowing = true;
-      });
-      showModalGpsLocation();
-    } else if (isPermanentlyDenied && prefs.addressSearchSave != '') {
-      final status = await PermissionHandle.Permission.location.request();
-
-      accessGps(status);
-    } */
-  }
-
-  void accessGps(PermissionHandle.PermissionStatus status) {
-    switch (status) {
-      case PermissionHandle.PermissionStatus.granted:
-        Timer(new Duration(milliseconds: 300), () {
-          showMaterialCupertinoBottomSheetLocation(context, () {
-            HapticFeedback.lightImpact();
-            myLocationBloc.initPositionLocation(context);
-
-            Navigator.pop(context);
-          }, () {
-            Navigator.pop(context);
-          }, false);
-        });
-
-        break;
-
-      case PermissionHandle.PermissionStatus.denied:
-        showMaterialCupertinoBottomSheetLocation(context, () {
-          HapticFeedback.lightImpact();
-          showModalGpsLocation();
-        }, () {
-          Navigator.pop(context);
-        }, false);
-
-        setState(
-          () {
-            _isDialogShowing = true;
-          },
-        );
-
-        break;
-
-      case PermissionHandle.PermissionStatus.permanentlyDenied:
-        showMaterialCupertinoBottomSheetLocation(context, () {
-          HapticFeedback.lightImpact();
-          myLocationBloc.initPositionLocation(context);
-          Navigator.pop(context);
-        }, () {
-          Navigator.pop(context);
-        }, false);
-        // openAppSettings();
-
-        break;
-      default:
-    }
   }
 
   void storesByLocationlistServices(

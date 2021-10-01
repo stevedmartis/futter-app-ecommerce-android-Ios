@@ -178,8 +178,6 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
                             child: GestureDetector(
                               onTap: () {
                                 if (!isDisabled) {
-                                  showModalLoading(context);
-
                                   startPhoneAuth();
                                 } else {
                                   return false;
@@ -215,6 +213,8 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
   }
 
   startPhoneAuth() async {
+    showModalLoading(context);
+
     final phoneAuthDataProvider =
         Provider.of<PhoneAuthDataProvider>(context, listen: false);
     phoneAuthDataProvider.loading = true;
@@ -230,9 +230,12 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
                   });
         },
         onFailed: () {
+          Navigator.pop(context);
           showSnackBar(context, phoneAuthDataProvider.message);
         },
         onError: () {
+          Navigator.pop(context);
+
           showSnackBar(context, phoneAuthDataProvider.message);
         });
     if (!validPhone) {
